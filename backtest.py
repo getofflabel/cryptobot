@@ -223,6 +223,7 @@ def run_backtest(
     size_frac: float = 1.0,
     execution: str = "taker",
     funding_series: pd.Series | None = None,
+    stop_pct: float | None = None,
 ) -> BacktestResult:
     """Simulate trading `signal` over `candles`, charging full costs.
 
@@ -383,12 +384,25 @@ def run_backtest(
 
         units = new_units
 
+    # Intra-bar hard stop (stop_pct): the tool that makes HIGH LEVERAGE
+    # survivable. Checked against each bar's LOW (for longs) / HIGH (for
+    # shorts); fills AT the stop price plus slippage, taker fee — a stop is
+    # always a market order, executed inside the bar, not at the next open.
+    # After a stop-out, re-entry is BLOCKED until the signal resets to flat:
+    # without that, a still-long signal would buy right back next bar and
+    # churn the account through the stop repeatedly.
+    stopped_out = False
+
     current_frac = 0.0                  # the fractional target we now hold
 
     for i in range(len(candles)):
         # 1. Fill yesterday's decision at today's open (Rule 2, no lookahead).
         if i > 0:
             desired = target[i - 1]
+            if stopped_out:
+                if desired == 0.0:
+                    stopped_out = False          # signal reset: re-armed
+                desired = 0.0                    # no re-entry until then
             sign_change = np.sign(desired) != np.sign(current_frac)
             resize = (not sign_change
                       and abs(desired - current_frac) >= REBALANCE_MIN)
@@ -406,6 +420,33 @@ def run_backtest(
                 equity_now = cash + units * opens[i]
                 execute(i, desired * equity_now * size_frac / opens[i])
                 current_frac = desired
+
+        # 1b. Intra-bar hard stop check on whatever we now hold.
+        if stop_pct is not None and units != 0 and t_entry_price is not None:
+            if units > 0:
+                stop_price = t_entry_price * (1 - stop_pct / 100)
+                hit = lows[i] <= stop_price
+                fill = stop_price * (1 - costs._adverse_frac)
+            else:
+                stop_price = t_entry_price * (1 + stop_pct / 100)
+                hit = highs[i] >= stop_price
+                fill = stop_price * (1 + costs._adverse_frac)
+            if hit:
+                fee = costs.fee(abs(units) * fill)
+                cash += units * fill - fee
+                total_fees += fee
+                total_friction += abs(units) * abs(fill - stop_price)
+                trades.append(Trade(
+                    direction=int(np.sign(units)),
+                    entry_time=t_entry_time, exit_time=times[i],
+                    entry_price=t_entry_price, exit_price=fill,
+                    units=abs(units), fees=t_fees + fee, funding=t_funding,
+                    pnl=(cash - t_entry_equity),
+                ))
+                units, current_frac = 0.0, 0.0
+                t_entry_time = t_entry_price = t_entry_equity = None
+                t_fees = t_funding = 0.0
+                stopped_out = True
 
         # 2. Funding accrues on whatever we hold, in proportion to bar length.
         if units != 0:

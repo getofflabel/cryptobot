@@ -219,6 +219,27 @@ check("trade pnl == -$4.375 incl. resize costs",
 check("final equity 9,995.625",
       abs(float(r.equity_curve.iloc[-1]) - 9_995.625) < 0.01)
 
+# ---- Test 12: intra-bar hard stop ---------------------------------------
+print("\n[12] Tight stops fill intra-bar at the stop price, then block re-entry")
+# Long from bar 1 open ($100 maker fill, low touches). Bar 2 dips to 98.5,
+# through the 1% stop at 99. Exit AT 99 x (1 - 3bps slip) = 98.9703,
+# taker fee 6bps. Signal stays long after — a naive engine re-enters bar 3
+# and churns; ours must not.
+c = make_candles([100] * 6)
+c.loc[2, "low"] = 98.5
+r = run_backtest(c, pd.Series([1, 1, 1, 1, 1, 0]), COSTS,
+                 initial_equity=10_000, execution="maker", stop_pct=1.0)
+check("exactly one trade (no churn re-entry)", len(r.trades) == 1,
+      f"got {len(r.trades)}")
+check("stopped out at 98.97 (stop 99 minus slippage), not the close",
+      abs(r.trades[0].exit_price - 99 * (1 - 0.0003)) < 0.01,
+      f"got {r.trades[0].exit_price:.4f}")
+# pnl: entry fee 2bps x 10k = $2; exit 100u x 98.9703 = 9897.03, fee 5.94;
+# price loss 102.97; funding bar1 0.125 => total ~ -111.03
+expect = -(2 + (10_000 - 9_897.03) + 5.94 + 0.125)
+check("stop-out pnl matches hand computation",
+      abs(r.trades[0].pnl - expect) < 0.05, f"got {r.trades[0].pnl:+.2f}")
+
 # ---- summary ------------------------------------------------------------
 print("\n" + "=" * 64)
 print(f"RESULT: {PASS} passed, {FAIL} failed")
