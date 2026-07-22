@@ -189,6 +189,36 @@ rl = run_backtest(c, sig_long, COSTS, initial_equity=10_000,
 check("long at +2bps funding nets -$8.75 (pays $4.75)",
       abs(rl.trades[0].pnl - (-8.75)) < 0.02, f"got {rl.trades[0].pnl:+.4f}")
 
+# ---- Test 10: fractional position sizing --------------------------------
+print("\n[10] Fractional signals size positions proportionally")
+# signal 0.5 on $10k -> $5,000 notional (50 units at $100). Maker fills at
+# flat price: fees 2bps x 5k x 2 = $2. Held bars 1-2 -> funding
+# 2 x (1/8) x 1bp x 5k = $0.125. Net -$2.125.
+c = make_candles([100] * 5)
+r = run_backtest(c, pd.Series([0.5, 0.5, 0, 0, 0]), COSTS,
+                 initial_equity=10_000, execution="maker")
+check("half-size trade holds 50 units", abs(r.trades[0].units - 50) < 0.01,
+      f"got {r.trades[0].units:.2f}")
+check("half-size round trip costs $2.125",
+      abs(r.trades[0].pnl - (-2.125)) < 0.01, f"got {r.trades[0].pnl:+.4f}")
+
+# ---- Test 11: rebalance threshold ---------------------------------------
+print("\n[11] Small size drifts are ignored; big ones resize the position")
+# 1.0 -> 0.9 (drift 0.1 < 0.25: no trade) -> 0.5 (drift 0.5: resize).
+# All at flat $100, maker. One round trip in total:
+#   entry 100u fee $2; resize sell 50u fee $1; force-close 50u fee $1
+#   funding: bars 1-2 at $10k (0.125 x2) + bars 3-4 at $5k (0.0625 x2)
+#   net = -(2+1+1) - 0.375 = -$4.375, final equity 9,995.625
+c = make_candles([100] * 5)
+r = run_backtest(c, pd.Series([1.0, 0.9, 0.5, 0.5, 0]), COSTS,
+                 initial_equity=10_000, execution="maker")
+check("still exactly one trade (resize is not a new trade)",
+      len(r.trades) == 1, f"got {len(r.trades)}")
+check("trade pnl == -$4.375 incl. resize costs",
+      abs(r.trades[0].pnl - (-4.375)) < 0.01, f"got {r.trades[0].pnl:+.4f}")
+check("final equity 9,995.625",
+      abs(float(r.equity_curve.iloc[-1]) - 9_995.625) < 0.01)
+
 # ---- summary ------------------------------------------------------------
 print("\n" + "=" * 64)
 print(f"RESULT: {PASS} passed, {FAIL} failed")

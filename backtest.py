@@ -263,9 +263,17 @@ def run_backtest(
     if len(candles) != len(signal):
         raise ValueError("signal must have exactly one value per candle")
 
-    target = signal.fillna(0).astype(int).to_numpy()
-    if not np.isin(target, (-1, 0, 1)).all():
-        raise ValueError("signal values must be -1, 0, or +1")
+    # Signals may now be FRACTIONAL: +0.5 means "be long at half size".
+    # This is what lets a strategy size with conviction instead of all-or-
+    # nothing. -1..0..+1 only; anything outside that range is a bug upstream.
+    target = signal.fillna(0).to_numpy(dtype=float)
+    if ((target < -1) | (target > 1)).any():
+        raise ValueError("signal values must lie in [-1, +1]")
+
+    # Rebalance threshold: resizing an open position pays real fees, so we
+    # ignore size drifts smaller than this fraction of full size. Direction
+    # changes (including full exits) always trade regardless.
+    REBALANCE_MIN = 0.25
 
     opens = candles["open"].to_numpy()
     highs = candles["high"].to_numpy()
@@ -375,21 +383,29 @@ def run_backtest(
 
         units = new_units
 
+    current_frac = 0.0                  # the fractional target we now hold
+
     for i in range(len(candles)):
         # 1. Fill yesterday's decision at today's open (Rule 2, no lookahead).
         if i > 0:
             desired = target[i - 1]
-            current_dir = int(np.sign(units))
-            if desired != current_dir:
-                if desired == 0:
-                    execute(i, 0.0)
-                else:
-                    # Flatten first if flipping, then size off updated equity.
-                    if current_dir != 0:
-                        execute(i, 0.0)
+            sign_change = np.sign(desired) != np.sign(current_frac)
+            resize = (not sign_change
+                      and abs(desired - current_frac) >= REBALANCE_MIN)
+
+            if sign_change:
+                if current_frac != 0.0:
+                    execute(i, 0.0)              # flatten first
+                if desired != 0.0:
                     equity_now = cash            # flat, so equity is all cash
-                    new_units = desired * (equity_now * size_frac) / opens[i]
-                    execute(i, new_units)
+                    execute(i, desired * equity_now * size_frac / opens[i])
+                current_frac = desired
+            elif resize:
+                # same direction, meaningfully different size: adjust the
+                # position without closing the trade
+                equity_now = cash + units * opens[i]
+                execute(i, desired * equity_now * size_frac / opens[i])
+                current_frac = desired
 
         # 2. Funding accrues on whatever we hold, in proportion to bar length.
         if units != 0:
