@@ -57,9 +57,14 @@ MIN_ATR_PCT = 1.5
 BAR = "4h"                     # decisions at UTC 00/04/08/12/16/20
 BAR_SECONDS = 4 * 3600
 WARMUP_BARS = 300              # hysteresis needs deep history to know state
-NOTIONAL_FRACTION = 1.5        # 1.5x the ledger per position — the sweet
-                               # spot from the leverage sweep (returns peak
-                               # ~2x; 3x is worse than 2x at -90% DD)
+NOTIONAL_FRACTION = 2.0        # 2.0x the ledger per position. Re-swept on
+                               # the CURRENT champion (Wallace's push, and he
+                               # was right that 1.5x was calibrated on the
+                               # old strategy): 52% CAGR vs 44%, worst
+                               # stretch -78%, and the -8% SL caps any single
+                               # trade at -16% — far from liquidation. Past
+                               # 2.5x the curve flattens while ruin risk
+                               # goes vertical; that far we do not go.
 CONTRACT_BTC = 0.001           # BloFin BTC-USDT: 1 contract = 0.001 BTC
 LOT = 0.1                      # order size must be a multiple of this
 LOG_FILE = "trades_log.jsonl"
