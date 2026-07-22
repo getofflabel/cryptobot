@@ -240,6 +240,30 @@ expect = -(2 + (10_000 - 9_897.03) + 5.94 + 0.125)
 check("stop-out pnl matches hand computation",
       abs(r.trades[0].pnl - expect) < 0.05, f"got {r.trades[0].pnl:+.2f}")
 
+# ---- Test 13: intra-bar take-profit -------------------------------------
+print("\n[13] Targets fill at the limit as maker; stop wins a both-touch bar")
+# Long from bar1 at 100 (maker). Bar 2 high reaches 104.2, through the +4%
+# target at 104: exit AT 104, maker fee 2bps.
+#   pnl = +4% x 100u = 400 - entry fee 2 - exit fee 2.08 - funding 0.125
+c = make_candles([100] * 6)
+c.loc[2, "high"] = 104.2
+r = run_backtest(c, pd.Series([1, 1, 1, 1, 1, 0]), COSTS,
+                 initial_equity=10_000, execution="maker",
+                 stop_pct=1.0, target_pct=4.0)
+check("target filled at exactly 104",
+      abs(r.trades[0].exit_price - 104) < 1e-9,
+      f"got {r.trades[0].exit_price:.4f}")
+check("pnl = +$395.80 (4R win minus fees and funding)",
+      abs(r.trades[0].pnl - 395.795) < 0.05, f"got {r.trades[0].pnl:+.2f}")
+# Both-touch bar: high 104.2 AND low 98.5 in the same bar -> STOP wins.
+c2 = make_candles([100] * 6)
+c2.loc[2, "high"], c2.loc[2, "low"] = 104.2, 98.5
+r2 = run_backtest(c2, pd.Series([1, 1, 1, 1, 1, 0]), COSTS,
+                  initial_equity=10_000, execution="maker",
+                  stop_pct=1.0, target_pct=4.0)
+check("conservative ordering: the stop fires, not the target",
+      r2.trades[0].exit_price < 100, f"got {r2.trades[0].exit_price:.4f}")
+
 # ---- summary ------------------------------------------------------------
 print("\n" + "=" * 64)
 print(f"RESULT: {PASS} passed, {FAIL} failed")

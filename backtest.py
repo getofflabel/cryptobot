@@ -224,6 +224,7 @@ def run_backtest(
     execution: str = "taker",
     funding_series: pd.Series | None = None,
     stop_pct: float | None = None,
+    target_pct: float | None = None,
 ) -> BacktestResult:
     """Simulate trading `signal` over `candles`, charging full costs.
 
@@ -420,6 +421,39 @@ def run_backtest(
                 equity_now = cash + units * opens[i]
                 execute(i, desired * equity_now * size_frac / opens[i])
                 current_frac = desired
+
+        # 1a2. Intra-bar TAKE-PROFIT: a resting limit at entry x (1+target).
+        # Fills as MAKER (it is a resting limit) at the target price. If the
+        # same bar touches BOTH the target and the stop, we assume the STOP
+        # hit first — the conservative ordering, since we cannot know the
+        # path inside a bar.
+        if (target_pct is not None and units != 0
+                and t_entry_price is not None):
+            if units > 0:
+                tgt = t_entry_price * (1 + target_pct / 100)
+                stop_also = (stop_pct is not None
+                             and lows[i] <= t_entry_price * (1 - stop_pct / 100))
+                hit_tp = highs[i] >= tgt and not stop_also
+            else:
+                tgt = t_entry_price * (1 - target_pct / 100)
+                stop_also = (stop_pct is not None
+                             and highs[i] >= t_entry_price * (1 + stop_pct / 100))
+                hit_tp = lows[i] <= tgt and not stop_also
+            if hit_tp:
+                fee = abs(units) * tgt * costs.maker_fee_bps / 10_000
+                cash += units * tgt - fee
+                total_fees += fee
+                trades.append(Trade(
+                    direction=int(np.sign(units)),
+                    entry_time=t_entry_time, exit_time=times[i],
+                    entry_price=t_entry_price, exit_price=tgt,
+                    units=abs(units), fees=t_fees + fee, funding=t_funding,
+                    pnl=(cash - t_entry_equity),
+                ))
+                units, current_frac = 0.0, 0.0
+                t_entry_time = t_entry_price = t_entry_equity = None
+                t_fees = t_funding = 0.0
+                stopped_out = True      # same rule: no instant re-entry
 
         # 1b. Intra-bar hard stop check on whatever we now hold.
         if stop_pct is not None and units != 0 and t_entry_price is not None:
