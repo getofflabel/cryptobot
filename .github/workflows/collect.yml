@@ -1,0 +1,35 @@
+# Records one positioning snapshot every hour (price, funding, open
+# interest, orderbook depth/imbalance) into Supabase. ~1 min of runtime
+# per hour = ~720 free minutes/month; together with the trading bot we
+# stay well inside GitHub's 2,000 free minutes.
+#
+# This dataset is the foundation of the trader-replication program:
+# positioning history that no public API will hand us.
+
+name: collect
+
+on:
+  schedule:
+    - cron: "3 * * * *"        # hourly at :03
+  workflow_dispatch:
+
+concurrency:
+  group: cryptobot-collect
+  cancel-in-progress: true
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install requests
+      - name: record snapshot
+        env:
+          CRYPTOBOT_SUPABASE_URL: https://gpgjujfkktxghqeqvrvh.supabase.co
+          CRYPTOBOT_SUPABASE_ANON: ${{ secrets.CRYPTOBOT_SUPABASE_ANON }}
+          CRYPTOBOT_STATE_SECRET: ${{ secrets.CRYPTOBOT_STATE_SECRET }}
+        run: python collector.py
