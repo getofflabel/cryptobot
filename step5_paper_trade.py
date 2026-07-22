@@ -64,14 +64,16 @@ CONTRACT_BTC = 0.001           # BloFin BTC-USDT: 1 contract = 0.001 BTC
 LOT = 0.1                      # order size must be a multiple of this
 LOG_FILE = "trades_log.jsonl"
 
-# Protective bracket on every position, visible in the BloFin app.
-# SL 2.5% caps the disaster case (a flash move between hourly decisions,
-# which the MA exit is too slow to catch). TP 5% = 2:1 reward-to-risk.
-# Known interaction, accepted: if the SL fires and the MA signal is still
-# long an hour later, the bot re-enters. The bracket is crash insurance,
-# not the strategy.
-SL_PCT = 2.5
-TP_PCT = 5.0
+# Protective bracket, round-11 revision: STOP-LOSS ONLY, and WIDE.
+# We measured our original TP+5%/SL-2.5% bracket against six years of
+# data: it cut the strategy's test return from +32.1% to +10.3%, because
+# the TP amputated exactly the big winners that pay for everything, and
+# the tight SL shook trades out on ordinary 4h noise. An -8% SL leaves
+# the backtest IDENTICAL (+32.1%) while still insuring the true disaster:
+# a flash crash between 4h decisions. The bracket is crash insurance,
+# never trade management — that lesson now has a number on it.
+SL_PCT = 8.0
+TP_PCT = None
 
 # The bot's own ledger. The demo ACCOUNT holds leftover balance from before
 # the reset; the bot's score is kept separately in this file, starting at
@@ -409,22 +411,22 @@ def decide_and_trade(private: BlofinDemoPrivate, live_feed, symbol: str):
         save_state(state)
 
         # protective bracket, visible in the BloFin app on the position
-        ref = expected
+        ref = entry_fill
         if desired_dir > 0:
-            tp, sl = ref * (1 + TP_PCT / 100), ref * (1 - SL_PCT / 100)
+            sl = ref * (1 - SL_PCT / 100)
             close_side = "sell"
         else:
-            tp, sl = ref * (1 - TP_PCT / 100), ref * (1 + SL_PCT / 100)
+            sl = ref * (1 + SL_PCT / 100)
             close_side = "buy"
         try:
-            bid = private.place_tpsl(symbol, close_side, contracts, tp, sl)
-            print(f"  BRACKET set: TP {tp:,.1f} (+{TP_PCT}%) / "
-                  f"SL {sl:,.1f} (-{SL_PCT}%)  [{bid}]")
-            log_event({"action": "bracket", "tp": round(tp, 1),
+            bid = private.place_tpsl(symbol, close_side, contracts, None, sl)
+            print(f"  BRACKET set: SL {sl:,.1f} (-{SL_PCT}%), no TP — "
+                  f"winners run to the signal exit  [{bid}]")
+            log_event({"action": "bracket", "tp": None,
                        "sl": round(sl, 1), "tpsl_id": bid})
             notify("🤖 OPENED position",
-                   f"{side} {contracts:.1f} ct {symbol} ~{expected:,.0f} | "
-                   f"TP {tp:,.0f} / SL {sl:,.0f} (demo)")
+                   f"{side} {contracts:.1f} ct {symbol} ~{entry_fill:,.0f} | "
+                   f"SL {sl:,.0f}, no cap on the win (demo)")
         except Exception as e:
             print(f"  BRACKET FAILED (position is unprotected!): "
                   f"{str(e)[:120]}")

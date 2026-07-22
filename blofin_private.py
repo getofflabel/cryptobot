@@ -227,8 +227,8 @@ class BlofinDemoPrivate:
                    body={"instId": symbol, "orderId": order_id})
 
     def place_tpsl(self, symbol: str, position_side_close: str,
-                   contracts: float, tp_price: float, sl_price: float,
-                   margin_mode: str = "cross") -> str:
+                   contracts: float, tp_price: float | None,
+                   sl_price: float, margin_mode: str = "cross") -> str:
         """Attach a take-profit / stop-loss bracket to a position.
 
         position_side_close: "sell" to close a long, "buy" to close a short.
@@ -245,12 +245,16 @@ class BlofinDemoPrivate:
             "positionSide": "net",
             "side": position_side_close,
             "size": f"{contracts:.1f}",
-            "tpTriggerPrice": f"{tp_price:.1f}",
-            "tpOrderPrice": "-1",
             "slTriggerPrice": f"{sl_price:.1f}",
             "slOrderPrice": "-1",
             "reduceOnly": "true",
         }
+        if tp_price is not None:
+            # Optional: round 11 measured our +5% TP truncating the big
+            # winners the strategy lives on (test return 32% -> 10%).
+            # Stop-loss-only brackets are now the default.
+            body["tpTriggerPrice"] = f"{tp_price:.1f}"
+            body["tpOrderPrice"] = "-1"
         data = self._call("POST", "/api/v1/trade/order-tpsl", body=body)
         if isinstance(data, dict):
             return str(data.get("tpslId", data))
