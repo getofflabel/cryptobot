@@ -50,14 +50,28 @@ def main():
     f = get(f"{BLOFIN}/market/funding-rate", {"instId": "BTC-USDT"})["data"][0]
     snap["funding_bps"] = float(f["fundingRate"]) * 10_000
 
-    # open interest (Bybit — deepest public source for it)
-    try:
-        oi = get(f"{BYBIT}/market/open-interest",
-                 {"category": "linear", "symbol": "BTCUSDT",
-                  "intervalTime": "1h", "limit": 1})
-        snap["oi_btc"] = float(oi["result"]["list"][0]["openInterest"])
-    except Exception as e:
-        snap["oi_error"] = str(e)[:80]
+    # open interest — Bybit first (deepest data, works from residential
+    # IPs), then OKX, then Deribit: GitHub's US runners get geo-blocked by
+    # some venues, so the collector carries fallbacks. Which source served
+    # each snapshot is recorded so the series can be split later.
+    for name, fn in [
+        ("bybit", lambda: float(get(f"{BYBIT}/market/open-interest",
+                                    {"category": "linear", "symbol": "BTCUSDT",
+                                     "intervalTime": "1h", "limit": 1})
+                                ["result"]["list"][0]["openInterest"])),
+        ("okx", lambda: float(get("https://www.okx.com/api/v5/public/open-interest",
+                                  {"instId": "BTC-USDT-SWAP"})
+                              ["data"][0]["oiCcy"])),
+        ("deribit", lambda: float(get("https://www.deribit.com/api/v2/public/ticker",
+                                      {"instrument_name": "BTC-PERPETUAL"})
+                                  ["result"]["open_interest"]) / snap["last"]),
+    ]:
+        try:
+            snap["oi_btc"] = fn()
+            snap["oi_source"] = name
+            break
+        except Exception:
+            continue
 
     # order book: top-of-book imbalance + depth within 0.5% of mid
     book = get(f"{BLOFIN}/market/books",
