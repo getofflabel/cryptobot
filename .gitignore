@@ -1,0 +1,8 @@
+.env
+__pycache__/
+*.parquet
+trades_log.jsonl
+advisory_log.jsonl
+bot_state.json
+bot.log
+nohup.out

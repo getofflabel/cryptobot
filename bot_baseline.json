@@ -1,0 +1,17 @@
+{
+  "_comment": "The bot's PnL clock. Everything before start_utc is Wallace's own trading and is NOT the bot's score. Do not edit unless the bot is deliberately restarted from a fresh baseline.",
+
+  "start_utc": "2026-07-22T20:59:26Z",
+  "start_local": "2026-07-22 16:59:26 EDT",
+  "start_equity_usdt": 33141.429168,
+
+  "excluded_pre_bot": {
+    "realized_pnl_usdt": 27311.51901,
+    "closed_at_utc": "2026-07-22T20:59:00Z",
+    "order_id": "1000132740231",
+    "note": "Wallace's own position, flattened just before the bot took over. Banked into start_equity, never counted as bot performance."
+  },
+
+  "first_bot_order_id": "1000132740233",
+  "how_to_score": "bot_pnl = (balance + unrealized_pnl) - start_equity_usdt. Report it starting from $0.00. Percent is against start_equity_usdt, never against the raw account balance."
+}
