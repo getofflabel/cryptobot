@@ -1,0 +1,40 @@
+# render.yaml — the cloud deployment, defined as code.
+#
+# Why a Blueprint instead of clicking through the dashboard: this file IS
+# the configuration. Schedule, build, command, and env-var contract all
+# live in git, so the deployment can be rebuilt or moved without anyone
+# remembering what was typed into a form at midnight.
+#
+# The bot runs as a CRON JOB, not a web service: it wakes 7 minutes after
+# each 4h bar closes, makes exactly one decision, and exits. Nothing to
+# keep alive between runs, which is why this costs almost nothing.
+
+services:
+  - type: cron
+    name: cryptobot
+    runtime: python
+    plan: starter
+    # 7 minutes past every 4h UTC boundary (00/04/08/12/16/20), giving the
+    # exchange time to finalize the closing bar before we read it.
+    schedule: "7 0,4,8,12,16,20 * * *"
+    buildCommand: pip install -r requirements.txt
+    startCommand: python step5_paper_trade.py --once
+    envVars:
+      # Not secret: the project URL, and the Supabase publishable key,
+      # which is designed to be public (every table is RLS-locked and the
+      # bot's functions additionally require the state secret below).
+      - key: CRYPTOBOT_SUPABASE_URL
+        value: https://gpgjujfkktxghqeqvrvh.supabase.co
+      - key: CRYPTOBOT_SUPABASE_ANON
+        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdwZ2p1amZra3R4Z2hxZXF2cnZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4MzUzNjQsImV4cCI6MjA5ODQxMTM2NH0.J6x9aJ83axmEHCn0cZNev7HnU37D2SY6EedqO_zwhqg
+
+      # sync: false means "Render will prompt for this value and store it
+      # encrypted; it never enters git." These are the four that matter.
+      - key: CRYPTOBOT_STATE_SECRET
+        sync: false
+      - key: BLOFIN_DEMO_API_KEY
+        sync: false
+      - key: BLOFIN_DEMO_API_SECRET
+        sync: false
+      - key: BLOFIN_DEMO_PASSPHRASE
+        sync: false
