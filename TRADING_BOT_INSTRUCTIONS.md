@@ -54,6 +54,17 @@ cumulatively = failure). Universe: BTC, ETH, SOL only.
 - Research memory: RESEARCH_LOG.md (every look recorded), RESEARCH_QUEUE.md
   (what's next), quarterly re-audits for benched near-misses.
 
+## 6b. The Situation Room (AI judgment — authority is EARNED)
+On news-triggered wake-ups, a Claude session (Sonnet on Wallace's
+subscription; never Fable in the hot path) reads fresh headlines + market
+state and logs a structured judgment (risk_on/risk_off/neutral). Every
+judgment is auto-graded 4h later against what price actually did; the
+record is public in monthly reports. Authority ladder (pre-registered):
+Stage 1 log-only (current) -> Stage 2 veto eligibility at 30+ graded calls
+with >=60% accuracy (promotion is a reviewed decision) -> Stage 3
+initiative only with a longer record. Judgment never touches money before
+its evidence exists — same law as every strategy.
+
 ## 7. Definition of Done (proof standard for real money)
 >=3 months live or 30+ strike trades + 3+ ride trades, whichever later;
 live expectancy inside backtest bands; fills consistent with model; zero

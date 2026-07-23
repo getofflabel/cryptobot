@@ -1,0 +1,127 @@
+"""
+situation_room.py — AI judgment on breaking news, with EARNED authority.
+
+Runs only on news-triggered wake-ups. A real Claude session (Sonnet, on
+Wallace's subscription — his call: Sonnet 5 / Opus 4.8 for this job, never
+Fable in the hot path) reads the fresh headlines plus live market state and
+issues a structured judgment. THE AUTHORITY LADDER (pre-registered):
+
+  Stage 1 (NOW)    : judgments are logged and auto-graded. Zero authority.
+  Stage 2 (EARNED) : >=30 graded calls at >=60% accuracy -> eligible for
+                     VETO power (block new longs during judged danger).
+                     Promotion is a reviewed decision, not automatic.
+  Stage 3 (EARNED+): initiative — only with a longer proven record.
+
+Grading: each judgment records BTC's price. 4 hours later the hourly cycle
+scores it — risk_off + price fell = HIT, risk_on + price rose = HIT,
+neutral = ungraded. The record is public in every monthly report. This is
+how judgment earns what the checkbox strategies earned: with evidence.
+"""
+
+from __future__ import annotations
+
+import json
+import subprocess
+from datetime import datetime, timezone
+
+from step5_paper_trade import (CLOUD_STATE, _sb_rpc, _SB_SECRET, log_event,
+                               notify, save_state)
+
+MODEL = "sonnet"          # Wallace's pick for this job (fallback: opus)
+GRADE_AFTER_H = 4
+
+
+def _fresh_headlines(n=6):
+    if not CLOUD_STATE:
+        return []
+    try:
+        return _sb_rpc("cryptobot_recent_news",
+                       {"secret": _SB_SECRET, "n": n}) or []
+    except Exception:
+        return []
+
+
+def run_situation_room(live_feed, symbol, state):
+    """One judgment on the current situation. Called on news wake-ups."""
+    heads = _fresh_headlines()
+    if not heads:
+        return
+    px = live_feed.get_ticker(symbol).last
+    c4 = live_feed.get_candles(symbol, "4h", 30)
+    chg24 = (c4["close"].iloc[-1] / c4["close"].iloc[-7] - 1) * 100
+
+    prompt = (
+        "You are the situation reader for a Bitcoin trading system. "
+        "Fresh headlines (newest first):\n"
+        + "\n".join(f"- {h}" for h in heads)
+        + f"\n\nMarket: BTC ${px:,.0f}, {chg24:+.1f}% over 24h.\n"
+        "Judge the next 4-24 hours for crypto. Respond with ONLY this JSON: "
+        '{"stance": "risk_on|risk_off|neutral", "confidence": "low|medium|high", '
+        '"reasoning": "<one plain-English sentence>"}'
+    )
+    try:
+        out = subprocess.run(
+            ["claude", "-p", prompt, "--model", MODEL,
+             "--max-turns", "1"],
+            capture_output=True, text=True, timeout=120)
+        raw = out.stdout.strip()
+        j = json.loads(raw[raw.find("{"):raw.rfind("}") + 1])
+        stance = j.get("stance", "neutral")
+        conf = j.get("confidence", "low")
+        why = str(j.get("reasoning", ""))[:200]
+    except Exception as e:
+        print(f"  [SITROOM] judgment failed (non-fatal): {str(e)[:80]}")
+        return
+
+    rec = {"at": datetime.now(timezone.utc).isoformat(), "stance": stance,
+           "confidence": conf, "reasoning": why, "price": px,
+           "graded": None}
+    sr = state.setdefault("situation_room", {"n": 0, "hits": 0, "calls": []})
+    sr["calls"].append(rec)
+    del sr["calls"][:-100]
+    save_state(state)
+    print(f"  [SITROOM] {stance} ({conf}): {why}")
+    log_event({"action": "situation_judgment", **{k: rec[k] for k in
+               ("stance", "confidence", "reasoning", "price")}})
+    if stance == "risk_off" and conf in ("medium", "high"):
+        notify("🧠 Situation Room: RISK-OFF read",
+               f"{why} (judgment only — no authority yet, "
+               f"record {sr['hits']}/{sr['n']})")
+
+
+def grade_judgments(live_feed, symbol, state):
+    """Score matured judgments (>=4h old). Called every hourly cycle."""
+    sr = state.get("situation_room")
+    if not sr or not sr.get("calls"):
+        return
+    now = datetime.now(timezone.utc)
+    px = None
+    changed = False
+    for rec in sr["calls"]:
+        if rec.get("graded") is not None or rec.get("stance") == "neutral":
+            continue
+        age_h = (now - datetime.fromisoformat(rec["at"])).total_seconds() / 3600
+        if age_h < GRADE_AFTER_H:
+            continue
+        if px is None:
+            px = live_feed.get_ticker(symbol).last
+        move = (px / rec["price"] - 1) * 100
+        hit = (move > 0.15) if rec["stance"] == "risk_on" else (move < -0.15)
+        if abs(move) <= 0.15:
+            rec["graded"] = "flat-ungraded"
+            changed = True
+            continue
+        rec["graded"] = "hit" if hit else "miss"
+        sr["n"] += 1
+        sr["hits"] += hit
+        changed = True
+        acc = sr["hits"] / sr["n"] * 100
+        print(f"  [SITROOM] graded {rec['stance']}: {rec['graded']} "
+              f"(record {sr['hits']}/{sr['n']} = {acc:.0f}%)")
+        if sr["n"] >= 30 and acc >= 60 and not sr.get("stage2_flagged"):
+            sr["stage2_flagged"] = True
+            notify("🧠 SITUATION ROOM EARNED ITS RECORD",
+                   f"{sr['hits']}/{sr['n']} = {acc:.0f}% over 30+ calls — "
+                   f"eligible for veto power; review to promote")
+    if changed:
+        save_state(state)

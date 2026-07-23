@@ -138,6 +138,21 @@ def main(storm=None):
     except Exception as e:
         print(f"shadow15 failed (non-fatal): {str(e)[:100]}")
 
+    # 2d. SITUATION ROOM: on news-triggered wake-ups, an AI session (his
+    #     subscription, Sonnet) reads the situation; every hourly cycle
+    #     grades matured judgments. Authority: none until earned (see
+    #     situation_room.py ladder).
+    try:
+        import os as _os
+        from step5_paper_trade import load_state as _ls2
+        state_holder.setdefault("s", _ls2())
+        from situation_room import grade_judgments, run_situation_room
+        grade_judgments(live_feed, symbol, state_holder["s"])
+        if _os.environ.get("GITHUB_EVENT_NAME") == "workflow_dispatch"                 and _os.environ.get("CLAUDE_CODE_OAUTH_TOKEN"):
+            run_situation_room(live_feed, symbol, state_holder["s"])
+    except Exception as e:
+        print(f"situation room failed (non-fatal): {str(e)[:100]}")
+
     # 3. tactical book, every hour
     try:
         from step5_paper_trade import load_state

@@ -27,6 +27,9 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: pip install -r requirements.txt
+      - name: claude cli (situation room, news wakes only)
+        if: github.event_name == 'workflow_dispatch'
+        run: npm install -g @anthropic-ai/claude-code
       - name: hourly cycle
         env:
           BLOFIN_DEMO_API_KEY: ${{ secrets.BLOFIN_DEMO_API_KEY }}
@@ -35,4 +38,6 @@ jobs:
           CRYPTOBOT_SUPABASE_URL: https://gpgjujfkktxghqeqvrvh.supabase.co
           CRYPTOBOT_SUPABASE_ANON: ${{ secrets.CRYPTOBOT_SUPABASE_ANON }}
           CRYPTOBOT_STATE_SECRET: ${{ secrets.CRYPTOBOT_STATE_SECRET }}
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
         run: python hourly.py
