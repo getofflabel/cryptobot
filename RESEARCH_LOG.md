@@ -84,3 +84,13 @@ FINDING — the resolution map: 4h strong ($401/t), 1h moderate ($40-59/t),
 15m below the cost floor. Candle edges decay with resolution because
 profit-per-trade shrinks into fixed costs while signal weakens. 5m fetching;
 expect worse — nightly researcher to confirm cheaply for completeness.
+
+## 2026-07-23 — credit-sprint batch (interactive)
+[1] WALLACE'S HYPOTHESIS — 15m entries + WIDE stops (1.5%): VINDICATED at
+two gates: train +$14.82/197t, val +$26.17/55t (tight stops had val -$18!)
+-> TEST -$30.94/17t. 7th two-window winner killed by 2025-26. His stop-width
+insight materially real; the modern grind regime is the killer. QUARTERLY
+RE-AUDIT list. 15m wide SHORT: train +$55.60/36t but val n=2 (funding rare)
+— joins shadow-watch class. [2] OI-flag-touch: FAIL train. [3] post-settle
+long: FAIL train. [4] OI-breakout: FAIL train (val +). Looks burned: 5
+train/val pairs + ONE 15m test look. Queue items 2-4 closed.
