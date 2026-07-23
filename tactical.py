@@ -228,24 +228,28 @@ def tactical_cycle(private: BlofinDemoPrivate, live_feed, demo_feed,
 
     print(f"  [TACT] {trigger} SIGNAL — entering {contracts:.1f} ct "
           f"(~${notional:,.0f} notional at {trig_lev:.0f}x sleeve leverage)")
-    entry, was_maker = execute_maker_or_chase(
-        private, demo_feed, symbol, "buy", contracts, last_close)
+    private.ensure_leverage(symbol, trig_lev, "cross")   # per-trade leverage
+    try:
+        entry, was_maker = execute_maker_or_chase(
+            private, demo_feed, symbol, "buy", contracts, last_close)
+    except Exception as e:
+        print(f"  [TACT] ENTRY FAILED: {str(e)[:100]}")
+        notify("⚠️ tactical ENTRY FAILED (demo)",
+               f"{trigger} order rejected: {str(e)[:80]}. No position — check BloFin.")
+        return {"action": "entry_failed", "trigger": trigger}
 
     stop_pct = 2.2 if trigger == "flag-2h" else STOP_PCT
     tgt_pct = 6.6 if trigger == "flag-2h" else TARGET_PCT
     tp = round(entry * (1 + tgt_pct / 100), 1)
     sl = round(entry * (1 - stop_pct / 100), 1)
-    tp_oid = tpsl_id = None
+    tp_oid = None
+    tpsl_id = None
     try:
-        tp_oid = private.post_only_order(symbol, "sell", contracts, tp,
-                                         reduce_only=True)
+        tpsl_id = private.place_tpsl(symbol, "sell", contracts, tp, sl)
     except Exception as e:
-        print(f"  [TACT] TP limit failed: {str(e)[:80]}")
-    try:
-        tpsl_id = private.place_tpsl(symbol, "sell", contracts, None, sl)
-    except Exception as e:
-        print(f"  [TACT] SL bracket FAILED: {str(e)[:80]}")
-        notify("⚠️ tactical SL failed", "position unprotected — check BloFin")
+        print(f"  [TACT] TP/SL bracket FAILED: {str(e)[:80]}")
+        notify("⚠️ tactical bracket failed (demo)",
+               "position opened but TP/SL not set — check BloFin now")
 
     from strategy import atr as _atr
     _c = live_feed.get_candles(symbol, "4h", 20)
@@ -334,21 +338,25 @@ def amplifier_cycle(private: BlofinDemoPrivate, live_feed, demo_feed,
                     * cfg["lot"])
     print(f"  [AMP ] entering {contracts:.1f} ct ETH "
           f"(~${notional:,.0f} notional at {cfg['lev']:.0f}x slot leverage)")
-    entry, was_maker = execute_maker_or_chase(
-        private, demo_feed, sym, "buy", contracts, last_close)
+    private.ensure_leverage(sym, cfg["lev"], "cross")    # per-trade leverage
+    try:
+        entry, was_maker = execute_maker_or_chase(
+            private, demo_feed, sym, "buy", contracts, last_close)
+    except Exception as e:
+        print(f"  [AMP ] ENTRY FAILED: {str(e)[:100]}")
+        notify("⚠️ amplifier ENTRY FAILED (demo)",
+               f"ETH order rejected: {str(e)[:80]}. No position — check BloFin.")
+        return {"action": "entry_failed"}
     tp = round(entry * (1 + cfg["target"] / 100), 2)
     sl = round(entry * (1 - cfg["stop"] / 100), 2)
-    tp_oid = tpsl_id = None
+    tp_oid = None
+    tpsl_id = None
     try:
-        tp_oid = private.post_only_order(sym, "sell", contracts, tp,
-                                         reduce_only=True)
+        tpsl_id = private.place_tpsl(sym, "sell", contracts, tp, sl)
     except Exception as e:
-        print(f"  [AMP ] TP limit failed: {str(e)[:80]}")
-    try:
-        tpsl_id = private.place_tpsl(sym, "sell", contracts, None, sl)
-    except Exception as e:
-        print(f"  [AMP ] SL bracket FAILED: {str(e)[:80]}")
-        notify("⚠️ amplifier SL failed", "ETH position unprotected (demo)")
+        print(f"  [AMP ] TP/SL bracket FAILED: {str(e)[:80]}")
+        notify("⚠️ amplifier bracket failed (demo)",
+               "ETH position opened but TP/SL not set — check BloFin")
     book["open_trade"] = {
         "direction": 1, "contracts": contracts, "entry_price": entry,
         "entry_fee_bps": 2.0 if was_maker else 6.0,

@@ -326,8 +326,18 @@ def run_lab(private: BlofinDemoPrivate, live_feed, demo_feed, state: dict,
 
     print(f"  [LAB ] {trigger} SIGNAL — selling {contracts:.1f} ct "
           f"(~${notional:,.0f} notional at {LAB_LEV:.0f}x sleeve leverage)")
-    entry, was_maker = execute_maker_or_chase(
-        private, demo_feed, SYMBOL, "sell", contracts, last_close)
+    # set THIS trade's leverage before opening (was the silent-fail bug)
+    private.ensure_leverage(SYMBOL, LAB_LEV, "cross")
+    try:
+        entry, was_maker = execute_maker_or_chase(
+            private, demo_feed, SYMBOL, "sell", contracts, last_close)
+    except Exception as e:
+        print(f"  [LAB ] ENTRY FAILED: {str(e)[:100]}")
+        notify("⚠️ shorts lab ENTRY FAILED (demo)",
+               f"{trigger} tried to short but the order was rejected: "
+               f"{str(e)[:80]}. No position opened — check BloFin.")
+        return {"action": "entry_failed", "trigger": trigger,
+                "error": str(e)[:120]}
 
     if trigger == "forensic_short":
         stop = round(entry * (1 + FORENSIC_STOP_PCT / 100), 1)
@@ -336,18 +346,15 @@ def run_lab(private: BlofinDemoPrivate, live_feed, demo_feed, state: dict,
         stop = round(entry + CASCADE_STOP_ATR_MULT * atr14, 1)
         target = round(entry - CASCADE_TARGET_ATR_MULT * atr14, 1)
 
-    tp_oid = tpsl_id = None
+    # ONE proper TP/SL bracket (both show on the position, both market-exit)
+    tp_oid = None
+    tpsl_id = None
     try:
-        tp_oid = private.post_only_order(SYMBOL, "buy", contracts, target,
-                                         reduce_only=True)
+        tpsl_id = private.place_tpsl(SYMBOL, "buy", contracts, target, stop)
     except Exception as e:
-        print(f"  [LAB ] TP limit failed: {str(e)[:80]}")
-    try:
-        tpsl_id = private.place_tpsl(SYMBOL, "buy", contracts, None, stop)
-    except Exception as e:
-        print(f"  [LAB ] SL bracket FAILED: {str(e)[:80]}")
-        notify("⚠️ shorts lab SL failed",
-              "position unprotected — check BloFin (demo)")
+        print(f"  [LAB ] TP/SL bracket FAILED: {str(e)[:80]}")
+        notify("⚠️ shorts lab bracket failed (demo)",
+              "short opened but TP/SL not set — check BloFin now")
 
     lab["open_trade"] = {
         "trigger": trigger,

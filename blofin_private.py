@@ -161,6 +161,26 @@ class BlofinDemoPrivate:
 
     # -- trading ------------------------------------------------------------
 
+    def ensure_leverage(self, symbol: str, leverage: float,
+                        margin_mode: str = "cross") -> bool:
+        """Set the account leverage for THIS trade, right before opening it.
+        Every book calls this with ITS OWN leverage (the ride 10x, the strikes
+        / lab / apprentice 20x, or any per-trade value) so leverage is DYNAMIC
+        per trade, never a fixed account setting. Because only one book holds a
+        given symbol at a time (direction gates + one-slot rules), there is no
+        conflict. The MISSING version of this call was the exact bug that
+        silently rejected every order on 2026-07-23 ('all operations failed').
+        Returns True on success; logs and returns False on failure (caller
+        should alert loudly rather than trade unprotected)."""
+        try:
+            self.set_leverage(symbol, int(round(leverage)), margin_mode)
+            print(f"  leverage set {int(round(leverage))}x {margin_mode} "
+                  f"on {symbol}")
+            return True
+        except Exception as e:
+            print(f"  ⚠️ set-leverage FAILED on {symbol}: {str(e)[:100]}")
+            return False
+
     def market_order(self, symbol: str, side: str, contracts: float,
                      reduce_only: bool = False,
                      margin_mode: str = "cross") -> str:
