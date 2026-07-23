@@ -51,10 +51,19 @@ def _champion_state(live_feed, symbol) -> int:
     return int(v) if v == v else 0
 
 
-def _rsi3_1h(live_feed, symbol) -> float:
-    candles = live_feed.get_candles(symbol, "1h", 50)
+def _signals_1h(live_feed, symbol):
+    """The tactical book's two validated triggers, from the last closed 1h bar:
+    PANIC DIP  — RSI(3) < 15 (round 15 survivor)
+    FLAG TOUCH — bar dips to the 80h trend line and closes back above it
+                 (round 18 survivor: train +$14, val +$64, test +$52/trade)"""
+    candles = live_feed.get_candles(symbol, "1h", 120)
     r = rsi(candles["close"], 3).iloc[-1]
-    return float(r) if r == r else 50.0
+    r = float(r) if r == r else 50.0
+    sma80 = candles["close"].rolling(80).mean().iloc[-1]
+    last = candles.iloc[-1]
+    flag = bool(sma80 == sma80 and last["low"] <= sma80
+                and last["close"] > sma80)
+    return r, flag
 
 
 def _book_exit(state, t, exit_price, exit_fee_bps, reason):
@@ -139,9 +148,11 @@ def tactical_cycle(private: BlofinDemoPrivate, live_feed, demo_feed,
 
     # -- entry -------------------------------------------------------------
     champ = _champion_state(live_feed, symbol)
-    r3 = _rsi3_1h(live_feed, symbol)
-    print(f"  [TACT] champ4h={champ:+d} rsi3(1h)={r3:.1f}")
-    if champ != 1 or r3 >= 15:
+    r3, flag = _signals_1h(live_feed, symbol)
+    trigger = "panic-dip" if r3 < 15 else ("flag-touch" if flag else None)
+    print(f"  [TACT] champ4h={champ:+d} rsi3(1h)={r3:.1f} "
+          f"flag={'Y' if flag else 'n'} -> {trigger or 'no trigger'}")
+    if champ != 1 or trigger is None:
         return
     fb = current_funding_bps(live_feed, symbol)
     if fb is not None and fb > MAX_ENTRY_FUNDING_BPS:
@@ -180,9 +191,9 @@ def tactical_cycle(private: BlofinDemoPrivate, live_feed, demo_feed,
         "tp_order_id": tp_oid, "tpsl_id": tpsl_id,
     }
     save_state(state)
-    log_event({"action": "tact_enter", "fill_price": entry,
-               "contracts": contracts, "tp": tp, "sl": sl,
-               "maker": was_maker})
+    log_event({"action": "tact_enter", "trigger": trigger,
+               "fill_price": entry, "contracts": contracts, "tp": tp,
+               "sl": sl, "maker": was_maker})
     notify("⚡ TACTICAL entry (10x sleeve)",
            f"buy {contracts:.1f} ct @{entry:,.0f} | TP {tp:,.0f} "
            f"SL {sl:,.0f} (demo)")
