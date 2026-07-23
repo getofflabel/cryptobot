@@ -54,7 +54,7 @@ SLOTS = {
                  "contract": 0.001, "lot": 0.1},
     "ETH-USDT": {"state_key": "tactical_eth", "alloc": 0.15,
                  "contract": 0.01, "lot": 0.1,
-                 "stop": 1.81, "target": 5.43, "lev": 8.0,
+                 "stop": 1.81, "target": 5.43, "lev": 20.0,
                  "trigger": "amplifier"},
 }
 TACT_ALLOC = 0.25          # BTC slot share (ETH slot carries its own)
@@ -219,7 +219,10 @@ def tactical_cycle(private: BlofinDemoPrivate, live_feed, demo_feed,
     # situational leverage (Kelly study 2026-07-23): each trigger sized to
     # its own measured optimum ratio — more size where the math earns it,
     # less where it doesn't. Flat 10x was over-levering the flag triggers.
-    trig_lev = {"panic-dip": 10.0, "flag-touch": 6.0, "flag-2h": 3.0}[trigger]
+    # OWNER DIRECTIVE (2026-07-23): minimum 10x, target 20x. Every trigger
+    # runs at the max its stop geometry allows under BloFin's ~4.5%
+    # liquidation distance at 20x — all three stops (1.5/1.5/2.2%) fit.
+    trig_lev = {"panic-dip": 20.0, "flag-touch": 20.0, "flag-2h": 20.0}[trigger]
     notional = state["virtual_equity"] * TACT_ALLOC * trig_lev
     contracts = max(LOT, round(notional / last_close / CONTRACT_BTC / LOT) * LOT)
 

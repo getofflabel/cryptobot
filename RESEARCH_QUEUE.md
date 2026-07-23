@@ -49,3 +49,10 @@ Rules (non-negotiable, they are why the live books can be trusted):
   pre-specified, train/val ONLY (champion val to beat: +50.5% common-window)
 - GARCH storm-veto for strikes: skip entries when forecast > trailing p90
 - GARCH gate on the 15m shadow system entry conditions
+
+## STANDING PRIORITY (owner mandate, 2026-07-23): THE 15-20x TIER
+Every future research round optimizes for methods that WORK at 10-20x —
+tight-stop (<4% and ideally <2%) entries with positive expectancy after
+costs. Wide-stop strategies are legacy; the flow-data era (~Aug 20) and all
+nightly cycles hunt sub-2%-stop edges first. 3x-style "safe" configs are
+not what the owner is paying for.

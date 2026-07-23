@@ -67,7 +67,8 @@ SYMBOL = "BTC-USDT"
 
 # -- sizing: one slot, 15% of ledger equity, 5x leverage --------------------
 LAB_ALLOC = 0.15
-LAB_LEV = 5.0
+LAB_LEV = 20.0   # owner directive: 10x floor / 20x target; both triggers'
+                 # stops (1.69% fixed, 1.5x ATR) sit inside 20x liq distance
 
 # -- trigger thresholds (see module docstring for the exact geometry) ------
 # forensic_short = the ROUND-41 SURVIVOR definition exactly (step41_shorts.py
