@@ -114,3 +114,12 @@ Also today: order-clipping shipped to the live executor (12ct = 3 maker clips,
   BTC's rules transferred).
 - Joint-book simulation: both books on one ledger, true combined drawdown,
   validate the 60/40 weights.
+
+## 2026-07-23 — Round 19 (win-rate filters) + Round 20 (SOL amplifier)
+R19: daily-screen and confluence filters on the strikes — ALL WORSE than
+baseline (daily filter deletes early-trend winners; confluence = weakness).
+Nothing deployed; baseline reconfirmed. Strikes' TEST win rates already
+49-52%. R20: BTC-signal->SOL at SOL geometry: train -$0.55 (miss by a hair),
+val +$28 — does not qualify, NO test look burned. SOL benched again but the
+miss is by $0.55/trade; quarterly re-audit list. ETH amplifier remains the
+sole deployment-ready survivor.
