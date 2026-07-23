@@ -302,3 +302,43 @@ Other findings, now with numbers:
   day-trade tier now waits on NEW DATA TYPES: flow/OI era (~Aug 20) and
   news-timestamped event scalps (WatcherGuru feed gives exact event
   times — a family no candle backtest could see).
+
+## ROUND 45A — grind-native day trades (2026-07-23)
+4 families / 168 configs for the low-vol grind (calm-range fade, funding
+scalp, OI-shock, breakout-failure). 4 survivors, ALL in the OI-shock-follow
+family (calm-gated). ONE sealed look spent on the top pick (erosion +1):
+- OI-shock 1h q90 follow calm stop1.0/tgt2.0: train +$7.56/t val +$12.28/t
+  -> TEST -$5.86/t x59, -3.5%. FAIL. BURIED. The calm gate flipped train
+  positive but the edge did not survive out-of-sample.
+Real finding: the calm gate genuinely conditions OI-shock train profits
+(-$7->+$7) but that was in-sample structure, not a durable edge. Range-fade
+(the family built AROUND the calm gate) failed outright, gate or not.
+CANDLE + OI day-trade families are now EXHAUSTED across rounds 43+45A: the
+grind kills every fast price/OI-derived edge at the sealed test. The last
+untested frontier for day trades = NEWS-TIMESTAMPED events (round 45B) and
+the flow-microstructure era (~Aug 20). Test-look erosion total: +6.
+
+## ROUND 45B — NEWS-EVENT day trades — FIRST SEALED-TEST SURVIVOR (2026-07-23)
+Harvested WatcherGuru Telegram public history: ~400 days (2025-06-18 ->
+2026-07-23), 2941 relevant BTC/macro events. EVENT STUDY (the scientific
+core): BTC's |1h move| after a relevant WatcherGuru post = 1.33x the
+unconditional baseline (BEARISH-tagged: 1.44x). Wallace's thesis CONFIRMED —
+his trusted source carries measurable tradeable energy that no candle
+backtest can see.
+Backtest: 64 configs, 3 two-window survivors. ONE sealed look spent
+(erosion +1) on the strongest 1h config:
+- A-news-momentum, FIRST-BAR-MOVE direction, 1h, stop 1.2%/target 2.4%,
+  hold 24h (follow the sign of the first post-news hour's move):
+  train +$23.74/t x200, val +$7.11/t x67 -> **TEST +$20.81/t x67, +13.9%,
+  52.2% win, median hold 15h. PASS.** ★ FIRST STRATEGY EVER TO PASS THE
+  SEALED TEST in the whole program (rounds 1-45).
+CAVEATS (honest): only ~13mo of news history total (vs 6yr candles) — one
+regime slice, no bull-run/crash in sample; test window is ~2.5mo / 67
+trades; keyword classifier is crude (live AI judges may do better OR
+differently). ONE sealed pass is encouraging, NOT proof of a durable edge.
+NEXT: forward-paper-test on demo before any real-money consideration; the
+live Situation Room already ingests WatcherGuru — wire a "news momentum"
+book that follows the first-hour move after a relevant headline (GATED
+profitability work -> Fable). Also worth: re-run the event study with the
+AI classifier instead of keywords; extend the harvest as more history
+accrues.
