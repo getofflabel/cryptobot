@@ -42,8 +42,27 @@ def main(storm=None):
     except Exception as e:
         print(f"snapshot failed (non-fatal): {str(e)[:100]}")
 
+    # DAEMON HANDOFF: if the 24/7 Render daemon posted a heartbeat in the
+    # last 10 min, it owns trading — GitHub skips the ride/strikes to avoid
+    # double-trading, and only runs the situation room, collector, shadows,
+    # and journal. If the daemon is DOWN (stale heartbeat), GitHub trades
+    # as the backstop. Automatic failover, no double-trades.
+    daemon_alive = False
+    try:
+        from step5_paper_trade import load_state as _lsd
+        _hb = _lsd().get("daemon_heartbeat")
+        if _hb:
+            from datetime import datetime as _dt
+            age = (datetime.now(timezone.utc)
+                   - _dt.fromisoformat(_hb)).total_seconds()
+            daemon_alive = age < 600
+            print(f"daemon heartbeat age {age:.0f}s -> "
+                  f"{'ALIVE, GitHub is backstop-only' if daemon_alive else 'STALE, GitHub takes over trading'}")
+    except Exception as e:
+        print(f"heartbeat check failed, GitHub will trade: {str(e)[:60]}")
+
     # 2. core book at 4h boundaries
-    if hour % 4 == 0:
+    if hour % 4 == 0 and not daemon_alive:
         try:
             from step5_paper_trade import decide_and_trade
             print(f"[CORE {hour:02d}:xx UTC] 4h boundary — champion decides")
@@ -165,7 +184,10 @@ def main(storm=None):
         from step5_paper_trade import load_state
         from tactical import run_strikes
         state = state_holder.get("s") or load_state()
-        run_strikes(private, live_feed, demo_feed, state)
+        if not daemon_alive:
+            run_strikes(private, live_feed, demo_feed, state)
+        else:
+            print("  strikes skipped — daemon owns trading")
     except Exception as e:
         print(f"TACTICAL cycle error: {str(e)[:150]}")
         from step5_paper_trade import log_event

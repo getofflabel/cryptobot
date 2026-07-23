@@ -85,6 +85,7 @@ def main():
 
     price_history = []          # (timestamp, price)
     last_hour = -1
+    last_heartbeat = 0.0
     # kick off with one decision so we start in a known state
     full_cycle(private, live_feed, demo_feed, symbol, "startup")
 
@@ -92,6 +93,18 @@ def main():
         try:
             px = live_feed.get_ticker(symbol).last
             t = time.time()
+            # heartbeat every 60s: tells the GitHub backstop "I'm alive,
+            # you don't need to trade" — prevents double-trading, gives
+            # automatic failover if this worker ever dies
+            if t - last_heartbeat >= 60:
+                last_heartbeat = t
+                try:
+                    from step5_paper_trade import load_state, save_state
+                    st = load_state()
+                    st["daemon_heartbeat"] = _now().isoformat()
+                    save_state(st)
+                except Exception:
+                    pass
             price_history.append((t, px))
             price_history[:] = [(ts, p) for ts, p in price_history
                                 if t - ts <= SHOCK_WINDOW_S]
