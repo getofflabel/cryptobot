@@ -130,3 +130,12 @@ RIDE 6/7 yrs positive (only 2022 bear -27%). panic-dip 6/7 (worst year just
 FLAG-2H: 4/7 with profits concentrated in 2024 (+46%) and a -25% 2023 —
 ERA-DEPENDENCE FLAG: keep live (passed formal gauntlet, smallest sizing 3x)
 but on WATCH — bench at first live losing streak. No config changes.
+
+## 2026-07-23 — ROUND 23: FOMC study
+Decision hour = 2.55x normal violence (real, fades within 12h). BUT the
+panic-dip is FOMC-NEUTRAL: 15 trades entered within 24h of a decision made
++$74.81/t at 40% win vs +$73.79/t away — statistically identical. NO VETO,
+NO CALENDAR PLUMBING NEEDED: the vol/trend gates already absorb scheduled
+events; the geometry survives announcement chop. Advisory keeps flagging
+FOMC dates for Wallace's awareness only (next: Jul 29). ~52 FOMC dates
+hardcoded from public schedule (minor date-error risk disclosed).
