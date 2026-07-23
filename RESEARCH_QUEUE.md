@@ -24,7 +24,13 @@ Rules (non-negotiable, they are why the live books can be trusted):
 4. Donchian-channel tactical: buy 24h-high breakout in bull state ONLY when
    24h OI change > +3% AND ATR gate passes; stop 1%, tgt 4%, hold 48h.
    (Differs from dead r12 breakouts by the OI confirmation + bull filter.)
-5. Weekend liquidity study (measurement only, no strategy): are tactical
+5. 15m FORENSIC AUTOPSY (both directions) — Wallace's method on the
+   fastest tradeable resolution: label every 15m bar where a long/short at
+   tactical geometry would have PAID (train years only), measure condition
+   enrichments (funding, OI, pops, trend state, time-of-day), compose the
+   top discriminators into ONE rule per direction, gauntlet them. Data:
+   data_bybit_BTCUSDT_15m_full.parquet (fetched 2026-07-23).
+6. Weekend liquidity study (measurement only, no strategy): are tactical
    trigger outcomes different Sat/Sun UTC? Informs a possible session veto.
 
 ## Quarterly re-audits (fresh live months = new unseen data; never re-tune)
