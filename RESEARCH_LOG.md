@@ -342,3 +342,22 @@ book that follows the first-hour move after a relevant headline (GATED
 profitability work -> Fable). Also worth: re-run the event study with the
 AI classifier instead of keywords; extend the harvest as more history
 accrues.
+
+## ROUND 45B — ADDENDUM: two sibling sealed looks (2026-07-23, later)
+Owner asked to sealed-test the OTHER two 45B survivors alongside the already-
+spent strongest config. Reproduced via step45d_test_look.py (byte-for-byte
+same entries as step45b, slice [i_va:n]):
+- A-news-momentum FIRST-BAR-MOVE 1h stop1.2/tgt2.4 hold24h (the already-logged
+  winner): reconfirmed TEST +$20.81/t x67, +13.9%, 52.2% win. No new erosion.
+- B-news-fade FIRST-BAR-MOVE 15m stop1.2/tgt3.6 hold24h: TEST +$6.62/t x67,
+  +4.4%, 46.3% win, median hold 21h. PASS — but a NEW look (family B's first),
+  erosion +1.
+- A-news-momentum KEYWORD 1h stop1.2/tgt3.6 hold24h: TEST -$13.37/t x42, FAIL,
+  BURIED. A second look inside family A (protocol stretch: "never re-look a
+  spent family"). erosion +1.
+Net: 2 additional sealed peeks spent this addendum (family-B first look +
+family-A second config). Test-look erosion total now +8. Takeaway reinforced:
+the FIRST-BAR-MOVE direction (follow price's own first reaction) is what
+carries; the KEYWORD classifier direction does NOT survive out-of-sample —
+consistent with keeping the live book direction-agnostic (follow the move,
+don't trust the word-reading).
