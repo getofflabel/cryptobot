@@ -34,7 +34,8 @@ import config
 from blofin_private import BlofinDemoPrivate
 from step5_paper_trade import (CONTRACT_BTC, LOT, MAX_ENTRY_FUNDING_BPS,
                                current_funding_bps, execute_maker_or_chase,
-                               log_event, notify, now_utc, save_state)
+                               log_event, notify, now_utc,
+                               record_trade_outcome, save_state)
 from strategy import rsi, vol_gated_ma
 
 # THE STRIKE FORCE — multi-asset (round 21). Tradeable universe per
@@ -105,8 +106,9 @@ def _book_exit(state, t, exit_price, exit_fee_bps, reason):
     eq = state["virtual_equity"]
     print(f"  [TACT] {reason}: PnL ${realized:+,.2f} -> ledger ${eq:,.2f}")
     log_event({"action": "tact_exit", "reason": reason,
-               "exit_price": exit_price, "realized_pnl": realized,
-               "virtual_equity": eq})
+               "trigger": t.get("trigger", "?"), "exit_price": exit_price,
+               "realized_pnl": realized, "virtual_equity": eq})
+    record_trade_outcome(state, t.get("trigger", "tactical"), realized)
     notify(f"⚡ tactical {reason}: ${realized:+,.2f}",
            f"ledger ${eq:,.2f} / ${state.get('goal', 2000):,.0f} (demo)")
     return realized
@@ -199,6 +201,10 @@ def tactical_cycle(private: BlofinDemoPrivate, live_feed, demo_feed,
           f"-> {trigger or 'no trigger'}")
     if champ != 1 or trigger is None:
         return
+    if trigger in state.get("benched_triggers", []):
+        print(f"  [TACT] {trigger} is BENCHED by live memory — skipping")
+        log_event({"action": "memory_skip", "trigger": trigger})
+        return
     fb = current_funding_bps(live_feed, symbol)
     if fb is not None and fb > MAX_ENTRY_FUNDING_BPS:
         print(f"  [TACT] funding veto ({fb:+.2f} bps)")
@@ -236,6 +242,7 @@ def tactical_cycle(private: BlofinDemoPrivate, live_feed, demo_feed,
         notify("⚠️ tactical SL failed", "position unprotected — check BloFin")
 
     tact["open_trade"] = {
+        "trigger": trigger,
         "direction": 1, "contracts": contracts, "entry_price": entry,
         "entry_fee_bps": 2.0 if was_maker else 6.0,
         "entry_time": now_utc(), "tp_price": tp, "sl_price": sl,
@@ -299,6 +306,9 @@ def amplifier_cycle(private: BlofinDemoPrivate, live_feed, demo_feed,
     print(f"  [AMP ] BTC-dip signal: {'FIRING' if btc_dip else 'no'}")
     if not btc_dip:
         return
+    if "amplifier" in state.get("benched_triggers", []):
+        print("  [AMP ] BENCHED by live memory — skipping")
+        return
     fb = current_funding_bps(live_feed, "BTC-USDT")
     if fb is not None and fb > MAX_ENTRY_FUNDING_BPS:
         print(f"  [AMP ] funding veto ({fb:+.2f} bps)")
@@ -355,5 +365,6 @@ def _book_slot_exit(state, key, cfg, t, exit_price, exit_fee_bps, reason):
     log_event({"action": "amp_exit", "reason": reason,
                "exit_price": exit_price, "realized_pnl": realized,
                "virtual_equity": eq})
+    record_trade_outcome(state, "amplifier", realized)
     notify(f"🔗 amplifier {reason}: ${realized:+,.2f}",
            f"ledger ${eq:,.2f} / ${state.get('goal', 2000):,.0f} (demo)")

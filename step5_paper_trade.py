@@ -185,6 +185,34 @@ def sleep_until_next_bar():
     time.sleep(wait)
 
 
+BENCH_MIN_TRADES = 8      # a trigger with this many LIVE trades and negative
+                          # expectancy gets auto-benched (the memory system:
+                          # learn from real outcomes, never from fewer)
+
+
+def record_trade_outcome(state: dict, trigger: str, pnl: float):
+    """The memory layer (adopted from TradingBotV2's ledger/learnings idea,
+    adapted to our evidence standards): every live outcome updates per-
+    trigger stats stored durably in cloud state. A trigger that proves
+    itself bad LIVE (>=8 trades, negative expectancy) is BENCHED
+    automatically — no new entries — and Wallace gets notified. Stats
+    with fewer trades never veto anything: small samples are noise."""
+    stats = state.setdefault("trigger_stats", {})
+    t = stats.setdefault(trigger, {"n": 0, "pnl": 0.0, "wins": 0})
+    t["n"] += 1
+    t["pnl"] = round(t["pnl"] + pnl, 2)
+    t["wins"] += pnl > 0
+    exp = t["pnl"] / t["n"]
+    if (t["n"] >= BENCH_MIN_TRADES and exp < 0
+            and trigger not in state.setdefault("benched_triggers", [])):
+        state["benched_triggers"].append(trigger)
+        log_event({"action": "auto_bench", "trigger": trigger,
+                   "n": t["n"], "expectancy": round(exp, 2)})
+        notify(f"🪑 BENCHED: {trigger}",
+               f"{t['n']} live trades, ${exp:+.2f}/trade — no new entries "
+               f"until review (demo)")
+
+
 def book_exit(state: dict, exit_price: float, reason: str,
               exit_fee_bps: float | None = None) -> float:
     """Close the open trade on the bot's own ledger and return realized PnL.
@@ -225,6 +253,7 @@ def book_exit(state: dict, exit_price: float, reason: str,
           f"equity ${eq:,.2f} / goal ${goal:,.0f}")
     log_event({"action": "ledger", "reason": reason,
                "realized_pnl": round(realized, 2), "virtual_equity": eq})
+    record_trade_outcome(state, "ride", realized)
     notify(f"💰 trade closed: ${realized:+,.2f}",
            f"ledger ${eq:,.2f} / goal ${goal:,.0f} (demo)")
     if eq >= goal:
