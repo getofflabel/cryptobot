@@ -73,3 +73,14 @@ windows were NOT looked at on test (failed train) and remain unspent.
 
 **Next in queue:** item #2 — OI-confirmed flag-touch (1h live geometry + 24h OI
 change > +2%).
+
+## 2026-07-23 — 15m forensic autopsy + composites (interactive session)
+Vol-normalized geometry: stop 0.67%, tgt 2.01%, hold 96 bars. AUTOPSY (train
+only, both directions): best single conditions reach just 25-26% hit rate vs
+~27% breakeven — enrichments cap at 1.14-1.18x (vs 1.35x at 1h). Composites
+gauntleted: long (trend+vol+6h momentum) train +$1.95 marginal, val -$18.40
+FAIL; short (trend+vol+funding>2) train -$1.78 FAIL. No test looks burned.
+FINDING — the resolution map: 4h strong ($401/t), 1h moderate ($40-59/t),
+15m below the cost floor. Candle edges decay with resolution because
+profit-per-trade shrinks into fixed costs while signal weakens. 5m fetching;
+expect worse — nightly researcher to confirm cheaply for completeness.
