@@ -123,3 +123,10 @@ Nothing deployed; baseline reconfirmed. Strikes' TEST win rates already
 val +$28 — does not qualify, NO test look burned. SOL benched again but the
 miss is by $0.55/trade; quarterly re-audit list. ETH amplifier remains the
 sole deployment-ready survivor.
+
+## 2026-07-23 — ROUND 22: walk-forward audit (year-by-year, all live books)
+RIDE 6/7 yrs positive (only 2022 bear -27%). panic-dip 6/7 (worst year just
+-1.0% — the most robust edge we own). flag-touch 5/7. ETH amplifier 5/6.
+FLAG-2H: 4/7 with profits concentrated in 2024 (+46%) and a -25% 2023 —
+ERA-DEPENDENCE FLAG: keep live (passed formal gauntlet, smallest sizing 3x)
+but on WATCH — bench at first live losing streak. No config changes.
