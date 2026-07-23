@@ -189,10 +189,25 @@ NTFY_TOPIC = "cryptobot-d60e8e02cb101257"   # private random topic; the
 
 
 def notify(title: str, message: str):
-    """One alert channel: a free ntfy.sh push to Wallace's phone — works
-    from the cloud, costs nothing, and clicking it does something useful.
-    (The old macOS popups were removed 2026-07-23: macOS attributed them to
-    'Script Editor', and clicking one opened a confusing empty window.)"""
+    """Alerts to Wallace's phone. PRIMARY channel: a Telegram bot DM (set up
+    2026-07-23, @wallace_cryptobot_alerts_bot) — reliable, and he confirmed it
+    lands. ntfy.sh kept as a silent secondary. Reads creds from the process
+    env (Render) first, then .env (local). A failed push must never stop
+    trading, but failures now PRINT (no more silent notification black holes)."""
+    import os as _os
+    _e = _load_env()
+    tok = _os.environ.get("TELEGRAM_BOT_TOKEN") or _e.get("TELEGRAM_BOT_TOKEN", "")
+    chat = _os.environ.get("TELEGRAM_CHAT_ID") or _e.get("TELEGRAM_CHAT_ID", "")
+    if tok and chat:
+        try:
+            import requests as _rq
+            r = _rq.post(f"https://api.telegram.org/bot{tok}/sendMessage",
+                         data={"chat_id": chat, "text": f"{title}\n{message}"},
+                         timeout=6)
+            if r.status_code != 200:
+                print(f"  telegram push non-200: {r.status_code} {r.text[:80]}")
+        except Exception as e:
+            print(f"  telegram push failed: {str(e)[:80]}")
     try:
         import requests as _rq
         _rq.post(f"https://ntfy.sh/{NTFY_TOPIC}", data=message.encode(),
