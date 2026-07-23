@@ -57,14 +57,13 @@ MIN_ATR_PCT = 1.5
 BAR = "4h"                     # decisions at UTC 00/04/08/12/16/20
 BAR_SECONDS = 4 * 3600
 WARMUP_BARS = 300              # hysteresis needs deep history to know state
-NOTIONAL_FRACTION = 2.0        # 2.0x the ledger per position. Re-swept on
-                               # the CURRENT champion (Wallace's push, and he
-                               # was right that 1.5x was calibrated on the
-                               # old strategy): 52% CAGR vs 44%, worst
-                               # stretch -78%, and the -8% SL caps any single
-                               # trade at -16% — far from liquidation. Past
-                               # 2.5x the curve flattens while ruin risk
-                               # goes vertical; that far we do not go.
+# THE BARBELL (round 15): one ledger, two books.
+#   CORE     80% of equity at 2.0x  — the champion, compounding
+#   TACTICAL 20% of equity at 10x   — MTF Dip (tactical.py), tight stops
+# Core position sizing below = equity x 0.8 x 2.0 = 1.6x total equity.
+CORE_ALLOC = 0.8
+CORE_LEV = 2.0
+NOTIONAL_FRACTION = CORE_ALLOC * CORE_LEV
 CONTRACT_BTC = 0.001           # BloFin BTC-USDT: 1 contract = 0.001 BTC
 LOT = 0.1                      # order size must be a multiple of this
 LOG_FILE = "trades_log.jsonl"
