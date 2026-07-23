@@ -63,7 +63,16 @@ def _signals_1h(live_feed, symbol):
     last = candles.iloc[-1]
     flag = bool(sma80 == sma80 and last["low"] <= sma80
                 and last["close"] > sma80)
-    return r, flag
+    # third validated trigger (nightly researcher, step22): flag-touch on
+    # 2h bars — checked only when a 2h bar just closed (even UTC hours)
+    flag2h = False
+    from datetime import datetime, timezone
+    if datetime.now(timezone.utc).hour % 2 == 0:
+        c2 = live_feed.get_candles(symbol, "2h", 120)
+        s40 = c2["close"].rolling(40).mean().iloc[-1]   # ~ the 80h line
+        l2 = c2.iloc[-1]
+        flag2h = bool(s40 == s40 and l2["low"] <= s40 and l2["close"] > s40)
+    return r, flag, flag2h
 
 
 def _book_exit(state, t, exit_price, exit_fee_bps, reason):
@@ -148,10 +157,13 @@ def tactical_cycle(private: BlofinDemoPrivate, live_feed, demo_feed,
 
     # -- entry -------------------------------------------------------------
     champ = _champion_state(live_feed, symbol)
-    r3, flag = _signals_1h(live_feed, symbol)
-    trigger = "panic-dip" if r3 < 15 else ("flag-touch" if flag else None)
+    r3, flag, flag2h = _signals_1h(live_feed, symbol)
+    trigger = ("panic-dip" if r3 < 15 else
+               "flag-touch" if flag else
+               "flag-2h" if flag2h else None)
     print(f"  [TACT] champ4h={champ:+d} rsi3(1h)={r3:.1f} "
-          f"flag={'Y' if flag else 'n'} -> {trigger or 'no trigger'}")
+          f"flag={'Y' if flag else 'n'} flag2h={'Y' if flag2h else 'n'} "
+          f"-> {trigger or 'no trigger'}")
     if champ != 1 or trigger is None:
         return
     fb = current_funding_bps(live_feed, symbol)
@@ -170,8 +182,10 @@ def tactical_cycle(private: BlofinDemoPrivate, live_feed, demo_feed,
     entry, was_maker = execute_maker_or_chase(
         private, demo_feed, symbol, "buy", contracts, last_close)
 
-    tp = round(entry * (1 + TARGET_PCT / 100), 1)
-    sl = round(entry * (1 - STOP_PCT / 100), 1)
+    stop_pct = 2.2 if trigger == "flag-2h" else STOP_PCT
+    tgt_pct = 6.6 if trigger == "flag-2h" else TARGET_PCT
+    tp = round(entry * (1 + tgt_pct / 100), 1)
+    sl = round(entry * (1 - stop_pct / 100), 1)
     tp_oid = tpsl_id = None
     try:
         tp_oid = private.post_only_order(symbol, "sell", contracts, tp,
