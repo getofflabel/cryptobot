@@ -43,3 +43,9 @@ Rules (non-negotiable, they are why the live books can be trusted):
 - Book-imbalance entries: fade rips when bid-side depth collapses; buy dips
   when bid depth holds. The "last $1-2/trade" for shorts lives here.
 - OI-flush intraday reads at snapshot resolution.
+
+## GARCH era (round 29+, tools cached in data_garch_btc_1d.parquet)
+- GARCH percentile-gate grid on the ride: thresholds {50th, 60th, 70th}
+  pre-specified, train/val ONLY (champion val to beat: +50.5% common-window)
+- GARCH storm-veto for strikes: skip entries when forecast > trailing p90
+- GARCH gate on the 15m shadow system entry conditions

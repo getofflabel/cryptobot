@@ -170,3 +170,17 @@ no weekend veto (would delete profitable trades); no session filter.
 Pre-flow-data docket now FULLY COMPLETE. Remaining calendar: nightly
 researcher self-generates hypotheses; Oct 2026 quarterly re-audits;
 ~Aug 20 flow-data era opens the 15-20x tier hunt.
+
+## 2026-07-23 — ROUND 29: GARCH method (Miles Deutscher repo)
+Built walk-forward GARCH(1,1) daily vol forecasts (1,809 days, zero
+lookahead, refit/21d; cached data_garch_btc_1d.parquet; reference script
+vendored as garch_reference.py). Gauntlet vs champion on common window
+(2021-08+): GARCH-only gate NEARLY 3x'd train (+75.3% vs +25.6% with 1/3
+the trades — higher-quality entries) but val +40.2% < champion +50.5% →
+NO test look, ATR keeps the belt. GARCH OR ATR: near-miss (+48.4% val).
+GARCH sizing beat r10's ATR sizing on train (+35.1% vs champion +25.6%)
+— forecast vol > realized vol as a sizing instrument. DISPOSITION: GARCH
+enters the toolbox; queued for nightly researcher (PRE-SPECIFIED: GARCH
+percentile-gate grid on train/val only; GARCH storm-veto for strikes;
+GARCH gate for the 15m shadow). Caveat: common window shrinks samples
+(train 32t, val 9t).
