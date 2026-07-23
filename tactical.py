@@ -174,11 +174,15 @@ def tactical_cycle(private: BlofinDemoPrivate, live_feed, demo_feed,
 
     candles = live_feed.get_candles(symbol, "1h", 3)
     last_close = float(candles["close"].iloc[-1])
-    notional = state["virtual_equity"] * TACT_ALLOC * TACT_LEV
+    # situational leverage (Kelly study 2026-07-23): each trigger sized to
+    # its own measured optimum ratio — more size where the math earns it,
+    # less where it doesn't. Flat 10x was over-levering the flag triggers.
+    trig_lev = {"panic-dip": 10.0, "flag-touch": 6.0, "flag-2h": 3.0}[trigger]
+    notional = state["virtual_equity"] * TACT_ALLOC * trig_lev
     contracts = max(LOT, round(notional / last_close / CONTRACT_BTC / LOT) * LOT)
 
-    print(f"  [TACT] DIP SIGNAL — entering {contracts:.1f} ct "
-          f"(~${notional:,.0f} notional at {TACT_LEV:.0f}x sleeve leverage)")
+    print(f"  [TACT] {trigger} SIGNAL — entering {contracts:.1f} ct "
+          f"(~${notional:,.0f} notional at {trig_lev:.0f}x sleeve leverage)")
     entry, was_maker = execute_maker_or_chase(
         private, demo_feed, symbol, "buy", contracts, last_close)
 
