@@ -10,9 +10,12 @@ Rules (non-negotiable, they are why the live books can be trusted):
   same family. Log every look in RESEARCH_LOG.md (look-count erosion is real).
 
 ## Queue (top = next)
-1. 2h-resolution tactical entries: panic-dip (RSI3<15) and flag-touch on 2h
-   bars, bull state from 4h champion, stop 2.2% (1.85x median 2h ATR,
-   compute on train only), target 3:1, hold 24 bars. Data cached.
+1. [DONE 2026-07-22, round 17 / step22] 2h-resolution tactical entries.
+   flag-touch 2h SURVIVED the full gauntlet (train +$11.34/155t, val
+   +$64.83/53t, TEST +$40.23/29t, +11.7%, 52% win, DD -8.6%) -> AWAITING
+   DEPLOYMENT REVIEW. panic-dip 2h and panic-OR-flag both died on TRAIN
+   (negative), no test looks burned on them. Stop computed to exactly 2.2%
+   as estimated. Full evidence in RESEARCH_LOG.md.
 2. OI-confirmed flag-touch: the live flag-touch trigger PLUS 24h OI change
    > +2% (real money entering on the dip). 1h, same geometry as live.
 3. Funding-settlement timing: does entering long in the 2h AFTER a negative
