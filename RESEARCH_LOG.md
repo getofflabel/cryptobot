@@ -94,3 +94,23 @@ RE-AUDIT list. 15m wide SHORT: train +$55.60/36t but val n=2 (funding rare)
 — joins shadow-watch class. [2] OI-flag-touch: FAIL train. [3] post-settle
 long: FAIL train. [4] OI-breakout: FAIL train (val +). Looks burned: 5
 train/val pairs + ONE 15m test look. Queue items 2-4 closed.
+
+## 2026-07-23 — THE AMPLIFIER: BTC-signal -> ETH-trade (interactive)
+BTC panic-dip (champ1h bull + rsi3<15) traded ON ETH at ETH's vol-normalized
+geometry (1.81/5.43/48h maker). Train +$17.26/173t, val +$0.52/62t (thin but
+positive), TEST +$50.43/23t, 43% win, DD -8.5%. FULL GAUNTLET SURVIVOR #5.
+STATUS: AWAITING DEPLOYMENT — needs multi-asset tactical executor (ETH slot,
+ETH contract specs, per-symbol brackets/reconcile). Build carefully in an
+interactive session; zero rush while the market is chopped (no signals firing).
+Also today: order-clipping shipped to the live executor (12ct = 3 maker clips,
+100% maker in live drill).
+
+## Queue additions (2026-07-23)
+- DEPLOY: multi-asset tactical executor for the ETH amplifier sleeve.
+- Walk-forward robustness audit of all live strategies (rolling windows, not
+  one static split) — strengthens or flags every live verdict.
+- FOMC/CPI-day study: known historical dates vs our triggers — veto or edge?
+- Native forensic autopsies on ETH and SOL (their own paying-moments, not
+  BTC's rules transferred).
+- Joint-book simulation: both books on one ledger, true combined drawdown,
+  validate the 60/40 weights.

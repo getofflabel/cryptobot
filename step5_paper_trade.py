@@ -254,9 +254,36 @@ def current_funding_bps(live_feed, symbol: str) -> float | None:
         return None                # unreadable -> don't block on missing data
 
 
+MAX_CLIP = 5.0        # live-fire finding 2026-07-23: the demo book absorbs
+                      # ~5 ct passively but chokes on 10+. Bigger orders get
+                      # sliced into clips so each rests where depth exists.
+
+
 def execute_maker_or_chase(private: BlofinDemoPrivate, demo_feed, symbol: str,
                            side: str, contracts: float, limit_price: float,
                            reduce_only: bool = False) -> tuple[float, bool]:
+    """Fills `contracts` as maker-with-chase. Orders larger than MAX_CLIP
+    are executed as a sequence of clips; returns the size-weighted average
+    fill and whether the majority filled as maker."""
+    if contracts > MAX_CLIP + LOT / 2:
+        fills, makers = [], 0.0
+        left = contracts
+        while left > LOT / 2:
+            clip = min(MAX_CLIP, left)
+            px, mk = _execute_single(private, demo_feed, symbol, side,
+                                     round(clip, 1), limit_price, reduce_only)
+            fills.append((px, clip))
+            makers += clip if mk else 0.0
+            left -= clip
+        avg = sum(p * c for p, c in fills) / sum(c for _, c in fills)
+        return avg, makers >= contracts / 2
+    return _execute_single(private, demo_feed, symbol, side, contracts,
+                           limit_price, reduce_only)
+
+
+def _execute_single(private: BlofinDemoPrivate, demo_feed, symbol: str,
+                    side: str, contracts: float, limit_price: float,
+                    reduce_only: bool = False) -> tuple[float, bool]:
     """The round-5 execution upgrade, live.
 
     Try to be the PASSIVE side: post-only limit at the signal price. If it
