@@ -1,68 +1,70 @@
 <!doctype html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>HUD preview</title>
+  <meta charset="utf-8"><title>HUD preview</title>
   <link rel="stylesheet" href="panel.css">
   <style>
-    body { margin: 0; height: 100vh;
-      background: linear-gradient(135deg, #0e1117 0%, #1a2332 100%);
-      /* fake a chart behind it so the glass panel reads in context */
+    body { margin:0; min-height:100vh; display:flex; gap:60px; padding:50px;
       background-image:
         repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0 1px, transparent 1px 60px),
         repeating-linear-gradient(0deg, rgba(255,255,255,0.03) 0 1px, transparent 1px 60px),
-        linear-gradient(135deg, #0e1117 0%, #1a2332 100%);
-    }
-    /* pin the panel where the extension would put it */
-    #cbhud { position: fixed; top: 40px; right: 40px; }
+        linear-gradient(135deg,#0e1117,#1a2332); }
+    .slot { position: relative; }
+    #cbhud, #cbhud2 { position: relative !important; top:0!important; right:0!important; }
+    h4 { color:#889; font:600 12px system-ui; margin:0 0 12px; }
   </style>
 </head>
 <body>
-  <div id="cbhud">
-    <div id="cbhud-head">
-      <span class="cbhud-live"><span class="cbhud-dot"></span>CRYPTOBOT</span>
-      <span id="cbhud-price">—</span>
-      <span id="cbhud-collapse" title="collapse">‹</span>
-    </div>
-    <div id="cbhud-body">
-      <div class="cbhud-sec">
-        <div class="cbhud-sec-h"><span>STORM GAUGE</span><span id="cbhud-weather" class="cbhud-badge">—</span></div>
-        <div class="cbhud-row"><span>Market violence</span><span id="cbhud-viol" class="cbhud-mono">—</span></div>
-        <div class="cbhud-row"><span>vs past year</span><span id="cbhud-pct" class="cbhud-mono">—</span></div>
-        <div class="cbhud-row"><span>If you enter: size</span><span id="cbhud-size" class="cbhud-mono">—</span></div>
-        <div class="cbhud-row"><span id="cbhud-ledger-lbl">On ledger</span><span id="cbhud-dollars" class="cbhud-mono">—</span></div>
-        <div id="cbhud-action" class="cbhud-action">—</div>
-      </div>
-      <div class="cbhud-sec" id="cbhud-books"></div>
-      <div class="cbhud-thought" id="cbhud-thought">—</div>
-      <div class="cbhud-foot">Says how much — never when. Entries are your strategy's job.</div>
-      <div class="cbhud-stamp" id="cbhud-stamp"></div>
-    </div>
-  </div>
+  <div class="slot"><h4>FLAT (real live data)</h4><div id="cbhud"></div></div>
+  <div class="slot"><h4>IN A SHORT (simulated, live P&amp;L)</h4><div id="cbhud2"></div></div>
   <script>
-    const SUPABASE_URL = "https://gpgjujfkktxghqeqvrvh.supabase.co";
-    const ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdwZ2p1amZra3R4Z2hxZXF2cnZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4MzUzNjQsImV4cCI6MjA5ODQxMTM2NH0.J6x9aJ83axmEHCn0cZNev7HnU37D2SY6EedqO_zwhqg";
-    const $ = (id) => document.getElementById(id);
-    const wclass = { CALM: "calm", CHOPPY: "chop", STORM: "storm" };
-    function render(d) {
-      const s = d.storm;
-      $("cbhud-price").textContent = "BTC $" + (d.price||0).toLocaleString();
-      const w = $("cbhud-weather"); w.textContent = s.weather; w.className = "cbhud-badge " + (wclass[s.weather]||"");
-      $("cbhud-viol").textContent = `${s.violence}% / ${s.limit} limit`;
-      $("cbhud-pct").textContent = `${s.percentile}%`;
-      $("cbhud-size").textContent = `${s.size_mult.toFixed(2)}x`;
-      $("cbhud-ledger-lbl").textContent = `On $${Math.round(s.ledger).toLocaleString()} ledger`;
-      $("cbhud-dollars").textContent = `$${(s.entry_dollars||0).toLocaleString()}`;
-      const a = $("cbhud-action"); a.textContent = "▸ " + s.action; a.className = "cbhud-action " + (wclass[s.weather]||"");
-      $("cbhud-books").innerHTML = (d.books||[]).map(b =>
-        `<div class="cbhud-book"><span class="cbhud-bdot ${b.armed?"on":""}"></span><span class="cbhud-bname">${b.name}</span><span class="cbhud-bread">${b.read}</span></div>`).join("");
-      $("cbhud-thought").textContent = "💭 " + (d.thought||"");
-      $("cbhud-stamp").textContent = "updated just now";
+    const SUPABASE_URL="https://gpgjujfkktxghqeqvrvh.supabase.co";
+    const ANON="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdwZ2p1amZra3R4Z2hxZXF2cnZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4MzUzNjQsImV4cCI6MjA5ODQxMTM2NH0.J6x9aJ83axmEHCn0cZNev7HnU37D2SY6EedqO_zwhqg";
+    const fmt=(n,d=0)=>n==null?"—":Number(n).toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d});
+    const wclass={CALM:"calm",CHOPPY:"chop",STORM:"storm"};
+    const SHELL=(id)=>`<div id="cbhud-head"><span class="cbhud-live"><span class="cbhud-dot"></span>CRYPTOBOT</span><span id="${id}-mkt" class="cbhud-mkt"></span><span id="${id}-collapse" style="cursor:pointer;color:#8a8a90">‹</span></div><div id="cbhud-price-wrap"><span id="${id}-price">—</span><span id="${id}-chg" class="cbhud-chg"></span></div><div id="${id}-body"></div>`;
+    function paint(root,pfx,state,price,open24h){
+      const g=(s)=>document.getElementById(pfx+s);
+      g("-price").textContent="$"+fmt(price,0);
+      const chg=g("-chg"); const pct=(price/open24h-1)*100;
+      chg.textContent=(pct>=0?"▲ ":"▼ ")+Math.abs(pct).toFixed(2)+"%"; chg.className="cbhud-chg "+(pct>=0?"up":"down");
+      const mkt=g("-mkt"); mkt.textContent=state.market||""; mkt.className="cbhud-mkt "+(wclass[state.market]||"");
+      const pos=state.position; let html="";
+      if(pos&&pos.entry){
+        const size=pos.contracts*pos.contract_size, pnl=(price-pos.entry)*size*pos.dir, pnlPct=((price/pos.entry-1)*100)*pos.dir, win=pnl>=0, cls=win?"up":"down";
+        const dist=(l)=>l?((l/price-1)*100).toFixed(2)+"%":"—";
+        let prog=0; if(pos.target){const span=Math.abs(pos.target-pos.entry)||1; prog=Math.max(0,Math.min(100,(Math.abs(price-pos.entry)/span)*100*(win?1:0)));}
+        html=`<div class="cbhud-postop"><span class="cbhud-side ${pos.dir<0?"short":"long"}">${pos.side}</span><span class="cbhud-book">${pos.book}</span></div>
+        <div class="cbhud-pnl ${cls}">${win?"+":"−"}$${fmt(Math.abs(pnl),2)}<span class="cbhud-pnlpct">${win?"+":""}${pnlPct.toFixed(2)}%</span></div>
+        <div class="cbhud-lvls"><div class="cbhud-lvl"><span>entry</span><b>$${fmt(pos.entry,0)}</b></div>
+        <div class="cbhud-lvl"><span>stop</span><b>$${fmt(pos.stop,0)}</b><i>${dist(pos.stop)}</i></div>
+        <div class="cbhud-lvl"><span>target</span><b>${pos.target?"$"+fmt(pos.target,0):"trail"}</b><i>${dist(pos.target)}</i></div></div>
+        ${pos.target?`<div class="cbhud-bar"><div class="cbhud-bar-fill ${cls}" style="width:${prog}%"></div></div>`:""}
+        <div class="cbhud-thought">${state.thought||""}</div>`;
+      } else {
+        html=`<div class="cbhud-flat">FLAT · watching the tape</div><div class="cbhud-waits">`;
+        (state.waiting||[]).forEach(w=>{let extra="";
+          if(w.kind==="funding"&&w.now!=null){const pr=Math.max(0,Math.min(100,(w.now/w.need)*100));
+            extra=`<div class="cbhud-mini">now ${w.now>0?"+":""}${w.now}bp<div class="cbhud-pbar"><div class="cbhud-pbar-fill ${w.ready?"on":""}" style="width:${pr}%"></div></div></div>`;
+            if(w.level){const a=(price/w.level-1)*100; extra+=`<div class="cbhud-mini2">price ${a>=0?a.toFixed(2)+"% above":Math.abs(a).toFixed(2)+"% below"} breakdown $${fmt(w.level,0)}</div>`;}}
+          else if(w.kind==="rsi_below"&&w.now!=null){extra=`<div class="cbhud-mini">RSI3 now ${w.now} · fires under ${w.need}</div>`;}
+          html+=`<div class="cbhud-wait"><span class="cbhud-wdot ${w.ready?"on":""}"></span><div class="cbhud-wtxt"><b>${w.name}</b><span>${w.text}</span>${extra}</div></div>`;});
+        html+=`</div><div class="cbhud-thought">${state.thought||""}</div>`;
+      }
+      html+=`<div class="cbhud-stamp">bot read 4s ago · price live</div>`;
+      g("-body").innerHTML=html;
     }
-    fetch(`${SUPABASE_URL}/rest/v1/rpc/cryptobot_live_read`, {
-      method: "POST", headers: { apikey: ANON, Authorization: `Bearer ${ANON}`, "Content-Type": "application/json" }, body: "{}"
-    }).then(r => r.json()).then(render).catch(e => $("cbhud-stamp").textContent = "err " + e);
-    document.getElementById("cbhud-collapse").addEventListener("click", () => document.getElementById("cbhud").classList.toggle("collapsed"));
+    document.getElementById("cbhud").innerHTML=SHELL("cb1");
+    document.getElementById("cbhud2").innerHTML=SHELL("cb2");
+    fetch(`${SUPABASE_URL}/rest/v1/rpc/cryptobot_live_read`,{method:"POST",headers:{apikey:ANON,Authorization:`Bearer ${ANON}`,"Content-Type":"application/json"},body:"{}"})
+      .then(r=>r.json()).then(state=>{
+        const price=state.price||64745, open=price*0.997;
+        paint(null,"cb1",state,price,open);
+        // simulated SHORT for the P&L card
+        const posState={...state,market:"STORM",thought:"Riding the lab short — managing it.",
+          position:{book:"Shorts Lab",side:"SHORT",dir:-1,entry:65200,stop:66300,target:61900,contracts:1.4,contract_size:0.001,trigger:"cascade_short"}};
+        paint(null,"cb2",posState,63980,65900);
+      });
   </script>
 </body>
 </html>

@@ -1,19 +1,20 @@
 """
-live_read.py — the bot's CURRENT THOUGHT, published for the on-screen HUD.
+live_read.py — the bot's CURRENT STATE, published for the on-screen HUD.
 
-Wallace wants to glance at his chart and see what the bot is thinking at that
-moment. So every cycle the bot computes a compact snapshot — the STORM GAUGE
-(how violent is the market, and therefore how big a slice is sane) plus each
-book's live read — and writes it to cloud state under state["live_read"]. A
-tiny anon-readable RPC exposes just that snapshot; the browser overlay polls
-it. What you see on screen is the SAME code the bot trades on, never a
-reimplementation that could drift.
+v2 (2026-07-23): rebuilt for a trader's eye. Out went the academic storm
+gauge (violence percentiles, size multipliers) that Wallace couldn't read.
+In came the three things a trader actually glances for:
+  1. is the bot IN a trade, and is it winning or losing RIGHT NOW
+  2. if flat, what is it waiting for — and how close is that trigger
+  3. a one-line plain-English thought
 
-PHILOSOPHY (printed on the gauge): "Says how much — never when." The gauge is
-a SIZING advisor keyed to market violence; it never tells you to enter. Entry
-is the strategy's job. This snapshot is DISPLAY ONLY — the size multiplier is
-advice for the human eye and is NOT wired into the bot's live position sizing
-(that would be a strategy change, gated on its own).
+The panel ticks the PRICE itself live (fetched by the extension every ~2s,
+straight from BloFin) and does the P&L / distance math locally against the
+entry, stop, and target this snapshot provides — so the money number moves
+with the market, not on our 60s publish clock. This file just hands the
+panel the levels and context; the panel makes them live.
+
+DISPLAY ONLY. Nothing here feeds the bot's own sizing or entries.
 """
 
 from __future__ import annotations
@@ -24,156 +25,128 @@ from datetime import datetime, timezone
 from strategy import atr as _atr
 from strategy import vol_gated_ma, rsi
 
+CONTRACT_SIZE = {"The Ride": 0.001, "The Strikes": 0.001,
+                 "ETH Amplifier": 0.01, "Shorts Lab": 0.001}
 
-def _annualized_vol_series(daily):
-    """Realized annualized volatility, %, as a rolling daily series: the std
-    of the last 20 daily log returns, scaled to a year. The honest, standard
-    measure of 'how violent has this market been'."""
+
+def _annualized_vol(daily):
     c = daily["close"]
     logret = (c / c.shift(1)).apply(lambda x: math.log(x) if x and x > 0 else 0.0)
-    return logret.rolling(20).std() * math.sqrt(365) * 100
+    v = (logret.rolling(20).std() * math.sqrt(365) * 100).dropna()
+    if len(v) < 30:
+        return "CALM"
+    current = float(v.iloc[-1])
+    year = v.iloc[-365:] if len(v) > 365 else v
+    pct = float((year < current).mean()) * 100
+    return "STORM" if pct >= 80 else ("CHOPPY" if pct >= 50 else "CALM")
 
 
-def _weather(percentile):
-    if percentile >= 80:
-        return "STORM"
-    if percentile >= 50:
-        return "CHOPPY"
-    return "CALM"
-
-
-def _action(size_mult, weather):
-    if weather == "STORM":
-        return "HALF SIZE"
-    if weather == "CHOPPY":
-        return "TRIM SIZE"
-    return "FULL SIZE OK"
+def _open_position(state):
+    """Return the single open book as a panel-ready dict, or None. Checks each
+    book; the exchange nets to one position so at most one is open at a time."""
+    books = [("The Ride", state.get("open_trade")),
+             ("The Strikes", state.get("tactical", {}).get("open_trade")),
+             ("ETH Amplifier", state.get("tactical_eth", {}).get("open_trade")),
+             ("Shorts Lab", state.get("shorts_lab", {}).get("open_trade"))]
+    for name, t in books:
+        if not t:
+            continue
+        direction = t.get("direction", 1)
+        return {
+            "book": name,
+            "side": "SHORT" if direction < 0 else "LONG",
+            "dir": direction,
+            "entry": t.get("entry_price"),
+            "stop": t.get("sl_price"),
+            "target": t.get("tp_price"),
+            "contracts": t.get("contracts", 0),
+            "contract_size": CONTRACT_SIZE.get(name, 0.001),
+            "trigger": t.get("trigger", name),
+        }
+    return None
 
 
 def compute_live_read(candles_1h, candles_4h, candles_1d, funding_bps,
                       state) -> dict:
-    """Pure function (takes fetched candles, returns the snapshot dict) so it
-    is testable offline. All the market reads the bot acts on, in one place."""
     price = float(candles_1h["close"].iloc[-1])
-
-    # --- champion trend (the ride's compass) ---
     cv = vol_gated_ma(candles_4h, fast=20, slow=100, min_atr_pct=1.5).iloc[-1]
     champ = int(cv) if cv == cv else 0
+    market = _annualized_vol(candles_1d)
 
-    # --- STORM GAUGE: violence, its place in the past year, and the size it
-    #     implies (volatility targeting — size DOWN when the market is wild) ---
-    vol = _annualized_vol_series(candles_1d).dropna()
-    if len(vol) >= 30:
-        current = float(vol.iloc[-1])
-        year = vol.iloc[-365:] if len(vol) > 365 else vol
-        percentile = round(float((year < current).mean()) * 100)
-        limit = round(float(year.quantile(0.80)), 1)          # the storm line
-        median_vol = float(year.median())
-        size_mult = median_vol / current if current > 0 else 1.0
-        size_mult = round(max(0.40, min(1.30, size_mult)), 2)
-    else:
-        current, percentile, limit, size_mult = 0.0, 0, 0.0, 1.0
-
-    weather = _weather(percentile)
-    ledger = float(state.get("virtual_equity", 0) or 0)
-    entry_dollars = round(size_mult * ledger)
-
-    # --- 1h texture the fast books watch ---
     atr1h = float(_atr(candles_1h, 14).iloc[-1])
     atr1h_pct = round(atr1h / price * 100, 2) if price else 0.0
     r3 = float(rsi(candles_1h["close"], 3).iloc[-1])
-    lo20 = candles_1h["low"].rolling(20).min().shift(1).iloc[-1]
-    breakdown = bool(lo20 == lo20 and price < lo20)
-    pop4h = round((price / float(candles_1h["close"].iloc[-5]) - 1) * 100, 2) \
-        if len(candles_1h) >= 5 else 0.0
+    lo20_raw = candles_1h["low"].rolling(20).min().shift(1).iloc[-1]
+    lo20 = round(float(lo20_raw), 1) if lo20_raw == lo20_raw else None
     fb = round(funding_bps, 2) if funding_bps is not None else None
+    ledger = round(float(state.get("virtual_equity", 0) or 0), 2)
 
-    # --- what each book sees RIGHT NOW, in plain words ---
-    pos = "flat"
-    if state.get("open_trade"):
-        pos = "LONG (ride)"
-    elif state.get("tactical", {}).get("open_trade"):
-        pos = "LONG (strike)"
-    elif state.get("shorts_lab", {}).get("open_trade"):
-        pos = "SHORT (lab)"
+    position = _open_position(state)
 
+    # --- what each book is waiting for (only meaningful when flat) ----------
     benched = state.get("benched_triggers", [])
-    books = []
+    waiting = []
     # THE RIDE
-    books.append({
+    waiting.append({
         "name": "The Ride",
-        "read": "trend UP — riding" if champ == 1 else "trend flat — standing aside",
-        "armed": champ == 1,
+        "text": "riding the trend up" if champ == 1 else "trend flat — standing aside",
+        "kind": "trend", "ready": champ == 1,
     })
-    # THE STRIKES (panic-dip: champ up + RSI3 washout)
+    # THE STRIKES (dip-buy in an uptrend)
     if champ == 1:
-        strikes_read = (f"dip-buy armed · RSI3 {r3:.0f}" if r3 < 10
-                        else f"waiting RSI3<10 · now {r3:.0f}")
-        strikes_armed = r3 < 10
+        waiting.append({
+            "name": "The Strikes",
+            "text": "dip-buy: needs RSI3 < 10", "now": round(r3, 0),
+            "need": 10, "kind": "rsi_below", "ready": r3 < 10,
+        })
     else:
-        strikes_read = "asleep · needs uptrend"
-        strikes_armed = False
-    books.append({"name": "The Strikes", "read": strikes_read,
-                  "armed": strikes_armed})
-    # THE SHORTS LAB (forensic: funding + pop + live ATR; cascade: funding + breakdown)
+        waiting.append({"name": "The Strikes",
+                        "text": "asleep — needs an uptrend", "kind": "none",
+                        "ready": False})
+    # SHORTS LAB (needs trend down + a funding/breakdown trigger)
     if champ != 0:
-        lab_read = "asleep (trend not down)"
-        lab_armed = False
+        waiting.append({"name": "Shorts Lab",
+                        "text": "asleep — trend isn't down", "kind": "none",
+                        "ready": False})
     elif fb is None:
-        lab_read = "funding unreadable"
-        lab_armed = False
+        waiting.append({"name": "Shorts Lab", "text": "funding unreadable",
+                        "kind": "none", "ready": False})
     else:
-        cascade_close = fb > 2.0 and breakdown
-        forensic_close = fb >= 1.5 and pop4h > 1.5 and atr1h_pct > 1.2
-        if cascade_close or forensic_close:
-            lab_read = "SHORT armed"
-            lab_armed = True
-        elif fb > 1.5:
-            lab_read = f"funding hot {fb:+.1f}bp · watching"
-            lab_armed = False
-        else:
-            lab_read = f"quiet · funding {fb:+.1f}bp"
-            lab_armed = False
-    books.append({"name": "Shorts Lab", "read": lab_read, "armed": lab_armed})
+        waiting.append({
+            "name": "Shorts Lab",
+            "text": "short: needs funding > +2.0 + breakdown",
+            "now": fb, "need": 2.0, "kind": "funding",
+            "level": lo20,   # panel shows live price-vs-breakdown
+            "ready": fb > 2.0,
+        })
 
-    # one-line headline thought
-    if pos != "flat":
-        thought = f"In a {pos} position — managing it."
-    elif any(b["armed"] for b in books):
-        armed_names = ", ".join(b["name"] for b in books if b["armed"])
-        thought = f"{armed_names} armed — watching for the entry."
-    elif weather == "STORM":
-        thought = "Market's violent. If anything fires, half size."
+    # --- one-line thought ---------------------------------------------------
+    if position:
+        thought = f"In a {position['side'].lower()} ({position['book']}) — managing it."
+    elif any(w.get("ready") for w in waiting):
+        armed = ", ".join(w["name"] for w in waiting if w.get("ready"))
+        thought = f"{armed} armed — watching for the entry."
+    elif champ == 1:
+        thought = "Trend's up. Riding, waiting for a dip to add."
     else:
         thought = "Quiet tape. Nothing to do but watch."
 
     return {
         "ts": datetime.now(timezone.utc).isoformat(),
         "price": round(price, 1),
-        "storm": {
-            "violence": round(current, 1),
-            "limit": limit,
-            "percentile": percentile,
-            "weather": weather,
-            "size_mult": size_mult,
-            "entry_dollars": entry_dollars,
-            "ledger": round(ledger, 2),
-            "action": _action(size_mult, weather),
-        },
+        "market": market,
         "trend": "UP" if champ == 1 else "FLAT/DOWN",
-        "position": pos,
+        "ledger": ledger,
         "funding_bps": fb,
         "atr1h_pct": atr1h_pct,
-        "books": books,
+        "position": position,
+        "waiting": waiting,
         "benched": benched,
         "thought": thought,
     }
 
 
 def write_live_read(live_feed, state, save=True):
-    """Fetch what compute needs, build the snapshot, stash it in state. Called
-    from the daemon heartbeat and the hourly cycle. Never raises — a HUD glitch
-    must never disturb trading."""
     try:
         from step5_paper_trade import current_funding_bps, save_state
         c1 = live_feed.get_candles("BTC-USDT", "1h", 60)
