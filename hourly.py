@@ -76,9 +76,9 @@ def main():
     # 3. tactical book, every hour
     try:
         from step5_paper_trade import load_state
-        from tactical import tactical_cycle
+        from tactical import run_strikes
         state = load_state()
-        tactical_cycle(private, live_feed, demo_feed, symbol, state)
+        run_strikes(private, live_feed, demo_feed, state)
     except Exception as e:
         print(f"TACTICAL cycle error: {str(e)[:150]}")
         from step5_paper_trade import log_event
