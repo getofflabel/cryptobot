@@ -202,6 +202,21 @@ def main(storm=None):
         log_event({"action": "error", "book": "tactical",
                    "error": str(e)[:300]})
 
+    # 3b. shorts lab, every hour — same daemon handoff as the tactical book
+    try:
+        from step5_paper_trade import load_state
+        from shorts_lab import run_lab
+        state = state_holder.get("s") or load_state()
+        if not daemon_alive:
+            run_lab(private, live_feed, demo_feed, state)
+        else:
+            print("  shorts lab skipped — daemon owns trading")
+    except Exception as e:
+        print(f"SHORTS LAB cycle error: {str(e)[:150]}")
+        from step5_paper_trade import log_event
+        log_event({"action": "error", "book": "shorts_lab",
+                   "error": str(e)[:300]})
+
 
 if __name__ == "__main__":
     import time as _t

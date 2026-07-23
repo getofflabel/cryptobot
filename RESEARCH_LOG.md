@@ -255,3 +255,28 @@ reconciled — do NOT re-run items 2-6 (burned).
 **Next in queue:** GARCH STORM-VETO for the strikes (skip entries when forecast
 > trailing p90) — the next GARCH-era item, and a fresh, unexplored construction
 (veto on the fast tactical entries, not a gate on the slow ride).
+
+## ROUND 41 — the shorts offensive (2026-07-23)
+Wallace's mandate: crack shorts. Four native families, 64 configs, full costs
++ real funding, gauntlet splits (train->2024-01-10, val->2025-04-16).
+6 two-window survivors emerged — the most short life ever seen. THREE sealed
+test looks were spent (erosion ledger: +3):
+- forensic widened f>1.5bp 1h: test 0 TRADES. The 2025-26 grind never once
+  produced its euphoric-funding + live-ATR entry condition. Not a loser — a
+  SLEEPER. It cannot pay in a grind but also cannot bleed. Reclassified
+  DORMANT-BY-DESIGN; deployed to the live demo Shorts Lab where forward
+  trades (whenever regime turns violent) build its real sample.
+- breakdown N20 gate-below-median 1h: test -$0.17/t x108. Train/val edge was
+  regime coincidence; in the true out-of-sample grind it nets to costs.
+  BURIED. Never re-tune.
+- bleed-rider structural k=5 1h: test -$25.81/t x52, -13.4%. The grid
+  fragility flag (k=8/k=12/4h all negative) was the tell — this was
+  overfit to historical bleed shapes. BURIED. Lesson reconfirmed: a config
+  whose parameter neighbors all fail is noise wearing a costume.
+KEY STRUCTURAL FINDING (now 3x confirmed: rounds 4-8, round 39 sealed
+deaths, round 41): the 2025-26 low-vol grind pays NO short family after
+costs. Shorts that survive are CRASH-REGIME specialists that must sit
+dormant through grinds. Correct architecture = dormant crash-catchers with
+strict regime gates (funding euphoria, live ATR), NOT always-on shorts.
+Demo Shorts Lab (per Wallace's sandbox doctrine) carries forensic_short +
+cascade_short live; auto-bench judges them on real forward trades.

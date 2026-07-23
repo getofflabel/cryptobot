@@ -59,6 +59,12 @@ def full_cycle(private, live_feed, demo_feed, symbol, reason):
         run_strikes(private, live_feed, demo_feed, load_state())
     except Exception as e:
         print(f"  strikes error: {str(e)[:120]}")
+    try:
+        from shorts_lab import run_lab
+        from step5_paper_trade import load_state
+        run_lab(private, live_feed, demo_feed, load_state())
+    except Exception as e:
+        print(f"  shorts lab error: {str(e)[:120]}")
 
 
 def main():
