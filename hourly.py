@@ -187,6 +187,21 @@ def main(storm=None):
     except Exception as e:
         print(f"situation room failed (non-fatal): {str(e)[:100]}")
 
+    # 2e2. NEWS-MOMENTUM PAPER BOOK (round 45B forward test). Isolated: it
+    #     simulates its own position + PnL, places ZERO exchange orders, and
+    #     is safe to run on EVERY cycle regardless of daemon (no double-trade
+    #     risk — it never touches the shared BloFin net). Proving the first
+    #     sealed-test survivor holds up live before any real-money step.
+    try:
+        from step5_paper_trade import load_state as _ls3, log_event, notify, save_state
+        state_holder.setdefault("s", _ls3())
+        from news_book import news_book_cycle
+        news_book_cycle(live_feed, symbol, state_holder["s"],
+                        log=log_event, notify=notify)
+        save_state(state_holder["s"])
+    except Exception as e:
+        print(f"news book failed (non-fatal): {str(e)[:100]}")
+
     # 2e. refresh the human-readable journal (ledger.csv + learnings.md)
     try:
         import export_journal
