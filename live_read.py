@@ -66,6 +66,56 @@ def _open_position(state):
     return None
 
 
+def _thesis(champ, price, fb, r3, lo20, pop4h):
+    """The bot's CURRENT TRADE THESIS: if it had to pick a trade this second,
+    what would it be — side, entry, TP, SL, reward:risk, and a conviction
+    score (heuristic v1) reflecting how well conditions favor it. This is the
+    'here's how I'd trade it' Wallace asked to see, even on a flat day."""
+    if champ == 1:
+        side, book = "LONG", "The Strikes"
+        sl = round(price * (1 - 0.015), 1)      # tight strike stop
+        tp = round(price * (1 + 0.045), 1)      # 3:1
+        conv = 35                               # uptrend base
+        if r3 < 10:
+            conv += 32; dip = f"deep dip (RSI3 {r3:.0f}) — prime add"
+        elif r3 < 30:
+            conv += 16; dip = f"shallow pullback (RSI3 {r3:.0f})"
+        else:
+            dip = f"no dip yet (RSI3 {r3:.0f}) — extended"
+        why = f"Uptrend intact; {dip}."
+    else:
+        side, book = "SHORT", "Shorts Lab"
+        sl = round(price * (1 + 0.0169), 1)     # forensic geometry
+        tp = round(price * (1 - 0.0507), 1)     # 3:1
+        conv = 20                               # downtrend base
+        parts = ["downtrend"]
+        if fb is not None:
+            conv += min(30, max(0, fb / 2.0 * 30))
+            parts.append(f"funding {fb:+.1f}bp"
+                         + (" (hot)" if fb > 1.5 else ""))
+        broke = lo20 is not None and price < lo20
+        if broke:
+            conv += 30; parts.append("broke the 20-bar low")
+        elif lo20 is not None:
+            prox = max(0.0, 1 - (price / lo20 - 1) / 0.01)   # within 1% above
+            conv += round(18 * prox)
+            parts.append(f"{(price/lo20-1)*100:.2f}% above breakdown")
+        if pop4h < 0:
+            conv += min(8, -pop4h * 3)
+        why = "; ".join(parts).capitalize() + "."
+    conv = int(max(5, min(95, round(conv))))
+    risk = abs(price - sl) / price * 100
+    reward = abs(tp - price) / price * 100
+    return {
+        "side": side, "book": book,
+        "entry": round(price, 1), "tp": tp, "sl": sl,
+        "risk_pct": round(risk, 2), "reward_pct": round(reward, 2),
+        "rr": round(reward / risk, 1) if risk else 0,
+        "conviction": conv,
+        "why": why,
+    }
+
+
 def compute_live_read(candles_1h, candles_4h, candles_1d, funding_bps,
                       state) -> dict:
     price = float(candles_1h["close"].iloc[-1])
@@ -79,9 +129,12 @@ def compute_live_read(candles_1h, candles_4h, candles_1d, funding_bps,
     lo20_raw = candles_1h["low"].rolling(20).min().shift(1).iloc[-1]
     lo20 = round(float(lo20_raw), 1) if lo20_raw == lo20_raw else None
     fb = round(funding_bps, 2) if funding_bps is not None else None
+    pop4h = round((price / float(candles_1h["close"].iloc[-5]) - 1) * 100, 2) \
+        if len(candles_1h) >= 5 else 0.0
     ledger = round(float(state.get("virtual_equity", 0) or 0), 2)
 
     position = _open_position(state)
+    thesis = _thesis(champ, price, fb, r3, lo20, pop4h)
 
     # --- what each book is waiting for (only meaningful when flat) ----------
     benched = state.get("benched_triggers", [])
@@ -140,6 +193,7 @@ def compute_live_read(candles_1h, candles_4h, candles_1d, funding_bps,
         "funding_bps": fb,
         "atr1h_pct": atr1h_pct,
         "position": position,
+        "thesis": thesis,
         "waiting": waiting,
         "benched": benched,
         "thought": thought,

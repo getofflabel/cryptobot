@@ -119,25 +119,31 @@
         </div>
         ${pos.target ? `<div class="cbhud-bar"><div class="cbhud-bar-fill ${cls}" style="width:${prog}%"></div></div>` : ""}
         <div class="cbhud-thought">${state.thought || ""}</div>`;
+    } else if (state.thesis) {
+      // FLAT: show the trade the bot WOULD take right now — entry/TP/SL,
+      // reward:risk, and a live conviction score. "Here's how I'd trade it."
+      const th = state.thesis;
+      const convCls = th.conviction >= 60 ? "hi" : (th.conviction >= 40 ? "mid" : "lo");
+      html = `
+        <div class="cbhud-flat">IF I TRADED NOW</div>
+        <div class="cbhud-postop">
+          <span class="cbhud-side ${th.side === "SHORT" ? "short" : "long"}">${th.side}</span>
+          <span class="cbhud-book">${th.book}</span>
+          <span class="cbhud-rr">R:R ${th.rr}:1</span>
+        </div>
+        <div class="cbhud-lvls">
+          <div class="cbhud-lvl"><span>entry</span><b>$${fmt(th.entry, 0)}</b><i>market</i></div>
+          <div class="cbhud-lvl"><span>TP</span><b>$${fmt(th.tp, 0)}</b><i class="up">${th.side === "SHORT" ? "−" : "+"}${th.reward_pct}%</i></div>
+          <div class="cbhud-lvl"><span>SL</span><b>$${fmt(th.sl, 0)}</b><i class="down">${th.side === "SHORT" ? "+" : "−"}${th.risk_pct}%</i></div>
+        </div>
+        <div class="cbhud-conv">
+          <div class="cbhud-conv-h"><span>conviction</span><b class="${convCls}">${th.conviction}%</b></div>
+          <div class="cbhud-pbar"><div class="cbhud-pbar-fill ${convCls}" style="width:${th.conviction}%"></div></div>
+        </div>
+        <div class="cbhud-why">${th.why}</div>
+        <div class="cbhud-thought">${state.thought || ""}</div>`;
     } else {
-      html = `<div class="cbhud-flat">FLAT · watching the tape</div><div class="cbhud-waits">`;
-      (state.waiting || []).forEach((w) => {
-        let extra = "";
-        if (w.kind === "funding" && w.now != null) {
-          const pctReady = Math.max(0, Math.min(100, (w.now / w.need) * 100));
-          extra = `<div class="cbhud-mini">now ${w.now > 0 ? "+" : ""}${w.now}bp
-            <div class="cbhud-pbar"><div class="cbhud-pbar-fill ${w.ready ? "on" : ""}" style="width:${pctReady}%"></div></div></div>`;
-          if (w.level) {
-            const above = ((p / w.level - 1) * 100);
-            extra += `<div class="cbhud-mini2">price ${above >= 0 ? above.toFixed(2) + "% above" : Math.abs(above).toFixed(2) + "% below"} breakdown $${fmt(w.level, 0)}</div>`;
-          }
-        } else if (w.kind === "rsi_below" && w.now != null) {
-          extra = `<div class="cbhud-mini">RSI3 now ${w.now} · fires under ${w.need}</div>`;
-        }
-        html += `<div class="cbhud-wait"><span class="cbhud-wdot ${w.ready ? "on" : ""}"></span>
-          <div class="cbhud-wtxt"><b>${w.name}</b><span>${w.text}</span>${extra}</div></div>`;
-      });
-      html += `</div><div class="cbhud-thought">${state.thought || ""}</div>`;
+      html = `<div class="cbhud-flat">FLAT · watching the tape</div><div class="cbhud-thought">${state.thought || ""}</div>`;
     }
     // freshness
     const age = state.ts ? Date.now() - new Date(state.ts).getTime() : Infinity;

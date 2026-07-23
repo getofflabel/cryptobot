@@ -70,6 +70,21 @@
 .cbhud-lvl span { width: 52px; color: #8a8a90; }
 .cbhud-lvl b { color: #f0f0f2; font-weight: 600; }
 .cbhud-lvl i { margin-left: auto; color: #9a9aa0; font-style: normal; font-size: 11px; }
+.cbhud-lvl i.up { color: #34d399; }
+.cbhud-lvl i.down { color: #f87171; }
+.cbhud-rr { margin-left: auto; font-size: 10px; font-weight: 700; color: #cfcfd4;
+  background: rgba(255,255,255,0.07); padding: 2px 7px; border-radius: 5px; }
+.cbhud-conv { margin-top: 11px; }
+.cbhud-conv-h { display: flex; justify-content: space-between; align-items: baseline;
+  font-size: 11px; color: #8a8a90; margin-bottom: 4px; }
+.cbhud-conv-h b { font-size: 15px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.cbhud-conv-h b.hi { color: #34d399; }
+.cbhud-conv-h b.mid { color: #fbbf24; }
+.cbhud-conv-h b.lo { color: #9a9aa0; }
+.cbhud-pbar-fill.hi { background: #34d399; }
+.cbhud-pbar-fill.mid { background: #fbbf24; }
+.cbhud-pbar-fill.lo { background: #6b7280; }
+.cbhud-why { margin-top: 8px; font-size: 11px; line-height: 1.4; color: #b8b8be; }
 .cbhud-bar { height: 5px; border-radius: 3px; background: rgba(255,255,255,0.08);
   margin-top: 9px; overflow: hidden; }
 .cbhud-bar-fill { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
