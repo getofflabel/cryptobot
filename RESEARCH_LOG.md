@@ -161,3 +161,12 @@ recur, expect it, it is in spec); lowest-ever point $831; monthly avg
 2.5x when active, PEAK 7.8x equity, flat 59% of the time. Weights kept
 as-is per Wallace's chosen aggression; optional exposure cap (~6x) noted
 but NOT added (would alter validated behavior off an approximation).
+
+## 2026-07-23 — ROUND 26: weekend study (measurement, no looks burned)
+Weekend tape runs 0.68x weekday violence (thinner books, quieter). The
+panic-dip still WINS on weekends: +$58.49/t (100 trades) vs +$80.79/t
+weekday (221) — smaller but solidly positive, 39-40% win both. VERDICT:
+no weekend veto (would delete profitable trades); no session filter.
+Pre-flow-data docket now FULLY COMPLETE. Remaining calendar: nightly
+researcher self-generates hypotheses; Oct 2026 quarterly re-audits;
+~Aug 20 flow-data era opens the 15-20x tier hunt.
