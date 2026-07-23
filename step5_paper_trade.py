@@ -192,37 +192,61 @@ BENCH_MIN_TRADES = 8      # a trigger with this many LIVE trades and negative
                           # learn from real outcomes, never from fewer)
 
 
+def recent_news_headline() -> str | None:
+    """Most recent captured headline (for trade-review context)."""
+    if not CLOUD_STATE:
+        return None
+    try:
+        rows = _sb_rpc("cryptobot_recent_news",
+                       {"secret": _SB_SECRET, "n": 1})
+        return rows[0] if rows else None
+    except Exception:
+        return None
+
+
 def write_lesson(state: dict, trigger: str, pnl: float, entry_price: float,
                  exit_price: float, reason: str, ctx: dict | None):
-    """Wallace's rule: every LOSING trade gets a plain-English post-mortem —
-    what it was, why it went bad, what to learn. Honest diagnosis included:
-    some losses have a fixable cause (entered on thin conditions); many are
-    just the normal cost of a strategy that wins by losing small and often.
-    Saying which is which is the whole point."""
-    if pnl >= 0:
-        return
+    """Wallace's rule, both directions: EVERY trade gets a plain-English
+    review — what it was, the conditions and news around it, why it worked
+    or didn't, and what to carry forward. The honest part: wins in thin
+    conditions get flagged as luck (don't learn the wrong lesson), and
+    losses in solid conditions get labeled as normal strategy cost (don't
+    "fix" what isn't broken)."""
     ctx = ctx or {}
     atr_v, fb_v = ctx.get("atr_pct"), ctx.get("funding_bps")
-    diags = []
-    if atr_v is not None and atr_v < 1.65:
-        diags.append("market heat was barely above the gate — a thin-edge "
-                     "entry; losses cluster here")
-    if fb_v is not None and fb_v > 0.8:
-        diags.append("the crowd was already leaning long near the euphoria "
-                     "line — less fuel for the bounce")
-    if not diags:
-        diags.append("conditions were solid — this loss is the normal cost "
-                     "of the strategy (it wins by losing small and often), "
-                     "not a mistake to fix")
+    news = ctx.get("news")
+    won = pnl > 0
+    obs = []
+    if atr_v is not None:
+        obs.append(f"market heat {atr_v:.1f}% ({'healthy' if atr_v >= 1.65 else 'barely above the gate'})")
+    if fb_v is not None:
+        obs.append(f"crowd lean {fb_v:+.1f}bp ({'calm' if fb_v <= 0.8 else 'near euphoria'})")
+    if news:
+        obs.append(f"backdrop: {str(news)[:90]}")
+    thin = (atr_v is not None and atr_v < 1.65) or (fb_v is not None and fb_v > 0.8)
+    if won and not thin:
+        verdict = ("worked as designed — trend confirmed, market moving, "
+                   "crowd calm; keep taking this setup every time")
+    elif won and thin:
+        verdict = ("WON DESPITE thin conditions — this was closer to luck "
+                   "than skill; do not size up on setups like this")
+    elif not won and thin:
+        verdict = ("lost in thin conditions — the fixable kind; these "
+                   "cluster, and the memory is counting them")
+    else:
+        verdict = ("lost in solid conditions — the normal cost of the "
+                   "strategy (it wins by losing small and often); nothing "
+                   "to fix")
     lesson = {
         "date": now_utc(), "trigger": trigger,
-        "trade": f"long at ${entry_price:,.0f}, {reason} at "
-                 f"${exit_price:,.0f}, lost ${abs(pnl):,.2f}",
-        "why": "; ".join(diags),
+        "trade": f"long ${entry_price:,.0f} -> {reason} ${exit_price:,.0f}, "
+                 f"{'made' if won else 'lost'} ${abs(pnl):,.2f}",
+        "conditions": "; ".join(obs) if obs else "context not captured",
+        "why": verdict,
     }
     lessons = state.setdefault("lessons", [])
     lessons.append(lesson)
-    del lessons[:-50]                       # keep the last 50
+    del lessons[:-50]
     log_event({"action": "lesson", **lesson})
 
 

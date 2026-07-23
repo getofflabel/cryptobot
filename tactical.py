@@ -247,9 +247,11 @@ def tactical_cycle(private: BlofinDemoPrivate, live_feed, demo_feed,
     from strategy import atr as _atr
     _c = live_feed.get_candles(symbol, "4h", 20)
     _atrnow = float((_atr(_c, 14) / _c["close"] * 100).iloc[-1])
+    from step5_paper_trade import recent_news_headline
     tact["open_trade"] = {
         "trigger": trigger, "ctx": {"atr_pct": round(_atrnow, 2),
-                                    "funding_bps": fb},
+                                    "funding_bps": fb,
+                                    "news": recent_news_headline()},
         "direction": 1, "contracts": contracts, "entry_price": entry,
         "entry_fee_bps": 2.0 if was_maker else 6.0,
         "entry_time": now_utc(), "tp_price": tp, "sl_price": sl,
