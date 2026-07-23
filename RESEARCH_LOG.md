@@ -148,3 +148,16 @@ VERDICT: no native long edge on either alt at vol-normalized geometry —
 alts run hotter but noisier than BTC; their validated role stays FOLLOWER
 (ETH amplifier). Alt-native ideas now require flow data like everything
 else fast. Queue: joint-book sim is the last pre-flow item.
+
+## 2026-07-23 — ROUND 25: joint-fleet simulation (one ledger, live weights)
+1,135 trades, 6.3yr, event-ordered compounding (approximation; no
+liquidation modeling; all books assumed present from day 1; books are
+SURVIVORS of ~300 candidates so forward expectation is lower — treat the
+$ figure as structural, not a promise). $1k -> $831k (196% CAGR).
+STRUCTURE (the real findings): worst COMBINED drawdown -72.3% (correlation
+cost is real — deeper than any single book; at live aggression this WILL
+recur, expect it, it is in spec); lowest-ever point $831; monthly avg
++15.5% / median 0.0% / 47% positive / worst month -45%; exposure median
+2.5x when active, PEAK 7.8x equity, flat 59% of the time. Weights kept
+as-is per Wallace's chosen aggression; optional exposure cap (~6x) noted
+but NOT added (would alter validated behavior off an approximation).
