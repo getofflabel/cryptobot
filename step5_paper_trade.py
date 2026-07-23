@@ -155,9 +155,21 @@ def log_event(event: dict):
             pass                      # cloud mirror is best-effort
 
 
+NTFY_TOPIC = "cryptobot-d60e8e02cb101257"   # private random topic; the
+                                            # phone app subscribes to this
+
+
 def notify(title: str, message: str):
-    """Pop a macOS notification the moment something happens — trades
-    should announce themselves, not wait to be discovered in a log."""
+    """Announce events on BOTH channels: macOS popup (local runs) and a
+    free ntfy.sh phone push (works from the cloud — this is how trade and
+    shock alerts reach Wallace in real time without any credits)."""
+    try:
+        import requests as _rq
+        _rq.post(f"https://ntfy.sh/{NTFY_TOPIC}", data=message.encode(),
+                 headers={"Title": title.encode("ascii", "ignore").decode(),
+                          "Priority": "high"}, timeout=6)
+    except Exception:
+        pass
     try:
         import subprocess
         safe_t = title.replace('"', "'")

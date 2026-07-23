@@ -53,6 +53,59 @@ def main():
             log_event({"action": "error", "book": "core",
                        "error": str(e)[:300]})
 
+    # 2a2. MARKET SHOCK DETECTOR (the tape is the fastest news alarm):
+    #      an abnormal 1h move -> instant phone push, zero credits.
+    try:
+        from step5_paper_trade import load_state, log_event, notify, save_state
+        state_holder.setdefault("s", load_state())
+        st = state_holder["s"]
+        c1 = live_feed.get_candles(symbol, "1h", 120)
+        rets = c1["close"].pct_change().abs() * 100
+        last_move = float(rets.iloc[-1])
+        threshold = max(3 * float(rets.iloc[:-1].median()), 1.5)
+        if last_move > threshold:
+            px = float(c1["close"].iloc[-1])
+            direction = "UP" if c1["close"].iloc[-1] > c1["close"].iloc[-2] else "DOWN"
+            msg = (f"BTC moved {last_move:.1f}% {direction} in an hour "
+                   f"(normal is {threshold/3:.2f}%) — now ${px:,.0f}. "
+                   f"Positions are bracketed; gates will read the new vol.")
+            print(f"[SHOCK] {msg}")
+            log_event({"action": "market_shock", "move_pct": round(last_move, 2),
+                       "price": px})
+            notify("🚨 MARKET SHOCK", msg)
+
+        # NEWS WIRE (free aggregator the fast X accounts repost; keyword-
+        # filtered in code — no AI reads anything, no credits spent)
+        import requests as _rq
+        KEYWORDS = ("trump", "fed ", "fomc", "sec ", "etf", "hack", "exploit",
+                    "war", "tariff", "cpi", "rate cut", "rate hike",
+                    "emergency", " ban", "lawsuit", "bankrupt", "liquidat")
+        try:
+            items = _rq.get("https://news.treeofalpha.com/api/news",
+                            params={"limit": 30}, timeout=10).json()
+            last_ts = st.get("last_news_ts", 0)
+            newest = last_ts
+            hits = []
+            for it in items:
+                ts = int(it.get("time", 0))
+                title = str(it.get("title", ""))
+                if ts <= last_ts:
+                    continue
+                newest = max(newest, ts)
+                if any(k in title.lower() for k in KEYWORDS):
+                    hits.append(title[:140])
+            if newest > last_ts:
+                st["last_news_ts"] = newest
+                save_state(st)
+            for hline in hits[:3]:
+                print(f"[NEWS ] {hline}")
+                log_event({"action": "news_flag", "headline": hline})
+                notify("📰 heavy news", hline)
+        except Exception as e:
+            print(f"news wire unreachable (non-fatal): {str(e)[:60]}")
+    except Exception as e:
+        print(f"shock/news check failed (non-fatal): {str(e)[:80]}")
+
     # 2b. SHADOW BOOK: the forensic short (funding>2bp + 4h pop>1.5% +
     #     ATR>1.2%) — both gauntlet windows positive but only 6 validation
     #     instances (rule needs 8). No orders: we LOG every live firing so
