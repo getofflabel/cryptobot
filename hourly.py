@@ -21,6 +21,7 @@ from blofin_private import BlofinDemoPrivate, load_env
 
 
 def main():
+    state_holder = {}
     env = load_env()
     for k, v in env.items():                 # collector reads os.environ
         os.environ.setdefault(k, v)
@@ -73,11 +74,21 @@ def main():
     except Exception as e:
         print(f"shadow check failed (non-fatal): {str(e)[:80]}")
 
+    # 2c. THE 15-MINUTE SYSTEM (shadow mode): Wallace's wide-stop 15m
+    #     strategy trading a shadow ledger on real bars — builds the forward
+    #     record that earns (or denies) real orders. Zero real orders here.
+    try:
+        from step5_paper_trade import load_state as _ls
+        from shadow15 import shadow15_cycle
+        shadow15_cycle(live_feed, _ls() if False else state_holder.setdefault("s", _ls()))
+    except Exception as e:
+        print(f"shadow15 failed (non-fatal): {str(e)[:100]}")
+
     # 3. tactical book, every hour
     try:
         from step5_paper_trade import load_state
         from tactical import run_strikes
-        state = load_state()
+        state = state_holder.get("s") or load_state()
         run_strikes(private, live_feed, demo_feed, state)
     except Exception as e:
         print(f"TACTICAL cycle error: {str(e)[:150]}")
