@@ -42,6 +42,8 @@ jobs:
           CRYPTOBOT_SUPABASE_ANON: ${{ secrets.CRYPTOBOT_SUPABASE_ANON }}
           CRYPTOBOT_STATE_SECRET: ${{ secrets.CRYPTOBOT_STATE_SECRET }}
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           GITHUB_EVENT_NAME: ${{ github.event_name }}
         run: python hourly.py
       - name: commit journal
