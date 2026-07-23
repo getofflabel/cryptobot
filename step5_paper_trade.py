@@ -66,11 +66,14 @@ WARMUP_BARS = 300              # hysteresis needs deep history to know state
 # supports the extra weight (panic-dip standalone: $1k->$28.5k/6yr without
 # ever dipping under $1k). Combined bull-dip exposure can reach ~5x equity;
 # that is the chosen aggression, inside each strategy's measured optimum.
-# 2026-07-23, his push "2x is investor behavior": THE RIDE now runs at its
-# MEASURED PEAK — 3x is where its growth curve tops out (59% CAGR); beyond
-# that, returns FALL while drawdowns deepen. This is maximum honest throttle.
+# 2026-07-23, OWNER DIRECTIVE: the ride's dial is 10x. Wallace set the bar
+# ("minimum 10x", "2x is investor behavior") and the demo account is the
+# sandbox that proves or breaks it with live trades — the backtest's 3x
+# growth-peak estimate is recorded in RESEARCH_LOG.md but does NOT override
+# his call. The -8% price stop at 10x means a stop-out costs ~80% of this
+# slice; sized off the ledger, that is the chosen, understood risk.
 CORE_ALLOC = 0.6
-CORE_LEV = 3.0
+CORE_LEV = 10.0
 NOTIONAL_FRACTION = CORE_ALLOC * CORE_LEV
 CONTRACT_BTC = 0.001           # BloFin BTC-USDT: 1 contract = 0.001 BTC
 LOT = 0.1                      # order size must be a multiple of this
