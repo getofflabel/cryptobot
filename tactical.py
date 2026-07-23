@@ -37,7 +37,7 @@ from step5_paper_trade import (CONTRACT_BTC, LOT, MAX_ENTRY_FUNDING_BPS,
                                log_event, notify, now_utc, save_state)
 from strategy import rsi, vol_gated_ma
 
-TACT_ALLOC = 0.2
+TACT_ALLOC = 0.4   # reweighted 2026-07-23: the strikes earn 40%
 TACT_LEV = 10.0
 STOP_PCT = 1.5
 TARGET_PCT = 4.5

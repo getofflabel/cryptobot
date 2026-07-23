@@ -61,7 +61,12 @@ WARMUP_BARS = 300              # hysteresis needs deep history to know state
 #   CORE     80% of equity at 2.0x  — the champion, compounding
 #   TACTICAL 20% of equity at 10x   — MTF Dip (tactical.py), tight stops
 # Core position sizing below = equity x 0.8 x 2.0 = 1.6x total equity.
-CORE_ALLOC = 0.8
+# Reweighted 2026-07-23 (Wallace: grow as fast as the math allows):
+# THE RIDE gets 60%, THE STRIKES get 40% — the strikes' Kelly analysis
+# supports the extra weight (panic-dip standalone: $1k->$28.5k/6yr without
+# ever dipping under $1k). Combined bull-dip exposure can reach ~5x equity;
+# that is the chosen aggression, inside each strategy's measured optimum.
+CORE_ALLOC = 0.6
 CORE_LEV = 2.0
 NOTIONAL_FRACTION = CORE_ALLOC * CORE_LEV
 CONTRACT_BTC = 0.001           # BloFin BTC-USDT: 1 contract = 0.001 BTC
