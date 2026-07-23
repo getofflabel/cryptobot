@@ -68,7 +68,20 @@ def main():
 
     print(f"[{_now():%Y-%m-%d %H:%M:%S}] DAEMON LIVE — watching {symbol} "
           f"every {POLL_SECONDS}s, reacting instantly. This process never "
-          f"sleeps.")
+          f"sleeps.", flush=True)
+    try:
+        boot_px = live_feed.get_ticker(symbol).last   # proves BloFin reachable
+        from step5_paper_trade import log_event, notify
+        log_event({"action": "daemon_boot", "host": "render",
+                   "price": boot_px})
+        notify("🖥️ 24/7 worker ONLINE",
+               f"Render daemon live, BTC ${boot_px:,.0f}. Watching every "
+               f"{POLL_SECONDS}s, never sleeps. (demo)")
+        print(f"  boot heartbeat sent — BloFin reachable, BTC ${boot_px:,.0f}",
+              flush=True)
+    except Exception as e:
+        print(f"  BOOT WARNING — BloFin unreachable from Render: "
+              f"{str(e)[:120]}", flush=True)
 
     price_history = []          # (timestamp, price)
     last_hour = -1
