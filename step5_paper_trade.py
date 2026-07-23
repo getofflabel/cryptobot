@@ -160,27 +160,17 @@ NTFY_TOPIC = "cryptobot-d60e8e02cb101257"   # private random topic; the
 
 
 def notify(title: str, message: str):
-    """Announce events on BOTH channels: macOS popup (local runs) and a
-    free ntfy.sh phone push (works from the cloud — this is how trade and
-    shock alerts reach Wallace in real time without any credits)."""
+    """One alert channel: a free ntfy.sh push to Wallace's phone — works
+    from the cloud, costs nothing, and clicking it does something useful.
+    (The old macOS popups were removed 2026-07-23: macOS attributed them to
+    'Script Editor', and clicking one opened a confusing empty window.)"""
     try:
         import requests as _rq
         _rq.post(f"https://ntfy.sh/{NTFY_TOPIC}", data=message.encode(),
                  headers={"Title": title.encode("ascii", "ignore").decode(),
                           "Priority": "high"}, timeout=6)
     except Exception:
-        pass
-    try:
-        import subprocess
-        safe_t = title.replace('"', "'")
-        safe_m = message.replace('"', "'")
-        subprocess.run(
-            ["osascript", "-e",
-             f'display notification "{safe_m}" with title "{safe_t}" '
-             f'sound name "Glass"'],
-            timeout=10, capture_output=True)
-    except Exception:
-        pass                        # a failed popup must never stop trading
+        pass                        # a failed push must never stop trading
 
 
 def now_utc() -> str:
