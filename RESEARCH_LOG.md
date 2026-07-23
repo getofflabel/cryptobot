@@ -184,3 +184,17 @@ enters the toolbox; queued for nightly researcher (PRE-SPECIFIED: GARCH
 percentile-gate grid on train/val only; GARCH storm-veto for strikes;
 GARCH gate for the 15m shadow). Caveat: common window shrinks samples
 (train 32t, val 9t).
+
+## 2026-07-23 — ROUND 30: the 15-year backtest (Bitstamp daily, 2011-2026)
+5,439 daily bars ($8.88 -> $65,677). THE FINDING: Bitcoin's volatility has
+structurally DECAYED era over era — a FIXED vol gate calibrated on early
+eras (9.42% daily) went completely dead by 2023 (zero trades, 3 eras).
+ADAPTIVE gate (ATR > 1.3x trailing-365d median) fixed it: $1k -> $187k
+(42% CAGR) vs fixed's $11k, trading in EVERY era. Transferred to the live
+4h gauntlet: adaptive did NOT beat the champion (val +26.4% vs +63.9%) —
+belt retained, no test look — the champion's fixed 1.5% is superior in the
+CURRENT era. STANDING RISK ON RECORD: the live gate will age as BTC
+matures; monitor via the monthly scoreboard (if ride trade-count decays
+toward zero across quarters while trends visibly run, the gate is dying —
+re-derive it then). HODL's 7,400x over 15yr is the $8.88 base effect, not
+a beatable benchmark for any risk-managed system at 1x.
