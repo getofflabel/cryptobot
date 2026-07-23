@@ -349,6 +349,34 @@ def decide_and_trade(private: BlofinDemoPrivate, live_feed, symbol: str):
                "unrealized_pnl": round(unreal, 2),
                "equity": round(state["virtual_equity"] + unreal, 2)})
 
+    # TRADER-TEMPO CAP (Wallace's rule: we are traders, not investors).
+    # No core position lives past 14 days. Gauntlet-tested: the 14d cap
+    # costs ~5 points of test return (32.1%->27.3%); 7d guts the edge.
+    # After a time-out, no re-entry until the signal itself resets.
+    MAX_CORE_HOLD_H = 14 * 24
+    raw_dir = desired_dir
+    if state.get("core_blocked"):
+        if raw_dir != 1:
+            state["core_blocked"] = False
+            save_state(state)
+        desired_dir = 0
+    t_open = state.get("open_trade")
+    if t_open and desired_dir == 1:
+        try:
+            e_dt = datetime.strptime(t_open["entry_time"],
+                                     "%Y-%m-%d %H:%M:%S UTC")
+            held_h = (datetime.now(timezone.utc)
+                      - e_dt.replace(tzinfo=timezone.utc)
+                      ).total_seconds() / 3600
+            if held_h >= MAX_CORE_HOLD_H:
+                print(f"  TIME CAP: core held {held_h / 24:.1f} days — "
+                      f"exiting (trader tempo, 14d max)")
+                desired_dir = 0
+                state["core_blocked"] = True
+                save_state(state)
+        except Exception:
+            pass
+
     if desired_dir == current_dir:
         print("  no change needed — holding course.")
         return
