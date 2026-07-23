@@ -139,3 +139,12 @@ NO CALENDAR PLUMBING NEEDED: the vol/trend gates already absorb scheduled
 events; the geometry survives announcement chop. Advisory keeps flagging
 FOMC dates for Wallace's awareness only (next: Jul 29). ~52 FOMC dates
 hardcoded from public schedule (minor date-error risk disclosed).
+
+## 2026-07-23 — ROUND 24: native autopsies, ETH & SOL
+Both coins' best native conditions (volatility regime, 1.36-1.42x) top out
+at 24-25% hit rates vs ~27% breakeven; composites (volatile AND crash-zone)
+failed train on both (ETH -$15/t, SOL -$40/t). NO test looks burned.
+VERDICT: no native long edge on either alt at vol-normalized geometry —
+alts run hotter but noisier than BTC; their validated role stays FOLLOWER
+(ETH amplifier). Alt-native ideas now require flow data like everything
+else fast. Queue: joint-book sim is the last pre-flow item.
