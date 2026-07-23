@@ -20,7 +20,8 @@ import config
 from blofin_private import BlofinDemoPrivate, load_env
 
 
-def main():
+def main(storm=None):
+    storm = storm if storm is not None else {"on": False}
     state_holder = {}
     env = load_env()
     for k, v in env.items():                 # collector reads os.environ
@@ -73,6 +74,7 @@ def main():
             log_event({"action": "market_shock", "move_pct": round(last_move, 2),
                        "price": px})
             notify("🚨 MARKET SHOCK", msg)
+            storm["on"] = True
 
         # NEWS WIRE (free aggregator the fast X accounts repost; keyword-
         # filtered in code — no AI reads anything, no credits spent)
@@ -100,7 +102,6 @@ def main():
             for hline in hits[:3]:
                 print(f"[NEWS ] {hline}")
                 log_event({"action": "news_flag", "headline": hline})
-                notify("📰 heavy news", hline)
         except Exception as e:
             print(f"news wire unreachable (non-fatal): {str(e)[:60]}")
     except Exception as e:
@@ -151,4 +152,18 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    import time as _t
+    storm = {"on": False}
+    main(storm)
+    # STORM MODE (Wallace's rule: the MACHINE acts on news, at any hour,
+    # without him): after a market shock, don't sleep until next hour —
+    # re-run the full decision stack every 10 minutes for the rest of
+    # this run's window, so the setups a shock creates (panic dips,
+    # cascade conditions, fired brackets) are caught in minutes.
+    extra = 0
+    while storm["on"] and extra < 2:
+        extra += 1
+        print(f"\n[STORM MODE] rapid re-check {extra}/2 in 10 minutes...")
+        _t.sleep(600)
+        storm["on"] = False          # re-arms only if the shock persists
+        main(storm)
