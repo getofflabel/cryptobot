@@ -117,6 +117,32 @@ def _sb_rpc(fn: str, payload: dict):
     return r.json() if r.text else None
 
 
+def sync_ledger_to_account(private, symbol, state) -> None:
+    """Wallace's model: the virtual ledger and the BloFin balance are ONE
+    number. When the bot is FLAT, set the ledger to the live account
+    balance — so a manual balance change (like resetting to $1,500) or any
+    realized PnL flows straight into the scoreboard automatically. Skipped
+    mid-trade so an open position's math is never disturbed."""
+    has_trade = (state.get("open_trade")
+                 or state.get("tactical", {}).get("open_trade")
+                 or state.get("tactical_eth", {}).get("open_trade"))
+    if has_trade:
+        return
+    try:
+        if abs(private.net_position_contracts(symbol)) > 0.001:
+            return
+        bal = round(float(private.futures_balance().get("balance", 0)), 2)
+        cur = round(float(state.get("virtual_equity", 0)), 2)
+        if bal > 0 and abs(bal - cur) > 0.01:
+            state["virtual_equity"] = bal
+            save_state(state)
+            log_event({"action": "ledger_sync", "from": cur, "to": bal})
+            print(f"  LEDGER SYNCED to live BloFin balance: ${bal:,.2f} "
+                  f"(was ${cur:,.2f})")
+    except Exception as e:
+        print(f"  ledger sync skipped: {str(e)[:60]}")
+
+
 def load_state() -> dict:
     if CLOUD_STATE:
         data = _sb_rpc("cryptobot_get_state", {"secret": _SB_SECRET})

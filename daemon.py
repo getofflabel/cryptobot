@@ -41,6 +41,11 @@ def _now():
 def full_cycle(private, live_feed, demo_feed, symbol, reason):
     """Run the whole decision stack once (same work the hourly job does)."""
     print(f"\n[{_now():%H:%M:%S}] === DECISION CYCLE ({reason}) ===")
+    try:
+        from step5_paper_trade import load_state, sync_ledger_to_account
+        sync_ledger_to_account(private, symbol, load_state())
+    except Exception as e:
+        print(f"  ledger sync skipped: {str(e)[:60]}")
     hour = _now().hour
     try:
         if hour % 4 == 0 or reason.startswith("shock"):

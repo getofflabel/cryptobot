@@ -34,6 +34,14 @@ def main(storm=None):
     demo_feed, _ = config.make_exchange("demo")
     hour = datetime.now(timezone.utc).hour
 
+    # 0. keep the ledger == the live BloFin balance (Wallace: one number)
+    try:
+        from step5_paper_trade import load_state as _ls0, sync_ledger_to_account
+        state_holder.setdefault("s", _ls0())
+        sync_ledger_to_account(private, symbol, state_holder["s"])
+    except Exception as e:
+        print(f"ledger sync failed (non-fatal): {str(e)[:60]}")
+
     # 1. positioning snapshot (best-effort: research data must never block
     #    trading)
     try:
