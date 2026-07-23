@@ -76,7 +76,12 @@ def run_situation_room(live_feed, symbol, state):
             conf = j.get("confidence", "low")
             why = str(j.get("reasoning", ""))[:200]
         except Exception as e:
-            print(f"  [SITROOM] {model} judgment failed: {str(e)[:80]}")
+            err = ""
+            try:
+                err = f" | rc={out.returncode} err={out.stderr.strip()[:150]}"
+            except Exception:
+                pass
+            print(f"  [SITROOM] {model} judgment failed: {str(e)[:80]}{err}")
             continue
         rec = {"at": datetime.now(timezone.utc).isoformat(), "model": model,
                "stance": stance, "confidence": conf, "reasoning": why,
