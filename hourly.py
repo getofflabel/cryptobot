@@ -42,6 +42,13 @@ def main(storm=None):
     except Exception as e:
         print(f"ledger sync failed (non-fatal): {str(e)[:60]}")
 
+    # 0b. publish the on-screen HUD snapshot (what the bot is thinking now)
+    try:
+        from live_read import write_live_read
+        write_live_read(live_feed, state_holder["s"])
+    except Exception as e:
+        print(f"live_read failed (non-fatal): {str(e)[:60]}")
+
     # 1. positioning snapshot (best-effort: research data must never block
     #    trading)
     try:

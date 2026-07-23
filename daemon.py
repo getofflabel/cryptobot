@@ -110,10 +110,13 @@ def main():
             if t - last_heartbeat >= 60:
                 last_heartbeat = t
                 try:
-                    from step5_paper_trade import load_state, save_state
+                    from step5_paper_trade import load_state
+                    from live_read import write_live_read
                     st = load_state()
                     st["daemon_heartbeat"] = _now().isoformat()
-                    save_state(st)
+                    # publishes the on-screen HUD's snapshot AND saves state
+                    # (heartbeat included) in one write
+                    write_live_read(live_feed, st)
                 except Exception:
                     pass
             price_history.append((t, px))

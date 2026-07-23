@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "Cryptobot Live HUD",
+  "version": "1.0.0",
+  "description": "A floating panel showing what your trading bot is thinking right now — the Storm Gauge and every book's live read — on top of BloFin and TradingView.",
+  "permissions": ["storage"],
+  "host_permissions": ["https://gpgjujfkktxghqeqvrvh.supabase.co/*"],
+  "background": { "service_worker": "background.js" },
+  "content_scripts": [
+    {
+      "matches": ["*://*.blofin.com/*", "*://*.tradingview.com/*"],
+      "js": ["content.js"],
+      "css": ["panel.css"],
+      "run_at": "document_idle"
+    }
+  ]
+}

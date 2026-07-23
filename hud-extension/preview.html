@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>HUD preview</title>
+  <link rel="stylesheet" href="panel.css">
+  <style>
+    body { margin: 0; height: 100vh;
+      background: linear-gradient(135deg, #0e1117 0%, #1a2332 100%);
+      /* fake a chart behind it so the glass panel reads in context */
+      background-image:
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0 1px, transparent 1px 60px),
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.03) 0 1px, transparent 1px 60px),
+        linear-gradient(135deg, #0e1117 0%, #1a2332 100%);
+    }
+    /* pin the panel where the extension would put it */
+    #cbhud { position: fixed; top: 40px; right: 40px; }
+  </style>
+</head>
+<body>
+  <div id="cbhud">
+    <div id="cbhud-head">
+      <span class="cbhud-live"><span class="cbhud-dot"></span>CRYPTOBOT</span>
+      <span id="cbhud-price">—</span>
+      <span id="cbhud-collapse" title="collapse">‹</span>
+    </div>
+    <div id="cbhud-body">
+      <div class="cbhud-sec">
+        <div class="cbhud-sec-h"><span>STORM GAUGE</span><span id="cbhud-weather" class="cbhud-badge">—</span></div>
+        <div class="cbhud-row"><span>Market violence</span><span id="cbhud-viol" class="cbhud-mono">—</span></div>
+        <div class="cbhud-row"><span>vs past year</span><span id="cbhud-pct" class="cbhud-mono">—</span></div>
+        <div class="cbhud-row"><span>If you enter: size</span><span id="cbhud-size" class="cbhud-mono">—</span></div>
+        <div class="cbhud-row"><span id="cbhud-ledger-lbl">On ledger</span><span id="cbhud-dollars" class="cbhud-mono">—</span></div>
+        <div id="cbhud-action" class="cbhud-action">—</div>
+      </div>
+      <div class="cbhud-sec" id="cbhud-books"></div>
+      <div class="cbhud-thought" id="cbhud-thought">—</div>
+      <div class="cbhud-foot">Says how much — never when. Entries are your strategy's job.</div>
+      <div class="cbhud-stamp" id="cbhud-stamp"></div>
+    </div>
+  </div>
+  <script>
+    const SUPABASE_URL = "https://gpgjujfkktxghqeqvrvh.supabase.co";
+    const ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdwZ2p1amZra3R4Z2hxZXF2cnZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4MzUzNjQsImV4cCI6MjA5ODQxMTM2NH0.J6x9aJ83axmEHCn0cZNev7HnU37D2SY6EedqO_zwhqg";
+    const $ = (id) => document.getElementById(id);
+    const wclass = { CALM: "calm", CHOPPY: "chop", STORM: "storm" };
+    function render(d) {
+      const s = d.storm;
+      $("cbhud-price").textContent = "BTC $" + (d.price||0).toLocaleString();
+      const w = $("cbhud-weather"); w.textContent = s.weather; w.className = "cbhud-badge " + (wclass[s.weather]||"");
+      $("cbhud-viol").textContent = `${s.violence}% / ${s.limit} limit`;
+      $("cbhud-pct").textContent = `${s.percentile}%`;
+      $("cbhud-size").textContent = `${s.size_mult.toFixed(2)}x`;
+      $("cbhud-ledger-lbl").textContent = `On $${Math.round(s.ledger).toLocaleString()} ledger`;
+      $("cbhud-dollars").textContent = `$${(s.entry_dollars||0).toLocaleString()}`;
+      const a = $("cbhud-action"); a.textContent = "▸ " + s.action; a.className = "cbhud-action " + (wclass[s.weather]||"");
+      $("cbhud-books").innerHTML = (d.books||[]).map(b =>
+        `<div class="cbhud-book"><span class="cbhud-bdot ${b.armed?"on":""}"></span><span class="cbhud-bname">${b.name}</span><span class="cbhud-bread">${b.read}</span></div>`).join("");
+      $("cbhud-thought").textContent = "💭 " + (d.thought||"");
+      $("cbhud-stamp").textContent = "updated just now";
+    }
+    fetch(`${SUPABASE_URL}/rest/v1/rpc/cryptobot_live_read`, {
+      method: "POST", headers: { apikey: ANON, Authorization: `Bearer ${ANON}`, "Content-Type": "application/json" }, body: "{}"
+    }).then(r => r.json()).then(render).catch(e => $("cbhud-stamp").textContent = "err " + e);
+    document.getElementById("cbhud-collapse").addEventListener("click", () => document.getElementById("cbhud").classList.toggle("collapsed"));
+  </script>
+</body>
+</html>
