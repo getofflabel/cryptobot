@@ -190,6 +190,40 @@ BENCH_MIN_TRADES = 8      # a trigger with this many LIVE trades and negative
                           # learn from real outcomes, never from fewer)
 
 
+def write_lesson(state: dict, trigger: str, pnl: float, entry_price: float,
+                 exit_price: float, reason: str, ctx: dict | None):
+    """Wallace's rule: every LOSING trade gets a plain-English post-mortem —
+    what it was, why it went bad, what to learn. Honest diagnosis included:
+    some losses have a fixable cause (entered on thin conditions); many are
+    just the normal cost of a strategy that wins by losing small and often.
+    Saying which is which is the whole point."""
+    if pnl >= 0:
+        return
+    ctx = ctx or {}
+    atr_v, fb_v = ctx.get("atr_pct"), ctx.get("funding_bps")
+    diags = []
+    if atr_v is not None and atr_v < 1.65:
+        diags.append("market heat was barely above the gate — a thin-edge "
+                     "entry; losses cluster here")
+    if fb_v is not None and fb_v > 0.8:
+        diags.append("the crowd was already leaning long near the euphoria "
+                     "line — less fuel for the bounce")
+    if not diags:
+        diags.append("conditions were solid — this loss is the normal cost "
+                     "of the strategy (it wins by losing small and often), "
+                     "not a mistake to fix")
+    lesson = {
+        "date": now_utc(), "trigger": trigger,
+        "trade": f"long at ${entry_price:,.0f}, {reason} at "
+                 f"${exit_price:,.0f}, lost ${abs(pnl):,.2f}",
+        "why": "; ".join(diags),
+    }
+    lessons = state.setdefault("lessons", [])
+    lessons.append(lesson)
+    del lessons[:-50]                       # keep the last 50
+    log_event({"action": "lesson", **lesson})
+
+
 def record_trade_outcome(state: dict, trigger: str, pnl: float):
     """The memory layer (adopted from TradingBotV2's ledger/learnings idea,
     adapted to our evidence standards): every live outcome updates per-
@@ -254,6 +288,8 @@ def book_exit(state: dict, exit_price: float, reason: str,
     log_event({"action": "ledger", "reason": reason,
                "realized_pnl": round(realized, 2), "virtual_equity": eq})
     record_trade_outcome(state, "ride", realized)
+    write_lesson(state, "ride", realized, t["entry_price"], exit_price,
+                 reason, t.get("ctx"))
     notify(f"💰 trade closed: ${realized:+,.2f}",
            f"ledger ${eq:,.2f} / goal ${goal:,.0f} (demo)")
     if eq >= goal:

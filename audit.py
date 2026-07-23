@@ -128,6 +128,12 @@ def main():
           f"{'clean' if not errs else f'{len(errs)} errors to review'}")
     print(f"    5. infra         : "
           f"{'no bracket failures' if not bfail else 'REVIEW NEEDED'}")
+    lessons = state.get("lessons", []) if isinstance(state, dict) else []
+    if lessons:
+        print("\n  RECENT LESSONS (plain English, newest first)")
+        for L in lessons[-5:][::-1]:
+            print(f"    {L['date']} [{L['trigger']}] {L['trade']}")
+            print(f"      why: {L['why']}")
     print("=" * 62)
 
 

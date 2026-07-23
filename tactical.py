@@ -109,6 +109,9 @@ def _book_exit(state, t, exit_price, exit_fee_bps, reason):
                "trigger": t.get("trigger", "?"), "exit_price": exit_price,
                "realized_pnl": realized, "virtual_equity": eq})
     record_trade_outcome(state, t.get("trigger", "tactical"), realized)
+    from step5_paper_trade import write_lesson
+    write_lesson(state, t.get("trigger", "tactical"), realized,
+                 t["entry_price"], exit_price, reason, t.get("ctx"))
     notify(f"⚡ tactical {reason}: ${realized:+,.2f}",
            f"ledger ${eq:,.2f} / ${state.get('goal', 2000):,.0f} (demo)")
     return realized
@@ -241,8 +244,12 @@ def tactical_cycle(private: BlofinDemoPrivate, live_feed, demo_feed,
         print(f"  [TACT] SL bracket FAILED: {str(e)[:80]}")
         notify("⚠️ tactical SL failed", "position unprotected — check BloFin")
 
+    from strategy import atr as _atr
+    _c = live_feed.get_candles(symbol, "4h", 20)
+    _atrnow = float((_atr(_c, 14) / _c["close"] * 100).iloc[-1])
     tact["open_trade"] = {
-        "trigger": trigger,
+        "trigger": trigger, "ctx": {"atr_pct": round(_atrnow, 2),
+                                    "funding_bps": fb},
         "direction": 1, "contracts": contracts, "entry_price": entry,
         "entry_fee_bps": 2.0 if was_maker else 6.0,
         "entry_time": now_utc(), "tp_price": tp, "sl_price": sl,
@@ -366,5 +373,8 @@ def _book_slot_exit(state, key, cfg, t, exit_price, exit_fee_bps, reason):
                "exit_price": exit_price, "realized_pnl": realized,
                "virtual_equity": eq})
     record_trade_outcome(state, "amplifier", realized)
+    from step5_paper_trade import write_lesson
+    write_lesson(state, "amplifier", realized, t["entry_price"],
+                 exit_price, reason, t.get("ctx"))
     notify(f"🔗 amplifier {reason}: ${realized:+,.2f}",
            f"ledger ${eq:,.2f} / ${state.get('goal', 2000):,.0f} (demo)")
