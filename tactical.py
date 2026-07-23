@@ -32,6 +32,7 @@ from datetime import datetime, timezone
 
 import config
 from blofin_private import BlofinDemoPrivate
+from book_ledger import attributed_position
 from step5_paper_trade import (CONTRACT_BTC, LOT, MAX_ENTRY_FUNDING_BPS,
                                current_funding_bps, execute_maker_or_chase,
                                log_event, notify, now_utc,
@@ -117,6 +118,69 @@ def _book_exit(state, t, exit_price, exit_fee_bps, reason):
     return realized
 
 
+def _bracket_present(private, symbol, t) -> bool:
+    """True if a live TP/SL bracket exists for this position. When we have
+    OUR OWN tpsl_id on record, require THAT specific bracket to be present
+    — not just any bracket resting on the symbol — so we never mistake
+    another book's bracket for ours (or ours for gone because a *different*
+    book's bracket happens to still be there)."""
+    brackets = private.pending_tpsl(symbol)
+    if not brackets:
+        return False
+    our_id = t.get("tpsl_id")
+    if our_id:
+        return any(str(b.get("tpslId")) == str(our_id) for b in brackets)
+    return True   # no id on record (legacy state) — any bracket is enough
+
+
+def _ensure_bracket(private, symbol, state, t):
+    """Self-healing protection for the LONG books (close side = sell). Every
+    cycle, verify the TP/SL bracket is live on the exchange; re-place it if
+    missing so a leveraged position never sits naked (the 2026-07-23 bug).
+
+    HARDENED (2026-07-23, later that day): the sandbox's BloFin reads are
+    flaky — an empty/HTML response briefly made this function re-arm a stop
+    that actually existed. Now: read pending_tpsl TWICE, 4 seconds apart,
+    and only re-arm if BOTH reads come back empty AND a fresh net-position
+    read confirms the position we'd be protecting still exists. Any
+    exception during the READS means "don't know" — do nothing, never act
+    on bad data. A failure during the actual re-arm PLACEMENT is still
+    reported loudly (that one is a real, actionable failure)."""
+    if not t or not t.get("sl_price"):
+        return
+    try:
+        if _bracket_present(private, symbol, t):
+            return                                   # a bracket exists — good
+        time.sleep(4)
+        if _bracket_present(private, symbol, t):
+            return                     # 1st read was a flaky empty response
+        net = private.net_position_contracts(symbol)
+        if abs(net) < LOT / 2:
+            return           # position itself is gone — nothing to protect;
+                              # reconcile handles the exit next cycle
+    except Exception as e:
+        # a read failed or returned garbage (HTML edge-throttle, etc.) —
+        # NEVER act on bad data. Skip this cycle, try again next time.
+        print(f"  [TACT] bracket check skipped (unreliable read): "
+              f"{str(e)[:80]}")
+        return
+
+    # Both reads independently confirmed no bracket, AND the position is
+    # still genuinely open. Re-arm once.
+    try:
+        tpsl_id = private.place_tpsl(symbol, "sell", t["contracts"],
+                                     t.get("tp_price"), t["sl_price"])
+        t["tpsl_id"] = tpsl_id
+        save_state(state)
+        print(f"  [TACT] ⚠️ bracket was MISSING — re-armed SL {t['sl_price']:,.1f}")
+        notify("🛡️ Stop re-armed (demo)",
+               f"A long's TP/SL had vanished — re-placed. SL ${t['sl_price']:,.0f}.")
+    except Exception as e:
+        print(f"  [TACT] bracket re-arm FAILED: {str(e)[:80]}")
+        notify("⚠️ tactical UNPROTECTED (demo)",
+               "bracket missing and re-arm failed — check BloFin now")
+
+
 def _cleanup_orders(private, symbol, t):
     """Cancel whichever of our bracket orders is still resting."""
     try:
@@ -149,13 +213,18 @@ def tactical_cycle(private: BlofinDemoPrivate, live_feed, demo_feed,
     tact = state.setdefault("tactical", {"open_trade": None})
     t = tact.get("open_trade")
 
-    core = state.get("open_trade")
-    core_ct = core["contracts"] if core else 0.0
-    tact_ct = t["contracts"] if t else 0.0
+    # Book-aware attribution (2026-07-23 fix, see book_ledger.py): net minus
+    # every OTHER book's own recorded position (ride, shorts lab,
+    # apprentice) leaves ONLY the tactical slot's actual slice of the
+    # exchange net. Comparing hand-summed core+tact contracts against raw
+    # net (the old way) silently broke the instant the shorts lab held a
+    # position too — its short would shrink "net" and could look like this
+    # book's own bracket had fired when nothing had.
     net = private.net_position_contracts(symbol)
+    attributed_tact = attributed_position(net, state, "tact")
 
     # -- reconcile: did a bracket fire between cycles? --------------------
-    if t and net < core_ct + tact_ct - LOT / 2:
+    if t and attributed_tact < t["contracts"] - LOT / 2:
         # our position is gone (or partially) — find what filled
         exit_price, fee_bps = t["entry_price"], 6.0
         try:
@@ -186,8 +255,9 @@ def tactical_cycle(private: BlofinDemoPrivate, live_feed, demo_feed,
             _book_exit(state, t, fill, 2.0 if was_maker else 6.0, "48h time")
             t = None
         else:
+            _ensure_bracket(private, symbol, state, t)   # self-heal the stop
             print(f"  [TACT] holding {t['contracts']:.1f} ct from "
-                  f"{t['entry_price']:,.1f} ({held_h:.0f}h), bracket working")
+                  f"{t['entry_price']:,.1f} ({held_h:.0f}h), bracket verified")
             return
 
     # -- entry -------------------------------------------------------------

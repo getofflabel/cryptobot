@@ -40,6 +40,7 @@ from datetime import datetime, timezone
 
 import config
 from blofin_private import BlofinDemoPrivate, load_env
+from book_ledger import attributed_position, unexplained_position
 from strategy import vol_filtered_ma
 
 # ---- run parameters -------------------------------------------------------
@@ -472,12 +473,38 @@ def _execute_single(private: BlofinDemoPrivate, demo_feed, symbol: str,
 
 
 def decide_and_trade(private: BlofinDemoPrivate, live_feed, symbol: str):
-    """One full decision cycle. Returns a summary dict."""
+    """One full decision cycle. Returns a summary dict.
+
+    BOOK ATTRIBUTION (fixed 2026-07-23, see book_ledger.py for the full
+    incident writeup). BloFin nets every book's BTC-USDT activity — THE
+    RIDE (this function), THE STRIKES (tactical.py), THE SHORTS LAB
+    (shorts_lab.py) — into ONE exchange position. This function used to
+    read that raw net with private.net_position_contracts() and treat the
+    WHOLE thing as its own position. On 2026-07-23 the shorts lab opened a
+    -69.6 ct short; this function's champion signal was 0 (wants flat), it
+    read the net as "I am short 69.6 ct I don't want," and spent cycles
+    BUYING it back in 5-ct post-only clips (execute_maker_or_chase's clip
+    loop) — fighting a position that belonged entirely to another book. Its
+    exit path then did a blanket cancel of every pending TP/SL bracket on
+    the symbol, stripping the lab's protective stop out from under a live
+    position on its way out.
+
+    THE RULE, now enforced everywhere below: this function only ever acts
+    on book_ledger.attributed_position(net, state, "ride") — the exchange
+    net minus every OTHER book's own recorded position, i.e. the slice
+    that is actually the ride's. It never reads or reacts to the raw net,
+    and its bracket cleanup only ever touches an order id it recorded
+    itself (never a blanket sweep while another book is holding).
+    """
     state = load_state()
-    # 0. if we thought we had a trade on but the exchange is flat, the
-    #    TP/SL bracket fired between cycles — book it before deciding.
-    current_now = private.net_position_contracts(symbol)
-    if state.get("open_trade") and current_now == 0:
+    net = private.net_position_contracts(symbol)
+    current_ride = attributed_position(net, state, "ride")
+
+    # 0. if we thought we had a trade on but OUR ATTRIBUTED SLICE is flat,
+    #    the TP/SL bracket fired between cycles — book it before deciding.
+    #    Comparing against our own slice (not raw net) so another book's
+    #    still-open position can never mask, or fake, the ride's own exit.
+    if state.get("open_trade") and abs(current_ride) < LOT / 2:
         try:
             fills = private.fills(symbol)
             exit_price = float(fills[0]["fillPrice"]) if fills else \
@@ -486,6 +513,8 @@ def decide_and_trade(private: BlofinDemoPrivate, live_feed, symbol: str):
             exit_price = state["open_trade"]["entry_price"]
         print("  bracket fired since last cycle — booking the exit.")
         book_exit(state, exit_price, "TP/SL")
+        current_ride = attributed_position(net, state, "ride")   # re-derive
+                                                                  # (state changed)
 
     # 1. fresh CLOSED bars from the live feed (real market prices)
     candles = live_feed.get_candles(symbol, BAR, WARMUP_BARS)
@@ -496,13 +525,15 @@ def decide_and_trade(private: BlofinDemoPrivate, live_feed, symbol: str):
     sig = vol_filtered_ma(candles, FAST, SLOW, min_atr_pct=MIN_ATR_PCT)
     desired_dir = int(sig.iloc[-1]) if sig.iloc[-1] == sig.iloc[-1] else 0
 
-    # 3. current truth from the exchange
-    current_contracts = private.net_position_contracts(symbol)
-    current_dir = 0 if current_contracts == 0 else (
-        1 if current_contracts > 0 else -1)
+    # 3. current truth from the exchange — OUR ATTRIBUTED SLICE, never the
+    #    raw net (see the module note above; this is the exact 2026-07-23 bug).
+    current_dir = 0 if abs(current_ride) < LOT / 2 else (
+        1 if current_ride > 0 else -1)
+    unexplained = unexplained_position(net, state)
 
     print(f"\n[{now_utc()}] bar {last_bar:%m-%d %H:%M} close {last_close:,.1f}"
-          f" | signal {desired_dir:+d} | position {current_contracts:+.1f} ct")
+          f" | signal {desired_dir:+d} | ride slice {current_ride:+.1f} ct"
+          f" (exchange net {net:+.1f}, unexplained {unexplained:+.1f})")
 
     # equity snapshot every cycle — this is the "PnL throughout time" series.
     # The scoreboard is the bot's OWN ledger (started at $1,000), never the
@@ -514,7 +545,8 @@ def decide_and_trade(private: BlofinDemoPrivate, live_feed, symbol: str):
                   * t["contracts"] * CONTRACT_BTC)
     log_event({"action": "snapshot", "bar": str(last_bar),
                "close": last_close, "signal": desired_dir,
-               "position_contracts": current_contracts,
+               "position_contracts": net, "ride_contracts": current_ride,
+               "unexplained_contracts": unexplained,
                "virtual_equity": state["virtual_equity"],
                "unrealized_pnl": round(unreal, 2),
                "equity": round(state["virtual_equity"] + unreal, 2)})
@@ -527,7 +559,16 @@ def decide_and_trade(private: BlofinDemoPrivate, live_feed, symbol: str):
     # better (+32.1% vs +27.3%).
 
     if desired_dir == current_dir:
-        print("  no change needed — holding course.")
+        if desired_dir == 0 and abs(unexplained) > LOT / 2:
+            # THE INCIDENT, structurally impossible now: our own slice is
+            # already flat (or already matches what we want), but the raw
+            # exchange net is not — some OTHER book owns that contracts.
+            # Not ours to touch. Do nothing.
+            print(f"  desired flat, our slice is flat — exchange net "
+                  f"{net:+.1f} ct belongs to other books "
+                  f"(unexplained {unexplained:+.1f}). Doing nothing.")
+        else:
+            print("  no change needed — holding course.")
         return
 
     # 4. we need to trade. Snapshot the demo book's quote first so we can
@@ -535,22 +576,45 @@ def decide_and_trade(private: BlofinDemoPrivate, live_feed, symbol: str):
     demo_feed, _ = config.make_exchange("demo")
     quote = demo_feed.get_ticker(symbol)
 
-    # -- exit any existing position first
+    # -- exit any existing position first (OUR SLICE ONLY)
     if current_dir != 0:
-        # cancel the protective bracket before exiting, so no orphaned
-        # trigger lingers after the position it protected is gone
-        try:
-            for br in private.pending_tpsl(symbol):
-                private.cancel_tpsl(symbol, str(br.get("tpslId")))
-                print(f"  cancelled old TP/SL bracket {br.get('tpslId')}")
-        except Exception as e:
-            print(f"  (bracket cleanup: {str(e)[:80]})")
+        # Cancel ONLY our own bracket order — never a blanket sweep of every
+        # pending TP/SL on the symbol. That blanket cancel is the exact
+        # 2026-07-23 bug: it stripped the shorts lab's protective stop out
+        # from under a live position that had nothing to do with the ride.
+        t_own = state.get("open_trade")
+        own_tpsl_id = t_own.get("tpsl_id") if t_own else None
+        other_books_open = bool(
+            state.get("tactical", {}).get("open_trade")
+            or state.get("shorts_lab", {}).get("open_trade")
+            or state.get("apprentice", {}).get("open_trade"))
+        if own_tpsl_id:
+            try:
+                private.cancel_tpsl(symbol, str(own_tpsl_id))
+                print(f"  cancelled our own TP/SL bracket {own_tpsl_id}")
+            except Exception as e:
+                print(f"  (bracket cleanup: {str(e)[:80]})")
+        elif not other_books_open:
+            # No id on record (older state, or the bracket placement never
+            # got a chance to save one) — but nothing else is holding a
+            # position on this symbol either, so a full sweep is safe:
+            # there is nothing else on the exchange to protect.
+            try:
+                for br in private.pending_tpsl(symbol):
+                    private.cancel_tpsl(symbol, str(br.get("tpslId")))
+                    print(f"  cancelled old TP/SL bracket {br.get('tpslId')}")
+            except Exception as e:
+                print(f"  (bracket cleanup: {str(e)[:80]})")
+        else:
+            print("  no recorded bracket id for our own position, and "
+                  "another book is open — skipping a blanket cancel so we "
+                  "never touch their protection.")
 
         side = "sell" if current_dir > 0 else "buy"
-        print(f"  EXIT  {side} {abs(current_contracts):.1f} ct — trying "
+        print(f"  EXIT  {side} {abs(current_ride):.1f} ct — trying "
               f"maker at {last_close:,.1f}")
         exit_fill, was_maker = execute_maker_or_chase(
-            private, demo_feed, symbol, side, abs(current_contracts),
+            private, demo_feed, symbol, side, abs(current_ride),
             last_close, reduce_only=True)
         log_event({"action": "exit", "side": side, "fill_price": exit_fill,
                    "maker": was_maker})
@@ -558,7 +622,7 @@ def decide_and_trade(private: BlofinDemoPrivate, live_feed, symbol: str):
             book_exit(state, exit_fill, "signal exit",
                       exit_fee_bps=(2.0 if was_maker else config.fee_bps()))
         notify("🤖 CLOSED position",
-               f"{side} {abs(current_contracts):.1f} ct {symbol} "
+               f"{side} {abs(current_ride):.1f} ct {symbol} "
                f"@{exit_fill:,.0f} {'maker' if was_maker else 'taker'} (demo)")
 
     # 5. enter the new position — sized off the BOT'S LEDGER, not the
@@ -588,7 +652,9 @@ def decide_and_trade(private: BlofinDemoPrivate, live_feed, symbol: str):
                                "entry_fee_bps": 2.0 if was_maker
                                else config.fee_bps(),
                                "funding_bps_est": fb if fb is not None else 1.0,
-                               "entry_time": now_utc()}
+                               "entry_time": now_utc(),
+                               "tp_price": None, "sl_price": None,
+                               "tp_order_id": None, "tpsl_id": None}
         save_state(state)
 
         # protective bracket, visible in the BloFin app on the position
@@ -605,6 +671,12 @@ def decide_and_trade(private: BlofinDemoPrivate, live_feed, symbol: str):
                   f"winners run to the signal exit  [{bid}]")
             log_event({"action": "bracket", "tp": None,
                        "sl": round(sl, 1), "tpsl_id": bid})
+            # RECORD our own bracket id — this is what lets the exit path
+            # cancel ONLY our own bracket later instead of sweeping every
+            # pending TP/SL on the symbol (the 2026-07-23 bug).
+            state["open_trade"]["sl_price"] = sl
+            state["open_trade"]["tpsl_id"] = bid
+            save_state(state)
             notify("🤖 OPENED position",
                    f"{side} {contracts:.1f} ct {symbol} ~{entry_fill:,.0f} | "
                    f"SL {sl:,.0f}, no cap on the win (demo)")

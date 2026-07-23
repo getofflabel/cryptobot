@@ -53,9 +53,11 @@ step41b_lab_smoke.py.
 
 from __future__ import annotations
 
+import time
 from datetime import datetime, timezone
 
 from blofin_private import BlofinDemoPrivate
+from book_ledger import attributed_position, unexplained_position
 from step5_paper_trade import (CONTRACT_BTC, LOT, current_funding_bps,
                                execute_maker_or_chase, log_event, notify,
                                now_utc, record_trade_outcome,
@@ -131,6 +133,73 @@ def _cleanup_orders(private, symbol, t):
         pass
 
 
+def _bracket_present(private, symbol, t) -> bool:
+    """True if a live TP/SL bracket exists for this position. When we have
+    OUR OWN tpsl_id on record, require THAT specific bracket to be present
+    — not just any bracket resting on the symbol — so we never mistake
+    another book's bracket for ours (mirrors tactical.py's helper)."""
+    brackets = private.pending_tpsl(symbol)
+    if not brackets:
+        return False
+    our_id = t.get("tpsl_id")
+    if our_id:
+        return any(str(b.get("tpslId")) == str(our_id) for b in brackets)
+    return True   # no id on record (e.g. freshly adopted) — any bracket
+                  # on the symbol is enough
+
+
+def _ensure_bracket(private, symbol, state, t):
+    """SELF-HEALING PROTECTION: every cycle, verify a TP/SL bracket is actually
+    live on the exchange for this open short. If it's missing — cancelled by a
+    reboot race, a reconcile hiccup, anything — re-place it immediately. A 20x
+    position must NEVER sit naked. This guard was missing on 2026-07-23 when a
+    bracket vanished and the 'holding' path happily reported 'bracket working'
+    while the position was actually unprotected.
+
+    HARDENED (2026-07-23, later that day): the sandbox's BloFin reads are
+    flaky — an empty/HTML response briefly made this function re-arm a stop
+    that actually existed. Now: read pending_tpsl TWICE, 4 seconds apart,
+    and only re-arm if BOTH reads come back empty AND a fresh net-position
+    read confirms the short we'd be protecting still exists. Any exception
+    during the READS means "don't know" — do nothing, never act on bad
+    data. A failure during the actual re-arm PLACEMENT is still reported
+    loudly (that one is a real, actionable failure)."""
+    if not t or not t.get("sl_price"):
+        return
+    try:
+        if _bracket_present(private, symbol, t):
+            return                                   # a bracket exists — good
+        time.sleep(4)
+        if _bracket_present(private, symbol, t):
+            return                     # 1st read was a flaky empty response
+        net = private.net_position_contracts(symbol)
+        if abs(net) < LOT / 2:
+            return           # position itself is gone — nothing to protect;
+                              # reconcile handles the exit next cycle
+    except Exception as e:
+        # a read failed or returned garbage (HTML edge-throttle, etc.) —
+        # NEVER act on bad data. Skip this cycle, try again next time.
+        print(f"  [LAB] bracket check skipped (unreliable read): "
+              f"{str(e)[:80]}")
+        return
+
+    # Both reads independently confirmed no bracket, AND the short is
+    # still genuinely open. Re-arm once.
+    try:
+        tpsl_id = private.place_tpsl(symbol, "buy", t["contracts"],
+                                     t.get("tp_price"), t["sl_price"])
+        t["tpsl_id"] = tpsl_id
+        save_state(state)
+        print(f"  [LAB] ⚠️ bracket was MISSING — re-armed SL {t['sl_price']:,.1f}")
+        notify("🛡️ Stop re-armed (demo)",
+               f"The short's TP/SL had vanished — re-placed automatically. "
+               f"SL now back at ${t['sl_price']:,.0f}.")
+    except Exception as e:
+        print(f"  [LAB] bracket re-arm FAILED: {str(e)[:80]}")
+        notify("⚠️ shorts lab UNPROTECTED (demo)",
+               "bracket missing and re-arm failed — check BloFin now")
+
+
 def _book_exit(state, t, exit_price, exit_fee_bps, reason):
     """Close the lab's short on its own ledger line. Short PnL: profit when
     price FALLS (entry - exit), the mirror image of tactical.py's long math."""
@@ -163,19 +232,27 @@ def run_lab(private: BlofinDemoPrivate, live_feed, demo_feed, state: dict,
     lab = state.setdefault("shorts_lab", {"open_trade": None})
     t = lab.get("open_trade")
 
-    core = state.get("open_trade")
-    tact = state.get("tactical", {}).get("open_trade")
-    core_ct = core["contracts"] if core else 0.0
-    tact_ct = tact["contracts"] if tact else 0.0
-    lab_ct = t["contracts"] if t else 0.0
+    # Book-aware attribution (2026-07-23 fix, see book_ledger.py): rather
+    # than hand-summing core+tact and subtracting, ask the shared ledger
+    # for exactly the slice of the exchange net this book can claim, and
+    # for whatever slice NOBODY claims. This is the fix for the incident:
+    # before it existed, the ride read raw net as its own and fought this
+    # exact short. It also generalizes cleanly to any future book (e.g. the
+    # apprentice) without every book needing to know about every other.
     net = private.net_position_contracts(SYMBOL)
-    expected = core_ct + tact_ct - lab_ct   # lab's short subtracts from net
+    attributed_lab = attributed_position(net, state, "lab")
+    unexplained = unexplained_position(net, state)
+    lab_ct = t["contracts"] if t else 0.0
     tag = " DRY" if dry else ""
-    print(f"  [LAB{tag}] reconcile: net={net:+.2f} expected={expected:+.2f} "
-          f"(core {core_ct:.1f} + tact {tact_ct:.1f} - lab {lab_ct:.1f})")
+    print(f"  [LAB{tag}] reconcile: net={net:+.2f} attributed_lab="
+          f"{attributed_lab:+.2f} (recorded -{lab_ct:.1f}) "
+          f"unexplained={unexplained:+.2f}")
 
     # -- reconcile: our short is gone (or shrank) — a bracket fired --------
-    if t and net > expected + LOT / 2:
+    # attributed_lab is what the ledger says is genuinely ours; if it's
+    # less negative than our own record (by more than half a lot), some or
+    # all of OUR short closed.
+    if t and attributed_lab > -lab_ct + LOT / 2:
         exit_price, fee_bps = t["entry_price"], 6.0
         try:
             fills = private.fills(SYMBOL)
@@ -196,30 +273,40 @@ def run_lab(private: BlofinDemoPrivate, live_feed, demo_feed, state: dict,
         _book_exit(state, t, exit_price, fee_bps, reason)
         t = None
 
-    # -- reconcile: exchange shows a short we have no record of — adopt it -
-    elif not t and net < core_ct + tact_ct - LOT / 2:
-        adopted_ct = round(core_ct + tact_ct - net, 1)
+    # -- reconcile: an unexplained short exists on the exchange — adopt it -
+    # Triggers ONLY on unexplained_position < -LOT/2 — a slice of the net
+    # that NO book's own record claims. A recorded lab short that exactly
+    # matches the net (attributed_lab handled above) must never re-trigger
+    # this branch, and neither should a short another book (say, a future
+    # apprentice) has already claimed in its own record.
+    elif not t and unexplained < -LOT / 2:
+        adopted_ct = round(-unexplained, 1)
         print(f"  [LAB{tag}] UNEXPECTED net short {adopted_ct:.1f} ct on "
-              f"the exchange — adopting")
+              f"the exchange (unclaimed by any book) — adopting")
         if dry:
             print("  [LAB DRY] would adopt this position into state — no "
                   "state changes made")
             return {"action": "would_adopt", "contracts": adopted_ct}
         px = float(live_feed.get_candles(SYMBOL, "1h", 2)["close"].iloc[-1])
+        # protect it immediately with the forensic-short geometry (never adopt
+        # a naked 20x position — that was the 2026-07-23 bug)
+        adopt_sl = round(px * (1 + FORENSIC_STOP_PCT / 100), 1)
+        adopt_tp = round(px * (1 - FORENSIC_TARGET_PCT / 100), 1)
         lab["open_trade"] = t = {
             "trigger": "adopted", "ctx": {},
             "direction": -1, "contracts": adopted_ct, "entry_price": px,
             "entry_fee_bps": 6.0, "entry_time": now_utc(),
-            "tp_price": None, "sl_price": None,
+            "tp_price": adopt_tp, "sl_price": adopt_sl,
             "tp_order_id": None, "tpsl_id": None,
             "max_hold_h": FORENSIC_MAX_HOLD_H,
         }
         save_state(state)
+        _ensure_bracket(private, SYMBOL, state, t)   # place its protection now
         log_event({"action": "lab_adopt", "contracts": adopted_ct,
                    "price": px})
         notify("⚠️ shorts lab adopted unexpected short",
-              f"{adopted_ct:.1f} ct @ {px:,.0f} — no record of how it got "
-              f"there, now tracked (demo)")
+              f"{adopted_ct:.1f} ct @ {px:,.0f} — now tracked AND protected "
+              f"(SL ${adopt_sl:,.0f}) (demo)")
 
     # -- time exit -----------------------------------------------------------
     if t:
@@ -242,9 +329,11 @@ def run_lab(private: BlofinDemoPrivate, live_feed, demo_feed, state: dict,
             _book_exit(state, t, fill, 2.0 if was_maker else 6.0,
                       f"{max_hold_h:.0f}h time")
             return {"action": "time_exit", "fill": fill}
+        if not dry:
+            _ensure_bracket(private, SYMBOL, state, t)   # self-heal the stop
         print(f"  [LAB{tag}] holding {t['contracts']:.1f} ct short from "
               f"{t['entry_price']:,.1f} trig={t.get('trigger')} "
-              f"({held_h:.0f}h/{max_hold_h:.0f}h), bracket working")
+              f"({held_h:.0f}h/{max_hold_h:.0f}h), bracket verified")
         return {"action": "holding", "trigger": t.get("trigger"),
                 "held_h": round(held_h, 1)}
 
