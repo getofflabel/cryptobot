@@ -198,3 +198,60 @@ matures; monitor via the monthly scoreboard (if ride trade-count decays
 toward zero across quarters while trends visibly run, the gate is dying —
 re-derive it then). HODL's 7,400x over 15yr is the $8.88 base effect, not
 a beatable benchmark for any risk-managed system at 1x.
+
+## 2026-07-23 — ROUND 31: GARCH percentile-gate grid on the ride (step23_round31.py)
+
+**Hypothesis (RESEARCH_QUEUE.md "GARCH era" docket, top pre-specified item):**
+Replace the 4h champion's FIXED ATR vol gate (enter longs only when ATR>=1.5%
+of price) with a GARCH percentile gate at the pre-specified thresholds
+{50th, 60th, 70th} — "is the walk-forward GARCH daily-vol forecast in the top
+X% of what we've seen so far?" Round 29's single GARCH-only gate 3x'd TRAIN
+(with 1/3 the trades) but its val fell short; this is the reserved grid.
+
+**Config (frozen, no tuning):** champion = vol_gated_ma(4h, 20/100,
+funding<=1bp). GARCH variant swaps min_atr_pct=1.5 -> 0 (ATR gate OFF) and adds
+entry_filter = funding<=1bp AND garch_vol >= trailing-expanding-quantile(q),
+q in {0.50,0.60,0.70}. Threshold is a TRAILING expanding quantile (min 180 days)
+of the round-29 walk-forward forecast (built from returns through D-1) — no
+lookahead. Daily gate mapped onto 4h bars backward. Common window = where the
+trailing threshold exists: **2022-02-03 -> 2026-07-22, 9785 4h bars**, 60/20/20.
+Champion RE-SCORED on this exact window as the honest benchmark (round 29's
++50.5% used a longer 2021-08 window and is NOT reused as the bar).
+
+**Results (train / val, taker, real funding — TEST HELD BACK, NOT LOOKED AT):**
+
+| config | tr n | tr exp | tr ret% | val n | val exp | val ret% |
+|---|---|---|---|---|---|---|
+| CHAMPION (ATR 1.5 gate) | 27 | +$81.88 | +22.1% | 6 | +$979 | **+58.8%** |
+| GARCH p50 gate | 15 | **-$182** | **-27.3%** | 3 | +$1,673 | +50.2% |
+| GARCH p60 gate | 12 | **-$230** | **-27.6%** | 3 | +$966 | +29.0% |
+| GARCH p70 gate | 9 | **-$222** | **-20.0%** | 2 | +$1,551 | +31.0% |
+
+**VERDICT: FAIL — belt retained.** All three GARCH percentile gates go
+NEGATIVE on train (-20% to -27.6%) and none beats the champion's val return
+(+58.8%). They are also sample-starved (train 9-15, val 2-3 trades — below the
+30/8 minimum), so they could not qualify even setting the negative train aside.
+The ride simply doesn't fire often enough on a ~4.4yr window to validate any
+gate swap with confidence — that thinness is itself a finding.
+
+WHY THIS DIVERGES FROM ROUND 29'S OPTIMISTIC TRAIN: round 29 REPLACED the ATR
+gate differently (its "GARCH-only gate" behaved as a near-champion-return
+selector on the longer 2021-08 window). This round's pure percentile-REPLACEMENT
+of the ATR gate on the honest common window fails: a high GARCH forecast (top
+50/60/70% of history) is NOT the same as the instantaneous ATR being live at
+the moment of a 4h trend entry, and the ATR gate is doing real work the GARCH
+percentile does not replicate. The champion's fixed 1.5% ATR gate stands.
+
+**Looks consumed:** THREE train/val screens (p50/p60/p70). ZERO test looks
+(none was on the table — this item was a train/val screen by design). The GARCH
+percentile-gate-REPLACEMENT family is now CLOSED.
+
+**Also closed this file (queue hygiene):** the credit-sprint batch (see above,
+2026-07-23) already closed queue items #2 OI-flag-touch, #3 post-settle long,
+#4 OI-breakout (all FAIL train); the 15m forensic autopsy closed item #5; and
+Round 26 closed item #6 (weekend). The queue file lagged reality and is now
+reconciled — do NOT re-run items 2-6 (burned).
+
+**Next in queue:** GARCH STORM-VETO for the strikes (skip entries when forecast
+> trailing p90) — the next GARCH-era item, and a fresh, unexplored construction
+(veto on the fast tactical entries, not a gate on the slow ride).

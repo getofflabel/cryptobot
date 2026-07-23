@@ -153,6 +153,13 @@ def main(storm=None):
     except Exception as e:
         print(f"situation room failed (non-fatal): {str(e)[:100]}")
 
+    # 2e. refresh the human-readable journal (ledger.csv + learnings.md)
+    try:
+        import export_journal
+        export_journal.main()
+    except Exception as e:
+        print(f"journal export failed (non-fatal): {str(e)[:80]}")
+
     # 3. tactical book, every hour
     try:
         from step5_paper_trade import load_state
