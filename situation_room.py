@@ -27,7 +27,10 @@ from datetime import datetime, timezone
 from step5_paper_trade import (CLOUD_STATE, _sb_rpc, _SB_SECRET, log_event,
                                notify, save_state)
 
-MODEL = "sonnet"          # Wallace's pick for this job (fallback: opus)
+# Wallace's requirement: don't ASSUME which model judges better — race
+# them. Both read every event; both get graded; the standings decide who
+# ever earns authority. (Fable never runs in the hot path — his rule.)
+MODELS = ["sonnet", "opus"]
 GRADE_AFTER_H = 4
 
 
@@ -59,34 +62,36 @@ def run_situation_room(live_feed, symbol, state):
         '{"stance": "risk_on|risk_off|neutral", "confidence": "low|medium|high", '
         '"reasoning": "<one plain-English sentence>"}'
     )
-    try:
-        out = subprocess.run(
-            ["claude", "-p", prompt, "--model", MODEL,
-             "--max-turns", "1"],
-            capture_output=True, text=True, timeout=120)
-        raw = out.stdout.strip()
-        j = json.loads(raw[raw.find("{"):raw.rfind("}") + 1])
-        stance = j.get("stance", "neutral")
-        conf = j.get("confidence", "low")
-        why = str(j.get("reasoning", ""))[:200]
-    except Exception as e:
-        print(f"  [SITROOM] judgment failed (non-fatal): {str(e)[:80]}")
-        return
-
-    rec = {"at": datetime.now(timezone.utc).isoformat(), "stance": stance,
-           "confidence": conf, "reasoning": why, "price": px,
-           "graded": None}
-    sr = state.setdefault("situation_room", {"n": 0, "hits": 0, "calls": []})
-    sr["calls"].append(rec)
-    del sr["calls"][:-100]
+    sr = state.setdefault("situation_room",
+                          {"models": {}, "calls": []})
+    for model in MODELS:
+        try:
+            out = subprocess.run(
+                ["claude", "-p", prompt, "--model", model,
+                 "--max-turns", "1"],
+                capture_output=True, text=True, timeout=120)
+            raw = out.stdout.strip()
+            j = json.loads(raw[raw.find("{"):raw.rfind("}") + 1])
+            stance = j.get("stance", "neutral")
+            conf = j.get("confidence", "low")
+            why = str(j.get("reasoning", ""))[:200]
+        except Exception as e:
+            print(f"  [SITROOM] {model} judgment failed: {str(e)[:80]}")
+            continue
+        rec = {"at": datetime.now(timezone.utc).isoformat(), "model": model,
+               "stance": stance, "confidence": conf, "reasoning": why,
+               "price": px, "graded": None}
+        sr["calls"].append(rec)
+        print(f"  [SITROOM] {model}: {stance} ({conf}) — {why}")
+        log_event({"action": "situation_judgment", "model": model,
+                   "stance": stance, "confidence": conf,
+                   "reasoning": why, "price": px})
+        if stance == "risk_off" and conf in ("medium", "high"):
+            m = sr["models"].get(model, {"n": 0, "hits": 0})
+            notify(f"🧠 {model} reads RISK-OFF",
+                   f"{why} (no authority yet — record {m['hits']}/{m['n']})")
+    del sr["calls"][:-200]
     save_state(state)
-    print(f"  [SITROOM] {stance} ({conf}): {why}")
-    log_event({"action": "situation_judgment", **{k: rec[k] for k in
-               ("stance", "confidence", "reasoning", "price")}})
-    if stance == "risk_off" and conf in ("medium", "high"):
-        notify("🧠 Situation Room: RISK-OFF read",
-               f"{why} (judgment only — no authority yet, "
-               f"record {sr['hits']}/{sr['n']})")
 
 
 def grade_judgments(live_feed, symbol, state):
@@ -106,22 +111,24 @@ def grade_judgments(live_feed, symbol, state):
         if px is None:
             px = live_feed.get_ticker(symbol).last
         move = (px / rec["price"] - 1) * 100
-        hit = (move > 0.15) if rec["stance"] == "risk_on" else (move < -0.15)
+        model = rec.get("model", "sonnet")
+        m = sr.setdefault("models", {}).setdefault(model, {"n": 0, "hits": 0})
         if abs(move) <= 0.15:
             rec["graded"] = "flat-ungraded"
             changed = True
             continue
+        hit = (move > 0.15) if rec["stance"] == "risk_on" else (move < -0.15)
         rec["graded"] = "hit" if hit else "miss"
-        sr["n"] += 1
-        sr["hits"] += hit
+        m["n"] += 1
+        m["hits"] += hit
         changed = True
-        acc = sr["hits"] / sr["n"] * 100
-        print(f"  [SITROOM] graded {rec['stance']}: {rec['graded']} "
-              f"(record {sr['hits']}/{sr['n']} = {acc:.0f}%)")
-        if sr["n"] >= 30 and acc >= 60 and not sr.get("stage2_flagged"):
-            sr["stage2_flagged"] = True
-            notify("🧠 SITUATION ROOM EARNED ITS RECORD",
-                   f"{sr['hits']}/{sr['n']} = {acc:.0f}% over 30+ calls — "
-                   f"eligible for veto power; review to promote")
+        acc = m["hits"] / m["n"] * 100
+        print(f"  [SITROOM] {model} graded {rec['stance']}: {rec['graded']} "
+              f"({model} record {m['hits']}/{m['n']} = {acc:.0f}%)")
+        if m["n"] >= 30 and acc >= 60 and not m.get("stage2_flagged"):
+            m["stage2_flagged"] = True
+            notify(f"🧠 {model.upper()} EARNED ITS RECORD",
+                   f"{m['hits']}/{m['n']} = {acc:.0f}% over 30+ graded calls "
+                   f"— eligible for veto power; review to promote")
     if changed:
         save_state(state)
