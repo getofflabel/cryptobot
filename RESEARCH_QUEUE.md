@@ -56,3 +56,8 @@ tight-stop (<4% and ideally <2%) entries with positive expectancy after
 costs. Wide-stop strategies are legacy; the flow-data era (~Aug 20) and all
 nightly cycles hunt sub-2%-stop edges first. 3x-style "safe" configs are
 not what the owner is paying for.
+- DAY-TRADE TIER, next families (candle families exhausted in round 43):
+  (1) news-event momentum: enter on WatcherGuru headline timestamp +
+  first 15m direction, out within hours (needs the news table's history);
+  (2) funding-settlement scalps around the 8h marks; (3) liquidation-
+  cascade continuation once flow-data era matures (~Aug 20).

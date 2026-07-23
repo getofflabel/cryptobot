@@ -280,3 +280,25 @@ dormant through grinds. Correct architecture = dormant crash-catchers with
 strict regime gates (funding euphoria, live ATR), NOT always-on shorts.
 Demo Shorts Lab (per Wallace's sandbox doctrine) carries forensic_short +
 cascade_short live; auto-bench judges them on real forward trades.
+
+## ROUND 43 — the day-trade hunt (2026-07-23)
+Wallace's mandate: trades in-and-out within a day, stops sized for 20x.
+4 families / 98 configs (momentum burst, session breakout, washout scalp,
+VWAP fade), full costs + funding, gauntlet splits. 3 two-window survivors.
+TWO sealed looks spent (erosion +2, both on family 1):
+- momentum burst 1h X1.8 CHAMP-gated 3xATR: test -$2.68/t x36. FAIL.
+- momentum burst 1h X1.8 RAW: test -$11.02/t x55 — the +$37.90 val was
+  window luck, exactly as flagged. FAIL. BURIED, never re-tune.
+- session breakout survivor: NO look spent (+$1.08/t val edge with -77%
+  train DD is undeployable at any size) — BURIED without look.
+Other findings, now with numbers:
+- RSI3 washout scalp DIES at same-day exits (all 32 configs negative, to
+  -$46/t): the dip-buy edge NEEDS its 48h room. The live strikes keep it.
+- 15m below cost floor for all 4 families (~9.2bps cost vs ~3bps edge).
+  4th confirmation of the resolution map.
+- STRUCTURAL (4th confirmation): the 2025-26 grind kills fast holds the
+  same way it kills shorts. Surviving edges remain SLOW (4h trend, 48h
+  dip-buys). Candle-derived day-trade families are exhausted; the
+  day-trade tier now waits on NEW DATA TYPES: flow/OI era (~Aug 20) and
+  news-timestamped event scalps (WatcherGuru feed gives exact event
+  times — a family no candle backtest could see).
