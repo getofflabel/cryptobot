@@ -402,3 +402,20 @@ deeper. Turnover ~3-6 trades/yr = a slow compounder, portfolio ballast
 beside the fast crypto books, not a replacement.
 EXECUTION PATH: GLD via Alpaca paper (Wallace signup pending) → deployable.
 Deferred: GC=F news-momentum candidate (round 47) until a futures venue.
+
+## ROUND 54 — adaptive-gate ride revalidation: INCUMBENT DEFENDED (2026-07-24)
+Dormancy audit motivated testing whether the ride's fixed 1.5% ATR gate
+(open only 18.7% of recent bars) should migrate to the adaptive gate.
+Train/val with the live -8% SL: statistical wash (~100% vs ~101% train,
+57.0% vs 54.6% val). TWO sealed looks spent on the drought window itself
+(erosion +2), the decisive comparison:
+- FIXED 1.5 (live):   8t, +$401.30/t, +32.1%, DD -12.3%, last entry 06-18
+- ADAPTIVE 1.0x:     11t, +$137.19/t, +15.1%, DD -24.0%
+VERDICT: KEEP THE FIXED GATE. In the grind, selectivity IS the edge —
+the strict gate marks only real vol expansions; adaptivity trades the
+noise for half the money at 2x the drawdown. The round-30 "fixed gates
+die" prescription does NOT apply to this strategy's sealed-era behavior.
+The ride's honest modern cadence: ~6-7 entries/yr, each heavily paid.
+Owner's activity mandate is served by the other books, not by loosening
+the sniper. Gold book separately fixed this session (donchian 55->20,
+sealed-passed on both instruments — see commit).
