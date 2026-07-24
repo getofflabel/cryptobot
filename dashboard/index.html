@@ -539,14 +539,74 @@
   }
   .paper-chart-head {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     justify-content: space-between;
     gap: 10px;
-    margin-bottom: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
   }
   .paper-chart-name { font-size: 13.5px; font-weight: 700; color: var(--text-1); }
-  .paper-chart-asof { font-size: 11px; color: var(--text-3); }
-  .paper-chart-asof.stale { color: var(--gold); }
+
+  /* ---- timeframe strip: Time · 5m · 15m · 1H · 4H · 1D ---- */
+  .paper-tf-strip {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--card-border);
+    border-radius: 9px;
+    padding: 3px;
+  }
+  .paper-tf-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0 6px 0 4px;
+  }
+  .paper-tf-btn {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--text-2);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 5px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .paper-tf-btn:hover { color: var(--text-1); }
+  .paper-tf-btn.active { background: var(--accent-soft); color: #bcd4ff; }
+  .paper-tf-btn.stale::after { content: ' \00B7'; color: var(--gold); }
+
+  /* ---- market header row: last price · 24h change · hi/lo · as-of ---- */
+  .paper-market-header {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .paper-mh-last {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-1);
+    font-variant-numeric: tabular-nums;
+  }
+  .paper-mh-change { font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .paper-mh-change.pos { color: var(--green); }
+  .paper-mh-change.neg { color: var(--red); }
+  .paper-mh-change.neutral { color: var(--text-3); }
+  .paper-mh-stat { font-size: 11.5px; color: var(--text-3); font-variant-numeric: tabular-nums; }
+  .paper-mh-stat .v { color: var(--text-2); }
+  .paper-mh-asof { margin-left: auto; font-size: 11px; color: var(--text-3); }
+  .paper-mh-asof.stale { color: var(--gold); }
+
   .paper-chart-svg { width: 100%; height: auto; display: block; }
   .paper-chart-empty {
     padding: 46px 12px;
@@ -558,7 +618,7 @@
 
   .paper-books-row {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
     gap: 14px;
   }
 
@@ -615,18 +675,91 @@
     margin-bottom: 14px;
   }
 
-  .paper-pos {
-    border: 1px solid var(--card-border);
-    border-radius: var(--r-md);
-    padding: 12px 14px;
-    margin-bottom: 14px;
-    background: rgba(255,255,255,0.02);
-  }
-  .paper-pos-top {
-    display: flex;
-    align-items: center;
+  /* ---- assets row: Equity · Floating PnL · In use ---- */
+  .paper-assets-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 8px;
     margin-bottom: 10px;
+  }
+  .paper-asset-chip {
+    background: rgba(255,255,255,0.025);
+    border: 1px solid var(--card-border);
+    border-radius: var(--r-sm);
+    padding: 7px 10px;
+  }
+  .paper-asset-label {
+    font-size: 9.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-3);
+    margin-bottom: 2px;
+  }
+  .paper-asset-value {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-1);
+    font-variant-numeric: tabular-nums;
+  }
+  .paper-asset-value.pos { color: var(--green); }
+  .paper-asset-value.neg { color: var(--red); }
+
+  /* ---- fees line ---- */
+  .paper-fees-line {
+    font-size: 11px;
+    color: var(--text-3);
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+  .paper-fees-line .k { color: var(--text-2); font-weight: 700; }
+  .paper-fees-line .note { font-style: italic; }
+
+  /* ---- BloFin-column positions table ---- */
+  .paper-positions-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 6px;
+  }
+  .paper-positions-scroll {
+    overflow-x: auto;
+    margin-bottom: 6px;
+    border: 1px solid var(--card-border);
+    border-radius: var(--r-md);
+  }
+  .paper-positions-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11.5px;
+    white-space: nowrap;
+  }
+  .paper-positions-table th {
+    text-align: left;
+    font-size: 9.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-3);
+    padding: 8px 10px;
+    background: rgba(255,255,255,0.03);
+    border-bottom: 1px solid var(--card-border);
+    position: sticky;
+    top: 0;
+  }
+  .paper-positions-table td {
+    padding: 9px 10px;
+    color: var(--text-1);
+    font-variant-numeric: tabular-nums;
+    border-bottom: none;
+  }
+  .paper-positions-table .contracts-lev {
+    font-size: 9.5px;
+    color: var(--text-3);
+    margin-left: 4px;
+    font-weight: 700;
   }
   .paper-pos-side {
     font-size: 10.5px;
@@ -636,44 +769,31 @@
     border-radius: 5px;
     color: #fff;
     flex: none;
+    display: inline-block;
   }
   .paper-pos-side.long { background: #0f7a53; }
   .paper-pos-side.short { background: #a6303a; }
-  .paper-pos-held {
-    margin-left: auto;
-    font-size: 11.5px;
+  .paper-pos-cell-pnl.pos { color: var(--green); font-weight: 700; }
+  .paper-pos-cell-pnl.neg { color: var(--red); font-weight: 700; }
+  .paper-pos-cell-pnl.neutral { color: var(--text-2); }
+  .paper-pos-pnlpct { font-size: 10px; opacity: 0.85; margin-left: 3px; }
+  .paper-pos-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    font-size: 11px;
     color: var(--text-3);
+    padding: 8px 10px 12px;
   }
-  .paper-pos-pnl {
-    font-size: 21px;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    margin-bottom: 2px;
-  }
-  .paper-pos-pnl.pos { color: var(--green); }
-  .paper-pos-pnl.neg { color: var(--red); }
-  .paper-pos-pnl.neutral { color: var(--text-2); }
-  .paper-pos-pnlpct {
-    font-size: 12px;
-    color: var(--text-2);
-    margin-bottom: 10px;
-  }
-  .paper-pos-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(84px, 1fr));
-    gap: 8px 14px;
-    font-size: 12px;
-  }
-  .paper-pos-grid .lbl {
-    color: var(--text-3);
+  .paper-pos-meta .v { color: var(--text-2); }
+  .paper-pos-meta .stop { color: var(--red); }
+  .paper-pos-meta .target { color: var(--green); }
+  .paper-mmr-note {
     font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 2px;
+    color: var(--text-3);
+    font-style: italic;
+    margin: -2px 0 12px;
   }
-  .paper-pos-grid .v { color: var(--text-1); font-variant-numeric: tabular-nums; }
-  .paper-pos-grid .v.stop { color: var(--red); }
-  .paper-pos-grid .v.target { color: var(--green); }
 
   .paper-log-label {
     font-size: 10.5px;
@@ -758,13 +878,15 @@
     .grid { grid-template-columns: 1fr 1fr; }
     .paper-heading { flex-direction: column; align-items: stretch; }
     .paper-books-row { grid-template-columns: 1fr; }
+    .paper-chart-head { flex-direction: column; align-items: flex-start; }
   }
 
   @media (max-width: 460px) {
     .grid { grid-template-columns: 1fr; }
     .brand-mark { font-size: 16px; }
     .drawer { width: 100vw; }
-    .paper-pos-grid { grid-template-columns: repeat(2, 1fr); }
+    .paper-assets-row { grid-template-columns: 1fr; }
+    .paper-mh-asof { margin-left: 0; }
   }
 </style>
 </head>
@@ -909,8 +1031,9 @@
     drawer: null,
     lastFetch: null,
     fetchFailed: false,
-    paper: { books: [] },
+    paper: { books: [], candles: {} },
     paperMarket: 'Oil',
+    paperTf: '1h',
     paperFetchFailed: false
   };
 
@@ -1413,13 +1536,27 @@
     els.updatedAgo.textContent = (state.fetchFailed ? 'connection issue · last update ' : 'updated ') + label;
   }
 
-  // ---------------- paper desk ----------------
-  // "I don't want alerts. I want to SEE the trade happening visually, and
-  // I want it logged. Basically a copy of what I have on BloFin, just
-  // automated." — the internal paper books (tradfi_engine.py's oil/S&P
-  // slots + spx_book.py's dedicated S&P dip-buy) rendered as a real
-  // trading screen: a candlestick chart with the position drawn on it,
-  // a BloFin-style position card with live PnL, and a trade log.
+  // ---------------- paper desk (BloFin-clone) ----------------
+  // "if you're gonna do a paper desk, build the entire thing... give me
+  // the options of seeing the 5-minute, 15-minute, 1-hour, 4-hour, 1-day
+  // of each chart. Tell me the open positions... give me the exact
+  // trading fees... you will literally have to copy BloFin 1:1." — the
+  // internal paper books (tradfi_engine.py's oil/S&P slots + spx_book.py's
+  // dedicated S&P dip-buy) rendered as BloFin's own futures screen: a
+  // multi-timeframe candlestick chart, a market header row, an Assets
+  // panel, a fees line, a BloFin-column positions table, and a trade log.
+  // Driven by live_read.py's `paper` block: {books: [...], candles:
+  // {symbol: {candles_by_tf, stale_by_tf}}} — candles live ONCE per
+  // symbol (not per book) since TradFi-S&P and S&P Dip-Buy both trade
+  // SPY; see live_read.py's _build_paper for why.
+
+  var PAPER_TIMEFRAMES = [
+    { id: '5m', label: '5m' },
+    { id: '15m', label: '15m' },
+    { id: '1h', label: '1H' },
+    { id: '4h', label: '4H' },
+    { id: '1d', label: '1D' }
+  ];
 
   function fetchPaperData() {
     fetch(LIVE_READ_RPC_URL, {
@@ -1434,7 +1571,7 @@
       if (!r.ok) throw new Error('HTTP ' + r.status);
       return r.json();
     }).then(function (data) {
-      state.paper = (data && data.paper) || { books: [] };
+      state.paper = (data && data.paper) || { books: [], candles: {} };
       state.paperFetchFailed = false;
       renderPaper();
     }).catch(function (e) {
@@ -1445,6 +1582,22 @@
 
   function paperBooksForMarket(market) {
     return (state.paper.books || []).filter(function (b) { return b.market === market; });
+  }
+
+  // live_read.py publishes candles as bare [t,o,h,l,c] arrays (compact,
+  // see that file's _fmt_candles_compact) — normalized to {t,o,h,l,c}
+  // objects here so the existing chart-drawing code stays unchanged.
+  function normCandles(arr) {
+    return (arr || []).map(function (c) {
+      return { t: c[0], o: c[1], h: c[2], l: c[3], c: c[4] };
+    });
+  }
+
+  function paperCandlesForSymbol(symbol, tf) {
+    var entry = (state.paper.candles || {})[symbol];
+    if (!entry) return { arr: [], stale: false };
+    var raw = (entry.candles_by_tf || {})[tf] || [];
+    return { arr: normCandles(raw), stale: !!(entry.stale_by_tf || {})[tf] };
   }
 
   function fmtHeld(openedAtStr) {
@@ -1458,19 +1611,41 @@
     return h + 'h ' + m + 'm';
   }
 
+  function fmtOpenedAt(openedAtStr) {
+    if (!openedAtStr) return '—';
+    var d = new Date(openedAtStr.replace(' UTC', 'Z').replace(' ', 'T'));
+    if (isNaN(d.getTime())) d = new Date(openedAtStr);
+    if (isNaN(d.getTime())) return '—';
+    return d.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+  }
+
+  function positionMark(book) {
+    if (book.last_price && book.last_price.price != null) return book.last_price.price;
+    var c = paperCandlesForSymbol(book.symbol, '1h').arr;
+    return c.length ? c[c.length - 1].c : null;
+  }
+
+  // BloFin-column math that needs a LIVE mark price (margin/liq/break-even
+  // are static, published by live_read.py straight on book.open — see
+  // that file's _liq_price/_break_even_price). This only computes what
+  // actually depends on the ticking price: unrealized $/%, and margin
+  // ratio (equity / maintenance margin, BloFin's own definition).
   function positionPnl(book) {
     var t = book.open;
     if (!t || t.entry == null) return null;
-    var mark = (book.last_price && book.last_price.price != null)
-      ? book.last_price.price
-      : (book.candles && book.candles.length ? book.candles[book.candles.length - 1].c : null);
+    var mark = positionMark(book);
     if (mark == null) return null;
     var qty = t.contracts_or_notional || 0;
     var dollars = t.side === 'SHORT' ? (t.entry - mark) * qty : (mark - t.entry) * qty;
-    var margin = (t.notional && t.leverage) ? (t.notional / t.leverage)
-      : (t.notional || (t.entry * qty)) || null;
+    var margin = t.margin != null ? t.margin
+      : ((t.notional && t.leverage) ? (t.notional / t.leverage)
+        : (t.notional || (t.entry * qty)) || null);
     var pct = margin ? (dollars / margin) * 100 : null;
-    return { mark: mark, dollars: dollars, pct: pct };
+    var mmr = t.mmr_assumed != null ? t.mmr_assumed : 0.005;
+    var maintMargin = (mark != null && qty) ? mark * qty * mmr : null;
+    var equity = margin != null ? margin + dollars : null;
+    var marginRatioPct = (maintMargin && equity != null) ? (equity / maintMargin) * 100 : null;
+    return { mark: mark, dollars: dollars, pct: pct, margin: margin, marginRatioPct: marginRatioPct };
   }
 
   // ---- SVG candlestick chart, BloFin-style position overlay ----
@@ -1561,48 +1736,159 @@
     return svg;
   }
 
-  // ---- position card ----
+  // ---- timeframe strip (Time · 5m · 15m · 1H · 4H · 1D) ----
 
-  function buildPositionCardHtml(book, domIdx) {
+  function buildTfStripHtml(symbol) {
+    var html = '<div class="paper-tf-strip"><span class="paper-tf-label">Time</span>';
+    PAPER_TIMEFRAMES.forEach(function (tf) {
+      var stale = paperCandlesForSymbol(symbol, tf.id).stale;
+      var active = state.paperTf === tf.id;
+      html += '<button type="button" class="paper-tf-btn' + (active ? ' active' : '') +
+        (stale ? ' stale' : '') + '" data-tf="' + tf.id + '" title="' +
+        (stale ? 'stale — showing the last successfully published bars' : '') +
+        '">' + tf.label + '</button>';
+    });
+    html += '</div>';
+    return html;
+  }
+
+  // ---- market header row: last price · 24h change · 24h high/low · as-of ----
+
+  function buildMarketHeaderHtml(book) {
+    var last = book.last_price ? book.last_price.price : null;
+    var asOf = book.last_price ? book.last_price.as_of : null;
+    var stale = book.last_price ? !!book.last_price.stale : false;
+    var chg = book.change_24h_pct;
+    var chgCls = chg == null ? 'neutral' : (chg > 0 ? 'pos' : (chg < 0 ? 'neg' : 'neutral'));
+    var chgTxt = chg == null ? '—' : ((chg >= 0 ? '+' : '') + chg.toFixed(2) + '%');
+    return '<div class="paper-market-header">' +
+      '<div class="paper-mh-last tabular" data-field="mh-last">' + fmtPrice(last) + '</div>' +
+      '<div class="paper-mh-change tabular ' + chgCls + '" data-field="mh-change">' + chgTxt +
+        ' <span style="font-weight:400;color:var(--text-3)">24h</span></div>' +
+      '<div class="paper-mh-stat">24h high <span class="v tabular">' + fmtPrice(book.high_24h) + '</span></div>' +
+      '<div class="paper-mh-stat">24h low <span class="v tabular">' + fmtPrice(book.low_24h) + '</span></div>' +
+      '<div class="paper-mh-asof' + (stale ? ' stale' : '') + '">' +
+        (asOf ? 'as of ' + escapeHtml(asOf) : '') + (stale ? ' (stale)' : '') + '</div>' +
+    '</div>';
+  }
+
+  // ---- assets row: Equity · Floating PnL · In use ----
+
+  function buildAssetsRowHtml(book) {
+    var pnl = book.open ? positionPnl(book) : null;
+    var floating = pnl ? pnl.dollars : null;
+    var inUse = pnl && pnl.margin != null ? pnl.margin : null;
+    var floatCls = pnlClass(floating);
+    return '<div class="paper-assets-row">' +
+      '<div class="paper-asset-chip"><div class="paper-asset-label">Equity</div>' +
+        '<div class="paper-asset-value tabular">' + fmtMoneyPlain(book.ledger_equity) + '</div></div>' +
+      '<div class="paper-asset-chip"><div class="paper-asset-label">Floating PnL</div>' +
+        '<div class="paper-asset-value tabular ' + floatCls + '" data-field="floating">' +
+        (floating == null ? '—' : fmtMoney(floating)) + '</div></div>' +
+      '<div class="paper-asset-chip"><div class="paper-asset-label">In use</div>' +
+        '<div class="paper-asset-value tabular" data-field="inuse">' +
+        (inUse == null ? '$0.00' : fmtMoneyPlain(inUse)) + '</div></div>' +
+    '</div>';
+  }
+
+  // ---- fees line — maker %, taker %, $ charged at open (see live_read.py
+  // _fee_block for why maker==taker: these paper books charge one flat
+  // rate, no exchange tier) ----
+
+  function buildFeesLineHtml(book) {
+    var f = book.fees || {};
+    var entryFeeTxt = (book.open && book.open.entry_fee != null)
+      ? fmtMoneyPlain(book.open.entry_fee) : '—';
+    return '<div class="paper-fees-line">' +
+      '<span class="k">Fees</span> maker ' + (f.maker_pct != null ? f.maker_pct.toFixed(2) : '—') +
+      '% · taker ' + (f.taker_pct != null ? f.taker_pct.toFixed(2) : '—') +
+      '% · charged at open ' + entryFeeTxt +
+      '<div class="note">' + escapeHtml(f.note || '') + '</div>' +
+    '</div>';
+  }
+
+  // ---- BloFin-column positions table ----
+  // Contracts | Total | Avg. Price | Margin | PnL(PnL%) | Realized PnL |
+  // Est. Liq. Price | Break Even Price | Mark Price | Margin Ratio
+  // — plus opened-at/held/stop-target-distance underneath, per book.
+
+  function buildPositionsTableHtml(book) {
     var t = book.open;
     if (!t) {
-      return '<div class="paper-flat">flat — waiting for a setup</div>';
+      return '<div class="paper-positions-label">Positions</div>' +
+        '<div class="paper-flat">flat — waiting for a setup</div>';
     }
     var sideCls = t.side === 'SHORT' ? 'short' : 'long';
     var pnl = positionPnl(book);
-    var pnlDollars = pnl ? pnl.dollars : null;
-    var pnlPct = pnl ? pnl.pct : null;
+    var dollars = pnl ? pnl.dollars : null;
+    var pct = pnl ? pnl.pct : null;
     var mark = pnl ? pnl.mark : null;
-    var cls = pnlClass(pnlDollars);
+    var marginRatio = pnl ? pnl.marginRatioPct : null;
+    var cls = pnlClass(dollars);
     var qty = t.contracts_or_notional;
+    // "Realized PnL" for a still-open position = the fees already booked
+    // against it (entry fee, charged when the position opened) — see
+    // live_read.py's _tradfi_open_dict/_spx_open_dict (entry_fee).
+    var realizedPnl = t.entry_fee != null ? -t.entry_fee : null;
+    var stopDistPct = (t.stop != null && mark) ? ((t.stop - mark) / mark * 100) : null;
+    var targetDistPct = (t.target != null && mark) ? ((t.target - mark) / mark * 100) : null;
+    var mmrPct = t.mmr_assumed != null ? (t.mmr_assumed * 100).toFixed(1) : '0.5';
+
     return '' +
-      '<div class="paper-pos" data-paper-pos="' + domIdx + '">' +
-        '<div class="paper-pos-top">' +
-          '<span class="paper-pos-side ' + sideCls + '">' + t.side + '</span>' +
-          '<span class="paper-pos-held" data-field="held">' + fmtHeld(t.opened_at) + '</span>' +
-        '</div>' +
-        '<div class="paper-pos-pnl tabular ' + cls + '" data-field="pnl">' +
-          (pnlDollars == null ? '—' : fmtMoney(pnlDollars)) + '</div>' +
-        '<div class="paper-pos-pnlpct tabular ' + cls + '" data-field="pnlpct">' +
-          (pnlPct == null ? '' : (pnlPct >= 0 ? '+' : '') + pnlPct.toFixed(2) + '% of margin') + '</div>' +
-        '<div class="paper-pos-grid">' +
-          '<div><div class="lbl">Entry</div><div class="v tabular">' + fmtPrice(t.entry) + '</div></div>' +
-          '<div><div class="lbl">Mark</div><div class="v tabular" data-field="mark">' + fmtPrice(mark) + '</div></div>' +
-          '<div><div class="lbl">Stop</div><div class="v stop tabular">' + (t.stop == null ? '— (signal exit)' : fmtPrice(t.stop)) + '</div></div>' +
-          '<div><div class="lbl">Target</div><div class="v target tabular">' + (t.target == null ? '— (signal exit)' : fmtPrice(t.target)) + '</div></div>' +
-          '<div><div class="lbl">Size</div><div class="v tabular">' + (qty == null ? '—' : qty.toFixed(2)) + '</div></div>' +
-          '<div><div class="lbl">Notional</div><div class="v tabular">' + (t.notional == null ? '—' : fmtMoneyPlain(t.notional)) + '</div></div>' +
-        '</div>' +
+      '<div class="paper-positions-label">Positions</div>' +
+      '<div class="paper-positions-scroll"><table class="paper-positions-table">' +
+        '<thead><tr>' +
+          '<th>Contracts</th><th>Total</th><th>Avg. Price</th><th>Margin</th>' +
+          '<th>PnL (PnL%)</th><th>Realized PnL</th><th>Est. Liq. Price</th>' +
+          '<th>Break Even Price</th><th>Mark Price</th><th>Margin Ratio</th>' +
+        '</tr></thead>' +
+        '<tbody><tr>' +
+          '<td><span class="paper-pos-side ' + sideCls + '">' + t.side + '</span> ' +
+            (qty == null ? '—' : qty.toFixed(2)) +
+            (t.leverage != null ? '<span class="contracts-lev">' + t.leverage.toFixed(1) + 'x</span>' : '') +
+          '</td>' +
+          '<td>' + (t.notional == null ? '—' : fmtMoneyPlain(t.notional)) + '</td>' +
+          '<td>' + fmtPrice(t.entry) + '</td>' +
+          '<td>' + (t.margin == null ? '—' : fmtMoneyPlain(t.margin)) +
+            ' <span style="color:var(--text-3);font-size:9.5px">isolated</span></td>' +
+          '<td class="paper-pos-cell-pnl ' + cls + '" data-field="pnl">' +
+            (dollars == null ? '—' : fmtMoney(dollars)) +
+            '<span class="paper-pos-pnlpct" data-field="pnlpct">' +
+              (pct == null ? '' : ' (' + (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%)') +
+            '</span></td>' +
+          '<td class="paper-pos-cell-pnl ' + pnlClass(realizedPnl) + '">' +
+            (realizedPnl == null ? '—' : fmtMoney(realizedPnl)) + '</td>' +
+          '<td>' + fmtPrice(t.liq_price) + '</td>' +
+          '<td>' + fmtPrice(t.break_even) + '</td>' +
+          '<td data-field="mark">' + fmtPrice(mark) + '</td>' +
+          '<td data-field="marginratio">' + (marginRatio == null ? '—' : marginRatio.toFixed(0) + '%') + '</td>' +
+        '</tr></tbody>' +
+      '</table></div>' +
+      '<div class="paper-mmr-note">est. liq price / margin ratio assume a ' + mmrPct +
+        '% maintenance margin rate — OUR assumption, not a published BloFin figure ' +
+        '(no BloFin instrument exists for this market)</div>' +
+      '<div class="paper-pos-meta">' +
+        '<span>opened <span class="v">' + escapeHtml(fmtOpenedAt(t.opened_at)) + '</span></span>' +
+        '<span>held <span class="v" data-field="held">' + fmtHeld(t.opened_at) + '</span></span>' +
+        '<span>stop <span class="v stop">' + (t.stop == null ? '— (signal exit)' :
+          fmtPrice(t.stop) + (stopDistPct == null ? '' : ' (' + (stopDistPct >= 0 ? '+' : '') + stopDistPct.toFixed(2) + '%)')) +
+          '</span></span>' +
+        '<span>target <span class="v target">' + (t.target == null ? '— (signal exit)' :
+          fmtPrice(t.target) + (targetDistPct == null ? '' : ' (' + (targetDistPct >= 0 ? '+' : '') + targetDistPct.toFixed(2) + '%)')) +
+          '</span></span>' +
       '</div>';
   }
+
+  // ---- live tick — PnL/mark/margin-ratio/held/floating-PnL, once a second
 
   function tickPaperLive() {
     var active = paperBooksForMarket(state.paperMarket);
     active.forEach(function (book, i) {
-      var el = document.querySelector('[data-paper-pos="' + i + '"]');
-      if (!el || !book.open) return;
-      var held = el.querySelector('[data-field="held"]');
-      if (held) held.textContent = fmtHeld(book.open.opened_at);
+      var el = document.querySelector('.paper-book-card[data-paper-pos="' + i + '"]');
+      if (!el) return;
+      var heldEl = el.querySelector('[data-field="held"]');
+      if (heldEl && book.open) heldEl.textContent = fmtHeld(book.open.opened_at);
+      if (!book.open) return;
       var pnl = positionPnl(book);
       if (!pnl) return;
       var markEl = el.querySelector('[data-field="mark"]');
@@ -1610,13 +1896,18 @@
       var cls = pnlClass(pnl.dollars);
       var pnlEl = el.querySelector('[data-field="pnl"]');
       if (pnlEl) {
-        pnlEl.textContent = fmtMoney(pnl.dollars);
-        pnlEl.className = 'paper-pos-pnl tabular ' + cls;
+        pnlEl.className = 'paper-pos-cell-pnl ' + cls;
+        pnlEl.innerHTML = (pnl.dollars == null ? '—' : fmtMoney(pnl.dollars)) +
+          '<span class="paper-pos-pnlpct" data-field="pnlpct">' +
+            (pnl.pct == null ? '' : ' (' + (pnl.pct >= 0 ? '+' : '') + pnl.pct.toFixed(2) + '%)') +
+          '</span>';
       }
-      var pctEl = el.querySelector('[data-field="pnlpct"]');
-      if (pctEl && pnl.pct != null) {
-        pctEl.textContent = (pnl.pct >= 0 ? '+' : '') + pnl.pct.toFixed(2) + '% of margin';
-        pctEl.className = 'paper-pos-pnlpct tabular ' + cls;
+      var mrEl = el.querySelector('[data-field="marginratio"]');
+      if (mrEl) mrEl.textContent = pnl.marginRatioPct == null ? '—' : pnl.marginRatioPct.toFixed(0) + '%';
+      var floatEl = el.querySelector('[data-field="floating"]');
+      if (floatEl) {
+        floatEl.textContent = pnl.dollars == null ? '—' : fmtMoney(pnl.dollars);
+        floatEl.className = 'paper-asset-value tabular ' + cls;
       }
     });
   }
@@ -1628,7 +1919,9 @@
     if (!rows.length) {
       return '<div class="paper-log-label">Trade log</div><div class="paper-log-empty">no closed trades yet</div>';
     }
-    var html = '<div class="paper-log-label">Trade log · last ' + rows.length + '</div><div class="paper-log">';
+    var html = '<div class="paper-log-label">Trade log · last ' + rows.length +
+      ' <span style="text-transform:none;font-weight:400;letter-spacing:normal;color:var(--text-3)">' +
+      '(each PnL already nets both legs\' fees)</span></div><div class="paper-log">';
     rows.forEach(function (t) {
       var sideCls = t.side === 'SHORT' ? 'short' : 'long';
       var priceBit = (t.entry != null && t.exit != null)
@@ -1657,49 +1950,55 @@
     var marketBooks = paperBooksForMarket(state.paperMarket);
     if (!marketBooks.length) marketBooks = books;
 
-    var chartBook = marketBooks.filter(function (b) { return b.candles && b.candles.length; })[0];
+    var chartSymbol = marketBooks.length ? marketBooks[0].symbol : null;
+    var chartData = chartSymbol ? paperCandlesForSymbol(chartSymbol, state.paperTf) : { arr: [] };
     var opens = marketBooks.filter(function (b) { return b.open; }).map(function (b) { return b.open; });
-
-    var asOfLabel = '';
-    var stale = false;
-    if (chartBook && chartBook.last_price) {
-      asOfLabel = 'price as of ' + (chartBook.last_price.as_of || '—');
-      stale = !!chartBook.last_price.stale;
-    }
+    var headerBook = marketBooks.filter(function (b) { return b.last_price; })[0] || marketBooks[0];
 
     var chartHtml;
-    if (chartBook && chartBook.candles && chartBook.candles.length) {
-      chartHtml = buildCandleChartSvg(chartBook.candles, opens);
+    if (chartData.arr && chartData.arr.length) {
+      chartHtml = buildCandleChartSvg(chartData.arr, opens);
     } else {
       chartHtml = '<div class="paper-chart-empty">chart data warming up — check back next publish cycle</div>';
     }
 
     var html = '<div class="paper-chart-card">' +
       '<div class="paper-chart-head">' +
-        '<div class="paper-chart-name">' + escapeHtml(state.paperMarket) + ' · 1h</div>' +
-        '<div class="paper-chart-asof' + (stale ? ' stale' : '') + '">' + escapeHtml(asOfLabel) + (stale ? ' (stale)' : '') + '</div>' +
+        '<div class="paper-chart-name">' + escapeHtml(state.paperMarket) + '</div>' +
+        (chartSymbol ? buildTfStripHtml(chartSymbol) : '') +
       '</div>' +
+      (headerBook ? buildMarketHeaderHtml(headerBook) : '') +
       chartHtml +
     '</div>';
 
     html += '<div class="paper-books-row">';
     marketBooks.forEach(function (book, i) {
-      html += '<div class="paper-book-card">' +
+      html += '<div class="paper-book-card" data-paper-pos="' + i + '">' +
         '<div class="paper-book-head">' +
           '<div class="paper-book-name">' + escapeHtml(book.name) + '<span class="tag">paper</span></div>' +
-          '<div>' +
-            '<div class="paper-book-ledger">ledger <span class="val tabular">' + fmtMoneyPlain(book.ledger_equity) + '</span></div>' +
-            '<div class="paper-book-record">' + (book.record ? (book.record.w + 'W / ' + book.record.l + 'L') : '—') +
-              ' · today ' + fmtMoney(book.today_pnl) + '</div>' +
-          '</div>' +
+          '<div class="paper-book-record">' + (book.record ? (book.record.w + 'W / ' + book.record.l + 'L') : '—') +
+            ' · today ' + fmtMoney(book.today_pnl) + '</div>' +
         '</div>' +
-        buildPositionCardHtml(book, i) +
+        buildAssetsRowHtml(book) +
+        buildFeesLineHtml(book) +
+        buildPositionsTableHtml(book) +
         buildTradeLogHtml(book) +
       '</div>';
     });
     html += '</div>';
 
     els.paperContent.innerHTML = html;
+    wireTfStripClicks();
+  }
+
+  function wireTfStripClicks() {
+    var btns = els.paperContent.querySelectorAll('.paper-tf-btn');
+    btns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        state.paperTf = btn.getAttribute('data-tf');
+        renderPaper();
+      });
+    });
   }
 
   function buildPaperTabsUi() {

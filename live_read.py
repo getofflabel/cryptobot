@@ -36,6 +36,7 @@ from __future__ import annotations
 
 import json
 import math
+import pandas as pd
 from datetime import datetime, timezone
 
 from strategy import atr as _atr
@@ -91,7 +92,65 @@ PAPER_TRADFI_MARKETS = [
 ]
 
 PAPER_TRADE_LOG_CAP = 20      # "I want it logged" — last 20 closed trades
-PAPER_CANDLE_BARS = 120       # 1h bars — the chart's visible window
+
+# ---------------------------------------------------------------------------
+# BLOFIN-CLONE PAPER DESK v4 (2026-07-24) — "if you're gonna do a paper
+# desk, build the entire thing... you will literally have to copy BloFin
+# 1:1." Two upgrades over v3 (the single-1h-chart version above):
+#   1. MULTI-TIMEFRAME candles (5m/15m/1h/4h/1d), published as COMPACT
+#      [t,o,h,l,c] arrays (t = unix epoch seconds, not an ISO string) —
+#      publishing 5 timeframes x 2 markets x up to 150 bars each in
+#      object-per-candle form would roughly triple the payload for no
+#      reason; a bare array is all the dashboard's chart code needs.
+#   2. Honest BloFin-style position math (margin, est. liq price, break
+#      even price, margin ratio, fees) computed from the SAME numbers the
+#      paper engines already store — never a fabricated exchange feed.
+# ---------------------------------------------------------------------------
+
+PAPER_TIMEFRAMES = [
+    # (label, yfinance interval, yfinance period). 4h has interval=None —
+    # yfinance has no native 4h bar, so it's resampled from the SAME 1h
+    # fetch in the loop below (_resample_4h) rather than costing a second
+    # network call. Periods are yfinance's actual real limits for each
+    # interval ("pull what each allows"); the OUTPUT is separately capped
+    # to PAPER_CANDLE_CAP bars per timeframe — see _fmt_candles_compact.
+    ("5m", "5m", "60d"),
+    ("15m", "15m", "60d"),
+    ("1h", "60m", "730d"),
+    ("4h", None, None),
+    ("1d", "1d", "2y"),
+]
+PAPER_CANDLE_CAP = 150   # per timeframe, per market
+
+MAINT_MARGIN_RATE_ASSUMED = 0.005   # 0.5% — OUR assumption, used for the
+                                     # est. liq price / margin ratio math
+                                     # below. BloFin does not publish a
+                                     # maintenance margin rate for CL=F or
+                                     # SPY because no such BloFin
+                                     # instrument exists — this is labelled
+                                     # (mmr_assumed) on every payload that
+                                     # carries a liq/margin-ratio number
+                                     # built from it, never presented as
+                                     # exchange truth.
+
+# Fee constants MIRRORED (read only, never imported — see this file's
+# module-isolation contract below) from the two engines that actually run
+# these two paper ledgers:
+#   tradfi_engine.py: FEE_BPS_FUTURES=2.0 (CL=F), FEE_BPS_STANDARD=1.0 (SPY)
+#   spx_book.py:      FEE_BPS_PER_LEG=1.0, LEVERAGE=4.0 fixed (not stored
+#                      per-trade — see _spx_open_dict)
+# These are OUR modeled paper-ledger fees, NOT BloFin's real futures
+# schedule. Verified against exchange.py's BlofinExchange (the venue
+# step5_paper_trade.py/blofin_private.py actually trade BTC-USDT on):
+# TAKER_FEE_BPS=6.0 / MAKER_FEE_BPS=2.0 — i.e. BloFin's real VIP0 futures
+# rate (0.02% maker / 0.06% taker) IS exactly what this repo already
+# models for BTC, no discrepancy there. But CL=F/SPY aren't BloFin
+# instruments at all — no exchange charges these paper trades anything —
+# so their fee is shown as OUR flat modeled rate (maker==taker, no tier),
+# never dressed up as BloFin's own schedule. See _fee_block.
+TRADFI_FEE_BPS = {"CL=F": 2.0, "SPY": 1.0}
+SPX_DIPBUY_FEE_BPS = 1.0
+SPX_DIPBUY_LEVERAGE = 4.0
 
 
 def _paper_recent(rows, n=PAPER_TRADE_LOG_CAP):
@@ -152,70 +211,208 @@ def _tradfi_log_exits(symbol, limit=PAPER_TRADE_LOG_CAP):
         return []
 
 
-def _fmt_candles(hist_df, bars=PAPER_CANDLE_BARS):
-    """A yfinance OHLC DataFrame (Datetime index, Open/High/Low/Close
-    columns) -> [{t, o, h, l, c}, ...], oldest-first, capped to the last
-    `bars` rows, timestamps normalized to UTC ISO8601. Any row that fails
-    to convert is skipped rather than aborting the whole chart."""
+def _fmt_candles_compact(hist_df, cap=PAPER_CANDLE_CAP):
+    """A yfinance/resampled OHLC DataFrame (DatetimeIndex, Open/High/Low/
+    Close columns) -> [[t, o, h, l, c], ...], oldest-first, capped to the
+    last `cap` rows. `t` is UNIX epoch SECONDS (UTC, int) rather than an
+    ISO8601 string — with 5 timeframes x 2 markets x up to 150 bars each
+    now published every cycle, an epoch int is roughly a third of the
+    bytes an ISO string costs once JSON-encoded, and every array element
+    stays a bare number — no {t,o,h,l,c} key names repeated 1,500 times.
+    Any row that fails to convert is skipped rather than aborting the
+    whole array."""
     if hist_df is None or not len(hist_df):
         return []
     out = []
-    for ts, row in hist_df.tail(bars).iterrows():
+    for ts, row in hist_df.tail(cap).iterrows():
         try:
-            t_iso = ts.tz_convert("UTC").isoformat() if ts.tzinfo is not None \
-                else ts.tz_localize("UTC").isoformat()
-            out.append({
-                "t": t_iso,
-                "o": round(float(row["Open"]), 4),
-                "h": round(float(row["High"]), 4),
-                "l": round(float(row["Low"]), 4),
-                "c": round(float(row["Close"]), 4),
-            })
+            ts_utc = ts.tz_convert("UTC") if ts.tzinfo is not None \
+                else ts.tz_localize("UTC")
+            out.append([
+                int(ts_utc.timestamp()),
+                round(float(row["Open"]), 4),
+                round(float(row["High"]), 4),
+                round(float(row["Low"]), 4),
+                round(float(row["Close"]), 4),
+            ])
         except Exception:
             continue
     return out
 
 
-def _tradfi_open_dict(t):
-    """state['tradfi_engine']['open_trades'][i] -> the paper block's
-    {side, entry, stop, target, contracts_or_notional, opened_at} shape.
-    tradfi_engine's trade dict uses stop_price/target_price/shares (NOT
-    sl_price/tp_price/contracts like the crypto books' _norm_trade
-    expects) — normalized separately here rather than overloading
-    _norm_trade with a third key-naming convention."""
+def _resample_4h(hist_1h):
+    """1h OHLC -> 4h OHLC by resampling — yfinance has no native 4h
+    interval, so this reuses the SAME 1h fetch rather than costing a
+    second network call. Bucket = [t, t+4h); label='left', closed='left'
+    means the bucket is NAMED by its start time and a bar landing exactly
+    on a boundary belongs to the bucket that OPENS there, not the one that
+    just closed — the standard OHLC resample convention, and the one a 4H
+    candle's own timestamp means (its open time), same as every other
+    timeframe published here."""
+    if hist_1h is None or not len(hist_1h):
+        return None
+    try:
+        agg = hist_1h.resample("4h", label="left", closed="left").agg({
+            "Open": "first", "High": "max", "Low": "min", "Close": "last",
+        })
+        return agg.dropna(subset=["Open", "High", "Low", "Close"])
+    except Exception:
+        return None
+
+
+def _24h_window_stats(hist_1h):
+    """Rolling 24-CALENDAR-HOUR high/low/change off the 1h series — a real
+    elapsed-time window, not a fixed bar count. That matters because CL=F
+    trades near-continuously and SPY doesn't: a gappy market (SPY over a
+    weekend) correctly shows fewer bars in the trailing 24h, never a
+    fabricated one. Returns None (never a guess) if under 2 bars fall in
+    the window — not enough to compute a change."""
+    if hist_1h is None or not len(hist_1h):
+        return None
+    try:
+        last_ts = hist_1h.index[-1]
+        last_close = float(hist_1h["Close"].iloc[-1])
+        cutoff = last_ts - pd.Timedelta(hours=24)
+        window = hist_1h[hist_1h.index >= cutoff]
+        if len(window) < 2:
+            return None
+        ref_close = float(window["Close"].iloc[0])
+        high = float(window["High"].max())
+        low = float(window["Low"].min())
+        change_pct = round((last_close / ref_close - 1) * 100, 2) \
+            if ref_close else None
+        return {"change_24h_pct": change_pct, "high_24h": round(high, 4),
+                "low_24h": round(low, 4)}
+    except Exception:
+        return None
+
+
+def _liq_price(entry, leverage, direction, mmr=MAINT_MARGIN_RATE_ASSUMED):
+    """ISOLATED-margin estimated liquidation price:
+      long:  entry * (1 - 1/leverage + mmr)
+      short: entry * (1 + 1/leverage - mmr)
+    See MAINT_MARGIN_RATE_ASSUMED's comment — mmr is OUR assumption, not a
+    published BloFin figure (no such BloFin instrument exists for CL=F/
+    SPY to publish one for)."""
+    if not entry or not leverage:
+        return None
+    try:
+        if direction >= 0:
+            return round(entry * (1 - 1 / leverage + mmr), 4)
+        return round(entry * (1 + 1 / leverage - mmr), 4)
+    except Exception:
+        return None
+
+
+def _break_even_price(entry, direction, fee_rate):
+    """Exit price at which BOTH legs' round-trip fees exactly offset the
+    directional move — the exact solve (not the entry*(1 +/- 2*fee)
+    approximation): for a long, entry*(1+fee) [cost incl. entry fee] must
+    equal X*(1-fee) [proceeds net of exit fee] -> X = entry*(1+fee)/(1-fee).
+    Mirrored for a short."""
+    if not entry:
+        return None
+    try:
+        if direction >= 0:
+            return round(entry * (1 + fee_rate) / (1 - fee_rate), 4)
+        return round(entry * (1 - fee_rate) / (1 + fee_rate), 4)
+    except Exception:
+        return None
+
+
+def _fee_block(fee_bps):
+    """The per-book 'fees' line: maker%/taker% (deliberately EQUAL — these
+    paper books charge one flat rate, no maker/taker tier, so showing them
+    as equal is the honest representation, not a fabricated split) + the
+    raw bps + a one-line note. See TRADFI_FEE_BPS's comment for sourcing
+    and why this is NOT BloFin's real schedule."""
+    pct = round(fee_bps / 100.0, 4)
+    return {
+        "maker_pct": pct, "taker_pct": pct, "fee_bps": fee_bps,
+        "note": "modeled paper-ledger fee, not BloFin's — no real "
+                "exchange charges CL=F/SPY perpetual fees",
+    }
+
+
+def _tradfi_open_dict(t, symbol=None):
+    """state['tradfi_engine']['open_trades'][i] -> the paper block's open
+    position shape. tradfi_engine's trade dict uses stop_price/
+    target_price/shares (NOT sl_price/tp_price/contracts like the crypto
+    books' _norm_trade expects) — normalized separately here rather than
+    overloading _norm_trade with a third key-naming convention.
+
+    v4 (2026-07-24): adds the BloFin-column math (margin, fee, est. liq
+    price, break-even price) so the positions table never has to fabricate
+    a number the dashboard doesn't have — every field here is computed
+    from the SAME trade dict tradfi_engine.py itself stores."""
     if not t:
         return None
     direction = t.get("direction", 1)
+    entry = t.get("entry_price")
+    leverage = t.get("leverage")
+    notional = t.get("notional")
+    qty = t.get("shares")
+    fee_bps = t.get("fee_bps")
+    if fee_bps is None:
+        fee_bps = TRADFI_FEE_BPS.get(symbol, TRADFI_FEE_BPS["SPY"])
+    fee_rate = fee_bps / 10000.0
+    margin = round(notional / leverage, 2) if (notional and leverage) else None
+    entry_fee = round(entry * fee_rate * qty, 4) \
+        if (entry is not None and qty is not None) else None
     return {
         "side": "SHORT" if direction < 0 else "LONG",
-        "entry": t.get("entry_price"),
+        "entry": entry,
         "stop": t.get("stop_price"),
         "target": t.get("target_price"),
-        "contracts_or_notional": t.get("shares"),
-        "notional": t.get("notional"),
-        "leverage": t.get("leverage"),
+        "contracts_or_notional": qty,
+        "notional": notional,
+        "leverage": leverage,
         "opened_at": t.get("entry_time"),
+        "margin": margin,
+        "margin_mode": "isolated",
+        "fee_bps": fee_bps,
+        "entry_fee": entry_fee,
+        "liq_price": _liq_price(entry, leverage, direction),
+        "break_even": _break_even_price(entry, direction, fee_rate),
+        "mmr_assumed": MAINT_MARGIN_RATE_ASSUMED,
     }
 
 
 def _spx_open_dict(t):
-    """spx_book's open_trade -> the same {side, entry, stop, target,
-    contracts_or_notional, opened_at} shape. This book is a pure dip-buy
-    (always LONG) that exits on an RSI/SMA SIGNAL, not a price level — it
-    carries no stop/target at all (see spx_book.py's module docstring: "no
-    per-trade stop"), so those two fields degrade to None rather than a
-    fabricated number."""
+    """spx_book's open_trade -> the same open-position shape. This book is
+    a pure dip-buy (always LONG) that exits on an RSI/SMA SIGNAL, not a
+    price level — it carries no stop/target at all (see spx_book.py's
+    module docstring: "no per-trade stop"), so those two fields degrade to
+    None rather than a fabricated number. leverage/fee_bps aren't stored
+    per-trade (spx_book always uses its own fixed module constants) — see
+    SPX_DIPBUY_LEVERAGE/SPX_DIPBUY_FEE_BPS's sourcing comment above."""
     if not t:
         return None
+    entry = t.get("entry_price")
+    leverage = SPX_DIPBUY_LEVERAGE
+    notional = t.get("notional")
+    qty = t.get("shares")
+    fee_bps = SPX_DIPBUY_FEE_BPS
+    fee_rate = fee_bps / 10000.0
+    margin = round(notional / leverage, 2) if notional else None
+    entry_fee = round(entry * fee_rate * qty, 4) \
+        if (entry is not None and qty is not None) else None
     return {
         "side": "LONG",
-        "entry": t.get("entry_price"),
+        "entry": entry,
         "stop": None,
         "target": None,
-        "contracts_or_notional": t.get("shares"),
-        "notional": t.get("notional"),
-        "leverage": None,   # spx_book doesn't store per-trade leverage
+        "contracts_or_notional": qty,
+        "notional": notional,
+        "leverage": leverage,
         "opened_at": t.get("entry_time") or t.get("entry_date"),
+        "margin": margin,
+        "margin_mode": "isolated",
+        "fee_bps": fee_bps,
+        "entry_fee": entry_fee,
+        "liq_price": _liq_price(entry, leverage, 1),
+        "break_even": _break_even_price(entry, 1, fee_rate),
+        "mmr_assumed": MAINT_MARGIN_RATE_ASSUMED,
     }
 
 
@@ -252,21 +449,30 @@ def _tradfi_book_entry(eng, symbol, market, name, market_data=None):
             "setup": r.get("setup"),
         })
 
+    fee_bps = (t.get("fee_bps") if t else None) or \
+        TRADFI_FEE_BPS.get(symbol, TRADFI_FEE_BPS["SPY"])
     book = {
         "name": name, "market": market, "symbol": symbol,
         "ledger_equity": ledger_equity,
-        "open": _tradfi_open_dict(t),
+        "open": _tradfi_open_dict(t, symbol),
         "record": {"w": wins, "l": losses},
         "today_pnl": today_pnl, "all_time_pnl": all_time_pnl,
         "trades": trades,
-        "candles": [],
+        "fees": _fee_block(fee_bps),
     }
     md = (market_data or {}).get(symbol)
     if md:
         if md.get("price") is not None:
             book["last_price"] = {"price": md["price"], "as_of": md.get("as_of"),
                                   "stale": bool(md.get("stale"))}
-        book["candles"] = md.get("candles") or []
+        for k in ("change_24h_pct", "high_24h", "low_24h"):
+            if md.get(k) is not None:
+                book[k] = md[k]
+    # NOTE: candles are NOT embedded per-book — see _build_paper's
+    # top-level `candles` dict (keyed by symbol). TradFi-S&P and S&P
+    # Dip-Buy both trade SPY; embedding the same ~150-bar x 5-timeframe
+    # array in both book dicts would silently double the SPY payload for
+    # zero benefit — the dashboard looks candles up by book["symbol"].
     return book
 
 
@@ -296,28 +502,40 @@ def _spx_book_entry(sb, market_data=None):
         "record": {"w": wins, "l": losses},
         "today_pnl": today_pnl, "all_time_pnl": all_time_pnl,
         "trades": trades,
-        "candles": [],
+        "fees": _fee_block(SPX_DIPBUY_FEE_BPS),
     }
     md = (market_data or {}).get("SPY")
     if md:
         if md.get("price") is not None:
             book["last_price"] = {"price": md["price"], "as_of": md.get("as_of"),
                                   "stale": bool(md.get("stale"))}
-        book["candles"] = md.get("candles") or []
+        for k in ("change_24h_pct", "high_24h", "low_24h"):
+            if md.get(k) is not None:
+                book[k] = md[k]
+    # candles NOT embedded here either — see _build_paper's top-level
+    # `candles` dict, shared with TradFi's SPY slot (same symbol).
     return book
 
 
 def _build_paper(state, market_data=None):
-    """The paper block: {books: [...], updated}. Reads ONLY
-    state['tradfi_engine'] and state['spx_book'] — never imports either
-    module. Missing state keys (this engine hasn't run its first cycle
-    yet) degrade to an empty books list rather than fabricating cards for
-    a book that has never actually initialized; a present-but-fresh dict
-    (the book HAS run, just flat) still builds full flat/empty-looking
-    cards. Every book is built in its own try/except so one book's bad
-    data can never blank out the others or the rest of the snapshot.
-    `market_data` is write_live_read's {symbol: {price, as_of, candles,
-    stale}} — see that function for how it's sourced and why."""
+    """The paper block: {books: [...], candles: {symbol: {...}}, updated}.
+    Reads ONLY state['tradfi_engine'] and state['spx_book'] — never
+    imports either module. Missing state keys (this engine hasn't run its
+    first cycle yet) degrade to an empty books list rather than
+    fabricating cards for a book that has never actually initialized; a
+    present-but-fresh dict (the book HAS run, just flat) still builds full
+    flat/empty-looking cards. Every book is built in its own try/except so
+    one book's bad data can never blank out the others or the rest of the
+    snapshot. `market_data` is write_live_read's {symbol: {price, as_of,
+    change_24h_pct, high_24h, low_24h, candles_by_tf, stale_by_tf, stale}}
+    — see that function for how it's sourced and why.
+
+    v4 (2026-07-24): candles live ONCE per symbol in the top-level
+    `candles` dict, NOT embedded inside every book that trades that
+    symbol — TradFi-S&P and S&P Dip-Buy both trade SPY, and duplicating a
+    150-bar x 5-timeframe candle set in both book dicts would silently
+    double the SPY payload for zero benefit. The dashboard looks candles
+    up by a book's `symbol` key."""
     books = []
     if "tradfi_engine" in state:
         eng = state.get("tradfi_engine") or {}
@@ -335,7 +553,15 @@ def _build_paper(state, market_data=None):
         except Exception as e:
             print(f"  live_read: paper book S&P Dip-Buy skipped "
                  f"({str(e)[:60]})")
-    return {"books": books,
+
+    candles = {}
+    for symbol, md in (market_data or {}).items():
+        cbt = (md or {}).get("candles_by_tf")
+        if cbt:
+            candles[symbol] = {"candles_by_tf": cbt,
+                               "stale_by_tf": (md or {}).get("stale_by_tf") or {}}
+
+    return {"books": books, "candles": candles,
             "updated": datetime.now(timezone.utc).isoformat()}
 
 
@@ -797,22 +1023,30 @@ def write_live_read(live_feed, state, save=True):
             print(f"  live_read: gold candles unavailable ({str(e)[:60]})")
             gold_daily = None
 
-        # PAPER DESK live prices + chart — tested (2026-07-24) from a REAL
-        # browser fetch() (not just curl): Yahoo's query endpoints send no
-        # Access-Control-Allow-Origin header (blocked by CORS before the
-        # 429 rate-limit even matters) and Stooq's CSV endpoint now sits
-        # behind a JS proof-of-work challenge a plain cross-origin fetch
-        # can never pass — both came back "TypeError: Failed to fetch" in
-        # an actual page context. So both the price AND the chart's
-        # candles are sourced HERE, server-side, straight off yfinance —
-        # deliberately NOT via tradfi_engine (never import that module) —
-        # and published into the snapshot so the dashboard never makes its
-        # own network call for them at all. One call per symbol, each
-        # isolated so a Yahoo hiccup degrades that ONE book, never the
-        # rest of the snapshot. On a hiccup, this reuses the PREVIOUS
-        # snapshot's candles (read off state — the one from before this
-        # function overwrites it below) so the chart never goes blank,
-        # just stale — marked "stale": true so the dashboard can say so.
+        # PAPER DESK live prices + MULTI-TIMEFRAME chart — tested
+        # (2026-07-24) from a REAL browser fetch() (not just curl): Yahoo's
+        # query endpoints send no Access-Control-Allow-Origin header
+        # (blocked by CORS before the 429 rate-limit even matters) and
+        # Stooq's CSV endpoint now sits behind a JS proof-of-work challenge
+        # a plain cross-origin fetch can never pass — both came back
+        # "TypeError: Failed to fetch" in an actual page context. So both
+        # the price AND every timeframe's candles are sourced HERE,
+        # server-side, straight off yfinance — deliberately NOT via
+        # tradfi_engine (never import that module) — and published into
+        # the snapshot so the dashboard never makes its own network call
+        # for them at all.
+        #
+        # v4 (2026-07-24): PER-TIMEFRAME fetch+fallback, not per-symbol.
+        # Each of the 5 timeframes (see PAPER_TIMEFRAMES) is fetched (or,
+        # for 4h, resampled off the SAME 1h fetch) independently, each
+        # isolated in its own try/except so ONE timeframe's Yahoo hiccup
+        # degrades only that timeframe — never the other four, and never
+        # the rest of the snapshot. On a per-timeframe miss, this reuses
+        # THAT timeframe's PREVIOUSLY published bars (read off state — the
+        # snapshot from before this function overwrites it below) so the
+        # chart never goes blank on that timeframe, just stale — marked in
+        # stale_by_tf so the dashboard can say so per-timeframe, not just
+        # per-symbol.
         prev_paper_books = {
             b.get("symbol"): b
             for b in (state.get("live_read", {}) or {}).get("paper", {})
@@ -821,8 +1055,8 @@ def write_live_read(live_feed, state, save=True):
         }
         # `_yf` is resolved ONCE, outside the per-symbol loop, but a failure
         # here (yfinance not installed / import error) must NOT skip the
-        # per-symbol previous-candles fallback below — a total import
-        # failure degrades exactly like a single symbol's fetch failing,
+        # per-timeframe previous-candles fallback below — a total import
+        # failure degrades exactly like every timeframe's fetch failing,
         # never worse. That's why the fallback loop is unconditional and
         # `_yf` is simply None (never fetched) on an import failure.
         try:
@@ -835,26 +1069,66 @@ def write_live_read(live_feed, state, save=True):
         tradfi_market = {}
         for _sym in ("CL=F", "SPY"):
             entry = {}
+            candles_by_tf = {}
+            stale_by_tf = {}
+            hist_1h_raw = None
             if _yf is not None:
                 try:
-                    hist = _yf.Ticker(_sym).history(period="10d", interval="1h")
-                    if hist is not None and len(hist):
-                        entry["price"] = round(float(hist["Close"].iloc[-1]), 2)
-                        entry["as_of"] = f"{datetime.now(timezone.utc):%H:%M UTC}"
-                        entry["candles"] = _fmt_candles(hist)
+                    ticker = _yf.Ticker(_sym)
                 except Exception as e:
-                    print(f"  live_read: {_sym} paper price/chart "
-                         f"unavailable ({str(e)[:60]})")
-            if not entry.get("candles"):
-                prev = prev_paper_books.get(_sym) or {}
-                prev_candles = prev.get("candles")
-                if prev_candles:
-                    entry.setdefault("candles", prev_candles)
-                    prev_price = prev.get("last_price", {}) or {}
-                    entry.setdefault("price", prev_price.get("price"))
-                    entry.setdefault("as_of", prev_price.get("as_of"))
+                    ticker = None
+                    print(f"  live_read: {_sym} Ticker() failed "
+                         f"({str(e)[:60]})")
+                if ticker is not None:
+                    for tf_label, interval, period in PAPER_TIMEFRAMES:
+                        try:
+                            if interval is None:      # 4h: resample only
+                                hist = _resample_4h(hist_1h_raw)
+                            else:
+                                hist = ticker.history(period=period,
+                                                      interval=interval)
+                                if hist is not None and len(hist) \
+                                        and tf_label == "1h":
+                                    hist_1h_raw = hist
+                            if hist is not None and len(hist):
+                                candles_by_tf[tf_label] = \
+                                    _fmt_candles_compact(hist)
+                        except Exception as e:
+                            print(f"  live_read: {_sym} {tf_label} candles "
+                                 f"unavailable ({str(e)[:60]})")
+                    if hist_1h_raw is not None and len(hist_1h_raw):
+                        entry["price"] = round(
+                            float(hist_1h_raw["Close"].iloc[-1]), 2)
+                        entry["as_of"] = \
+                            f"{datetime.now(timezone.utc):%H:%M UTC}"
+                        stats24 = _24h_window_stats(hist_1h_raw)
+                        if stats24:
+                            entry.update(stats24)
+
+            prev = prev_paper_books.get(_sym) or {}
+            prev_by_tf = prev.get("candles_by_tf") or {}
+            for tf_label, _interval, _period in PAPER_TIMEFRAMES:
+                if candles_by_tf.get(tf_label):
+                    stale_by_tf[tf_label] = False
+                else:
+                    prev_c = prev_by_tf.get(tf_label)
+                    if prev_c:
+                        candles_by_tf[tf_label] = prev_c
+                        stale_by_tf[tf_label] = True
+
+            if entry.get("price") is None:
+                prev_price = prev.get("last_price", {}) or {}
+                entry["price"] = prev_price.get("price")
+                entry["as_of"] = prev_price.get("as_of")
+                if entry["price"] is not None:
                     entry["stale"] = True
-            if entry:
+                for k in ("change_24h_pct", "high_24h", "low_24h"):
+                    if prev.get(k) is not None:
+                        entry[k] = prev[k]
+
+            entry["candles_by_tf"] = candles_by_tf
+            entry["stale_by_tf"] = stale_by_tf
+            if entry.get("price") is not None or candles_by_tf:
                 tradfi_market[_sym] = entry
 
         snap = compute_live_read(c1, c4, cd, fb, state, gold_daily=gold_daily,
