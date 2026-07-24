@@ -10,15 +10,19 @@ book_ledger.py's attribution system. Structural template: shorts_lab.py
 (one slot, dry mode, reconcile, hardened double-read _ensure_bracket,
 _book_exit math, entry via ensure_leverage + a single place_tpsl bracket).
 
-THE VALIDATED RULE (deployed VERBATIM — no improvements):
+THE VALIDATED ENTRY RULE (deployed VERBATIM — no improvements; UNCHANGED by
+the round-65 exit swap below):
   When a RELEVANT WatcherGuru headline lands, take the FIRST FULL 1h bar
   after the event (the bar whose entire life is post-event: event at
   14:07 -> the 15:00-16:00 bar), read its close-vs-open sign, and enter AT
-  THAT BAR'S CLOSE in that direction. Stop 1.2% / target 2.4% (2x) / max
-  hold 24h. Relevance = the EXACT classify_headline() imported from
-  step45b_news_events.py, unmodified. Direction comes from the BAR, never
-  the keyword tag — keyword tags are irrelevant to this variant; they are
-  imported only as a side effect of importing classify_headline itself.
+  THAT BAR'S CLOSE in that direction. Relevance = the EXACT classify_
+  headline() imported from step45b_news_events.py, unmodified. Direction
+  comes from the BAR, never the keyword tag — keyword tags are irrelevant
+  to this variant; they are imported only as a side effect of importing
+  classify_headline itself. (Historical note: this entry was originally
+  validated round 45B alongside a fixed stop1.2%/target2.4%/hold24h exit —
+  see the ROUND 65 EXIT SWAP section just below for what replaced that
+  exit and why; the entry itself was never touched.)
 
 NO-LOOKAHEAD ALIGNMENT, matched to step45b_news_events.align_events exactly:
   floor bar  = the bar whose open <= event_ts (== event_ts floored to the
@@ -34,6 +38,52 @@ NO-LOOKAHEAD ALIGNMENT, matched to step45b_news_events.align_events exactly:
                rule instead reads trading_idx's own CLOSE for direction
                and fills there. Same bar, same no-lookahead boundary,
                different (mandate-specified) fill point within it.
+
+ROUND 65 EXIT SWAP (this file, 2026-07-24): the ENTRY above is UNCHANGED —
+still the exact validated trigger, verbatim. The EXIT is not: the fixed
+TP+2.4%/SL-1.2%/24h bracket (N0, the "incumbent") is RETIRED. It was the
+owner's own critique (step65_news_eyes.py's docstring, verbatim): "you
+already know your take profit before even looking at the situation — no
+technical analysis, no price action. No real trader does this." Round 65's
+sealed test (step65_news_eyes.py, N2 STRUCTURE TRAILING, k=5, buffer 0.3%)
+found the incumbent STALE and bleeding in the current regime (-$14.93/t,
+-15.7% on the sealed 2026-05->07 slice, 104-105 trades) while N2 PASSED on
+all three windows (train +$9.57/t x315, val +$4.34/t x112, sealed test
++$10.35/t x104-105, +10.8%) — beating the incumbent everywhere, not just
+in-sample. This file now deploys N2 EXACTLY as step65_news_eyes.py defines
+it (mirrored/ported below, NOT imported — same convention gold_book.py
+already established for its own round-59 structure-trailing exit, so a
+research file can keep iterating without ever being a live import
+dependency):
+  INITIAL STOP = entry_bar_extreme_stop: the ENTRY BAR's own opposite
+    extreme (its low for a long, its high for a short — "read the reaction
+    candle") +/- a TRAIL_BUFFER_PCT=0.3% buffer. Stored at entry from the
+    same 1h candle already read for direction (see _resolve_direction).
+  NO TAKE-PROFIT. tp_price is always None now — the winners run until the
+    chart itself says stop, never amputated at a fixed distance.
+  FLOOR TRAILING = the initial stop only ever ratchets FAVORABLY, as new
+    CONFIRMED 1h swing lows (longs; highs for shorts, k=TRAIL_K=5 — a swing
+    counts only once 5 further bars have CLOSED after it, no lookahead)
+    print above it (below it, for shorts) — never backward. Recomputed
+    FRESH every cycle from the live 1h series (_compute_trail_floor), the
+    same "no incremental ratchet state to drift" pattern gold_book.py's own
+    _compute_trail_floor uses.
+  24h max hold is UNCHANGED.
+PROTECTION LIVES EXCHANGE-SIDE, exactly like every other book in this repo:
+  place_tpsl at entry with an SL-only bracket (tp_price=None) at the
+  initial stop; every hourly cycle while holding, if the recomputed floor
+  ratcheted, a NEW bracket is placed BEFORE the old one is cancelled (see
+  the "in a position" branch below — mirrors gold_book.py's own R59
+  cancel/replace mechanics verbatim: place-then-cancel, never the reverse,
+  so a failed new placement never leaves the position naked even for one
+  cycle). _ensure_bracket's double-read self-heal (below) needed NO change
+  for this: it only ever asserted a non-empty sl_price, never a tp — a
+  missing TP was already a no-op there, now it is simply always the case.
+DEVIATION CHECK: none. Every number and mechanic above (buffer 0.3%, k=5,
+entry-bar-extreme anchor, favorable-only ratchet, exchange-side SL-only
+bracket, 24h cap) matches step65_news_eyes.py's N2 definition exactly —
+this file only had to translate "recompute a floor over a fixed backtest
+array" into "recompute a floor over the live 1h feed every hourly cycle."
 
 NEWS SOURCE — REALITY CHECK (read before touching anything above)
 The Supabase RPC `cryptobot_recent_news` was inspected live (read-only,
@@ -94,6 +144,7 @@ from __future__ import annotations
 import time
 from datetime import datetime, timezone
 
+import numpy as np
 import pandas as pd
 
 from blofin_private import BlofinDemoPrivate
@@ -111,10 +162,27 @@ SYMBOL = "BTC-USDT"
 NEWS_ALLOC = 0.15
 NEWS_LEV = 20.0
 
-# -- the validated rule's geometry, deployed verbatim ------------------
+# -- N0 INCUMBENT geometry — RETIRED round 65 (see the module docstring's
+# ROUND 65 EXIT SWAP). No longer read anywhere to place an order; kept
+# defined, unused, purely as historical reference — same precedent as
+# gold_book.py keeping its own retired EMA_N constant around after its
+# round-59 exit swap.
 STOP_PCT = 1.2
 TARGET_PCT = 2.4          # 2x the stop
-MAX_HOLD_H = 24
+
+MAX_HOLD_H = 24            # UNCHANGED by the round-65 exit swap
+
+# -- N2 STRUCTURE TRAILING geometry (round 65, sealed-validated — see the
+# module docstring's ROUND 65 EXIT SWAP) — the live exit, deployed verbatim
+# from step65_news_eyes.py's N2 (mirrored/ported, not imported, below) ---
+TRAIL_BUFFER_PCT = 0.3      # % beyond the entry bar's opposite extreme
+TRAIL_K = 5                 # confirmed-swing pivot lag (a swing counts only
+                            # once k further 1h bars have CLOSED after it —
+                            # no lookahead, mirrors step65's K_SWING_PRIMARY)
+TRAIL_CANDLE_BARS = 60      # 1h bars pulled each cycle to recompute the
+                            # floor — comfortably covers the 24h max hold
+                            # plus TRAIL_K confirmation lag plus margin for
+                            # locating the entry bar itself in the window
 
 SCAN_N = 40                # recent news rows pulled from the RPC each cycle
 SEEN_CAP = 400              # rolling dedup window (headline TEXT, see above)
@@ -184,21 +252,110 @@ def _resolve_direction(live_feed, direction_bar_open_ts: pd.Timestamp):
     """Look for the CLOSED 1h bar that opened at direction_bar_open_ts.
     live_feed.get_candles only ever returns confirmed/closed bars (see
     exchange.py), so if that timestamp appears at all, the bar is closed.
-    Returns (direction, bar_open, bar_close); direction is None if the bar
-    hasn't closed yet, 0 for a doji (no direction)."""
+    Returns (direction, bar_open, bar_high, bar_low, bar_close); direction
+    is None if the bar hasn't closed yet, 0 for a doji (no direction). The
+    high/low are read here (not just open/close) because round 65's N2
+    exit needs THIS SAME bar's own opposite extreme for the initial
+    structure stop — see _entry_bar_extreme_stop below — and this is the
+    one place that bar is already being fetched, so no second read."""
     candles = live_feed.get_candles(SYMBOL, "1h", 12)
     if candles is None or len(candles) == 0:
-        return None, None, None
+        return None, None, None, None, None
     match = candles[candles["timestamp"] == direction_bar_open_ts]
     if match.empty:
-        return None, None, None
+        return None, None, None, None, None
     row = match.iloc[-1]
-    o, c = float(row["open"]), float(row["close"])
+    o, h, l, c = (float(row["open"]), float(row["high"]),
+                 float(row["low"]), float(row["close"]))
     if c > o:
-        return 1, o, c
+        return 1, o, h, l, c
     if c < o:
-        return -1, o, c
-    return 0, o, c
+        return -1, o, h, l, c
+    return 0, o, h, l, c
+
+
+# ===========================================================================
+# N2 STRUCTURE TRAILING (round 65, sealed-validated — see the module
+# docstring's ROUND 65 EXIT SWAP). Mirrored/ported verbatim from
+# step65_news_eyes.py's entry_bar_extreme_stop / find_pivots, NOT imported —
+# the same "production books re-implement a sealed pure function locally"
+# convention gold_book.py already established for its own round-59
+# structure-trailing exit (_find_swing_lows / _compute_trail_floor), so a
+# research file (step65_news_eyes.py) stays free to keep iterating without
+# ever becoming a live import dependency.
+# ===========================================================================
+
+def _entry_bar_extreme_stop(direction: int, bar_high: float, bar_low: float,
+                            buffer_pct: float = TRAIL_BUFFER_PCT) -> float:
+    """Initial protective stop = the ENTRY BAR's own opposite extreme, plus
+    a buffer — "read the reaction candle," the owner's own critique of the
+    old fixed bracket. Longs: below that bar's low. Shorts: above that
+    bar's high. Ported verbatim from step65_news_eyes.entry_bar_extreme_
+    stop (same formula, this file's own o/h/l/c array indexing collapsed
+    to the single bar newsdesk already has in hand at entry)."""
+    if direction > 0:
+        return bar_low * (1 - buffer_pct / 100)
+    return bar_high * (1 + buffer_pct / 100)
+
+
+def _find_pivots(h: np.ndarray, l: np.ndarray, k: int = TRAIL_K):
+    """Fractal swing pivots, CONFIRMED only k bars later (no lookahead: at
+    confirm_idx=j+k the pivot is knowable, not before). Ported verbatim
+    from step65_news_eyes.find_pivots. Returns (hi_pivots, lo_pivots),
+    each {"confirm_idx": np.array[int], "price": np.array[float]}."""
+    n = len(h)
+    hi_confirm, hi_price, lo_confirm, lo_price = [], [], [], []
+    for j in range(k, n - k):
+        wh = h[j - k:j + k + 1]
+        if h[j] >= wh.max():
+            hi_confirm.append(j + k)
+            hi_price.append(h[j])
+        wl = l[j - k:j + k + 1]
+        if l[j] <= wl.min():
+            lo_confirm.append(j + k)
+            lo_price.append(l[j])
+    return (
+        {"confirm_idx": np.array(hi_confirm, dtype=int), "price": np.array(hi_price, dtype=float)},
+        {"confirm_idx": np.array(lo_confirm, dtype=int), "price": np.array(lo_price, dtype=float)},
+    )
+
+
+def _compute_trail_floor(candles: pd.DataFrame, direction: int,
+                         entry_bar_open_ts, initial_floor: float,
+                         k: int = TRAIL_K):
+    """The live floor for one hourly cycle — mirrors step65_news_eyes.py's
+    N2 "trailing" _manage loop EXACTLY (that loop is itself just a running
+    max over confirmed post-entry pivots, so recomputing fresh every cycle
+    from scratch gives the identical final floor an incremental per-bar
+    loop would — same reasoning gold_book.py's own _compute_trail_floor
+    docstring gives for its round-59 exit). Starts at `initial_floor` (the
+    entry bar's own extreme +/- buffer, see _entry_bar_extreme_stop) and
+    only ever ratchets FAVORABLY as new swing lows (longs; highs, shorts)
+    CONFIRM strictly after the entry bar — never backward, and pre-entry
+    pivots never move it (matches step65's own bisect-from-entry_idx+1
+    window exactly).
+
+    Returns (new_floor, entry_idx). entry_idx is None if `candles` doesn't
+    contain the entry bar's own timestamp (too little history pulled this
+    cycle, or a clock/feed hiccup) — the caller must treat that as "skip
+    this cycle's ratchet, try again next cycle," never as a reset."""
+    ts = pd.DatetimeIndex(candles["timestamp"])
+    matches = np.where(ts == pd.Timestamp(entry_bar_open_ts))[0]
+    if len(matches) == 0:
+        return initial_floor, None
+    entry_idx = int(matches[0])
+    h = candles["high"].to_numpy()
+    l = candles["low"].to_numpy()
+    hi_piv, lo_piv = _find_pivots(h, l, k)
+    piv = lo_piv if direction > 0 else hi_piv
+    floor_px = initial_floor
+    for confirm_i, price in zip(piv["confirm_idx"], piv["price"]):
+        if confirm_i > entry_idx:
+            if direction > 0 and price > floor_px:
+                floor_px = float(price)
+            elif direction < 0 and price < floor_px:
+                floor_px = float(price)
+    return floor_px, entry_idx
 
 
 def _parse_utc(s: str) -> pd.Timestamp:
@@ -242,7 +399,15 @@ def _ensure_bracket(private, symbol, state, t):
     """SELF-HEALING PROTECTION, identical hardening to shorts_lab.py's copy:
     read pending_tpsl TWICE 4s apart, only re-arm if BOTH reads come back
     empty AND a fresh net-position read confirms the position still
-    exists. A read exception means 'don't know' — do nothing."""
+    exists. A read exception means 'don't know' — do nothing.
+
+    ROUND 65 CHECK (verified while wiring N2, no change needed): this
+    function has NEVER asserted anything about tp_price — only sl_price is
+    required, and t.get("tp_price") is passed straight through to
+    place_tpsl either way (which already treats None as "omit the TP leg,
+    place SL-only" — see blofin_private.place_tpsl). A missing TP was
+    always a correct, healthy state here, never a healing trigger; N2 just
+    makes that the permanent case instead of the fallback one."""
     if not t or not t.get("sl_price"):
         return
     try:
@@ -274,6 +439,90 @@ def _ensure_bracket(private, symbol, state, t):
         print(f"  [NEWS] bracket re-arm FAILED: {str(e)[:80]}")
         notify("⚠️ newsdesk UNPROTECTED (demo)",
               "bracket missing and re-arm failed — check BloFin now")
+
+
+def _ratchet_trail_floor(private, live_feed, state, t, dry: bool):
+    """Round 65's N2 exit, live: recompute the structure-trailing floor
+    fresh every hourly cycle and, if it ratcheted favorably, cancel/replace
+    the exchange-side SL-only bracket at the new level. Mirrors gold_book.
+    py's own R59 "in a position" branch mechanics EXACTLY: place the NEW
+    bracket BEFORE cancelling the OLD one, so a failed new placement never
+    leaves the position naked even for one cycle (the reverse order has a
+    real window with no bracket at all). dry=True computes and PRINTS what
+    would happen with zero order/state/log/notify side effects, same
+    contract as every other dry branch in this file."""
+    entry_bar_open_ts = t.get("entry_bar_open_ts")
+    if not entry_bar_open_ts:
+        return   # pre-round-65 trade record (shouldn't happen live, but
+                 # never crash on an old shape) — nothing to ratchet against
+    try:
+        candles = live_feed.get_candles(SYMBOL, "1h", TRAIL_CANDLE_BARS)
+    except Exception as e:
+        print(f"  [NEWS] trail floor recompute skipped (feed read failed): "
+              f"{str(e)[:80]}")
+        return
+    if candles is None or len(candles) == 0:
+        return
+
+    old_floor = t.get("trail_floor", t["sl_price"])
+    initial_floor = _entry_bar_extreme_stop(
+        t["direction"], t["entry_bar_high"], t["entry_bar_low"])
+    raw_floor, entry_idx = _compute_trail_floor(
+        candles, t["direction"], entry_bar_open_ts, initial_floor,
+        t.get("trail_k", TRAIL_K))
+    if entry_idx is None:
+        print(f"  [NEWS] trail floor recompute skipped — entry bar "
+              f"{entry_bar_open_ts} not in the {TRAIL_CANDLE_BARS}-bar "
+              f"window pulled this cycle, will retry next cycle")
+        return
+
+    # defensive clamp: the floor must NEVER move backward, even if some
+    # feed hiccup (a shorter window pulled this cycle, say) would otherwise
+    # make a from-scratch recompute look like it retreated.
+    new_floor = max(raw_floor, old_floor)
+    moved = new_floor > old_floor + 1e-9
+
+    if dry:
+        verb = "WOULD RATCHET to" if moved else "stays at"
+        print(f"  [NEWS DRY] trailing floor {verb} ${new_floor:,.1f} — "
+              f"NO ORDER PLACED")
+        return
+
+    if not moved:
+        return
+
+    new_sl = round(new_floor, 1)
+    close_side = "sell" if t["direction"] > 0 else "buy"
+    try:
+        new_tpsl_id = private.place_tpsl(SYMBOL, close_side, t["contracts"],
+                                         None, new_sl)
+    except Exception as e:
+        print(f"  [NEWS] trailing floor ratchet FAILED to place the new "
+              f"bracket ({str(e)[:80]}) — the prior stop "
+              f"(${t['sl_price']:,.1f}) is still resting, will retry next "
+              f"cycle")
+        notify("⚠️ newsdesk trailing-stop update FAILED (demo)",
+              f"floor moved to ${new_sl:,.0f} but the new bracket failed "
+              f"to place: {str(e)[:80]} — the old stop is still "
+              f"protecting the position, check BloFin")
+        return
+
+    try:
+        if t.get("tpsl_id"):
+            private.cancel_tpsl(SYMBOL, t["tpsl_id"])
+    except Exception as e:
+        print(f"  [NEWS] old bracket cancel failed after the new one was "
+              f"placed ({str(e)[:80]}) — two resting stops for now, the "
+              f"tighter one wins, harmless")
+
+    print(f"  [NEWS] trailing floor ratcheted ${old_floor:,.1f} -> "
+          f"${new_sl:,.1f} — exchange bracket replaced")
+    log_event({"action": "news_floor_ratchet", "old_floor": old_floor,
+               "new_floor": new_sl})
+    t["tpsl_id"] = new_tpsl_id
+    t["sl_price"] = new_sl
+    t["trail_floor"] = new_floor
+    save_state(state)
 
 
 def _book_exit(state, t, exit_price, exit_fee_bps, reason):
@@ -379,20 +628,27 @@ def run_newsdesk(private: BlofinDemoPrivate, live_feed, demo_feed,
             _book_exit(state, t, fill, 2.0 if was_maker else 6.0,
                       f"{max_hold_h:.0f}h time")
             return {"action": "time_exit", "fill": fill}
+        # -- round 65 N2: recompute + cancel/replace the structure-trailing
+        # floor BEFORE the self-heal check, so self-heal's double-read
+        # verifies the freshest bracket, not a stale one about to be
+        # replaced anyway --------------------------------------------------
+        _ratchet_trail_floor(private, live_feed, state, t, dry)
         if not dry:
             _ensure_bracket(private, SYMBOL, state, t)
         print(f"  [NEWS{tag}] holding {t['contracts']:.1f} ct "
               f"{'long' if t['direction'] > 0 else 'short'} from "
               f"{t['entry_price']:,.1f} ({held_h:.0f}h/{max_hold_h:.0f}h), "
+              f"trailing floor ${t.get('trail_floor', t['sl_price']):,.1f}, "
               f"bracket verified")
         return {"action": "holding", "direction": t["direction"],
-                "held_h": round(held_h, 1)}
+                "held_h": round(held_h, 1),
+                "trail_floor": t.get("trail_floor", t["sl_price"])}
 
     # -- pending: waiting for the direction bar to close -------------------
     pending = nd.get("pending")
     if pending:
         direction_bar_open_ts = _parse_utc(pending["direction_bar_open_ts"])
-        direction, bar_open, bar_close = _resolve_direction(
+        direction, bar_open, bar_high, bar_low, bar_close = _resolve_direction(
             live_feed, direction_bar_open_ts)
 
         if direction is None:
@@ -439,21 +695,17 @@ def run_newsdesk(private: BlofinDemoPrivate, live_feed, demo_feed,
         side = "buy" if direction > 0 else "sell"
 
         if dry:
-            if direction > 0:
-                tp_est = round(bar_close * (1 + TARGET_PCT / 100), 1)
-                sl_est = round(bar_close * (1 - STOP_PCT / 100), 1)
-            else:
-                tp_est = round(bar_close * (1 - TARGET_PCT / 100), 1)
-                sl_est = round(bar_close * (1 + STOP_PCT / 100), 1)
+            sl_est = round(_entry_bar_extreme_stop(direction, bar_high, bar_low), 1)
             print(f"  [NEWS DRY] {'LONG' if direction > 0 else 'SHORT'} "
                   f"WOULD FIRE — {side} {contracts:.1f} ct (~${notional:,.0f} "
                   f"notional at {NEWS_LEV:.0f}x, {NEWS_ALLOC*100:.0f}% alloc) "
-                  f"@ ~{bar_close:,.1f} | est TP {tp_est:,.1f} est SL "
-                  f"{sl_est:,.1f} | max hold {MAX_HOLD_H}h — NO ORDER PLACED")
+                  f"@ ~{bar_close:,.1f} | initial stop (structure, entry-bar "
+                  f"extreme +/-{TRAIL_BUFFER_PCT}%) {sl_est:,.1f} | no "
+                  f"take-profit — rides until the chart says stop | max "
+                  f"hold {MAX_HOLD_H}h — NO ORDER PLACED")
             return {"action": "would_enter", "direction": direction,
                     "contracts": contracts, "entry_ref": bar_close,
-                    "est_tp": tp_est, "est_sl": sl_est,
-                    "headline": pending["headline"]}
+                    "est_sl": sl_est, "headline": pending["headline"]}
 
         print(f"  [NEWS ] {'LONG' if direction > 0 else 'SHORT'} SIGNAL "
               f"(news_momentum) — {side} {contracts:.1f} ct (~${notional:,.0f} "
@@ -472,44 +724,51 @@ def run_newsdesk(private: BlofinDemoPrivate, live_feed, demo_feed,
             save_state(state)
             return {"action": "entry_failed", "error": str(e)[:120]}
 
-        if direction > 0:
-            tp = round(entry * (1 + TARGET_PCT / 100), 1)
-            sl = round(entry * (1 - STOP_PCT / 100), 1)
-            close_side = "sell"
-        else:
-            tp = round(entry * (1 - TARGET_PCT / 100), 1)
-            sl = round(entry * (1 + STOP_PCT / 100), 1)
-            close_side = "buy"
+        # round 65 N2: initial stop = THIS bar's own opposite extreme, +/-
+        # buffer — no take-profit, ever (see the module docstring's ROUND
+        # 65 EXIT SWAP). close_side unchanged: still "sell" to protect a
+        # long, "buy" to protect a short.
+        sl = round(_entry_bar_extreme_stop(direction, bar_high, bar_low), 1)
+        close_side = "sell" if direction > 0 else "buy"
 
         tpsl_id = None
         try:
-            tpsl_id = private.place_tpsl(SYMBOL, close_side, contracts, tp, sl)
+            tpsl_id = private.place_tpsl(SYMBOL, close_side, contracts,
+                                         None, sl)
         except Exception as e:
-            print(f"  [NEWS ] TP/SL bracket FAILED: {str(e)[:80]}")
+            print(f"  [NEWS ] SL bracket FAILED: {str(e)[:80]}")
             notify("⚠️ newsdesk bracket failed (demo)",
-                  "position opened but TP/SL not set — check BloFin now")
+                  "position opened but the structure stop was not set — "
+                  "check BloFin now")
 
         headline = pending["headline"]
         nd["open_trade"] = {
             "trigger": "news_momentum", "direction": direction,
             "contracts": contracts, "entry_price": entry,
             "entry_fee_bps": 2.0 if was_maker else 6.0,
-            "entry_time": now_utc(), "tp_price": tp, "sl_price": sl,
+            "entry_time": now_utc(), "tp_price": None, "sl_price": sl,
             "tpsl_id": tpsl_id, "max_hold_h": MAX_HOLD_H,
             "headline": headline, "event_ts": pending["event_ts"],
+            # round 65 N2 — the entry bar's own OHLC extremes (anchors the
+            # initial stop, re-derived identically every ratchet cycle) and
+            # the bar's own open timestamp (locates it in the live 1h feed
+            # pulled each cycle — see _compute_trail_floor).
+            "entry_bar_open_ts": pending["direction_bar_open_ts"],
+            "entry_bar_high": bar_high, "entry_bar_low": bar_low,
+            "trail_floor": sl, "trail_k": TRAIL_K,
             "ctx": {"news": headline},
         }
         nd["pending"] = None
         save_state(state)
         log_event({"action": "news_enter", "direction": direction,
-                   "fill_price": entry, "contracts": contracts, "tp": tp,
+                   "fill_price": entry, "contracts": contracts,
                    "sl": sl, "maker": was_maker, "headline": headline})
         notify(f"📰 NEWSDESK {'LONG' if direction > 0 else 'SHORT'} (demo)",
-              f"{side} {contracts:.1f} ct @{entry:,.0f} | TP {tp:,.0f} "
-              f"SL {sl:,.0f} | 24h max hold | {headline[:100]}")
+              f"{side} {contracts:.1f} ct @{entry:,.0f} | stop {sl:,.0f} "
+              f"(structure, entry-bar) | no take-profit — rides until the "
+              f"chart says stop | 24h max hold | {headline[:100]}")
         return {"action": "entered", "direction": direction, "entry": entry,
-               "contracts": contracts, "tp": tp, "sl": sl,
-               "headline": headline}
+               "contracts": contracts, "sl": sl, "headline": headline}
 
     # -- no trade, no pending: scan the wire for a new event ---------------
     headlines = _fetch_recent_news()

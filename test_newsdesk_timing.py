@@ -124,6 +124,7 @@ def test_i_bar_close_timing_and_direction():
     assert private.orders == [], "must not enter before the direction bar closes"
 
     # -- the 15:00 bar has now closed, UP (close > open) -> LONG entry -----
+    # round 65 N2: initial stop = THIS bar's own LOW - 0.3% buffer, no TP.
     feed.set_candles([
         {"timestamp": ts("2026-07-23 14:00:00"), "open": 100100.0,
          "high": 100150.0, "low": 100000.0, "close": 100050.0},
@@ -138,10 +139,14 @@ def test_i_bar_close_timing_and_direction():
     assert t is not None and t["direction"] == 1
     entry = t["entry_price"]
     assert approx(entry, 100550.0), "entry fills at the direction bar's OWN close"
-    exp_tp = round(entry * (1 + newsdesk.TARGET_PCT / 100), 1)
-    exp_sl = round(entry * (1 - newsdesk.STOP_PCT / 100), 1)
-    assert t["tp_price"] == exp_tp, (t["tp_price"], exp_tp)
+    assert t["tp_price"] is None, "N2 has no take-profit, ever"
+    exp_sl = round(100000.0 * (1 - newsdesk.TRAIL_BUFFER_PCT / 100), 1)
     assert t["sl_price"] == exp_sl, (t["sl_price"], exp_sl)
+    assert t["entry_bar_high"] == 100600.0
+    assert t["entry_bar_low"] == 100000.0
+    assert t["entry_bar_open_ts"] == "2026-07-23 15:00:00 UTC"
+    assert t["trail_floor"] == exp_sl
+    assert t["trail_k"] == newsdesk.TRAIL_K
     assert t["headline"].startswith("[WatcherGuru]")
 
     # -- SHORT direction, fresh state: 15:00 bar closes DOWN ---------------
@@ -165,10 +170,11 @@ def test_i_bar_close_timing_and_direction():
     t2 = state2["newsdesk"]["open_trade"]
     entry2 = t2["entry_price"]
     assert approx(entry2, 102000.0), entry2
-    exp_tp2 = round(entry2 * (1 - newsdesk.TARGET_PCT / 100), 1)
-    exp_sl2 = round(entry2 * (1 + newsdesk.STOP_PCT / 100), 1)
-    assert t2["tp_price"] == exp_tp2, (t2["tp_price"], exp_tp2)
+    assert t2["tp_price"] is None, "N2 has no take-profit, ever"
+    exp_sl2 = round(102600.0 * (1 + newsdesk.TRAIL_BUFFER_PCT / 100), 1)
     assert t2["sl_price"] == exp_sl2, (t2["sl_price"], exp_sl2)
+    assert t2["entry_bar_high"] == 102600.0
+    assert t2["entry_bar_low"] == 101800.0
 
 
 # ---------------------------------------------------------------------------
@@ -223,8 +229,12 @@ def test_ii_direction_gate_skip_when_opposed():
 
 
 # ---------------------------------------------------------------------------
-# (iii) reconcile books a TP-hit exit with correct signed PnL for a SHORT
-#       news trade (profit when price FALLS).
+# (iii) reconcile books a favorable ("TP hit" — see note below) exit with
+#       correct signed PnL for a SHORT news trade (profit when price
+#       FALLS). N2 never places a real TP order any more (see round 65's
+#       EXIT SWAP) — this exercises the reconcile branch's price-direction
+#       reason/fee heuristic, which the task's brief says stays UNCHANGED,
+#       so it is tested exactly as it already behaves, unmodified.
 # ---------------------------------------------------------------------------
 
 def test_iii_reconcile_books_short_tp_exit():
@@ -234,15 +244,23 @@ def test_iii_reconcile_books_short_tp_exit():
         "trigger": "news_momentum", "direction": -1, "contracts": contracts,
         "entry_price": entry, "entry_fee_bps": 6.0,
         "entry_time": s5.now_utc(),
-        "tp_price": round(entry * (1 - newsdesk.TARGET_PCT / 100), 1),
-        "sl_price": round(entry * (1 + newsdesk.STOP_PCT / 100), 1),
+        "tp_price": None,
+        "sl_price": round(entry * (1 + newsdesk.TRAIL_BUFFER_PCT / 100), 1),
         "tpsl_id": "tpsl-x", "max_hold_h": 24,
         "headline": "[WatcherGuru] JUST IN: test headline",
-        "event_ts": s5.now_utc(), "ctx": {"news": "[WatcherGuru] test"},
+        "event_ts": s5.now_utc(),
+        "entry_bar_open_ts": "2026-07-23 15:00:00 UTC",
+        "entry_bar_high": entry, "entry_bar_low": entry,
+        "trail_floor": round(entry * (1 + newsdesk.TRAIL_BUFFER_PCT / 100), 1),
+        "trail_k": newsdesk.TRAIL_K, "ctx": {"news": "[WatcherGuru] test"},
     }
     state = make_state()
     state["newsdesk"]["open_trade"] = t
-    exit_price = 63440.0        # below entry -> TP hit for a SHORT
+    exit_price = 63440.0        # below entry -> "TP hit" label (favorable
+                                 # for a short) under the reconcile branch's
+                                 # own price-direction heuristic — in N2 this
+                                 # exit was actually the trailed SL firing
+                                 # in-the-money, not a resting TP order
     private = FakePrivate(net=0.0, fills=[{"fillPrice": str(exit_price)}])
     feed = FakeCandleFeed()
 
