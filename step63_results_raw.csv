@@ -1,0 +1,201 @@
+tool,variant,cell,tr_n,tr_exp,checked_val,va_n,va_exp,verdict
+G1-LONG,"engulfing tf=1h ctx=roll55 wick=None stop=1.5xATR tgt=3.0xstop dir=long (train-only best-of-family, tr_exp=$+17.30 n=191)",UNCONDITIONAL,191,17.2980348819511,True,77,-41.72452758549958,BASELINE
+G1-LONG,"engulfing tf=1h ctx=roll55 wick=None stop=1.5xATR tgt=3.0xstop dir=long (train-only best-of-family, tr_exp=$+17.30 n=191)",trending-up×quiet,4,61.32479870771658,False,0,,"UNRELIABLE (train n<15, not attempted on val)"
+G1-LONG,"engulfing tf=1h ctx=roll55 wick=None stop=1.5xATR tgt=3.0xstop dir=long (train-only best-of-family, tr_exp=$+17.30 n=191)",trending-up×normal,41,6.170720814101337,True,31,-24.94747384839725,FAIL-VAL
+G1-LONG,"engulfing tf=1h ctx=roll55 wick=None stop=1.5xATR tgt=3.0xstop dir=long (train-only best-of-family, tr_exp=$+17.30 n=191)",trending-up×violent,3,192.00343399921016,False,0,,"UNRELIABLE (train n<15, not attempted on val)"
+G1-LONG,"engulfing tf=1h ctx=roll55 wick=None stop=1.5xATR tgt=3.0xstop dir=long (train-only best-of-family, tr_exp=$+17.30 n=191)",trending-down×quiet,13,-41.19621185441625,False,0,,"UNRELIABLE (train n<15, not attempted on val)"
+G1-LONG,"engulfing tf=1h ctx=roll55 wick=None stop=1.5xATR tgt=3.0xstop dir=long (train-only best-of-family, tr_exp=$+17.30 n=191)",trending-down×normal,31,32.229695141012805,True,15,-88.12404772438276,FAIL-VAL
+G1-LONG,"engulfing tf=1h ctx=roll55 wick=None stop=1.5xATR tgt=3.0xstop dir=long (train-only best-of-family, tr_exp=$+17.30 n=191)",trending-down×violent,9,-29.169292017548894,False,0,,"UNRELIABLE (train n<15, not attempted on val)"
+G1-LONG,"engulfing tf=1h ctx=roll55 wick=None stop=1.5xATR tgt=3.0xstop dir=long (train-only best-of-family, tr_exp=$+17.30 n=191)",ranging×quiet,45,8.080569251617836,True,4,-130.5155784025851,INSUFFICIENT-VAL-SAMPLE
+G1-LONG,"engulfing tf=1h ctx=roll55 wick=None stop=1.5xATR tgt=3.0xstop dir=long (train-only best-of-family, tr_exp=$+17.30 n=191)",ranging×normal,54,28.166109859800937,True,16,-12.571240801664203,FAIL-VAL
+G1-LONG,"engulfing tf=1h ctx=roll55 wick=None stop=1.5xATR tgt=3.0xstop dir=long (train-only best-of-family, tr_exp=$+17.30 n=191)",ranging×violent,5,-129.36604846380433,False,0,,"UNRELIABLE (train n<15, not attempted on val)"
+G1-LONG,"engulfing tf=1h ctx=roll55 wick=None stop=1.5xATR tgt=3.0xstop dir=long (train-only best-of-family, tr_exp=$+17.30 n=191)",crowded-long×violent,4,108.43976774587554,False,0,,"UNRELIABLE (train n<15, not attempted on val)"
+G1-LONG,"engulfing tf=1h ctx=roll55 wick=None stop=1.5xATR tgt=3.0xstop dir=long (train-only best-of-family, tr_exp=$+17.30 n=191)",crowded-short×violent,0,0.0,False,0,,"UNRELIABLE (train n<15, not attempted on val)"
+G1-LONG,"engulfing tf=1h ctx=roll55 wick=None stop=1.5xATR tgt=3.0xstop dir=long (train-only best-of-family, tr_exp=$+17.30 n=191)",neutral-crowd×violent,14,-31.15935038987248,False,0,,"UNRELIABLE (train n<15, not attempted on val)"
+G1-LONG,"engulfing tf=1h ctx=roll55 wick=None stop=1.5xATR tgt=3.0xstop dir=long (train-only best-of-family, tr_exp=$+17.30 n=191)",news-hot(13mo-span),0,0.0,False,0,,"UNRELIABLE (train n<15, not attempted on val)"
+G1-LONG,"engulfing tf=1h ctx=roll55 wick=None stop=1.5xATR tgt=3.0xstop dir=long (train-only best-of-family, tr_exp=$+17.30 n=191)",ALL-violent(any trend/crowd),17,-21.63319724593641,False,0,,FAIL-TRAIN
+G1-LONG,"engulfing tf=1h ctx=roll55 wick=None stop=1.5xATR tgt=3.0xstop dir=long (train-only best-of-family, tr_exp=$+17.30 n=191)",session=asia,54,18.00566691929621,True,28,-42.76092773188793,FAIL-VAL
+G1-LONG,"engulfing tf=1h ctx=roll55 wick=None stop=1.5xATR tgt=3.0xstop dir=long (train-only best-of-family, tr_exp=$+17.30 n=191)",session=london,62,6.69225978035704,True,21,-72.86628918410167,FAIL-VAL
+G1-LONG,"engulfing tf=1h ctx=roll55 wick=None stop=1.5xATR tgt=3.0xstop dir=long (train-only best-of-family, tr_exp=$+17.30 n=191)",session=newyork,72,-9.616769450606954,False,0,,FAIL-TRAIN
+G1-LONG,"engulfing tf=1h ctx=roll55 wick=None stop=1.5xATR tgt=3.0xstop dir=long (train-only best-of-family, tr_exp=$+17.30 n=191)",session=off-hours,23,48.95541645435293,True,13,32.42367158137607,REHABILITATED
+G1-LONG,"engulfing tf=1h ctx=roll55 wick=None stop=1.5xATR tgt=3.0xstop dir=long (train-only best-of-family, tr_exp=$+17.30 n=191)",session=weekend,45,27.816227560281913,True,15,-82.3540396910276,FAIL-VAL
+G1-SHORT,"pin-bar tf=1h ctx=roll20 wick=3 stop=1.5xATR tgt=2.0xstop dir=short (train-only best-of-family, tr_exp=$-3.21 n=408)",UNCONDITIONAL,408,-3.208170156926991,True,144,-20.597965011806536,BASELINE
+G1-SHORT,"pin-bar tf=1h ctx=roll20 wick=3 stop=1.5xATR tgt=2.0xstop dir=short (train-only best-of-family, tr_exp=$-3.21 n=408)",trending-up×quiet,16,-43.77992979984742,False,0,,FAIL-TRAIN
+G1-SHORT,"pin-bar tf=1h ctx=roll20 wick=3 stop=1.5xATR tgt=2.0xstop dir=short (train-only best-of-family, tr_exp=$-3.21 n=408)",trending-up×normal,87,-9.898559375640511,False,0,,FAIL-TRAIN
+G1-SHORT,"pin-bar tf=1h ctx=roll20 wick=3 stop=1.5xATR tgt=2.0xstop dir=short (train-only best-of-family, tr_exp=$-3.21 n=408)",trending-up×violent,19,-4.237967548182975,False,0,,FAIL-TRAIN
+G1-SHORT,"pin-bar tf=1h ctx=roll20 wick=3 stop=1.5xATR tgt=2.0xstop dir=short (train-only best-of-family, tr_exp=$-3.21 n=408)",trending-down×quiet,31,17.892207219534317,True,10,-8.117954404556803,FAIL-VAL
+G1-SHORT,"pin-bar tf=1h ctx=roll20 wick=3 stop=1.5xATR tgt=2.0xstop dir=short (train-only best-of-family, tr_exp=$-3.21 n=408)",trending-down×normal,68,-14.883373558930677,False,0,,FAIL-TRAIN
+G1-SHORT,"pin-bar tf=1h ctx=roll20 wick=3 stop=1.5xATR tgt=2.0xstop dir=short (train-only best-of-family, tr_exp=$-3.21 n=408)",trending-down×violent,6,-70.01360716896579,False,0,,"UNRELIABLE (train n<15, not attempted on val)"
+G1-SHORT,"pin-bar tf=1h ctx=roll20 wick=3 stop=1.5xATR tgt=2.0xstop dir=short (train-only best-of-family, tr_exp=$-3.21 n=408)",ranging×quiet,98,-9.08494196369314,False,0,,FAIL-TRAIN
+G1-SHORT,"pin-bar tf=1h ctx=roll20 wick=3 stop=1.5xATR tgt=2.0xstop dir=short (train-only best-of-family, tr_exp=$-3.21 n=408)",ranging×normal,103,3.5178176451844796,True,37,-55.675769826967574,FAIL-VAL
+G1-SHORT,"pin-bar tf=1h ctx=roll20 wick=3 stop=1.5xATR tgt=2.0xstop dir=short (train-only best-of-family, tr_exp=$-3.21 n=408)",ranging×violent,8,152.82257466246938,False,0,,"UNRELIABLE (train n<15, not attempted on val)"
+G1-SHORT,"pin-bar tf=1h ctx=roll20 wick=3 stop=1.5xATR tgt=2.0xstop dir=short (train-only best-of-family, tr_exp=$-3.21 n=408)",crowded-long×violent,15,30.574425965408228,True,5,16.989248487310032,INSUFFICIENT-VAL-SAMPLE
+G1-SHORT,"pin-bar tf=1h ctx=roll20 wick=3 stop=1.5xATR tgt=2.0xstop dir=short (train-only best-of-family, tr_exp=$-3.21 n=408)",crowded-short×violent,1,238.144102137745,False,0,,"UNRELIABLE (train n<15, not attempted on val)"
+G1-SHORT,"pin-bar tf=1h ctx=roll20 wick=3 stop=1.5xATR tgt=2.0xstop dir=short (train-only best-of-family, tr_exp=$-3.21 n=408)",neutral-crowd×violent,17,-2.3683520705871,False,0,,FAIL-TRAIN
+G1-SHORT,"pin-bar tf=1h ctx=roll20 wick=3 stop=1.5xATR tgt=2.0xstop dir=short (train-only best-of-family, tr_exp=$-3.21 n=408)",news-hot(13mo-span),0,0.0,False,0,,"UNRELIABLE (train n<15, not attempted on val)"
+G1-SHORT,"pin-bar tf=1h ctx=roll20 wick=3 stop=1.5xATR tgt=2.0xstop dir=short (train-only best-of-family, tr_exp=$-3.21 n=408)",ALL-violent(any trend/crowd),33,20.13851261640781,True,19,3.6189708023749088,REHABILITATED
+G1-SHORT,"pin-bar tf=1h ctx=roll20 wick=3 stop=1.5xATR tgt=2.0xstop dir=short (train-only best-of-family, tr_exp=$-3.21 n=408)",session=asia,98,10.528268411312526,True,34,15.748533435012659,REHABILITATED
+G1-SHORT,"pin-bar tf=1h ctx=roll20 wick=3 stop=1.5xATR tgt=2.0xstop dir=short (train-only best-of-family, tr_exp=$-3.21 n=408)",session=london,99,-10.935579572961146,False,0,,FAIL-TRAIN
+G1-SHORT,"pin-bar tf=1h ctx=roll20 wick=3 stop=1.5xATR tgt=2.0xstop dir=short (train-only best-of-family, tr_exp=$-3.21 n=408)",session=newyork,116,-19.77413912961415,False,0,,FAIL-TRAIN
+G1-SHORT,"pin-bar tf=1h ctx=roll20 wick=3 stop=1.5xATR tgt=2.0xstop dir=short (train-only best-of-family, tr_exp=$-3.21 n=408)",session=off-hours,66,-24.99445895433749,False,0,,FAIL-TRAIN
+G1-SHORT,"pin-bar tf=1h ctx=roll20 wick=3 stop=1.5xATR tgt=2.0xstop dir=short (train-only best-of-family, tr_exp=$-3.21 n=408)",session=weekend,149,-0.8233207092822865,False,0,,FAIL-TRAIN
+G2,base X2x/1bar touch=50pct tgt3xstop hold48h (1h),UNCONDITIONAL,462,-9.731119471110508,True,157,-21.24680894505646,BASELINE
+G2,base X2x/1bar touch=50pct tgt3xstop hold48h (1h),trending-up×quiet,15,-6.126755022995349,False,0,,FAIL-TRAIN
+G2,base X2x/1bar touch=50pct tgt3xstop hold48h (1h),trending-up×normal,136,-19.11875032444061,False,0,,FAIL-TRAIN
+G2,base X2x/1bar touch=50pct tgt3xstop hold48h (1h),trending-up×violent,60,-16.77560998863543,False,0,,FAIL-TRAIN
+G2,base X2x/1bar touch=50pct tgt3xstop hold48h (1h),trending-down×quiet,22,5.742464205701584,True,3,-65.66547856988836,INSUFFICIENT-VAL-SAMPLE
+G2,base X2x/1bar touch=50pct tgt3xstop hold48h (1h),trending-down×normal,101,-7.761045996756438,False,0,,FAIL-TRAIN
+G2,base X2x/1bar touch=50pct tgt3xstop hold48h (1h),trending-down×violent,41,-30.970401011383153,False,0,,FAIL-TRAIN
+G2,base X2x/1bar touch=50pct tgt3xstop hold48h (1h),ranging×quiet,39,-8.084450936760941,False,0,,FAIL-TRAIN
+G2,base X2x/1bar touch=50pct tgt3xstop hold48h (1h),ranging×normal,142,-10.887355602657319,False,0,,FAIL-TRAIN
+G2,base X2x/1bar touch=50pct tgt3xstop hold48h (1h),ranging×violent,40,-25.359009102432445,False,0,,FAIL-TRAIN
+G2,base X2x/1bar touch=50pct tgt3xstop hold48h (1h),crowded-long×violent,54,-19.38047339098392,False,0,,FAIL-TRAIN
+G2,base X2x/1bar touch=50pct tgt3xstop hold48h (1h),crowded-short×violent,16,-36.80382540183541,False,0,,FAIL-TRAIN
+G2,base X2x/1bar touch=50pct tgt3xstop hold48h (1h),neutral-crowd×violent,94,-18.70868728523162,False,0,,FAIL-TRAIN
+G2,base X2x/1bar touch=50pct tgt3xstop hold48h (1h),news-hot(13mo-span),0,0.0,False,0,,"UNRELIABLE (train n<15, not attempted on val)"
+G2,base X2x/1bar touch=50pct tgt3xstop hold48h (1h),ALL-violent(any trend/crowd),131,-20.060054506614527,False,0,,FAIL-TRAIN
+G2,base X2x/1bar touch=50pct tgt3xstop hold48h (1h),session=asia,175,-12.228125636026947,False,0,,FAIL-TRAIN
+G2,base X2x/1bar touch=50pct tgt3xstop hold48h (1h),session=london,191,-19.568749623627642,False,0,,FAIL-TRAIN
+G2,base X2x/1bar touch=50pct tgt3xstop hold48h (1h),session=newyork,287,-14.460962285876489,False,0,,FAIL-TRAIN
+G2,base X2x/1bar touch=50pct tgt3xstop hold48h (1h),session=off-hours,100,9.21834722186819,True,39,-2.6652476117611887,FAIL-VAL
+G2,base X2x/1bar touch=50pct tgt3xstop hold48h (1h),session=weekend,149,-11.73473052490867,False,0,,FAIL-TRAIN
+G3,RSI14 k8 regular buf0.15% tgt2x hold48h (1h),UNCONDITIONAL,260,-15.799296284754226,True,89,-38.34362019422138,BASELINE
+G3,RSI14 k8 regular buf0.15% tgt2x hold48h (1h),trending-up×quiet,7,136.75374635313634,False,0,,"UNRELIABLE (train n<15, not attempted on val)"
+G3,RSI14 k8 regular buf0.15% tgt2x hold48h (1h),trending-up×normal,60,-34.802264307819755,False,0,,FAIL-TRAIN
+G3,RSI14 k8 regular buf0.15% tgt2x hold48h (1h),trending-up×violent,26,-34.900430354729906,False,0,,FAIL-TRAIN
+G3,RSI14 k8 regular buf0.15% tgt2x hold48h (1h),trending-down×quiet,11,91.582894883444,False,0,,"UNRELIABLE (train n<15, not attempted on val)"
+G3,RSI14 k8 regular buf0.15% tgt2x hold48h (1h),trending-down×normal,45,-2.3447024204649805,False,0,,FAIL-TRAIN
+G3,RSI14 k8 regular buf0.15% tgt2x hold48h (1h),trending-down×violent,17,-34.3438091965514,False,0,,FAIL-TRAIN
+G3,RSI14 k8 regular buf0.15% tgt2x hold48h (1h),ranging×quiet,34,-45.04161681888645,False,0,,FAIL-TRAIN
+G3,RSI14 k8 regular buf0.15% tgt2x hold48h (1h),ranging×normal,71,-35.81773553920185,False,0,,FAIL-TRAIN
+G3,RSI14 k8 regular buf0.15% tgt2x hold48h (1h),ranging×violent,15,-46.06696392609532,False,0,,FAIL-TRAIN
+G3,RSI14 k8 regular buf0.15% tgt2x hold48h (1h),crowded-long×violent,16,18.27678732375307,True,6,-192.221629835289,INSUFFICIENT-VAL-SAMPLE
+G3,RSI14 k8 regular buf0.15% tgt2x hold48h (1h),crowded-short×violent,4,-61.48809225943114,False,0,,"UNRELIABLE (train n<15, not attempted on val)"
+G3,RSI14 k8 regular buf0.15% tgt2x hold48h (1h),neutral-crowd×violent,40,-47.946657104202885,False,0,,FAIL-TRAIN
+G3,RSI14 k8 regular buf0.15% tgt2x hold48h (1h),news-hot(13mo-span),0,0.0,False,0,,"UNRELIABLE (train n<15, not attempted on val)"
+G3,RSI14 k8 regular buf0.15% tgt2x hold48h (1h),ALL-violent(any trend/crowd),58,-34.99820829028705,False,0,,FAIL-TRAIN
+G3,RSI14 k8 regular buf0.15% tgt2x hold48h (1h),session=asia,96,6.270758164751517,True,30,-45.50065976149702,FAIL-VAL
+G3,RSI14 k8 regular buf0.15% tgt2x hold48h (1h),session=london,67,-14.522210500349162,False,0,,FAIL-TRAIN
+G3,RSI14 k8 regular buf0.15% tgt2x hold48h (1h),session=newyork,68,-43.353007449906436,False,0,,FAIL-TRAIN
+G3,RSI14 k8 regular buf0.15% tgt2x hold48h (1h),session=off-hours,46,-40.13806580981898,False,0,,FAIL-TRAIN
+G3,RSI14 k8 regular buf0.15% tgt2x hold48h (1h),session=weekend,72,-24.011875262232554,False,0,,FAIL-TRAIN
+G4,EMA20/50 long-only stop1.2xATR(cap1.7%) tgt2.5xATR (1h),UNCONDITIONAL,311,-11.04517760870255,True,103,-19.30143265015847,BASELINE
+G4,EMA20/50 long-only stop1.2xATR(cap1.7%) tgt2.5xATR (1h),trending-up×quiet,35,9.554456918578113,True,14,-97.13910045253604,FAIL-VAL
+G4,EMA20/50 long-only stop1.2xATR(cap1.7%) tgt2.5xATR (1h),trending-up×normal,103,-2.763681568862948,False,0,,FAIL-TRAIN
+G4,EMA20/50 long-only stop1.2xATR(cap1.7%) tgt2.5xATR (1h),trending-up×violent,39,-23.085305032786543,False,0,,FAIL-TRAIN
+G4,EMA20/50 long-only stop1.2xATR(cap1.7%) tgt2.5xATR (1h),trending-down×quiet,52,-42.53777738110625,False,0,,FAIL-TRAIN
+G4,EMA20/50 long-only stop1.2xATR(cap1.7%) tgt2.5xATR (1h),trending-down×normal,93,-22.674840259216758,False,0,,FAIL-TRAIN
+G4,EMA20/50 long-only stop1.2xATR(cap1.7%) tgt2.5xATR (1h),trending-down×violent,23,-28.174139703088297,False,0,,FAIL-TRAIN
+G4,EMA20/50 long-only stop1.2xATR(cap1.7%) tgt2.5xATR (1h),ranging×quiet,88,1.8767337257206278,True,11,6.308227115557119,REHABILITATED
+G4,EMA20/50 long-only stop1.2xATR(cap1.7%) tgt2.5xATR (1h),ranging×normal,117,-8.377205290142431,False,0,,FAIL-TRAIN
+G4,EMA20/50 long-only stop1.2xATR(cap1.7%) tgt2.5xATR (1h),ranging×violent,32,2.4832357514860632,True,17,-36.72483062254062,FAIL-VAL
+G4,EMA20/50 long-only stop1.2xATR(cap1.7%) tgt2.5xATR (1h),crowded-long×violent,34,-28.61015358234459,False,0,,FAIL-TRAIN
+G4,EMA20/50 long-only stop1.2xATR(cap1.7%) tgt2.5xATR (1h),crowded-short×violent,17,17.729077200914723,True,5,-47.166562866459934,INSUFFICIENT-VAL-SAMPLE
+G4,EMA20/50 long-only stop1.2xATR(cap1.7%) tgt2.5xATR (1h),neutral-crowd×violent,70,-17.72424796619328,False,0,,FAIL-TRAIN
+G4,EMA20/50 long-only stop1.2xATR(cap1.7%) tgt2.5xATR (1h),news-hot(13mo-span),0,0.0,False,0,,"UNRELIABLE (train n<15, not attempted on val)"
+G4,EMA20/50 long-only stop1.2xATR(cap1.7%) tgt2.5xATR (1h),ALL-violent(any trend/crowd),81,-15.509544833241463,False,0,,FAIL-TRAIN
+G4,EMA20/50 long-only stop1.2xATR(cap1.7%) tgt2.5xATR (1h),session=asia,239,-8.55237825954185,False,0,,FAIL-TRAIN
+G4,EMA20/50 long-only stop1.2xATR(cap1.7%) tgt2.5xATR (1h),session=london,239,-7.311586865367698,False,0,,FAIL-TRAIN
+G4,EMA20/50 long-only stop1.2xATR(cap1.7%) tgt2.5xATR (1h),session=newyork,245,-1.0910992837927367,False,0,,FAIL-TRAIN
+G4,EMA20/50 long-only stop1.2xATR(cap1.7%) tgt2.5xATR (1h),session=off-hours,218,14.072319042613211,True,75,-8.273155343219575,FAIL-VAL
+G4,EMA20/50 long-only stop1.2xATR(cap1.7%) tgt2.5xATR (1h),session=weekend,166,-12.305713140707995,False,0,,FAIL-TRAIN
+G5,X1.8% champ tgt3xATR hold24h (1h),UNCONDITIONAL,257,7.201061835876636,True,61,8.7398139432017,BASELINE
+G5,X1.8% champ tgt3xATR hold24h (1h),trending-up×quiet,1,-92.47482417577885,False,0,,"UNRELIABLE (train n<15, not attempted on val)"
+G5,X1.8% champ tgt3xATR hold24h (1h),trending-up×normal,49,14.110108946343773,True,12,16.775813295247342,REHABILITATED
+G5,X1.8% champ tgt3xATR hold24h (1h),trending-up×violent,45,-13.326563377622652,False,0,,FAIL-TRAIN
+G5,X1.8% champ tgt3xATR hold24h (1h),trending-down×quiet,0,0.0,False,0,,"UNRELIABLE (train n<15, not attempted on val)"
+G5,X1.8% champ tgt3xATR hold24h (1h),trending-down×normal,41,29.692175294478414,True,5,-6.190988943169941,INSUFFICIENT-VAL-SAMPLE
+G5,X1.8% champ tgt3xATR hold24h (1h),trending-down×violent,47,-8.327988583111019,False,0,,FAIL-TRAIN
+G5,X1.8% champ tgt3xATR hold24h (1h),ranging×quiet,2,-91.62820685726365,False,0,,"UNRELIABLE (train n<15, not attempted on val)"
+G5,X1.8% champ tgt3xATR hold24h (1h),ranging×normal,52,21.60076084412759,True,8,93.60513744081891,REHABILITATED
+G5,X1.8% champ tgt3xATR hold24h (1h),ranging×violent,33,-12.910538895052014,False,0,,FAIL-TRAIN
+G5,X1.8% champ tgt3xATR hold24h (1h),crowded-long×violent,44,-11.961391198817761,False,0,,FAIL-TRAIN
+G5,X1.8% champ tgt3xATR hold24h (1h),crowded-short×violent,15,-26.373555064035585,False,0,,FAIL-TRAIN
+G5,X1.8% champ tgt3xATR hold24h (1h),neutral-crowd×violent,81,-3.204374050860892,False,0,,FAIL-TRAIN
+G5,X1.8% champ tgt3xATR hold24h (1h),news-hot(13mo-span),0,0.0,False,0,,"UNRELIABLE (train n<15, not attempted on val)"
+G5,X1.8% champ tgt3xATR hold24h (1h),ALL-violent(any trend/crowd),120,-14.931128684113173,False,0,,FAIL-TRAIN
+G5,X1.8% champ tgt3xATR hold24h (1h),session=asia,76,1.9572403535519602,True,15,17.234806550860835,REHABILITATED
+G5,X1.8% champ tgt3xATR hold24h (1h),session=london,64,-4.009287001839795,False,0,,FAIL-TRAIN
+G5,X1.8% champ tgt3xATR hold24h (1h),session=newyork,122,0.5115316730196235,True,37,3.7381226096971956,REHABILITATED
+G5,X1.8% champ tgt3xATR hold24h (1h),session=off-hours,37,1.1233073792907424,True,8,-89.02823491087611,FAIL-VAL
+G5,X1.8% champ tgt3xATR hold24h (1h),session=weekend,55,-30.259780102630348,False,0,,FAIL-TRAIN
+G6-k1.5,k=1.5xATR both-directions champ-gated (1h),UNCONDITIONAL,629,-7.940704339422376,True,215,-4.605028202749185,BASELINE
+G6-k1.5,k=1.5xATR both-directions champ-gated (1h),trending-up×quiet,19,-31.26348320242735,False,0,,FAIL-TRAIN
+G6-k1.5,k=1.5xATR both-directions champ-gated (1h),trending-up×normal,146,-15.974461876072557,False,0,,FAIL-TRAIN
+G6-k1.5,k=1.5xATR both-directions champ-gated (1h),trending-up×violent,46,-27.070734349745972,False,0,,FAIL-TRAIN
+G6-k1.5,k=1.5xATR both-directions champ-gated (1h),trending-down×quiet,39,43.76482217085812,True,12,-22.027426713357574,FAIL-VAL
+G6-k1.5,k=1.5xATR both-directions champ-gated (1h),trending-down×normal,131,-11.8982145291223,False,0,,FAIL-TRAIN
+G6-k1.5,k=1.5xATR both-directions champ-gated (1h),trending-down×violent,40,-1.1328542907282553,False,0,,FAIL-TRAIN
+G6-k1.5,k=1.5xATR both-directions champ-gated (1h),ranging×quiet,114,-16.320972854269968,False,0,,FAIL-TRAIN
+G6-k1.5,k=1.5xATR both-directions champ-gated (1h),ranging×normal,173,-8.849559021337592,False,0,,FAIL-TRAIN
+G6-k1.5,k=1.5xATR both-directions champ-gated (1h),ranging×violent,34,-28.394900407823865,False,0,,FAIL-TRAIN
+G6-k1.5,k=1.5xATR both-directions champ-gated (1h),crowded-long×violent,46,-45.334257838955914,False,0,,FAIL-TRAIN
+G6-k1.5,k=1.5xATR both-directions champ-gated (1h),crowded-short×violent,19,-72.2910739721885,False,0,,FAIL-TRAIN
+G6-k1.5,k=1.5xATR both-directions champ-gated (1h),neutral-crowd×violent,82,-5.589306233648242,False,0,,FAIL-TRAIN
+G6-k1.5,k=1.5xATR both-directions champ-gated (1h),news-hot(13mo-span),0,0.0,False,0,,"UNRELIABLE (train n<15, not attempted on val)"
+G6-k1.5,k=1.5xATR both-directions champ-gated (1h),ALL-violent(any trend/crowd),117,-16.897452690079948,False,0,,FAIL-TRAIN
+G6-k1.5,k=1.5xATR both-directions champ-gated (1h),session=asia,296,-10.376763204667954,False,0,,FAIL-TRAIN
+G6-k1.5,k=1.5xATR both-directions champ-gated (1h),session=london,281,-21.854521296187023,False,0,,FAIL-TRAIN
+G6-k1.5,k=1.5xATR both-directions champ-gated (1h),session=newyork,358,-12.745969723713916,False,0,,FAIL-TRAIN
+G6-k1.5,k=1.5xATR both-directions champ-gated (1h),session=off-hours,214,-18.185950208613377,False,0,,FAIL-TRAIN
+G6-k1.5,k=1.5xATR both-directions champ-gated (1h),session=weekend,192,3.447924937075072,True,65,-15.291316770809331,FAIL-VAL
+G6-k2.5,k=2.5xATR both-directions champ-gated (1h),UNCONDITIONAL,333,-14.91103948847054,True,115,-3.742079217993998,BASELINE
+G6-k2.5,k=2.5xATR both-directions champ-gated (1h),trending-up×quiet,7,0.05583153206966277,False,0,,"UNRELIABLE (train n<15, not attempted on val)"
+G6-k2.5,k=2.5xATR both-directions champ-gated (1h),trending-up×normal,71,-38.0469281319129,False,0,,FAIL-TRAIN
+G6-k2.5,k=2.5xATR both-directions champ-gated (1h),trending-up×violent,27,-9.758534624063099,False,0,,FAIL-TRAIN
+G6-k2.5,k=2.5xATR both-directions champ-gated (1h),trending-down×quiet,14,22.870225451758284,False,0,,"UNRELIABLE (train n<15, not attempted on val)"
+G6-k2.5,k=2.5xATR both-directions champ-gated (1h),trending-down×normal,63,-34.32196872414059,False,0,,FAIL-TRAIN
+G6-k2.5,k=2.5xATR both-directions champ-gated (1h),trending-down×violent,19,33.9878565526473,True,15,47.22553309680952,REHABILITATED
+G6-k2.5,k=2.5xATR both-directions champ-gated (1h),ranging×quiet,56,-9.549531130797602,False,0,,FAIL-TRAIN
+G6-k2.5,k=2.5xATR both-directions champ-gated (1h),ranging×normal,96,-25.17355188196903,False,0,,FAIL-TRAIN
+G6-k2.5,k=2.5xATR both-directions champ-gated (1h),ranging×violent,22,-62.98481088990039,False,0,,FAIL-TRAIN
+G6-k2.5,k=2.5xATR both-directions champ-gated (1h),crowded-long×violent,25,-58.64399315602219,False,0,,FAIL-TRAIN
+G6-k2.5,k=2.5xATR both-directions champ-gated (1h),crowded-short×violent,12,19.050908463162006,False,0,,"UNRELIABLE (train n<15, not attempted on val)"
+G6-k2.5,k=2.5xATR both-directions champ-gated (1h),neutral-crowd×violent,40,0.30305734244102495,True,31,-1.3173674744381472,FAIL-VAL
+G6-k2.5,k=2.5xATR both-directions champ-gated (1h),news-hot(13mo-span),0,0.0,False,0,,"UNRELIABLE (train n<15, not attempted on val)"
+G6-k2.5,k=2.5xATR both-directions champ-gated (1h),ALL-violent(any trend/crowd),66,-13.251485009248372,False,0,,FAIL-TRAIN
+G6-k2.5,k=2.5xATR both-directions champ-gated (1h),session=asia,129,-22.92506832846573,False,0,,FAIL-TRAIN
+G6-k2.5,k=2.5xATR both-directions champ-gated (1h),session=london,138,-36.986438966063176,False,0,,FAIL-TRAIN
+G6-k2.5,k=2.5xATR both-directions champ-gated (1h),session=newyork,170,-21.038696406884704,False,0,,FAIL-TRAIN
+G6-k2.5,k=2.5xATR both-directions champ-gated (1h),session=off-hours,88,-27.89966713766884,False,0,,FAIL-TRAIN
+G6-k2.5,k=2.5xATR both-directions champ-gated (1h),session=weekend,84,11.404003804601913,True,27,9.208810537153113,REHABILITATED
+G7-donchian10,donchian20/10 + ADX>=25 (1h),UNCONDITIONAL,264,31.055460253745245,True,99,-17.59351111892478,BASELINE
+G7-donchian10,donchian20/10 + ADX>=25 (1h),trending-up×quiet,7,-100.10362809974036,False,0,,"UNRELIABLE (train n<15, not attempted on val)"
+G7-donchian10,donchian20/10 + ADX>=25 (1h),trending-up×normal,74,-10.385683178466836,False,0,,FAIL-TRAIN
+G7-donchian10,donchian20/10 + ADX>=25 (1h),trending-up×violent,31,11.382504729159278,True,11,-88.9795276921554,FAIL-VAL
+G7-donchian10,donchian20/10 + ADX>=25 (1h),trending-down×quiet,10,217.36322512839416,False,0,,"UNRELIABLE (train n<15, not attempted on val)"
+G7-donchian10,donchian20/10 + ADX>=25 (1h),trending-down×normal,47,51.81001047928518,True,27,-86.88665143066034,FAIL-VAL
+G7-donchian10,donchian20/10 + ADX>=25 (1h),trending-down×violent,18,-112.34493343027992,False,0,,FAIL-TRAIN
+G7-donchian10,donchian20/10 + ADX>=25 (1h),ranging×quiet,31,202.0590010077541,True,4,97.0402279124014,INSUFFICIENT-VAL-SAMPLE
+G7-donchian10,donchian20/10 + ADX>=25 (1h),ranging×normal,86,41.96397032531483,True,26,50.13771340006371,REHABILITATED
+G7-donchian10,donchian20/10 + ADX>=25 (1h),ranging×violent,17,-45.716483194075195,False,0,,FAIL-TRAIN
+G7-donchian10,donchian20/10 + ADX>=25 (1h),crowded-long×violent,25,-37.97780128070306,False,0,,FAIL-TRAIN
+G7-donchian10,donchian20/10 + ADX>=25 (1h),crowded-short×violent,9,-138.11808984806723,False,0,,"UNRELIABLE (train n<15, not attempted on val)"
+G7-donchian10,donchian20/10 + ADX>=25 (1h),neutral-crowd×violent,39,9.573303909664434,True,25,-65.05587875404882,FAIL-VAL
+G7-donchian10,donchian20/10 + ADX>=25 (1h),news-hot(13mo-span),0,0.0,False,0,,"UNRELIABLE (train n<15, not attempted on val)"
+G7-donchian10,donchian20/10 + ADX>=25 (1h),ALL-violent(any trend/crowd),63,-26.584626588146275,False,0,,FAIL-TRAIN
+G7-donchian10,donchian20/10 + ADX>=25 (1h),session=asia,89,9.17745493127216,True,24,-32.49343638516666,FAIL-VAL
+G7-donchian10,donchian20/10 + ADX>=25 (1h),session=london,78,-0.8189249956934267,False,0,,FAIL-TRAIN
+G7-donchian10,donchian20/10 + ADX>=25 (1h),session=newyork,147,18.352410740885748,True,61,-27.759038420388606,FAIL-VAL
+G7-donchian10,donchian20/10 + ADX>=25 (1h),session=off-hours,58,-1.7979367849514754,False,0,,FAIL-TRAIN
+G7-donchian10,donchian20/10 + ADX>=25 (1h),session=weekend,77,15.955650463005227,True,24,-43.641990938542904,FAIL-VAL
+G7-donchian20,donchian20/20 + ADX>=25 (1h),UNCONDITIONAL,228,15.80420648067893,True,82,-33.363072251958116,BASELINE
+G7-donchian20,donchian20/20 + ADX>=25 (1h),trending-up×quiet,7,-199.61931191840657,False,0,,"UNRELIABLE (train n<15, not attempted on val)"
+G7-donchian20,donchian20/20 + ADX>=25 (1h),trending-up×normal,67,-33.88684885994872,False,0,,FAIL-TRAIN
+G7-donchian20,donchian20/20 + ADX>=25 (1h),trending-up×violent,30,-51.36200093951302,False,0,,FAIL-TRAIN
+G7-donchian20,donchian20/20 + ADX>=25 (1h),trending-down×quiet,10,124.78744675027356,False,0,,"UNRELIABLE (train n<15, not attempted on val)"
+G7-donchian20,donchian20/20 + ADX>=25 (1h),trending-down×normal,44,0.8591891498862506,True,24,-89.53956402142985,FAIL-VAL
+G7-donchian20,donchian20/20 + ADX>=25 (1h),trending-down×violent,18,-116.17181678093372,False,0,,FAIL-TRAIN
+G7-donchian20,donchian20/20 + ADX>=25 (1h),ranging×quiet,27,218.86038786772662,True,4,53.29781667960833,INSUFFICIENT-VAL-SAMPLE
+G7-donchian20,donchian20/20 + ADX>=25 (1h),ranging×normal,80,-2.288032571776739,False,0,,FAIL-TRAIN
+G7-donchian20,donchian20/20 + ADX>=25 (1h),ranging×violent,16,-1.8103482530904103,False,0,,FAIL-TRAIN
+G7-donchian20,donchian20/20 + ADX>=25 (1h),crowded-long×violent,24,-101.73415847733922,False,0,,FAIL-TRAIN
+G7-donchian20,donchian20/20 + ADX>=25 (1h),crowded-short×violent,9,-164.85478930022185,False,0,,"UNRELIABLE (train n<15, not attempted on val)"
+G7-donchian20,donchian20/20 + ADX>=25 (1h),neutral-crowd×violent,36,2.9736137107058007,True,24,-102.06994715891199,FAIL-VAL
+G7-donchian20,donchian20/20 + ADX>=25 (1h),news-hot(13mo-span),0,0.0,False,0,,"UNRELIABLE (train n<15, not attempted on val)"
+G7-donchian20,donchian20/20 + ADX>=25 (1h),ALL-violent(any trend/crowd),58,-41.665754931277256,False,0,,FAIL-TRAIN
+G7-donchian20,donchian20/20 + ADX>=25 (1h),session=asia,82,70.51140456081512,True,22,-51.444811261816454,FAIL-VAL
+G7-donchian20,donchian20/20 + ADX>=25 (1h),session=london,75,25.074136782310283,True,23,125.76782847827828,REHABILITATED
+G7-donchian20,donchian20/20 + ADX>=25 (1h),session=newyork,134,26.69049224878297,True,55,-32.42263745968878,FAIL-VAL
+G7-donchian20,donchian20/20 + ADX>=25 (1h),session=off-hours,57,-50.840383447413494,False,0,,FAIL-TRAIN
+G7-donchian20,donchian20/20 + ADX>=25 (1h),session=weekend,74,9.286850715272989,True,23,-18.434934249828785,FAIL-VAL

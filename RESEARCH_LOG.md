@@ -486,3 +486,22 @@ but under costs, golden cross too slow, first-hour shorts dead. Trend =
 DD-reduction-not-outperformance (matches gold). Turn-of-month t=2.43
 flagged for a dedicated round. Venue: SPY-USDT prod tracks real S&P
 (0.08% basis) but absent on demo + thin — deploy when venue exists.
+
+## ROUND 63 — graveyard rehabilitation + SESSION axis (2026-07-24)
+Owner doctrine tested: "known indicators are known for a reason — find
+the right scenario." VERDICT: CONFIRMED. 12 of 10-tool-variants x 19
+scenario/session cells rehabilitated (6.3% pass vs controls; SESSION
+cells alone 12.0% — triple base rate, sessions pull real weight):
+- Pin bars: violent markets + LONGS in off-hours + SHORTS in Asia
+- Momentum bursts: calm trends + Asia + NY sessions (sealed burial of
+  the unconditional config stands)
+- VWAP fades: violent downtrends + WEEKENDS (owner folklore confirmed)
+- ADX filter: ranging markets; donchian20 in LONDON val +$125.77/t x23
+  (control-weak — needs confirmation before any deployment)
+- EMA cross: quiet ranges only; ZERO session effect (folklore refuted)
+STAYS FULLY BURIED: order blocks, reversal RSI divergence, tight VWAP.
+5/6 original + 4/6 session claims beat dumb-cell controls; the 2 weak
+ones flagged. News-heat axis structurally untestable (13mo news vs old
+train window). NEXT: these conditional rules feed the scenario router +
+Learning Engine components — deployment only via train/val+sealed per
+rule, never straight from a rehab cell.
