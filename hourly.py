@@ -285,6 +285,15 @@ def main(storm=None):
         log_event({"action": "error", "book": "gold_book",
                    "error": str(e)[:300]})
 
+    # 3e. DAILY PICK backstop (daemon owns it when alive)
+    if not daemon_alive:
+        try:
+            from daily_pick import run_daily_pick
+            from step5_paper_trade import load_state as _lsp
+            run_daily_pick(private, live_feed, demo_feed, _lsp())
+        except Exception as e:
+            print(f"daily pick error (non-fatal): {str(e)[:100]}")
+
 
 if __name__ == "__main__":
     import time as _t

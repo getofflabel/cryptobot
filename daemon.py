@@ -116,7 +116,13 @@ def full_cycle(private, live_feed, demo_feed, symbol, reason):
     _run_book("The Strikes", _strikes)
     _run_book("Shorts Lab", _lab)
     _run_book("The Newsdesk", _news)
+    def _pick():
+        from daily_pick import run_daily_pick
+        from step5_paper_trade import load_state
+        run_daily_pick(private, live_feed, demo_feed, load_state())
+
     _run_book("The Gold Book", _gold)
+    _run_book("Daily Pick", _pick)
 
 
 def main():

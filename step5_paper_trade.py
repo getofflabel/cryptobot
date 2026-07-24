@@ -407,6 +407,35 @@ MAX_CLIP = 5.0        # live-fire finding 2026-07-23: the demo book absorbs
                       # sliced into clips so each rests where depth exists.
 
 
+def execute_market_clips(private, demo_feed, symbol: str, side: str,
+                         contracts: float, ref_price: float,
+                         reduce_only: bool = False):
+    """OWNER'S LAW (2026-07-24, after three stray-buy-order sightings):
+    a buy order only exists when we truly want to BUY NOW, and TP/SL are
+    ONLY ever the native bracket. So live entries fill via instant MARKET
+    clips — on the screen for seconds, never resting. Costs taker fees
+    (6bps vs 2) — the price of clean, atomic, interruption-proof entries;
+    the old maker-and-wait loop left orphaned resting orders and partial
+    naked positions whenever a deploy or crash hit mid-loop.
+    Returns (approx_fill_price, was_maker=False)."""
+    import math as _m
+    remaining = round(contracts, 1)
+    clip = 5.0
+    while remaining > 0.05:
+        step = min(clip, remaining)
+        private.market_order(symbol, side, round(step, 1),
+                             reduce_only=reduce_only)
+        remaining = round(remaining - step, 1)
+    # approximate fill from the live quote (fills endpoint lags); books
+    # reconcile against the exchange anyway.
+    try:
+        q = demo_feed.get_ticker(symbol)
+        px = q.ask if side == "buy" else q.bid
+    except Exception:
+        px = ref_price
+    return float(px), False
+
+
 def execute_maker_or_chase(private: BlofinDemoPrivate, demo_feed, symbol: str,
                            side: str, contracts: float, limit_price: float,
                            reduce_only: bool = False) -> tuple[float, bool]:

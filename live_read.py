@@ -8,6 +8,21 @@ In came the three things a trader actually glances for:
   2. if flat, what is it waiting for — and how close is that trigger
   3. a one-line plain-English thought
 
+v3 (2026-07-23): SYMBOL-AWARE. The flaw v2 had: it only ever described
+BTC-USDT, even while Wallace was staring at BloFin's XAUT-USDT (gold) page —
+he'd see Bitcoin's price and a Bitcoin news trade next to a gold chart.
+Fixed by publishing a `symbols` map keyed by instId (BTC-USDT, XAUT-USDT,
+ETH-USDT, SOL-USDT, TSLA-USDT, + anything else the Daily Pick happens to
+hold) alongside a `global` block for the account-wide stuff (equity, goal,
+market weather, thought, the news-armed object). The extension detects what
+the viewer is actually looking at and renders THAT symbol's content.
+
+Every OLD top-level key (price, market, trend, position, armed, thesis,
+waiting, thought, ...) is KEPT VERBATIM for one deploy cycle — still BTC's
+own numbers, exactly as v2 published them — so a stale extension that hasn't
+picked up the new content.js yet keeps working unmodified. Delete the old
+keys once the new extension is confirmed live everywhere.
+
 The panel ticks the PRICE itself live (fetched by the extension every ~2s,
 straight from BloFin) and does the P&L / distance math locally against the
 entry, stop, and target this snapshot provides — so the money number moves
@@ -26,7 +41,14 @@ from strategy import atr as _atr
 from strategy import vol_gated_ma, rsi
 
 CONTRACT_SIZE = {"The Ride": 0.001, "The Strikes": 0.001,
-                 "ETH Amplifier": 0.01, "Shorts Lab": 0.001}
+                 "ETH Amplifier": 0.01, "Shorts Lab": 0.001,
+                 "The Gold Book": 0.001, "Daily Pick": 0.001}
+
+# instId -> the plain-English name the HUD shows next to it.
+DISPLAY_NAMES = {
+    "BTC-USDT": "Bitcoin", "ETH-USDT": "Ethereum", "XAUT-USDT": "Gold",
+    "SOL-USDT": "Solana", "TSLA-USDT": "Tesla",
+}
 
 
 def _annualized_vol(daily):
@@ -41,29 +63,156 @@ def _annualized_vol(daily):
     return "STORM" if pct >= 80 else ("CHOPPY" if pct >= 50 else "CALM")
 
 
+def _norm_trade(book, t, contract_size, target_label=None):
+    """Turn ANY book's open_trade dict into the one panel-ready shape every
+    position card renders (side, entry, stop, target, size). Shared by every
+    symbol below so a card looks the same whether it's BTC's The Ride or
+    Gold's donchian breakout. `contract_size` is the fallback when the trade
+    itself didn't record its own contract_value (The Ride/Strikes/Shorts Lab/
+    ETH Amplifier never do; Gold and Daily Pick always do, and that's more
+    accurate than a hardcoded constant, so it wins when present)."""
+    direction = t.get("direction", 1)
+    d = {
+        "book": book,
+        "side": "SHORT" if direction < 0 else "LONG",
+        "dir": direction,
+        "entry": t.get("entry_price"),
+        "stop": t.get("sl_price"),
+        "target": t.get("tp_price"),
+        "contracts": t.get("contracts", 0),
+        "contract_size": t.get("contract_value", contract_size),
+        "trigger": t.get("trigger", book),
+    }
+    if target_label:
+        d["target_label"] = target_label
+    return d
+
+
 def _open_position(state):
-    """Return the single open book as a panel-ready dict, or None. Checks each
-    book; the exchange nets to one position so at most one is open at a time."""
-    books = [("The Ride", state.get("open_trade")),
-             ("The Strikes", state.get("tactical", {}).get("open_trade")),
-             ("ETH Amplifier", state.get("tactical_eth", {}).get("open_trade")),
-             ("Shorts Lab", state.get("shorts_lab", {}).get("open_trade"))]
-    for name, t in books:
+    """Return BTC-USDT's single open book as a panel-ready dict, or None.
+    Checks each BTC book; the exchange nets to one position so at most one
+    is open at a time."""
+    books = [("The Ride", state.get("open_trade"), CONTRACT_SIZE["The Ride"]),
+             ("The Strikes", state.get("tactical", {}).get("open_trade"),
+              CONTRACT_SIZE["The Strikes"]),
+             ("ETH Amplifier", state.get("tactical_eth", {}).get("open_trade"),
+              CONTRACT_SIZE["ETH Amplifier"]),
+             ("Shorts Lab", state.get("shorts_lab", {}).get("open_trade"),
+              CONTRACT_SIZE["Shorts Lab"])]
+    for name, t, csize in books:
         if not t:
             continue
-        direction = t.get("direction", 1)
-        return {
-            "book": name,
-            "side": "SHORT" if direction < 0 else "LONG",
-            "dir": direction,
-            "entry": t.get("entry_price"),
-            "stop": t.get("sl_price"),
-            "target": t.get("tp_price"),
-            "contracts": t.get("contracts", 0),
-            "contract_size": CONTRACT_SIZE.get(name, 0.001),
-            "trigger": t.get("trigger", name),
-        }
+        return _norm_trade(name, t, csize)
     return None
+
+
+def _gold_status(gold_daily):
+    """The Gold Book's flat-state card: the donchian55 breakout level and
+    the EMA20 trend line, off XAUT-USDT daily candles. `gold_daily` is
+    fetched by write_live_read (one extra candles call per 60s heartbeat);
+    if that fetch failed, or there isn't 56 bars of history yet, this
+    degrades to {"mode": "unknown"} rather than raising — a gold outage
+    must never take the rest of the snapshot down with it."""
+    try:
+        if gold_daily is None or len(gold_daily) < 56:
+            return {"mode": "unknown"}
+        hi55 = gold_daily["high"].rolling(55).max().shift(1).iloc[-1]
+        if hi55 != hi55:   # NaN guard (matches this file's existing style)
+            return {"mode": "unknown"}
+        ema20 = gold_daily["close"].ewm(span=20, adjust=False).mean().iloc[-1]
+        last_close = float(gold_daily["close"].iloc[-1])
+        level_55d = round(float(hi55), 1)
+        ema20_v = round(float(ema20), 1)
+        return {
+            "mode": "waiting_breakout",
+            "level_55d": level_55d,
+            "ema20": ema20_v,
+            "last_close": round(last_close, 1),
+            "text": f"Buying a close above ${level_55d:,.0f}. "
+                    f"Trend line ${ema20_v:,.0f}.",
+        }
+    except Exception:
+        return {"mode": "unknown"}
+
+
+def _build_symbols(state, position, thesis, waiting, armed, gold_daily):
+    """The v3 payload: every instrument the bot might have on screen,
+    keyed by BloFin instId. See the module docstring for why this exists."""
+    symbols = {
+        "BTC-USDT": {
+            "display": DISPLAY_NAMES["BTC-USDT"],
+            "thesis": thesis,
+            "waiting": waiting,
+            "position": position,
+            "armed": armed,
+        },
+    }
+
+    # --- XAUT-USDT — The Gold Book --------------------------------------
+    gold_open = state.get("gold_book", {}).get("open_trade")
+    if gold_open:
+        symbols["XAUT-USDT"] = {
+            "display": DISPLAY_NAMES["XAUT-USDT"], "book": "The Gold Book",
+            "position": _norm_trade(
+                "The Gold Book", gold_open,
+                CONTRACT_SIZE["The Gold Book"], target_label="trend exit"),
+        }
+    else:
+        symbols["XAUT-USDT"] = {
+            "display": DISPLAY_NAMES["XAUT-USDT"], "book": "The Gold Book",
+            "position": None, "status": _gold_status(gold_daily),
+        }
+
+    # --- ETH-USDT — ETH Amplifier ---------------------------------------
+    eth_open = state.get("tactical_eth", {}).get("open_trade")
+    if eth_open:
+        symbols["ETH-USDT"] = {
+            "display": DISPLAY_NAMES["ETH-USDT"], "book": "ETH Amplifier",
+            "position": _norm_trade("ETH Amplifier", eth_open,
+                                    CONTRACT_SIZE["ETH Amplifier"]),
+        }
+    else:
+        symbols["ETH-USDT"] = {
+            "display": DISPLAY_NAMES["ETH-USDT"], "book": "ETH Amplifier",
+            "position": None,
+            "status": {"mode": "waiting_dip",
+                       "text": "amplifier waits for a BTC panic-dip"},
+        }
+
+    # --- Daily Pick rotation (SOL-USDT, TSLA-USDT, + whatever else it's --
+    # --- holding) — read defensively, this book may not be deployed yet --
+    dp = state.get("daily_pick", {}) or {}
+    dp_open = dp.get("open_trade")
+    dp_symbol = dp_open.get("symbol") if dp_open else None
+    rotation_status = {"mode": "rotation",
+                       "text": "in the Daily Pick rotation, scored every "
+                               "morning"}
+
+    for sym in ("SOL-USDT", "TSLA-USDT"):
+        if dp_open and dp_symbol == sym:
+            symbols[sym] = {
+                "display": DISPLAY_NAMES[sym], "book": "Daily Pick",
+                "position": _norm_trade("Daily Pick", dp_open,
+                                        CONTRACT_SIZE["Daily Pick"]),
+            }
+        else:
+            symbols[sym] = {
+                "display": DISPLAY_NAMES[sym], "book": "Daily Pick",
+                "position": None, "status": rotation_status,
+            }
+
+    # any OTHER symbol the daily pick currently holds (not one of the named
+    # ones above) still gets exposed, under its own instId
+    if dp_open and dp_symbol and dp_symbol not in symbols:
+        symbols[dp_symbol] = {
+            "display": DISPLAY_NAMES.get(dp_symbol,
+                                         dp_symbol.replace("-USDT", "")),
+            "book": "Daily Pick",
+            "position": _norm_trade("Daily Pick", dp_open,
+                                    CONTRACT_SIZE["Daily Pick"]),
+        }
+
+    return symbols
 
 
 def _thesis(champ, price, fb, r3, lo20, pop4h):
@@ -117,7 +266,7 @@ def _thesis(champ, price, fb, r3, lo20, pop4h):
 
 
 def compute_live_read(candles_1h, candles_4h, candles_1d, funding_bps,
-                      state) -> dict:
+                      state, gold_daily=None) -> dict:
     price = float(candles_1h["close"].iloc[-1])
     cv = vol_gated_ma(candles_4h, fast=20, slow=100, min_atr_pct=1.5).iloc[-1]
     champ = int(cv) if cv == cv else 0
@@ -132,12 +281,15 @@ def compute_live_read(candles_1h, candles_4h, candles_1d, funding_bps,
     pop4h = round((price / float(candles_1h["close"].iloc[-5]) - 1) * 100, 2) \
         if len(candles_1h) >= 5 else 0.0
     ledger = round(float(state.get("virtual_equity", 0) or 0), 2)
+    goal = round(float(state.get("goal", 2000) or 2000), 2)
 
     position = _open_position(state)
     thesis = _thesis(champ, price, fb, r3, lo20, pop4h)
 
     # the Newsdesk's armed/pending news trade — the HUD must NEVER say
-    # "nothing to do" while a trade is cocked and counting down
+    # "nothing to do" while a trade is cocked and counting down. Tagged with
+    # its symbol so a viewer looking at gold/ETH/etc. can still be told a
+    # BTC news trade is armed, without mistaking it for THEIR symbol's news.
     armed = None
     nd_pending = state.get("newsdesk", {}).get("pending")
     if nd_pending:
@@ -149,7 +301,7 @@ def compute_live_read(candles_1h, candles_4h, candles_1d, funding_bps,
                 "%Y-%m-%dT%H:%M:%SZ")
         except Exception:
             decision_iso = None
-        armed = {"book": "The Newsdesk",
+        armed = {"book": "The Newsdesk", "symbol": "BTC-USDT",
                  "headline": str(nd_pending.get("headline", ""))[:160],
                  "decision_ts": decision_iso}
 
@@ -196,14 +348,19 @@ def compute_live_read(candles_1h, candles_4h, candles_1d, funding_bps,
     elif armed:
         thought = "News trade ARMED — direction decides at the bar close."
     elif any(w.get("ready") for w in waiting):
-        armed = ", ".join(w["name"] for w in waiting if w.get("ready"))
-        thought = f"{armed} armed — watching for the entry."
+        armed_names = ", ".join(w["name"] for w in waiting if w.get("ready"))
+        thought = f"{armed_names} armed — watching for the entry."
     elif champ == 1:
         thought = "Trend's up. Riding, waiting for a dip to add."
     else:
         thought = "Quiet tape. Nothing to do but watch."
 
+    symbols = _build_symbols(state, position, thesis, waiting, armed,
+                             gold_daily)
+
     return {
+        # --- OLD v2 keys, kept verbatim for one deploy cycle (backward
+        # compat for a stale extension) — always BTC-USDT's own numbers ---
         "ts": datetime.now(timezone.utc).isoformat(),
         "price": round(price, 1),
         "market": market,
@@ -217,6 +374,15 @@ def compute_live_read(candles_1h, candles_4h, candles_1d, funding_bps,
         "waiting": waiting,
         "benched": benched,
         "thought": thought,
+        # --- NEW v3 keys ------------------------------------------------
+        "global": {
+            "equity": ledger,
+            "goal": goal,
+            "market": market,
+            "thought": thought,
+            "armed": armed,
+        },
+        "symbols": symbols,
     }
 
 
@@ -227,7 +393,20 @@ def write_live_read(live_feed, state, save=True):
         c4 = live_feed.get_candles("BTC-USDT", "4h", 300)
         cd = live_feed.get_candles("BTC-USDT", "1d", 400)
         fb = current_funding_bps(live_feed, "BTC-USDT")
-        snap = compute_live_read(c1, c4, cd, fb, state)
+
+        # ONE extra candles call per 60s heartbeat, for the Gold Book's
+        # flat-state levels (donchian55 high + EMA20) — see _gold_status.
+        # Isolated in its own try/except so a gold-feed hiccup degrades
+        # gold's card to {"status": {"mode": "unknown"}} and never takes
+        # down the BTC snapshot the rest of this function builds.
+        try:
+            from gold_book import SYMBOL as GOLD_SYMBOL
+            gold_daily = live_feed.get_candles(GOLD_SYMBOL, "1d", 90)
+        except Exception as e:
+            print(f"  live_read: gold candles unavailable ({str(e)[:60]})")
+            gold_daily = None
+
+        snap = compute_live_read(c1, c4, cd, fb, state, gold_daily=gold_daily)
         state["live_read"] = snap
         if save:
             save_state(state)

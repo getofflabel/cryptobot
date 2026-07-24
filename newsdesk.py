@@ -100,7 +100,7 @@ from blofin_private import BlofinDemoPrivate
 from book_ledger import attributed_position, unexplained_position
 from step45b_news_events import classify_headline
 from step5_paper_trade import (CLOUD_STATE, CONTRACT_BTC, LOT, _SB_SECRET,
-                               _sb_rpc, execute_maker_or_chase, log_event,
+                               _sb_rpc, execute_maker_or_chase, execute_market_clips, log_event,
                                notify, now_utc, record_trade_outcome,
                                save_state, write_lesson)
 
@@ -373,7 +373,7 @@ def run_newsdesk(private: BlofinDemoPrivate, live_feed, demo_feed,
             side = "sell" if t["direction"] > 0 else "buy"
             quote = demo_feed.get_ticker(SYMBOL)
             ref_price = quote.bid if side == "sell" else quote.ask
-            fill, was_maker = execute_maker_or_chase(
+            fill, was_maker = execute_market_clips(
                 private, demo_feed, SYMBOL, side, t["contracts"],
                 ref_price, reduce_only=True)
             _book_exit(state, t, fill, 2.0 if was_maker else 6.0,
@@ -460,7 +460,7 @@ def run_newsdesk(private: BlofinDemoPrivate, live_feed, demo_feed,
               f"notional at {NEWS_LEV:.0f}x sleeve leverage)")
         private.ensure_leverage(SYMBOL, NEWS_LEV, "cross")
         try:
-            entry, was_maker = execute_maker_or_chase(
+            entry, was_maker = execute_market_clips(
                 private, demo_feed, SYMBOL, side, contracts, bar_close)
         except Exception as e:
             print(f"  [NEWS ] ENTRY FAILED: {str(e)[:100]}")

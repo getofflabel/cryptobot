@@ -1,70 +1,341 @@
 <!doctype html>
 <html>
 <head>
-  <meta charset="utf-8"><title>HUD preview</title>
+  <meta charset="utf-8"><title>HUD v3 preview — symbol-aware</title>
   <link rel="stylesheet" href="panel.css">
   <style>
-    body { margin:0; min-height:100vh; display:flex; gap:60px; padding:50px;
+    body { margin:0; min-height:100vh; padding:50px; color:#cdd;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
       background-image:
         repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0 1px, transparent 1px 60px),
         repeating-linear-gradient(0deg, rgba(255,255,255,0.03) 0 1px, transparent 1px 60px),
         linear-gradient(135deg,#0e1117,#1a2332); }
+    .row { display:flex; gap:60px; flex-wrap:wrap; align-items:flex-start; }
     .slot { position: relative; }
-    #cbhud, #cbhud2 { position: relative !important; top:0!important; right:0!important; }
+    #cbhud { position: relative !important; top:0!important; right:0!important; }
     h4 { color:#889; font:600 12px system-ui; margin:0 0 12px; }
+    .note { font:400 11px/1.5 system-ui; color:#778; max-width:250px; margin-top:10px; }
+    .switcher { display:flex; gap:8px; margin-bottom:16px; }
+    .switcher button { font:700 11px system-ui; letter-spacing:0.04em;
+      padding:7px 14px; border-radius:7px; border:1px solid rgba(255,255,255,0.14);
+      background:rgba(255,255,255,0.05); color:#cfd0d4; cursor:pointer; }
+    .switcher button:hover { background:rgba(255,255,255,0.1); }
+    .switcher button.active { background:#2563eb; border-color:#2563eb; color:#fff; }
+    section { margin-bottom:56px; }
   </style>
 </head>
 <body>
-  <div class="slot"><h4>FLAT (real live data)</h4><div id="cbhud"></div></div>
-  <div class="slot"><h4>IN A SHORT (simulated, live P&amp;L)</h4><div id="cbhud2"></div></div>
+  <section>
+    <h4>SYMBOL SWITCHER — one panel, re-rendered per detected instId, from a
+      SINGLE real captured snapshot (fetched live off the bot's Supabase RPC
+      at build time, see the JSON below). This is the exact bug fix: BTC
+      shows its thesis/armed-news card, Gold shows its own waiting-breakout
+      levels, Tesla shows its own rotation status — and on Gold/Tesla you
+      can see the cross-symbol strip flagging that a BTC news trade is
+      armed elsewhere, without pretending it's THEIR news.</h4>
+    <div class="switcher">
+      <button data-sym="BTC-USDT" class="active">BTC</button>
+      <button data-sym="XAUT-USDT">XAUT</button>
+      <button data-sym="TSLA-USDT">TSLA</button>
+    </div>
+    <div class="slot"><div id="cbhud"></div></div>
+  </section>
+
+  <section>
+    <h4>REGRESSION CHECK — position cards, both symbols</h4>
+    <div class="row">
+      <div class="slot"><h4>BTC short (existing path, unchanged look)</h4><div id="cbhud2"></div></div>
+      <div class="slot"><h4>Gold long (NEW: generalized position card — target null shows "trend exit", contract_size from the book's own record)</h4><div id="cbhud3"></div></div>
+    </div>
+  </section>
+
   <script>
-    const SUPABASE_URL="https://gpgjujfkktxghqeqvrvh.supabase.co";
-    const ANON="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdwZ2p1amZra3R4Z2hxZXF2cnZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4MzUzNjQsImV4cCI6MjA5ODQxMTM2NH0.J6x9aJ83axmEHCn0cZNev7HnU37D2SY6EedqO_zwhqg";
-    const fmt=(n,d=0)=>n==null?"—":Number(n).toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d});
-    const wclass={CALM:"calm",CHOPPY:"chop",STORM:"storm"};
-    const SHELL=(id)=>`<div id="cbhud-head"><span class="cbhud-live"><span class="cbhud-dot"></span>CRYPTOBOT</span><span id="${id}-mkt" class="cbhud-mkt"></span><span id="${id}-collapse" style="cursor:pointer;color:#8a8a90">‹</span></div><div id="cbhud-price-wrap"><span id="${id}-price">—</span><span id="${id}-chg" class="cbhud-chg"></span></div><div id="${id}-body"></div>`;
-    function paint(root,pfx,state,price,open24h){
-      const g=(s)=>document.getElementById(pfx+s);
-      g("-price").textContent="$"+fmt(price,0);
-      const chg=g("-chg"); const pct=(price/open24h-1)*100;
-      chg.textContent=(pct>=0?"▲ ":"▼ ")+Math.abs(pct).toFixed(2)+"%"; chg.className="cbhud-chg "+(pct>=0?"up":"down");
-      const mkt=g("-mkt"); mkt.textContent=state.market||""; mkt.className="cbhud-mkt "+(wclass[state.market]||"");
-      const pos=state.position; let html="";
-      if(pos&&pos.entry){
-        const size=pos.contracts*pos.contract_size, pnl=(price-pos.entry)*size*pos.dir, pnlPct=((price/pos.entry-1)*100)*pos.dir, win=pnl>=0, cls=win?"up":"down";
-        const dist=(l)=>l?((l/price-1)*100).toFixed(2)+"%":"—";
-        let prog=0; if(pos.target){const span=Math.abs(pos.target-pos.entry)||1; prog=Math.max(0,Math.min(100,(Math.abs(price-pos.entry)/span)*100*(win?1:0)));}
-        html=`<div class="cbhud-postop"><span class="cbhud-side ${pos.dir<0?"short":"long"}">${pos.side}</span><span class="cbhud-book">${pos.book}</span></div>
-        <div class="cbhud-pnl ${cls}">${win?"+":"−"}$${fmt(Math.abs(pnl),2)}<span class="cbhud-pnlpct">${win?"+":""}${pnlPct.toFixed(2)}%</span></div>
-        <div class="cbhud-lvls"><div class="cbhud-lvl"><span>entry</span><b>$${fmt(pos.entry,0)}</b></div>
-        <div class="cbhud-lvl"><span>stop</span><b>$${fmt(pos.stop,0)}</b><i>${dist(pos.stop)}</i></div>
-        <div class="cbhud-lvl"><span>target</span><b>${pos.target?"$"+fmt(pos.target,0):"trail"}</b><i>${dist(pos.target)}</i></div></div>
-        ${pos.target?`<div class="cbhud-bar"><div class="cbhud-bar-fill ${cls}" style="width:${prog}%"></div></div>`:""}
-        <div class="cbhud-thought">${state.thought||""}</div>`;
-      } else if(state.thesis){
-        const th=state.thesis, cc=th.conviction>=60?"hi":(th.conviction>=40?"mid":"lo");
-        html=`<div class="cbhud-flat">IF I TRADED NOW</div>
-        <div class="cbhud-postop"><span class="cbhud-side ${th.side==="SHORT"?"short":"long"}">${th.side}</span><span class="cbhud-book">${th.book}</span><span class="cbhud-rr">R:R ${th.rr}:1</span></div>
-        <div class="cbhud-lvls"><div class="cbhud-lvl"><span>entry</span><b>$${fmt(th.entry,0)}</b><i>market</i></div>
-        <div class="cbhud-lvl"><span>TP</span><b>$${fmt(th.tp,0)}</b><i class="up">${th.side==="SHORT"?"−":"+"}${th.reward_pct}%</i></div>
-        <div class="cbhud-lvl"><span>SL</span><b>$${fmt(th.sl,0)}</b><i class="down">${th.side==="SHORT"?"+":"−"}${th.risk_pct}%</i></div></div>
-        <div class="cbhud-conv"><div class="cbhud-conv-h"><span>conviction</span><b class="${cc}">${th.conviction}%</b></div><div class="cbhud-pbar"><div class="cbhud-pbar-fill ${cc}" style="width:${th.conviction}%"></div></div></div>
-        <div class="cbhud-why">${th.why}</div><div class="cbhud-thought">${state.thought||""}</div>`;
-      } else { html=`<div class="cbhud-flat">FLAT</div>`; }
-      html+=`<div class="cbhud-stamp">bot read 4s ago · price live</div>`;
-      g("-body").innerHTML=html;
+    // ---- the real snapshot, captured 2026-07-24 off the bot's live
+    // Supabase RPC (cryptobot_live_read) via write_live_read(..., save=False)
+    // — a read-only compute, nothing written back to the bot's state. -----
+    const REAL_SNAPSHOT = {
+  "ts": "2026-07-24T02:06:37.878674+00:00",
+  "price": 65057.6,
+  "market": "CALM",
+  "trend": "FLAT/DOWN",
+  "ledger": 1468.58,
+  "funding_bps": 1.63,
+  "atr1h_pct": 0.42,
+  "position": null,
+  "armed": {
+    "book": "The Newsdesk",
+    "symbol": "BTC-USDT",
+    "headline": "[WatcherGuru] JUST IN: \ud83c\uddfa\ud83c\uddf8 President Trump says the US is leading China and all other countries by a lot in AI crypto. We want to stay in front in crypto. @Watch",
+    "decision_ts": "2026-07-24T02:00:00Z"
+  },
+  "thesis": {
+    "side": "SHORT",
+    "book": "Shorts Lab",
+    "entry": 65057.6,
+    "tp": 61759.2,
+    "sl": 66157.1,
+    "risk_pct": 1.69,
+    "reward_pct": 5.07,
+    "rr": 3.0,
+    "conviction": 51,
+    "why": "Downtrend; funding +1.6bp (hot); 0.65% above breakdown."
+  },
+  "waiting": [
+    {
+      "name": "The Ride",
+      "text": "trend flat \u2014 standing aside",
+      "kind": "trend",
+      "ready": false
+    },
+    {
+      "name": "The Strikes",
+      "text": "asleep \u2014 needs an uptrend",
+      "kind": "none",
+      "ready": false
+    },
+    {
+      "name": "Shorts Lab",
+      "text": "short: needs funding > +2.0 + breakdown",
+      "now": 1.63,
+      "need": 2.0,
+      "kind": "funding",
+      "level": 64636.0,
+      "ready": false
     }
-    document.getElementById("cbhud").innerHTML=SHELL("cb1");
-    document.getElementById("cbhud2").innerHTML=SHELL("cb2");
-    fetch(`${SUPABASE_URL}/rest/v1/rpc/cryptobot_live_read`,{method:"POST",headers:{apikey:ANON,Authorization:`Bearer ${ANON}`,"Content-Type":"application/json"},body:"{}"})
-      .then(r=>r.json()).then(state=>{
-        const price=state.price||64745, open=price*0.997;
-        paint(null,"cb1",state,price,open);
-        // simulated SHORT for the P&L card
-        const posState={...state,market:"STORM",thought:"Riding the lab short — managing it.",
-          position:{book:"Shorts Lab",side:"SHORT",dir:-1,entry:65200,stop:66300,target:61900,contracts:1.4,contract_size:0.001,trigger:"cascade_short"}};
-        paint(null,"cb2",posState,63980,65900);
+  ],
+  "benched": [],
+  "thought": "News trade ARMED \u2014 direction decides at the bar close.",
+  "global": {
+    "equity": 1468.58,
+    "goal": 3000.0,
+    "market": "CALM",
+    "thought": "News trade ARMED \u2014 direction decides at the bar close.",
+    "armed": {
+      "book": "The Newsdesk",
+      "symbol": "BTC-USDT",
+      "headline": "[WatcherGuru] JUST IN: \ud83c\uddfa\ud83c\uddf8 President Trump says the US is leading China and all other countries by a lot in AI crypto. We want to stay in front in crypto. @Watch",
+      "decision_ts": "2026-07-24T02:00:00Z"
+    }
+  },
+  "symbols": {
+    "BTC-USDT": {
+      "display": "Bitcoin",
+      "thesis": {
+        "side": "SHORT",
+        "book": "Shorts Lab",
+        "entry": 65057.6,
+        "tp": 61759.2,
+        "sl": 66157.1,
+        "risk_pct": 1.69,
+        "reward_pct": 5.07,
+        "rr": 3.0,
+        "conviction": 51,
+        "why": "Downtrend; funding +1.6bp (hot); 0.65% above breakdown."
+      },
+      "waiting": [
+        {
+          "name": "The Ride",
+          "text": "trend flat \u2014 standing aside",
+          "kind": "trend",
+          "ready": false
+        },
+        {
+          "name": "The Strikes",
+          "text": "asleep \u2014 needs an uptrend",
+          "kind": "none",
+          "ready": false
+        },
+        {
+          "name": "Shorts Lab",
+          "text": "short: needs funding > +2.0 + breakdown",
+          "now": 1.63,
+          "need": 2.0,
+          "kind": "funding",
+          "level": 64636.0,
+          "ready": false
+        }
+      ],
+      "position": null,
+      "armed": {
+        "book": "The Newsdesk",
+        "symbol": "BTC-USDT",
+        "headline": "[WatcherGuru] JUST IN: \ud83c\uddfa\ud83c\uddf8 President Trump says the US is leading China and all other countries by a lot in AI crypto. We want to stay in front in crypto. @Watch",
+        "decision_ts": "2026-07-24T02:00:00Z"
+      }
+    },
+    "XAUT-USDT": {
+      "display": "Gold",
+      "book": "The Gold Book",
+      "position": null,
+      "status": {
+        "mode": "waiting_breakout",
+        "level_55d": 4571.5,
+        "ema20": 4063.7,
+        "last_close": 4045.1,
+        "text": "Buying a close above $4,572. Trend line $4,064."
+      }
+    },
+    "ETH-USDT": {
+      "display": "Ethereum",
+      "book": "ETH Amplifier",
+      "position": null,
+      "status": {
+        "mode": "waiting_dip",
+        "text": "amplifier waits for a BTC panic-dip"
+      }
+    },
+    "SOL-USDT": {
+      "display": "Solana",
+      "book": "Daily Pick",
+      "position": null,
+      "status": {
+        "mode": "rotation",
+        "text": "in the Daily Pick rotation, scored every morning"
+      }
+    },
+    "TSLA-USDT": {
+      "display": "Tesla",
+      "book": "Daily Pick",
+      "position": null,
+      "status": {
+        "mode": "rotation",
+        "text": "in the Daily Pick rotation, scored every morning"
+      }
+    }
+  }
+};
+
+    const $ = (id) => document.getElementById(id);
+    const fmt = (n, d = 0) => (n == null ? "—" : Number(n).toLocaleString(undefined, { minimumFractionDigits: d, maximumFractionDigits: d }));
+    const wclass = { CALM: "calm", CHOPPY: "chop", STORM: "storm" };
+    const DISPLAY_FALLBACK = { "BTC-USDT": "Bitcoin", "XAUT-USDT": "Gold", "ETH-USDT": "Ethereum", "SOL-USDT": "Solana", "TSLA-USDT": "Tesla" };
+    const PRICE_DECIMALS = { "BTC-USDT": 0, "XAUT-USDT": 1, "ETH-USDT": 1, "SOL-USDT": 2, "TSLA-USDT": 2 };
+
+    const SHELL = (id) => `<div id="cbhud-head"><span class="cbhud-live"><span class="cbhud-dot"></span>CRYPTOBOT</span><span id="${id}-sym" class="cbhud-sym"></span><span id="${id}-mkt" class="cbhud-mkt"></span><span id="${id}-collapse" style="cursor:pointer;color:#8a8a90">‹</span></div><div id="${id}-price-wrap" style="display:flex;align-items:baseline;gap:8px;padding:11px 12px 9px"><span id="${id}-price">—</span><span id="${id}-chg" class="cbhud-chg"></span></div><div id="${id}-body"></div>`;
+
+    function fmtLocalTime(iso) {
+      if (!iso) return null;
+      try { return new Date(iso).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }); } catch (_) { return null; }
+    }
+
+    function renderArmedStrip(armedGlobal) {
+      if (!armedGlobal) return "";
+      const when = fmtLocalTime(armedGlobal.decision_ts);
+      return `<div class="cbhud-newsstrip">📰 BTC news trade armed${when ? " · decides " + when : ""}</div>`;
+    }
+
+    function renderPositionCard(pos, price, thoughtLine) {
+      const size = pos.contracts * pos.contract_size;
+      const pnl = (price - pos.entry) * size * pos.dir;
+      const pnlPct = ((price / pos.entry - 1) * 100) * pos.dir;
+      const win = pnl >= 0, cls = win ? "up" : "down";
+      const dist = (lvl) => lvl ? (((lvl / price - 1) * 100)).toFixed(2) + "%" : "—";
+      let prog = 0;
+      if (pos.target) { const span = Math.abs(pos.target - pos.entry) || 1; prog = Math.max(0, Math.min(100, (Math.abs(price - pos.entry) / span) * 100 * (win ? 1 : 0))); }
+      const targetLabel = pos.target_label || "trail";
+      return `<div class="cbhud-postop"><span class="cbhud-side ${pos.dir < 0 ? "short" : "long"}">${pos.side}</span><span class="cbhud-book">${pos.book}</span></div>
+        <div class="cbhud-pnl ${cls}">${win ? "+" : "−"}$${fmt(Math.abs(pnl), 2)}<span class="cbhud-pnlpct">${win ? "+" : ""}${pnlPct.toFixed(2)}%</span></div>
+        <div class="cbhud-lvls"><div class="cbhud-lvl"><span>entry</span><b>$${fmt(pos.entry, 0)}</b></div>
+        <div class="cbhud-lvl"><span>stop</span><b>$${fmt(pos.stop, 0)}</b><i>${dist(pos.stop)}</i></div>
+        <div class="cbhud-lvl"><span>target</span><b>${pos.target ? "$" + fmt(pos.target, 0) : targetLabel}</b><i>${dist(pos.target)}</i></div></div>
+        ${pos.target ? `<div class="cbhud-bar"><div class="cbhud-bar-fill ${cls}" style="width:${prog}%"></div></div>` : ""}
+        <div class="cbhud-thought">${thoughtLine || ""}</div>`;
+    }
+
+    // ---- the symbol-switcher panel: exact same branching as content.js's
+    // paintBody, given a fixed detected instId instead of live URL sniffing.
+    function paintSwitcher(instId) {
+      const symData = REAL_SNAPSHOT.symbols[instId];
+      const marketWeather = REAL_SNAPSHOT.global.market;
+      $("cbhud-sym").textContent = "· " + ((symData && symData.display) || DISPLAY_FALLBACK[instId] || instId);
+      $("cbhud-mkt").textContent = marketWeather || "";
+      $("cbhud-mkt").className = "cbhud-mkt " + (wclass[marketWeather] || "");
+      const price = instId === "BTC-USDT" ? REAL_SNAPSHOT.price
+        : (symData && symData.position ? symData.position.entry : null);
+      $("cbhud-price").textContent = price != null ? "$" + fmt(price, PRICE_DECIMALS[instId] ?? 2) : "—";
+      $("cbhud-chg").textContent = "";
+
+      const armedGlobal = REAL_SNAPSHOT.global.armed;
+      const pos = symData && symData.position;
+      let strip = instId !== "BTC-USDT" ? renderArmedStrip(armedGlobal) : "";
+      let html = "";
+
+      if (pos && pos.entry) {
+        html = renderPositionCard(pos, price, `In a ${pos.side.toLowerCase()} (${pos.book}), managing it.`);
+      } else if (instId === "BTC-USDT") {
+        const thought = REAL_SNAPSHOT.global.thought;
+        if (armedGlobal) {
+          let when = "at the bar close";
+          const d = fmtLocalTime(armedGlobal.decision_ts);
+          if (d) when = "at " + d;
+          html = `<div class="cbhud-flat">📰 NEWS TRADE ARMED</div>
+            <div class="cbhud-why" style="margin-top:2px">${(armedGlobal.headline || "").replace(/^\[WatcherGuru\]\s*/, "")}</div>
+            <div class="cbhud-mini" style="margin-top:8px">Direction decides ${when}, then it enters with a 1.2% stop, 2.4% target.</div>
+            <div class="cbhud-thought">${thought || ""}</div>`;
+        } else if (symData && symData.thesis) {
+          const th = symData.thesis, cc = th.conviction >= 60 ? "hi" : (th.conviction >= 40 ? "mid" : "lo");
+          html = `<div class="cbhud-flat">IF I TRADED NOW</div>
+            <div class="cbhud-postop"><span class="cbhud-side ${th.side === "SHORT" ? "short" : "long"}">${th.side}</span><span class="cbhud-book">${th.book}</span><span class="cbhud-rr">R:R ${th.rr}:1</span></div>
+            <div class="cbhud-lvls"><div class="cbhud-lvl"><span>entry</span><b>$${fmt(th.entry, 0)}</b><i>market</i></div>
+            <div class="cbhud-lvl"><span>TP</span><b>$${fmt(th.tp, 0)}</b><i class="up">${th.side === "SHORT" ? "−" : "+"}${th.reward_pct}%</i></div>
+            <div class="cbhud-lvl"><span>SL</span><b>$${fmt(th.sl, 0)}</b><i class="down">${th.side === "SHORT" ? "+" : "−"}${th.risk_pct}%</i></div></div>
+            <div class="cbhud-conv"><div class="cbhud-conv-h"><span>conviction</span><b class="${cc}">${th.conviction}%</b></div><div class="cbhud-pbar"><div class="cbhud-pbar-fill ${cc}" style="width:${th.conviction}%"></div></div></div>
+            <div class="cbhud-why">${th.why}</div><div class="cbhud-thought">${thought || ""}</div>`;
+        } else {
+          html = `<div class="cbhud-flat">FLAT · watching the tape</div><div class="cbhud-thought">${thought || ""}</div>`;
+        }
+      } else if (instId === "XAUT-USDT") {
+        const status = symData && symData.status;
+        if (status && status.mode === "waiting_breakout") {
+          html = `<div class="cbhud-flat">GOLD · WAITING FOR BREAKOUT</div>
+            <div class="cbhud-lvls"><div class="cbhud-lvl"><span>buy above</span><b>$${fmt(status.level_55d, 0)}</b></div>
+            <div class="cbhud-lvl"><span>trend line</span><b>$${fmt(status.ema20, 0)}</b></div></div>
+            <div class="cbhud-thought">${status.text || ""}</div>`;
+        } else {
+          html = `<div class="cbhud-flat">GOLD</div><div class="cbhud-thought">watching XAUT-USDT. levels unavailable right now.</div>`;
+        }
+      } else if (symData) {
+        const status = symData.status;
+        html = `<div class="cbhud-flat">${(symData.display || instId).toUpperCase()}</div><div class="cbhud-thought">${(status && status.text) || "watching the tape"}</div>`;
+      }
+
+      html += `<div class="cbhud-stamp">bot read a few seconds ago · price live</div>`;
+      $("cbhud-body").innerHTML = strip + html;
+    }
+
+    document.getElementById("cbhud").innerHTML = SHELL("cbhud");
+    document.querySelectorAll(".switcher button").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".switcher button").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        paintSwitcher(btn.dataset.sym);
       });
+    });
+    paintSwitcher("BTC-USDT");
+
+    // ---- regression-check panels: simulated positions -------------------
+    document.getElementById("cbhud2").innerHTML = SHELL("cbhud2");
+    document.getElementById("cbhud3").innerHTML = SHELL("cbhud3");
+
+    (function () {
+      $("cbhud2-sym").textContent = "· Bitcoin";
+      $("cbhud2-mkt").textContent = "STORM"; $("cbhud2-mkt").className = "cbhud-mkt storm";
+      const price = 63980;
+      $("cbhud2-price").textContent = "$" + fmt(price, 0);
+      const pos = { book: "Shorts Lab", side: "SHORT", dir: -1, entry: 65200, stop: 66300, target: 61900, contracts: 1.4, contract_size: 0.001 };
+      $("cbhud2-body").innerHTML = renderPositionCard(pos, price, "Riding the lab short, managing it.")
+        + `<div class="cbhud-stamp">bot read 4s ago · price live</div>`;
+    })();
+
+    (function () {
+      $("cbhud3-sym").textContent = "· Gold";
+      $("cbhud3-mkt").textContent = "CALM"; $("cbhud3-mkt").className = "cbhud-mkt calm";
+      const price = 4610;
+      $("cbhud3-price").textContent = "$" + fmt(price, 1);
+      const pos = { book: "The Gold Book", side: "LONG", dir: 1, entry: 4580.0, stop: 3755.6, target: null, target_label: "trend exit", contracts: 12, contract_size: 0.001 };
+      $("cbhud3-body").innerHTML = renderPositionCard(pos, price, "In a long (The Gold Book), managing it.")
+        + `<div class="cbhud-stamp">bot read 4s ago · price live</div>`;
+    })();
   </script>
 </body>
 </html>

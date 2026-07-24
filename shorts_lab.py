@@ -59,7 +59,7 @@ from datetime import datetime, timezone
 from blofin_private import BlofinDemoPrivate
 from book_ledger import attributed_position, unexplained_position
 from step5_paper_trade import (CONTRACT_BTC, LOT, current_funding_bps,
-                               execute_maker_or_chase, log_event, notify,
+                               execute_maker_or_chase, execute_market_clips, log_event, notify,
                                now_utc, record_trade_outcome,
                                recent_news_headline, save_state, write_lesson)
 from strategy import atr as _atr
@@ -323,7 +323,7 @@ def run_lab(private: BlofinDemoPrivate, live_feed, demo_feed, state: dict,
                 return {"action": "would_time_exit", "contracts": t["contracts"]}
             _cleanup_orders(private, SYMBOL, t)
             quote = demo_feed.get_ticker(SYMBOL)
-            fill, was_maker = execute_maker_or_chase(
+            fill, was_maker = execute_market_clips(
                 private, demo_feed, SYMBOL, "buy", t["contracts"],
                 quote.ask, reduce_only=True)
             _book_exit(state, t, fill, 2.0 if was_maker else 6.0,
@@ -418,7 +418,7 @@ def run_lab(private: BlofinDemoPrivate, live_feed, demo_feed, state: dict,
     # set THIS trade's leverage before opening (was the silent-fail bug)
     private.ensure_leverage(SYMBOL, LAB_LEV, "cross")
     try:
-        entry, was_maker = execute_maker_or_chase(
+        entry, was_maker = execute_market_clips(
             private, demo_feed, SYMBOL, "sell", contracts, last_close)
     except Exception as e:
         print(f"  [LAB ] ENTRY FAILED: {str(e)[:100]}")

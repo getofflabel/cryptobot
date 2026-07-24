@@ -34,7 +34,7 @@ import config
 from blofin_private import BlofinDemoPrivate
 from book_ledger import attributed_position
 from step5_paper_trade import (CONTRACT_BTC, LOT, MAX_ENTRY_FUNDING_BPS,
-                               current_funding_bps, execute_maker_or_chase,
+                               current_funding_bps, execute_maker_or_chase, execute_market_clips,
                                log_event, notify, now_utc,
                                record_trade_outcome, save_state)
 from strategy import rsi, vol_gated_ma
@@ -249,7 +249,7 @@ def tactical_cycle(private: BlofinDemoPrivate, live_feed, demo_feed,
         if held_h >= MAX_HOLD_H:
             _cleanup_orders(private, symbol, t)
             quote = demo_feed.get_ticker(symbol)
-            fill, was_maker = execute_maker_or_chase(
+            fill, was_maker = execute_market_clips(
                 private, demo_feed, symbol, "sell", t["contracts"],
                 quote.bid, reduce_only=True)
             _book_exit(state, t, fill, 2.0 if was_maker else 6.0, "48h time")
@@ -300,7 +300,7 @@ def tactical_cycle(private: BlofinDemoPrivate, live_feed, demo_feed,
           f"(~${notional:,.0f} notional at {trig_lev:.0f}x sleeve leverage)")
     private.ensure_leverage(symbol, trig_lev, "cross")   # per-trade leverage
     try:
-        entry, was_maker = execute_maker_or_chase(
+        entry, was_maker = execute_market_clips(
             private, demo_feed, symbol, "buy", contracts, last_close)
     except Exception as e:
         print(f"  [TACT] ENTRY FAILED: {str(e)[:100]}")
@@ -379,7 +379,7 @@ def amplifier_cycle(private: BlofinDemoPrivate, live_feed, demo_feed,
         if held_h >= MAX_HOLD_H:
             _cleanup_orders(private, sym, t)
             quote = demo_feed.get_ticker(sym)
-            fill, was_maker = execute_maker_or_chase(
+            fill, was_maker = execute_market_clips(
                 private, demo_feed, sym, "sell", t["contracts"],
                 quote.bid, reduce_only=True)
             _book_slot_exit(state, key, cfg, t, fill,
@@ -410,7 +410,7 @@ def amplifier_cycle(private: BlofinDemoPrivate, live_feed, demo_feed,
           f"(~${notional:,.0f} notional at {cfg['lev']:.0f}x slot leverage)")
     private.ensure_leverage(sym, cfg["lev"], "cross")    # per-trade leverage
     try:
-        entry, was_maker = execute_maker_or_chase(
+        entry, was_maker = execute_market_clips(
             private, demo_feed, sym, "buy", contracts, last_close)
     except Exception as e:
         print(f"  [AMP ] ENTRY FAILED: {str(e)[:100]}")
