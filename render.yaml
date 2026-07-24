@@ -18,3 +18,9 @@ services:
         sync: false
       - key: BLOFIN_DEMO_PASSPHRASE
         sync: false
+
+  - type: web
+    name: cryptobot-pnl
+    runtime: static
+    buildCommand: ""
+    staticPublishPath: ./dashboard
