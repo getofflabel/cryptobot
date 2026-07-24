@@ -130,7 +130,7 @@ SPX = "SPY"
 # 2026-07-24) — it left this paper universe the same day it briefly joined.
 UNIVERSE = [OIL, SPX]
 NICE_NAMES = {OIL: "oil", SPX: "the S&P 500"}
-FUTURES = {GOLD, OIL}          # 2bp/leg fee tier; SPX (SPY) is 1bp/leg
+FUTURES = {OIL}                # 2bp/leg fee tier; SPX (SPY) is 1bp/leg
 
 # ---------------------------------------------------------------------------
 # cadence / concurrency (SLOT_INTERVAL_H comes along for free via the
