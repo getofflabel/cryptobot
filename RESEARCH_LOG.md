@@ -541,3 +541,19 @@ structure trailing vs context veto vs ATR brackets. FINDINGS:
 Erosion ~+25. Owner's exit philosophy now sealed-validated on TWO live
 books (gold R59 4x, news R65 sign-flip); "pre-known % targets" retired
 from both.
+
+## ROUND 66 — the scenario mind (2026-07-24)
+5-axis classifier x 8 tools x 6y. CELL FINDINGS (train/val, floors met):
+T6 forensic-short EXISTS ONLY in violent+crowded-long (val +$193.25/t
+n=8 — the tool IS the scenario); T3 CHoCH concentrates in NY session
+(val +$383.85/t n=13, round's biggest); T4 donchian20 rehabilitated in
+ranging+normal+London/NY (val +$93.11 n=15) though dead overall; T7
+vol-shock is scenario-AGNOSTIC (17/26 cells hot); T5 strikes = trending
+-up + weekends, FADES in NY/London sessions. ROUTER v1 FAILED HONESTLY:
+OR-union construction too permissive (cut ~0 trades for 7/8 tools),
+beaten by the dumb-cell control — construction artifact, cells remain
+real. AXES: CROWD & VOL load-bearing (-$4.04/-$3.71 per trade when
+removed); SESSION dilutes routing despite big single cells; TREND/NEWS
+negligible marginal router value. NO looks spent (cells n=8-15 = too
+thin for sealed verdicts — quarantined until they fatten). NEXT: R68
+router v2 (intersection/single-best-cell construction).
