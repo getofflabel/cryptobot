@@ -88,14 +88,29 @@ def main():
           f"sleeps.", flush=True)
     try:
         boot_px = live_feed.get_ticker(symbol).last   # proves BloFin reachable
-        from step5_paper_trade import log_event, notify
+        from step5_paper_trade import log_event, notify, load_state, save_state
         log_event({"action": "daemon_boot", "host": "render",
                    "price": boot_px})
-        notify("🖥️ 24/7 worker ONLINE",
-               f"Render daemon live, BTC ${boot_px:,.0f}. Watching every "
-               f"{POLL_SECONDS}s, never sleeps. (demo)")
-        print(f"  boot heartbeat sent — BloFin reachable, BTC ${boot_px:,.0f}",
-              flush=True)
+        # PHONE ALERT GATE: only ping on boot if the last boot-ping was >2h
+        # ago. Routine redeploys (minutes apart) must NOT spam the phone with
+        # "worker online" price messages — that noise is what buried the real
+        # trade alerts. A genuine outage recovery (long gap) still notifies.
+        try:
+            st = load_state()
+            last = st.get("last_boot_notify")
+            gap_ok = True
+            if last:
+                gap_ok = (_now() - datetime.fromisoformat(last)
+                          ).total_seconds() > 7200
+            if gap_ok:
+                notify("🖥️ Bot back online",
+                       "Restarted and watching again. Alerts only fire now "
+                       "for real events: trades, fills, big moves. (demo)")
+                st["last_boot_notify"] = _now().isoformat()
+                save_state(st)
+        except Exception:
+            pass
+        print(f"  boot ok — BloFin reachable, BTC ${boot_px:,.0f}", flush=True)
     except Exception as e:
         print(f"  BOOT WARNING — BloFin unreachable from Render: "
               f"{str(e)[:120]}", flush=True)
