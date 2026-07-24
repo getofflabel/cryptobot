@@ -346,17 +346,32 @@ def test_d_unexplained_vs_recorded_short():
     """An unclaimed short (net -10, no book records it anywhere) makes the
     lab adopt it. The SAME net, but fully explained by the lab's own
     recorded short, must NOT re-trigger adoption."""
-    # -- case 1: nobody claims it -> adopt --------------------------------
+    # -- case 1: nobody claims it -> TWO-SIGHTING adoption (2026-07-24:
+    #    instant adoption let a save-lag ghost get "adopted" as a phantom;
+    #    now the first sighting only ARMS, and adoption needs the same
+    #    unexplained short seen again >=5 minutes later) ------------------
     state1 = make_state()
     private1 = FakePrivate(net=-10.0)
     live_feed = FakeLiveFeed()
     shorts_lab.vol_gated_ma = lambda *a, **kw: pd.Series([1])  # stand down
                                                                # right after
+    r1 = shorts_lab.run_lab(private1, live_feed, live_feed, state1)
+    assert state1["shorts_lab"]["open_trade"] is None, \
+        "first sighting must NOT adopt (ghost guard)"
+    assert state1["shorts_lab"].get("pending_adoption") is not None, \
+        "first sighting must arm pending_adoption"
+    assert r1["action"] == "adoption_pending"
+    # backdate the sighting past the 5-minute confirmation window
+    from datetime import datetime, timezone, timedelta
+    state1["shorts_lab"]["pending_adoption"]["ts"] = (
+        datetime.now(timezone.utc) - timedelta(minutes=6)).isoformat()
     shorts_lab.run_lab(private1, live_feed, live_feed, state1)
     assert state1["shorts_lab"]["open_trade"] is not None, \
-        "an unclaimed short must be adopted"
+        "a twice-confirmed unclaimed short must be adopted"
     assert abs(state1["shorts_lab"]["open_trade"]["contracts"] - 10.0) < 1e-9
     assert state1["shorts_lab"]["open_trade"]["trigger"] == "adopted"
+    assert state1["shorts_lab"].get("pending_adoption") is None, \
+        "the pending stamp must be consumed on adoption"
 
     # -- case 2: the lab's own record already explains all of net --------
     recorded_lab = lab_trade(10.0, trigger="forensic_short")

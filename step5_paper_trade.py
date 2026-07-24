@@ -177,14 +177,32 @@ def load_state() -> dict:
 
 
 def save_state(state: dict):
+    # 2026-07-24 GHOST-FACTORY FIX: a single transient Supabase timeout here
+    # used to "fall back to file" — but on Render the file is EPHEMERAL and
+    # the next load_state reads the CLOUD, so the save was silently LOST.
+    # That is exactly how the newsdesk's 13:31 exit stayed on the books as a
+    # ghost +67.7 long, whose mirror the Shorts Lab then "adopted" as a
+    # phantom short on Wallace's screen. Now: 3 attempts with backoff, and
+    # if the cloud still can't be written we SAY SO LOUDLY — a failed state
+    # save is a books-vs-reality fork, never a shrug.
     if CLOUD_STATE:
+        last = None
+        for attempt in range(3):
+            try:
+                _sb_rpc("cryptobot_set_state",
+                        {"secret": _SB_SECRET, "payload": state})
+                return
+            except Exception as e:
+                last = e
+                time.sleep(1.5)
+        print(f"  CLOUD STATE SAVE FAILED 3x: {str(last)[:80]}")
         try:
-            _sb_rpc("cryptobot_set_state",
-                    {"secret": _SB_SECRET, "payload": state})
-            return
-        except Exception as e:
-            print(f"  (cloud state save failed, falling back to file: "
-                  f"{str(e)[:60]})")
+            notify("🚨 book-keeping save FAILED (demo)",
+                   "The bot couldn't save its books to the cloud after 3 "
+                   "tries — its records may briefly disagree with BloFin "
+                   "until the next successful cycle.")
+        except Exception:
+            pass
     with open(STATE_FILE, "w") as f:
         json.dump(state, f, indent=1)
 

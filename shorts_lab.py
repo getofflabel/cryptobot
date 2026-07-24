@@ -281,8 +281,33 @@ def run_lab(private: BlofinDemoPrivate, live_feed, demo_feed, state: dict,
     # apprentice) has already claimed in its own record.
     elif not t and unexplained < -LOT / 2:
         adopted_ct = round(-unexplained, 1)
+        # TWO-SIGHTING CONFIRMATION (2026-07-24): an "unexplained short" can
+        # be a GHOST — if another book's exit-save is lost to a transient
+        # cloud timeout, its stale record makes the ledger see a mirror-image
+        # phantom (exactly how the lab "adopted" a -67.7ct short that never
+        # existed on the fill tape, and Wallace's screen showed a Bitcoin
+        # trade he wasn't in). Adoption now requires the SAME unexplained
+        # short to be seen on two cycles >=5 minutes apart — a real orphan
+        # persists; a save-lag ghost heals itself before the second look.
+        pend = lab.get("pending_adoption")
+        now_s = datetime.now(timezone.utc)
+        if pend and abs(pend.get("contracts", 0) - adopted_ct) <= LOT:
+            age_min = (now_s - datetime.fromisoformat(pend["ts"])
+                       ).total_seconds() / 60
+            confirmed = age_min >= 5
+        else:
+            confirmed = False
+            if not dry:
+                lab["pending_adoption"] = {"contracts": adopted_ct,
+                                           "ts": now_s.isoformat()}
+                save_state(state)
+            print(f"  [LAB{tag}] unexplained short {adopted_ct:.1f} ct seen — "
+                  f"awaiting second sighting before adopting (ghost guard)")
+        if not confirmed:
+            return {"action": "adoption_pending", "contracts": adopted_ct}
+        lab.pop("pending_adoption", None)
         print(f"  [LAB{tag}] UNEXPECTED net short {adopted_ct:.1f} ct on "
-              f"the exchange (unclaimed by any book) — adopting")
+              f"the exchange (unclaimed by any book, CONFIRMED twice) — adopting")
         if dry:
             print("  [LAB DRY] would adopt this position into state — no "
                   "state changes made")
