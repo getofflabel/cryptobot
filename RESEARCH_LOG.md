@@ -433,3 +433,16 @@ Sessions (London/NY/Asia) 0/6; pullback-in-trend 0/16; shorts 0/36.
 Bonus: donchian+EMA20exit fractals to 1h (152/55t) and 4h (41/17t)
 two-window — un-looked (thin-window discipline). GOLD PLAYBOOK STANDS:
 breakout trend-following is gold's one proven native language.
+
+## ROUND 58 — divergences/oscillators/MTF (2026-07-24)
+180 configs. ★ THIRD VALIDATED EDGE: 4h HIDDEN RSI divergence (RSI14, k8
+swings, buf 0.35%, tgt 3x, hold 48h; champion-gated continuation longs+
+shorts-mirror-in-downtrend): train $74.22/t x66, val $31.99/t x24, 7/16
+neighbor cluster -> ONE sealed look (erosion ~+18): 24t, +$52.03/t,
++12.5%, DD -15.5% ACROSS THE DROUGHT WINDOW. PASS. Deploying as a live
+book. Regular (reversal) divergences: 1/96 = noise, buried. Oscillator
+overlays on donchian: mostly sample-cutters (ADX>=20 tight-exit variant
+the lone narrow win). MTF ladder: monotonic improvement (val $4.59 ->
+$5.47 -> $56.42 stacking bias+trigger) but full-alignment n=12 val =
+floor-thin -> WATCH LIST, no look spent. 15m cost floor reconfirmed
+structural (8.5-9.5bps realized vs ~9-10 floor).

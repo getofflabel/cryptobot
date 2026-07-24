@@ -8,7 +8,9 @@ no vibes.
 - Personality: 24/7, no sessions, news reacts instantly (1.33x baseline
   after WatcherGuru posts — the news edge's home). Volatility DECAYS
   era-over-era: hourly ATR medians fell ~0.9% -> ~0.45% across 6y.
-- What works (validated): 4h trend w/ STRICT 1.5% vol gate (the gate's
+- What works (validated): 4h HIDDEN RSI divergence (continuation entries
+  at higher-low/RSI-lower-low inside trend — sealed +$52/t through the
+  drought, ~18/yr, the toolkit's first sealed graduate), 4h trend w/ STRICT 1.5% vol gate (the gate's
   selectivity IS the edge in grinds — R54 sealed proof), 1h RSI3 dip-buys
   in uptrends (needs 48h room — same-day exits kill it, R43), news
   momentum (first-hour direction, sealed PASS), sparse volume-shock
