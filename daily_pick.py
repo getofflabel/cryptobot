@@ -234,7 +234,7 @@ COMPONENT_LABEL = {
     "funding": "funding", "momentum_4h": "momentum",
 }
 COMPONENT_TAG = {
-    "trend_1d": "trend", "trend_1h": "trend", "breakout": "breakout",
+    "trend_1d": "trend", "trend_1d_align": "trend", "trend_1h": "trend", "breakout": "breakout",
     "washout": "washout", "volume_shock": "volume", "funding": "funding",
     "momentum_4h": "momentum",
 }
@@ -286,12 +286,14 @@ def score_instrument(c1h: pd.DataFrame, c1d: pd.DataFrame,
         short_pts += short_add
         comps.append({"name": name, "long": long_add, "short": short_add})
 
-    # -- trend: 1d SMA20/SMA50 alignment (+15), 1h MA20>MA100 state (+10) --
+    # -- HORIZON COHERENCE (owner, 2026-07-24: "you justified a 4h scalp
+    #    with the daily chart — your stop and target are scalp-sized, so the
+    #    intraday tape should cast the deciding votes"): the DAILY trend no
+    #    longer votes direction for this tight-zone book. It is computed
+    #    (washout still uses it as context) and applied AFTER the intraday
+    #    components pick a direction, as a small ALIGNMENT BONUS (+5) —
+    #    never the reason for a trade, only a tailwind acknowledgment.
     trend_1d, _, _ = _trend_1d_state(c1d)
-    if trend_1d == "up":
-        add("trend_1d", long_add=15.0)
-    elif trend_1d == "down":
-        add("trend_1d", short_add=15.0)
 
     ma20_1h = c1h["close"].rolling(20).mean().iloc[-1]
     ma100_1h = c1h["close"].rolling(100).mean().iloc[-1]
@@ -324,10 +326,22 @@ def score_instrument(c1h: pd.DataFrame, c1d: pd.DataFrame,
     #    a 1d downtrend (+20 short) ------------------------------------------
     r3 = _rsi(c1h["close"], 3).iloc[-1] if len(c1h) >= 2 else float("nan")
     w_long = w_short = 0.0
+    # KNIFE-CATCH GUARD (owner, 2026-07-24: "the downtrend hasn't even
+    # stopped and you went long" + R58's monotonic ladder finding that
+    # dip-buys improve ~12x when they wait for a reversal bar): oversold
+    # alone is NOT a buy — the last closed 1h bar must be a TURN CANDLE
+    # (closed green above the prior close for longs; mirror for shorts)
+    # before washout may vote. Oversold + the turn, never oversold raw.
+    turn_up = turn_down = False
+    if len(c1h) >= 3:
+        last_o, last_c = float(c1h["open"].iloc[-1]), float(c1h["close"].iloc[-1])
+        prev_c = float(c1h["close"].iloc[-2])
+        turn_up = last_c > last_o and last_c > prev_c
+        turn_down = last_c < last_o and last_c < prev_c
     if pd.notna(r3):
-        if r3 < 10 and trend_1d == "up":
+        if r3 < 10 and trend_1d == "up" and turn_up:
             w_long = 20.0
-        if r3 > 90 and trend_1d == "down":
+        if r3 > 90 and trend_1d == "down" and turn_down:
             w_short = 20.0
     if w_long or w_short:
         add("washout", long_add=w_long, short_add=w_short)
@@ -372,6 +386,13 @@ def score_instrument(c1h: pd.DataFrame, c1d: pd.DataFrame,
     if m_long or m_short:
         add("momentum_4h", long_add=m_long, short_add=m_short)
 
+    # daily-trend ALIGNMENT BONUS (see HORIZON COHERENCE above): +5 to the
+    # side the intraday components already chose, only when the daily
+    # agrees — a tailwind note, never a deciding vote.
+    if long_pts > short_pts and trend_1d == "up":
+        add("trend_1d_align", long_add=5.0)
+    elif short_pts > long_pts and trend_1d == "down":
+        add("trend_1d_align", short_add=5.0)
     raw = max(long_pts, short_pts)
     conviction = min(max(raw, 5.0), 95.0)
     direction = "long" if long_pts >= short_pts else "short"
@@ -484,8 +505,23 @@ def analyze_universe(live_feed, universe: list[str] = UNIVERSE,
         fb = current_funding_bps(live_feed, sym)
         sc = score_instrument(c1h, c1d, fb, benched)
         last_close = float(c1h["close"].iloc[-1])
-        atr14 = float(_atr(c1h, 14).iloc[-1])
+        atr_series = _atr(c1h, 14)
+        atr14 = float(atr_series.iloc[-1])
         atr_pct = (atr14 / last_close * 100) if last_close else 0.0
+        # VOLATILITY REGIME (owner, 2026-07-24: "for a day like today to be
+        # trading a 4h window, you're basically gambling — the tape isn't
+        # moving"): current ATR% vs this instrument's OWN trailing-14d
+        # median. calm = the expected move is too small for the tight-zone
+        # geometry to beat noise+costs; select_pick refuses C-grade picks
+        # in calm tape (A-setups only), keeps take-best in normal/violent.
+        atr_pct_series = (atr_series / c1h["close"] * 100)
+        med14 = float(atr_pct_series.iloc[-336:].median()) if len(c1h) >= 100 else None
+        if med14 and med14 > 0:
+            ratio = atr_pct / med14
+            regime = "calm" if ratio < 0.8 else ("violent" if ratio > 1.5 else "normal")
+        else:
+            regime = "normal"
+        rec["regime"] = regime
         rec.update(ok=True, conviction=sc["conviction"],
                    long_score=sc["long_score"], short_score=sc["short_score"],
                    direction=sc["direction"], components=sc["components"],
@@ -613,6 +649,17 @@ def select_pick(analysis: list[dict], private, demo_feed, state: dict):
             skips.append((cand["symbol"], info))
             print(f"  [PICK] {cand['symbol']} (conv {cand['conviction']:.0f}) "
                   f"GUARD FAIL: {info}")
+            continue
+        # NO GAMBLING IN QUIET TAPE (owner, 2026-07-24): in a calm regime
+        # the tight-zone geometry is a coin flip — only genuine A-setups
+        # (conviction >= CONVICTION_FLOOR) may fire; C-grade reps wait for
+        # a tape that actually moves.
+        if cand.get("regime") == "calm" and cand["conviction"] < CONVICTION_FLOOR:
+            msg = (f"calm tape (ATR below its own norm) — conviction "
+                   f"{cand['conviction']:.0f} < {CONVICTION_FLOOR:.0f} floor, "
+                   f"not gambling in a quiet market")
+            skips.append((cand["symbol"], msg))
+            print(f"  [PICK] {cand['symbol']} CALM-REGIME SKIP: {msg}")
             continue
         # stop-out cooldown: don't re-take a setup that just stopped us out
         # unless the signal has ACTUALLY gotten stronger (see the daybook

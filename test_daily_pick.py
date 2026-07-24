@@ -302,14 +302,17 @@ def test_a_scoring_components():
     assert len(c1h) == 100
 
     sc = dp.score_instrument(c1h, c1d, funding_bps=None)
-    assert sc["long_score"] == 25.0, sc
+    # HORIZON COHERENCE (2026-07-24): the daily trend no longer votes
+    # direction — the intraday trend_1h leads (+10) and the agreeing daily
+    # adds only the +5 alignment bonus.
+    assert sc["long_score"] == 15.0, sc
     assert sc["short_score"] == 0.0, sc
-    assert sc["conviction"] == 25.0, sc
+    assert sc["conviction"] == 15.0, sc
     assert sc["direction"] == "long", sc
     names = {c["name"] for c in sc["components"]}
-    assert names == {"trend_1d", "trend_1h"}, names
+    assert names == {"trend_1d_align", "trend_1h"}, names
     by_name = {c["name"]: c for c in sc["components"]}
-    assert by_name["trend_1d"]["long"] == 15.0
+    assert by_name["trend_1d_align"]["long"] == 5.0
     assert by_name["trend_1h"]["long"] == 10.0
 
     # -- breakout THROUGH (+20) co-firing with trend_1d (+15) --------------
@@ -324,11 +327,11 @@ def test_a_scoring_components():
     c1h2 = _flat_1h(3, 50.0)     # too short for any 1h-based component
 
     sc2 = dp.score_instrument(c1h2, c1d2, funding_bps=None)
-    assert sc2["long_score"] == 35.0, sc2
+    assert sc2["long_score"] == 25.0, sc2      # breakout 20 + align bonus 5
     assert sc2["short_score"] == 0.0, sc2
     assert sc2["direction"] == "long", sc2
     names2 = {c["name"] for c in sc2["components"]}
-    assert names2 == {"trend_1d", "breakout"}, names2
+    assert names2 == {"trend_1d_align", "breakout"}, names2
     by_name2 = {c["name"]: c for c in sc2["components"]}
     assert by_name2["breakout"]["long"] == 20.0
 
@@ -338,17 +341,29 @@ def test_a_scoring_components():
     #    trips the 4h-momentum check the other way -- both are legitimate,
     #    hand-computed below. ---------------------------------------------
     c1d3 = c1d.copy()   # reuse the same clean 55-bar uptrend from above
-    closes_1h3 = [100] * 10 + [90, 80, 70, 60, 50, 40, 30, 20, 10, 0]
+    # KNIFE-CATCH GUARD (2026-07-24): a straight decline (no turn candle)
+    # must NOT fire washout anymore — oversold alone is not a buy.
+    closes_knife = [100] * 10 + [90, 80, 70, 60, 50, 40, 30, 20, 10, 0]
+    c1h_knife = _mk(closes_knife, freq="1h", volumes=[1000.0] * 20)
+    sc_knife = dp.score_instrument(c1h_knife, c1d3, funding_bps=None)
+    assert all(c["name"] != "washout" for c in sc_knife["components"]), sc_knife
+
+    # ...but the same washout WITH a small green turn bar (close > open and
+    # > prior close, RSI3 still deeply oversold) DOES fire.
+    closes_1h3 = [100] * 10 + [90, 80, 70, 60, 50, 40, 30, 20, 10, 10.5]
     c1h3 = _mk(closes_1h3, freq="1h", volumes=[1000.0] * 20)
+    # _mk builds doji bars (open == close); the turn candle needs a real
+    # green body, so hand-set the final bar's open below its close.
+    c1h3.loc[c1h3.index[-1], "open"] = 10.0
     r3 = float(_rsi_check(pd.Series(closes_1h3), 3).iloc[-1])
     assert r3 < 10, f"fixture precondition failed: r3={r3}"
 
     sc3 = dp.score_instrument(c1h3, c1d3, funding_bps=None)
-    assert sc3["long_score"] == 35.0, sc3          # 15 trend_1d + 20 washout
-    assert sc3["short_score"] == 8.0, sc3           # 8 momentum_4h
+    assert sc3["long_score"] == 25.0, sc3    # 20 washout + 5 align bonus
+    assert sc3["short_score"] == 8.0, sc3    # 8 momentum_4h
     assert sc3["direction"] == "long", sc3
     names3 = {c["name"] for c in sc3["components"]}
-    assert names3 == {"trend_1d", "washout", "momentum_4h"}, names3
+    assert names3 == {"trend_1d_align", "washout", "momentum_4h"}, names3
     by_name3 = {c["name"]: c for c in sc3["components"]}
     assert by_name3["washout"]["long"] == 20.0
     assert by_name3["momentum_4h"]["short"] == 8.0
@@ -591,11 +606,19 @@ def test_f_slot_idempotency_and_recycling():
     up = _mk([105 + 5 * i for i in range(20)], freq="1d",
             start=ramp1d["timestamp"].iloc[-1] + pd.Timedelta(days=1))
     c1d_up = pd.concat([ramp1d, up], ignore_index=True)
+    # HORIZON COHERENCE (2026-07-24): the daily trend no longer votes, so
+    # ETH's edge in this fixture must live on the INTRADAY chart — give it
+    # a 1h uptrend (MA20>MA100) alongside the 1d one (align bonus).
+    eth_1h = _quiet_1h(130, 1800.0)
+    eth_ramp = _mk([1810 + 12 * i for i in range(20)], freq="1h",
+                  start=eth_1h["timestamp"].iloc[-1] + pd.Timedelta(hours=1))
+    eth_1h_up = pd.concat([eth_1h, eth_ramp], ignore_index=True)
     for sym, px in (("BTC-USDT", 65000.0), ("ETH-USDT", 2000.0),
                     ("SOL-USDT", 100.0), ("XAUT-USDT", 4000.0),
                     ("TSLA-USDT", 300.0)):
         feed.set_candles(sym, "1d", c1d_up if sym == "ETH-USDT" else _flat_1d(60, px))
-        feed.set_candles(sym, "1h", _quiet_1h(150, px))
+        feed.set_candles(sym, "1h",
+                        eth_1h_up if sym == "ETH-USDT" else _quiet_1h(150, px))
 
     private = FakePrivate(net_by_symbol={s: 0.0 for s in dp.UNIVERSE},
                           fill_price=None)
@@ -905,9 +928,9 @@ def test_k_benched_component_stops_firing():
                 start=ramp1h["timestamp"].iloc[-1] + pd.Timedelta(hours=1))
     c1h = pd.concat([c1h, ramp1h, tail1h], ignore_index=True)
 
-    # unbenched: trend_1d (+15) and trend_1h (+10) both fire, as in test_a
+    # unbenched: trend_1h (+10) leads, agreeing 1d adds the +5 align bonus
     sc_normal = dp.score_instrument(c1h, c1d, funding_bps=None)
-    assert sc_normal["long_score"] == 25.0, sc_normal
+    assert sc_normal["long_score"] == 15.0, sc_normal
 
     # "pick_trend" benched -> BOTH trend_1d and trend_1h (they share the
     # "trend" tag, see COMPONENT_TAG) stop contributing, entirely.
