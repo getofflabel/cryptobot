@@ -567,7 +567,7 @@ def run_diver(private: BlofinDemoPrivate, live_feed, demo_feed,
     print(f"  [DIVER] {'LONG' if direction > 0 else 'SHORT'} SIGNAL "
           f"(hidden_divergence) — {side} {contracts:.1f} ct "
           f"(~${notional:,.0f} notional at {DIVER_LEV:.0f}x sleeve leverage)")
-    private.ensure_leverage(SYMBOL, DIVER_LEV, "cross")
+    private.ensure_leverage(SYMBOL, DIVER_LEV)
     try:
         entry, was_maker = execute_market_clips(
             private, demo_feed, SYMBOL, side, contracts, ref_price)

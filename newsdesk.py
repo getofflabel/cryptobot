@@ -743,7 +743,7 @@ def run_newsdesk(private: BlofinDemoPrivate, live_feed, demo_feed,
         print(f"  [NEWS ] {'LONG' if direction > 0 else 'SHORT'} SIGNAL "
               f"(news_momentum) — {side} {contracts:.1f} ct (~${notional:,.0f} "
               f"notional at {NEWS_LEV:.0f}x sleeve leverage)")
-        private.ensure_leverage(SYMBOL, NEWS_LEV, "cross")
+        private.ensure_leverage(SYMBOL, NEWS_LEV)
         try:
             entry, was_maker = execute_market_clips(
                 private, demo_feed, SYMBOL, side, contracts, bar_close)

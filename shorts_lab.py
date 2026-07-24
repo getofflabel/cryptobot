@@ -441,7 +441,7 @@ def run_lab(private: BlofinDemoPrivate, live_feed, demo_feed, state: dict,
     print(f"  [LAB ] {trigger} SIGNAL — selling {contracts:.1f} ct "
           f"(~${notional:,.0f} notional at {LAB_LEV:.0f}x sleeve leverage)")
     # set THIS trade's leverage before opening (was the silent-fail bug)
-    private.ensure_leverage(SYMBOL, LAB_LEV, "cross")
+    private.ensure_leverage(SYMBOL, LAB_LEV)
     try:
         entry, was_maker = execute_market_clips(
             private, demo_feed, SYMBOL, "sell", contracts, last_close)

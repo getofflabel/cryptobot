@@ -627,7 +627,7 @@ def run_gold_book(private, live_feed, state: dict, dry: bool = False) -> dict:
         print(f"  [GOLD] BREAKOUT — entering LONG {contracts:.0f} ct "
               f"{SYMBOL} (~${contracts * spec['contract_value'] * ref_price:,.0f} "
               f"notional) @ ~${ref_price:,.2f}")
-        if not private.ensure_leverage(SYMBOL, GOLD_LEV, "cross"):
+        if not private.ensure_leverage(SYMBOL, GOLD_LEV):
             notify("⚠️ gold entry ABORTED (demo)",
                    "couldn't set leverage — no order placed, check BloFin")
             return {"action": "entry_aborted_leverage", **dec}
@@ -821,7 +821,7 @@ def intraday_check(private, live_feed, state, price: float):
     notional = equity * GOLD_ALLOC * GOLD_LEV
     contracts = _round_lot(notional / price / spec["contract_value"],
                            spec["lot_size"], spec["min_size"])
-    private.ensure_leverage(SYMBOL, int(GOLD_LEV), "cross")
+    private.ensure_leverage(SYMBOL, int(GOLD_LEV))
     remaining = contracts
     while remaining > spec["lot_size"] / 2:
         step = min(50.0, remaining)

@@ -1310,7 +1310,7 @@ def _do_entry(private, demo_feed, state, dp, cand, spec, low_conviction,
           f"at {plan['leverage']:.0f}x, risking {plan['risk_pct']*100:.2f}% "
           f"of equity)")
 
-    if not private.ensure_leverage(sym, plan["leverage"], "cross"):
+    if not private.ensure_leverage(sym, plan["leverage"]):
         notify("⚠️ daily pick entry ABORTED (demo)",
               f"couldn't set leverage on {sym} — no order placed")
         return {"action": "entry_aborted_leverage", "symbol": sym}

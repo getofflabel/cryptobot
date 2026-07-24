@@ -61,6 +61,28 @@ def load_env(path: str = ".env") -> dict:
     return env
 
 
+# MARGIN MODE (Wallace, 2026-07-24: "why are you trading cross instead of
+# ISO anyway?"). He is right and cross was an inherited default, never a
+# decision. Every position this bot opens carries an exchange-side stop
+# ~0.6-1% away, while cross-mode liquidation sits 24-62% away — so the
+# cushion cross buys is never touched. What cross COSTS is real: it pledges
+# the WHOLE account as collateral for every book's position, so one gap
+# through a stop, or one stop that failed to place, can reach across and
+# take the other books down with it. ISOLATED caps each trade's worst case
+# at its own margin — which is exactly the per-trade risk budget the engine
+# already sizes to. After a week of orphaned positions and failed brackets,
+# that containment beats an unused cushion.
+#
+# THE HARD CONSTRAINT: a symbol's margin mode cannot change while it holds a
+# position, and an order whose marginMode disagrees with the live position is
+# REJECTED (that mismatch is exactly the 2026-07-23 "all operations failed"
+# bug). So nothing is ever forced: _mode_for() reads the live position's own
+# mode when one exists and only uses the preferred mode when flat. Open
+# cross positions therefore live out their lives as cross; every NEW position
+# opens isolated as its symbol goes flat.
+MARGIN_MODE = "isolated"
+
+
 class BlofinDemoPrivate:
     """Authenticated access to the BloFin DEMO trading account."""
 
@@ -161,8 +183,21 @@ class BlofinDemoPrivate:
 
     # -- trading ------------------------------------------------------------
 
+    def _mode_for(self, symbol: str) -> str:
+        """The margin mode every order/bracket on `symbol` MUST use: the live
+        position's own mode when one exists (mismatch = rejection), otherwise
+        the preferred MARGIN_MODE. Degrades to MARGIN_MODE if the read fails
+        — never blocks a trade on a bookkeeping lookup."""
+        try:
+            for pos in self.positions(symbol):
+                if abs(float(pos.get("positions") or 0)) > 0:
+                    return str(pos.get("marginMode") or MARGIN_MODE)
+        except Exception:
+            pass
+        return MARGIN_MODE
+
     def ensure_leverage(self, symbol: str, leverage: float,
-                        margin_mode: str = "cross") -> bool:
+                        margin_mode: str | None = None) -> bool:
         """Set the account leverage for THIS trade, right before opening it.
         Every book calls this with ITS OWN leverage (the ride 10x, the strikes
         / lab / apprentice 20x, or any per-trade value) so leverage is DYNAMIC
@@ -172,6 +207,7 @@ class BlofinDemoPrivate:
         silently rejected every order on 2026-07-23 ('all operations failed').
         Returns True on success; logs and returns False on failure (caller
         should alert loudly rather than trade unprotected)."""
+        margin_mode = margin_mode or self._mode_for(symbol)
         try:
             self.set_leverage(symbol, int(round(leverage)), margin_mode)
             print(f"  leverage set {int(round(leverage))}x {margin_mode} "
@@ -183,7 +219,7 @@ class BlofinDemoPrivate:
 
     def market_order(self, symbol: str, side: str, contracts: float,
                      reduce_only: bool = False,
-                     margin_mode: str = "cross") -> str:
+                     margin_mode: str | None = None) -> str:
         """Place a market order for `contracts`. Returns the order id.
 
         side is "buy" or "sell". reduce_only=True marks an order that may
@@ -195,6 +231,7 @@ class BlofinDemoPrivate:
         "isolated") or BloFin rejects the order. When closing, always read
         the mode off the position rather than assuming.
         """
+        margin_mode = margin_mode or self._mode_for(symbol)
         body = {
             "instId": symbol,
             "marginMode": margin_mode,
@@ -221,7 +258,7 @@ class BlofinDemoPrivate:
         it rather than filling it as taker. That guarantee is the point."""
         body = {
             "instId": symbol,
-            "marginMode": "cross",
+            "marginMode": self._mode_for(symbol),
             "positionSide": "net",
             "side": side,
             "orderType": "post_only",
@@ -248,7 +285,7 @@ class BlofinDemoPrivate:
 
     def place_tpsl(self, symbol: str, position_side_close: str,
                    contracts: float, tp_price: float | None,
-                   sl_price: float, margin_mode: str = "cross") -> str:
+                   sl_price: float, margin_mode: str | None = None) -> str:
         """Attach a take-profit / stop-loss bracket to a position.
 
         position_side_close: "sell" to close a long, "buy" to close a short.
@@ -259,6 +296,7 @@ class BlofinDemoPrivate:
         This is what makes the position 'projected' in the BloFin app — the
         TP and SL lines show on the position card and the chart.
         """
+        margin_mode = margin_mode or self._mode_for(symbol)
         body = {
             "instId": symbol,
             "marginMode": margin_mode,

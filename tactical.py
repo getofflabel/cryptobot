@@ -298,7 +298,7 @@ def tactical_cycle(private: BlofinDemoPrivate, live_feed, demo_feed,
 
     print(f"  [TACT] {trigger} SIGNAL — entering {contracts:.1f} ct "
           f"(~${notional:,.0f} notional at {trig_lev:.0f}x sleeve leverage)")
-    private.ensure_leverage(symbol, trig_lev, "cross")   # per-trade leverage
+    private.ensure_leverage(symbol, trig_lev)   # per-trade leverage
     try:
         entry, was_maker = execute_market_clips(
             private, demo_feed, symbol, "buy", contracts, last_close)
@@ -408,7 +408,7 @@ def amplifier_cycle(private: BlofinDemoPrivate, live_feed, demo_feed,
                     * cfg["lot"])
     print(f"  [AMP ] entering {contracts:.1f} ct ETH "
           f"(~${notional:,.0f} notional at {cfg['lev']:.0f}x slot leverage)")
-    private.ensure_leverage(sym, cfg["lev"], "cross")    # per-trade leverage
+    private.ensure_leverage(sym, cfg["lev"])    # per-trade leverage
     try:
         entry, was_maker = execute_market_clips(
             private, demo_feed, sym, "buy", contracts, last_close)
