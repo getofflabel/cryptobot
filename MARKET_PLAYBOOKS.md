@@ -34,8 +34,12 @@ no vibes.
   funding runs hot (~20%/yr on some TradFi perps).
 - OPEN: R55 (EMA crosses, sessions, intraday families) running.
 
-## S&P 500 (SPY/ES=F research; NO demo venue yet — SPX-USDT on BloFin is
-   the SPX6900 MEMECOIN, never confuse them)
+## S&P 500 (SPY/ES=F research)
+- VENUE (verified 2026-07-24): **SPY-USDT on BloFin prod IS the real S&P
+  tracker** (last 738.75 vs real SPY 738.18 — 0.08% basis) but is NOT
+  served on the demo host (ticker empty) and is THIN (~$650k/24h).
+  **SPX-USDT is the SPX6900 MEMECOIN — one letter, wrong instrument,
+  never confuse them.** Paper venue: none yet; research banks knowledge.
 - Personality: session-bound (9:30-16:00 ET), overnight gaps carry the
   drift, WatcherGuru news does NOT move it in-session (1.03x — R47);
   the world's most mean-reverting major index historically.
