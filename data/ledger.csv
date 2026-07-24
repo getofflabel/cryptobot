@@ -1,1 +1,3 @@
 timestamp,symbol,action,price,quantity,reason,mode,outcome,pnl
+2026-07-24T03:01:37.304359+00:00,BTC-USDT,SELL,1868.24,,pipeline test close,demo,win,0.44
+2026-07-24T02:55:56.404328+00:00,ETH-USDT,BUY,1865.51,16.1,amp_enter,demo,open,
