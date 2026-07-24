@@ -381,3 +381,24 @@ candidate is deployable. KEY PORTING LESSON with numbers: ETF overnight
 gaps destroy tight stops (GLD near-miss: 44/45 val trades gapped THROUGH
 the 0.5% stop; -$0.19/t raw -> -$37.81/t honest). The crypto tight-stop
 playbook does not port to session markets unmodified.
+
+## ROUND 48 — TradFi trend gauntlet — SECOND VALIDATED EDGE (2026-07-24)
+20y daily gold/QQQ/SPY/oil through the crypto-proven shapes. 200 configs,
+14 survivors — 8 of them the Donchian-breakout family. TWO sealed looks
+spent on the twin flagship (erosion +2), BOTH PASS:
+- GLD donchian55+EMA20exit 1d: TEST +$199.41/t x16, +31.9%, DD -13.9% (4.4y)
+- GC=F same shape:            TEST +$145.10/t x18, +26.1%, DD -13.0% (5.2y)
+Cross-instrument + all-decades-positive + sealed pass = the program's most
+robust edge. ★ Second validated edge (after BTC news momentum).
+Other findings: BTC's fixed 1.5% ATR gate produces ZERO trades on gold/QQQ
+hourly (native ATR 0.28-0.72%) — thresholds never port blind; RSI3 dip-buy
+does NOT transfer to TradFi (1/72); mirrored shorts die on secular uptrends
+(0/20); backtest.py charges default FUNDING unless CostModel funding_bps_8h=0
+— set explicitly for all TradFi (latent-bias catch); ETF overnight gaps blow
+tight stops (44/45 gap-throughs on a 0.5% GLD stop; round 47 same lesson).
+HONEST FRAME: long-only trend systems did NOT beat buy-and-hold raw return
+over these decades — the case is validated edge + ~14% DD vs B&H's much
+deeper. Turnover ~3-6 trades/yr = a slow compounder, portfolio ballast
+beside the fast crypto books, not a replacement.
+EXECUTION PATH: GLD via Alpaca paper (Wallace signup pending) → deployable.
+Deferred: GC=F news-momentum candidate (round 47) until a futures venue.
