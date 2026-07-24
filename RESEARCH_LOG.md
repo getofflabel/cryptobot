@@ -644,3 +644,22 @@ GAP NAMED: his real stack is W/D/4H context -> 1H/30m/15m entries; our
 daily->4h approximation is shallower. FOLLOW-UP (R74): the DAILY-ONLY
 version on 20+ years of free forex dailies — the honest test his
 frequency actually deserves.
+
+## ROUND 74 — the fair test: structure->retest->engulf on 20-33y dailies
+The R73 "not enough data" objection is CLOSED: all 9 instruments got
+20-33 years (train windows alone 12-20y). VERDICT: his LITERAL full
+stack never cleared 30/8 floors in 648 configs (max 26 train / 7 val);
+realized frequency 0.48 trades/yr vs his stated 4-14/yr — as taught,
+the system is nearly untestable through rarity, not breadth.
+WIN RATE: pooled 38.9% (median 40%), survivors 42.8% — his 60-65%
+claim holds NOWHERE; the survivors earn via R:R (1.3-2.5x), not hit
+rate. ABLATION (the real finding): dropping the RETEST or dropping the
+ENGULFING each 7-8x'd frequency and produced ALL 12 survivors — the
+"retest AND engulf together" pair is the choke point. Per-instrument
+irony: his own live pairs (USDCHF, USDJPY) = 0 survivors; BTC and SPY
+(claimed but never traded on camera) = 3 and 1, BTC's break config the
+round's best expectancy. CAVEAT: every survivor is an ABLATED cousin —
+this validates generic break-and-continuation, not his recipe.
+SYNTHESIS w/ R71-iter1 (rare triggers were R58's magic) — the program's
+working rule: there is a SELECTIVITY SWEET SPOT; too little confirmation
+= noise, too much = never trades. 12 candidates banked, no look spent.
