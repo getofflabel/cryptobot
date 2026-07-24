@@ -100,10 +100,23 @@ def full_cycle(private, live_feed, demo_feed, symbol, reason):
         from step5_paper_trade import load_state
         run_newsdesk(private, live_feed, demo_feed, load_state())
 
+    def _gold():
+        # THE GOLD BOOK (round 48, GLD donchian55/EMA20): broker-free, its
+        # own separate paper ledger, zero exchange orders — safe to call on
+        # EVERY full_cycle. run_gold_book's own internal last_bar_date
+        # guard makes every call a no-op except the first one after a NEW
+        # daily GLD bar closes; its own FETCH_THROTTLE_S (30 min) caps how
+        # often it will even hit yfinance, independent of how often this
+        # daemon cycles.
+        from gold_book import run_gold_book
+        from step5_paper_trade import load_state
+        run_gold_book(load_state())
+
     _run_book("The Ride", _ride)
     _run_book("The Strikes", _strikes)
     _run_book("Shorts Lab", _lab)
     _run_book("The Newsdesk", _news)
+    _run_book("The Gold Book", _gold)
 
 
 def main():
