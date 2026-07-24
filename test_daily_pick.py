@@ -956,6 +956,314 @@ def test_k_benched_component_stops_firing():
     assert analysis[0]["conviction"] == 5.0, analysis[0]
 
 
+# ===========================================================================
+# THE MISSED-TRADE LEDGER (2026-07-24 upgrade) — six more intents:
+#   l) select_pick logs every skip (all 5 reason tags) to passed_log with
+#      the SAME stop/target geometry a real entry would have used
+#   m) score_passed_trades replays the tight-zone bracket against real
+#      candles correctly — hand-verified stop-hit, target-hit, and
+#      4h-time-exit cases, plus the "too young to judge yet" gate
+#   n) once an entry is scored it is NEVER re-fetched/re-simulated
+#   o) passed_log is capped at PASSED_LOG_CAP, oldest dropped first
+#   p) the recap's missed-trade lines render correctly from a seeded,
+#      already-scored passed_log/gate_scoreboard, never leaking a
+#      different day's numbers in
+# ===========================================================================
+
+def _cf_entry(symbol, direction, conviction, reason, ref_price, stop_pct,
+             target_pct, ts="2026-07-23T10:00 UTC"):
+    """A hand-built passed_log entry, bypassing select_pick, so
+    score_passed_trades() tests can control geometry/timing exactly."""
+    return {"ts": ts, "symbol": symbol, "direction": direction,
+            "conviction": conviction, "reason": reason, "ref_price": ref_price,
+            "stop_pct": stop_pct, "target_pct": target_pct, "scored": False}
+
+
+def _row_candles(rows):
+    return pd.DataFrame(rows)
+
+
+# ===========================================================================
+# (l) select_pick logs every skip to passed_log with correct geometry
+# ===========================================================================
+
+def test_l_passed_log_geometry():
+    def _clean_cand(symbol, direction, conviction, regime="normal", atr=1.0):
+        return {"symbol": symbol, "ok": True, "stale": False,
+               "conviction": conviction, "direction": direction,
+               "components": [], "long_score": conviction if direction == "long" else 0,
+               "short_score": conviction if direction == "short" else 0,
+               "atr_pct_1h": atr, "last_close": 2000.0 if symbol == "ETH-USDT"
+               else (50.0 if symbol == "SOL-USDT" else 65000.0),
+               "funding_bps": None, "regime": regime}
+
+    # -- guard fail: ETH already held on the exchange -----------------------
+    top = _clean_cand("ETH-USDT", "long", 70.0)
+    second = _clean_cand("SOL-USDT", "long", 55.0)
+    state = make_state()
+    private = FakePrivate(net_by_symbol={"ETH-USDT": 4.2, "SOL-USDT": 0.0})
+    demo = FakeDemoFeed(specs={"ETH-USDT": DEFAULT_SPEC, "SOL-USDT": DEFAULT_SPEC})
+    try:
+        _freeze("2026-07-23 14:15:00")
+        chosen, low_conv, skips = dp.select_pick([top, second], private, demo, state)
+    finally:
+        _unfreeze()
+    assert chosen is not None and chosen[0]["symbol"] == "SOL-USDT", chosen
+    log = state["daily_pick"]["passed_log"]
+    assert len(log) == 1, log
+    entry = log[0]
+    assert entry["symbol"] == "ETH-USDT"
+    assert entry["direction"] == "long"
+    assert entry["conviction"] == 70.0
+    assert entry["reason"] == "guard"
+    assert entry["ref_price"] == 2000.0
+    assert entry["scored"] is False
+    exp_stop, exp_target = dp._stop_target_pct(1.0)
+    assert entry["stop_pct"] == exp_stop and entry["target_pct"] == exp_target, entry
+    assert entry["ts"] == "2026-07-23T14:00 UTC", entry
+
+    # -- calm-regime gate: below-floor conviction in a calm regime ----------
+    calm_cand = _clean_cand("SOL-USDT", "long", 20.0, regime="calm")
+    state2 = make_state()
+    private2 = FakePrivate(net_by_symbol={"SOL-USDT": 0.0})
+    demo2 = FakeDemoFeed(specs={"SOL-USDT": DEFAULT_SPEC})
+    try:
+        _freeze("2026-07-23 14:15:00")
+        chosen2, _, _ = dp.select_pick([calm_cand], private2, demo2, state2)
+    finally:
+        _unfreeze()
+    assert chosen2 is None, chosen2
+    log2 = state2["daily_pick"]["passed_log"]
+    assert len(log2) == 1 and log2[0]["reason"] == "calm_gate", log2
+
+    # -- cooldown: a recent loss on the exact same (symbol, direction) ------
+    cool_cand = _clean_cand("SOL-USDT", "long", 50.0)
+    state3 = make_state()
+    private3 = FakePrivate(net_by_symbol={"SOL-USDT": 0.0})
+    demo3 = FakeDemoFeed(specs={"SOL-USDT": DEFAULT_SPEC})
+    try:
+        _freeze("2026-07-23 14:15:00")
+        frozen_now = dp.datetime.now(timezone.utc)
+        state3["daily_pick"] = dp._fresh_dp()
+        state3["daily_pick"]["last_stopouts"] = {
+            "SOL-USDT:long": {"ts": (frozen_now - timedelta(hours=1)).isoformat(),
+                              "conviction": 50.0}}
+        chosen3, _, _ = dp.select_pick([cool_cand], private3, demo3, state3)
+    finally:
+        _unfreeze()
+    assert chosen3 is None, chosen3
+    log3 = state3["daily_pick"]["passed_log"]
+    assert len(log3) == 1 and log3[0]["reason"] == "cooldown", log3
+
+    # -- one-thesis: the crypto cluster is MIXED (both directions open) -----
+    thesis_cand = _clean_cand("SOL-USDT", "long", 50.0)
+    state4 = make_state()
+    private4 = FakePrivate(net_by_symbol={"BTC-USDT": 1.0, "ETH-USDT": -1.0,
+                                          "SOL-USDT": 0.0})
+    demo4 = FakeDemoFeed(specs={"SOL-USDT": DEFAULT_SPEC})
+    try:
+        _freeze("2026-07-23 14:15:00")
+        chosen4, _, _ = dp.select_pick([thesis_cand], private4, demo4, state4)
+    finally:
+        _unfreeze()
+    assert chosen4 is None, chosen4
+    log4 = state4["daily_pick"]["passed_log"]
+    assert len(log4) == 1 and log4[0]["reason"] == "one_thesis", log4
+
+    # -- correlation: opposes the cluster's clean lean -----------------------
+    corr_cand = _clean_cand("SOL-USDT", "short", 50.0)
+    state5 = make_state()
+    private5 = FakePrivate(net_by_symbol={"BTC-USDT": 1.0, "ETH-USDT": 0.0,
+                                          "SOL-USDT": 0.0})
+    demo5 = FakeDemoFeed(specs={"SOL-USDT": DEFAULT_SPEC})
+    try:
+        _freeze("2026-07-23 14:15:00")
+        chosen5, _, _ = dp.select_pick([corr_cand], private5, demo5, state5)
+    finally:
+        _unfreeze()
+    assert chosen5 is None, chosen5
+    log5 = state5["daily_pick"]["passed_log"]
+    assert len(log5) == 1 and log5[0]["reason"] == "correlation", log5
+
+
+# ===========================================================================
+# (m) score_passed_trades replays the bracket correctly — hand-verified
+#     stop-hit, target-hit, and time-exit cases, plus the age gate
+# ===========================================================================
+
+def test_m_score_passed_trades_bracket_outcomes():
+    feed = FakeLiveFeed()
+
+    # (A) LONG stop-hit: SOL-USDT ref 100, stop 1.0% (sl 99) target 1.5% (tp 101.5)
+    feed.set_candles("SOL-USDT", "1h", _row_candles([
+        {"timestamp": pd.Timestamp("2026-07-23 11:00", tz="UTC"),
+         "open": 100.0, "high": 100.2, "low": 98.5, "close": 99.0, "volume": 1.0},
+    ]))
+    # (B) SHORT target-hit: ETH-USDT ref 2000, stop 1.0% (sl 2020) target 1.5% (tp 1970)
+    feed.set_candles("ETH-USDT", "1h", _row_candles([
+        {"timestamp": pd.Timestamp("2026-07-23 11:00", tz="UTC"),
+         "open": 2000.0, "high": 2005.0, "low": 1965.0, "close": 1970.0, "volume": 1.0},
+    ]))
+    # (C) LONG time-exit: BTC-USDT ref 50000, stop 0.5% (sl 49750) target 0.75% (tp 50375)
+    #     — every bar in the window stays inside the band, so it's a clean
+    #     4h close-out, not a bracket hit.
+    feed.set_candles("BTC-USDT", "1h", _row_candles([
+        {"timestamp": pd.Timestamp("2026-07-23 11:00", tz="UTC"),
+         "open": 50000.0, "high": 50100.0, "low": 49900.0, "close": 50050.0, "volume": 1.0},
+        {"timestamp": pd.Timestamp("2026-07-23 12:00", tz="UTC"),
+         "open": 50050.0, "high": 50150.0, "low": 49950.0, "close": 50080.0, "volume": 1.0},
+        {"timestamp": pd.Timestamp("2026-07-23 13:00", tz="UTC"),
+         "open": 50080.0, "high": 50120.0, "low": 49980.0, "close": 50090.0, "volume": 1.0},
+        {"timestamp": pd.Timestamp("2026-07-23 14:00", tz="UTC"),
+         "open": 50090.0, "high": 50110.0, "low": 50000.0, "close": 50100.0, "volume": 1.0},
+    ]))
+
+    state = make_state()
+    state["daily_pick"] = dp._fresh_dp()
+    state["daily_pick"]["passed_log"] = [
+        _cf_entry("SOL-USDT", "long", 70.0, "calm_gate", 100.0, 1.0, 1.5),
+        _cf_entry("ETH-USDT", "short", 30.0, "cooldown", 2000.0, 1.0, 1.5),
+        _cf_entry("BTC-USDT", "long", 60.0, "guard", 50000.0, 0.5, 0.75),
+        # logged only 1h before "now" below — too young to judge (< MAX_HOLD_H)
+        _cf_entry("XAUT-USDT", "long", 50.0, "correlation", 4000.0, 0.5, 0.75,
+                  ts="2026-07-23T14:00 UTC"),
+    ]
+
+    try:
+        _freeze("2026-07-23 15:00:00")   # the first three entries are 5h old
+        n_scored = dp.score_passed_trades(feed, state)
+    finally:
+        _unfreeze()
+
+    assert n_scored == 3, n_scored   # the too-young entry must NOT be counted
+    log = state["daily_pick"]["passed_log"]
+    by_sym = {e["symbol"]: e for e in log}
+
+    sol = by_sym["SOL-USDT"]
+    assert sol["scored"] is True and sol["exit_kind"] == "stop", sol
+    assert sol["counterfactual_pnl"] == -22.4, sol   # 0.02*1000*(-1.12/1.0)
+
+    eth = by_sym["ETH-USDT"]
+    assert eth["exit_kind"] == "target", eth
+    assert eth["counterfactual_pnl"] == 13.8, eth    # 0.01*1000*(1.38/1.0)
+
+    btc = by_sym["BTC-USDT"]
+    assert btc["exit_kind"] == "time", btc
+    assert btc["counterfactual_pnl"] == 3.2, btc     # 0.02*1000*(0.08/0.5)
+
+    xaut = by_sym["XAUT-USDT"]
+    assert xaut["scored"] is False, "too young to judge — must stay unscored"
+
+    board = state["daily_pick"]["gate_scoreboard"]
+    assert board["calm_gate"] == {"passed_n": 1, "cf_pnl": -22.4}, board
+    assert board["cooldown"] == {"passed_n": 1, "cf_pnl": 13.8}, board
+    assert board["guard"] == {"passed_n": 1, "cf_pnl": 3.2}, board
+    assert "correlation" not in board, board
+
+
+# ===========================================================================
+# (n) once-scored-never-rescored
+# ===========================================================================
+
+def test_n_scored_never_rescored():
+    feed = FakeLiveFeed()
+    feed.set_candles("SOL-USDT", "1h", _row_candles([
+        {"timestamp": pd.Timestamp("2026-07-23 11:00", tz="UTC"),
+         "open": 100.0, "high": 100.2, "low": 98.5, "close": 99.0, "volume": 1.0},
+    ]))
+    state = make_state()
+    state["daily_pick"] = dp._fresh_dp()
+    state["daily_pick"]["passed_log"] = [
+        _cf_entry("SOL-USDT", "long", 70.0, "calm_gate", 100.0, 1.0, 1.5),
+    ]
+    try:
+        _freeze("2026-07-23 15:00:00")
+        n1 = dp.score_passed_trades(feed, state)
+        first_pnl = state["daily_pick"]["passed_log"][0]["counterfactual_pnl"]
+        assert n1 == 1 and first_pnl == -22.4, (n1, first_pnl)
+        board_before = dict(state["daily_pick"]["gate_scoreboard"]["calm_gate"])
+
+        # mutate the feed so a re-score (if one happened) would produce a
+        # DIFFERENT number entirely — proves the entry is never re-fetched.
+        feed.set_candles("SOL-USDT", "1h", _row_candles([
+            {"timestamp": pd.Timestamp("2026-07-23 11:00", tz="UTC"),
+             "open": 100.0, "high": 200.0, "low": 100.0, "close": 150.0,
+             "volume": 1.0},
+        ]))
+        n2 = dp.score_passed_trades(feed, state)
+    finally:
+        _unfreeze()
+
+    assert n2 == 0, n2
+    assert state["daily_pick"]["passed_log"][0]["counterfactual_pnl"] == -22.4
+    assert state["daily_pick"]["gate_scoreboard"]["calm_gate"] == board_before
+
+
+# ===========================================================================
+# (o) passed_log rolling cap — oldest dropped first
+# ===========================================================================
+
+def test_o_passed_log_rolling_cap():
+    state = make_state()
+    cand = {"symbol": "SOL-USDT", "direction": "long", "conviction": 50.0,
+           "atr_pct_1h": 1.0, "last_close": 100.0}
+    total = dp.PASSED_LOG_CAP + 25
+    for i in range(total):
+        dp._log_passed_trade(state, cand, "guard", f"slot-{i}")
+    log = state["daily_pick"]["passed_log"]
+    assert len(log) == dp.PASSED_LOG_CAP, len(log)
+    assert log[0]["ts"] == "slot-25", log[0]                    # oldest 25 dropped
+    assert log[-1]["ts"] == f"slot-{total - 1}", log[-1]        # newest kept
+
+
+# ===========================================================================
+# (p) the recap's missed-trade lines render from a seeded, already-scored
+#     passed_log/gate_scoreboard — and never leak a different day's numbers
+# ===========================================================================
+
+def test_p_recap_missed_trade_lines():
+    state = make_state()
+    dp_state = dp._fresh_dp()
+    dp_state["passed_log"] = [
+        {"ts": "2026-07-22T10:00 UTC", "symbol": "SOL-USDT", "direction": "long",
+         "conviction": 70.0, "reason": "calm_gate", "ref_price": 100.0,
+         "stop_pct": 1.0, "target_pct": 1.5, "scored": True,
+         "counterfactual_pnl": -22.4, "exit_kind": "stop"},
+        {"ts": "2026-07-22T12:00 UTC", "symbol": "ETH-USDT", "direction": "short",
+         "conviction": 30.0, "reason": "cooldown", "ref_price": 2000.0,
+         "stop_pct": 1.0, "target_pct": 1.5, "scored": True,
+         "counterfactual_pnl": 13.8, "exit_kind": "target"},
+        {"ts": "2026-07-22T14:00 UTC", "symbol": "BTC-USDT", "direction": "long",
+         "conviction": 60.0, "reason": "guard", "ref_price": 50000.0,
+         "stop_pct": 0.5, "target_pct": 0.75, "scored": True,
+         "counterfactual_pnl": 3.2, "exit_kind": "time"},
+        # unscored yesterday entry -> must be ignored entirely
+        {"ts": "2026-07-22T18:00 UTC", "symbol": "XAUT-USDT", "direction": "long",
+         "conviction": 50.0, "reason": "correlation", "ref_price": 4000.0,
+         "stop_pct": 0.5, "target_pct": 0.75, "scored": False},
+        # a scored entry from a DIFFERENT day must never leak into the recap
+        {"ts": "2026-07-21T10:00 UTC", "symbol": "SOL-USDT", "direction": "long",
+         "conviction": 70.0, "reason": "calm_gate", "ref_price": 100.0,
+         "stop_pct": 1.0, "target_pct": 1.5, "scored": True,
+         "counterfactual_pnl": 999.0, "exit_kind": "target"},
+    ]
+
+    msg = dp._build_recap_message(dp_state, state, "2026-07-23")
+    assert "Passed 3 trades yesterday" in msg, msg
+    assert "gates saved $22.40" in msg, msg       # only SOL's -22.4 is a loss avoided
+    assert "cost $17.00" in msg, msg              # ETH 13.8 + BTC 3.2 left on the table
+    assert "net $-5.40" in msg, msg               # -22.4 + 13.8 + 3.2 = -5.4
+    assert ("Biggest miss: ETH-USDT short (cooldown) would've made $13.80"
+           in msg), msg
+    assert "999" not in msg, "must never leak a different day's data into the recap"
+
+    # no daybook trades AND no passed_log at all -> the plain "quiet 24h"
+    # message, with no missed-trade lines appended.
+    empty_dp = dp._fresh_dp()
+    quiet_msg = dp._build_recap_message(empty_dp, state, "2026-07-23")
+    assert quiet_msg == "Learning engine yesterday: no trades logged (quiet 24h)."
+
+
 # ---------------------------------------------------------------------------
 # Runner
 # ---------------------------------------------------------------------------
@@ -973,6 +1281,11 @@ def main():
         test_i_reconcile_tp_exit_ledger_and_daybook,
         test_j_daily_recap_trigger,
         test_k_benched_component_stops_firing,
+        test_l_passed_log_geometry,
+        test_m_score_passed_trades_bracket_outcomes,
+        test_n_scored_never_rescored,
+        test_o_passed_log_rolling_cap,
+        test_p_recap_missed_trade_lines,
     ]
     results = []
     for fn in tests:

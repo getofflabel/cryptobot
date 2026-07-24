@@ -220,6 +220,24 @@ STOPOUT_COOLDOWN_H = 6.0   # after a losing stop, don't re-take the same
                            # the first rule the daybook EARNED (2026-07-24)
 LOT_EPS = 1e-6             # "is there a position at all" threshold
 
+# ---------------------------------------------------------------------------
+# THE MISSED-TRADE LEDGER (owner, 2026-07-24: "I've seen a lot of trades
+# that could've gone well, but you just were not in them") — every gate
+# that skips a candidate logs a receipt with the SAME tight-zone geometry a
+# real entry would have used, so the daily recap can replay what actually
+# happened and settle "does this gate earn its keep" with a real number
+# instead of a feeling. See select_pick(), score_passed_trades().
+# ---------------------------------------------------------------------------
+PASSED_LOG_CAP = 400        # rolling cap on state["daily_pick"]["passed_log"]
+CF_TAKER_FEE_BPS = 6.0      # counterfactual fee assumption — taker BOTH legs
+                           # (see score_passed_trades docstring: flattering,
+                           # the conservative direction for judging a gate)
+REASON_LABEL = {            # short tag -> plain-English phrase for the recap
+    "guard": "position guard", "correlation": "correlation guard",
+    "one_thesis": "one-thesis guard", "cooldown": "cooldown",
+    "calm_gate": "calm gate",
+}
+
 CANDLE_1H_BARS = 150       # >=100 for MA100, >=49 for the vol-shock median
 CANDLE_1D_BARS = 120       # >=55+1 for the breakout channel, >=50 for SMA50
 
@@ -633,21 +651,52 @@ def _cluster_direction(private) -> int:
     return (lean > 0) - (lean < 0)
 
 
+def _log_passed_trade(state: dict, cand: dict, reason: str, slot_ts: str) -> None:
+    """THE MISSED-TRADE LEDGER: record ONE skipped candidate with the exact
+    stop/target geometry a real entry would have used (_stop_target_pct —
+    same function _build_entry_plan calls), so score_passed_trades() can
+    later replay this candidate against real candles and find out whether
+    the gate that skipped it actually earned its keep. `reason` is one of
+    the short tags in REASON_LABEL. Rolling cap PASSED_LOG_CAP, oldest
+    dropped first — this is a receipt trail, not a full audit log."""
+    dp = state.setdefault("daily_pick", _fresh_dp())
+    stop_pct, target_pct = _stop_target_pct(cand.get("atr_pct_1h"))
+    log = dp.setdefault("passed_log", [])
+    log.append({
+        "ts": slot_ts, "symbol": cand["symbol"], "direction": cand["direction"],
+        "conviction": cand["conviction"], "reason": reason,
+        "ref_price": cand["last_close"], "stop_pct": stop_pct,
+        "target_pct": target_pct, "scored": False,
+    })
+    del log[:-PASSED_LOG_CAP]
+
+
 def select_pick(analysis: list[dict], private, demo_feed, state: dict):
     """Rank by conviction, walk down applying every guard, return the
     BEST guard-clearing candidate — no conviction-floor skip (owner's
     order: take the best available every slot). Returns
-    ((cand, spec) | None, is_low_conviction, skip_log)."""
+    ((cand, spec) | None, is_low_conviction, skip_log).
+
+    Every candidate a guard/gate skips is ALSO logged to the missed-trade
+    ledger (_log_passed_trade) with the same geometry a real entry would
+    have used — including the slot's best (highest-conviction) candidate
+    when the whole slot ends up passing (every ranked candidate fails some
+    guard): it is simply the first one this loop evaluates and logs, since
+    `ranked` is sorted by descending conviction. Not-due/no-capacity cycles
+    never reach select_pick at all, so those never get logged — correctly,
+    since nothing was actually decided against."""
     ranked = sorted([a for a in analysis if a["ok"] and not a["stale"]],
                     key=lambda a: a["conviction"], reverse=True)
     from book_ledger import cluster_state
     cluster_dir, cluster_mixed = cluster_state(private)   # read once per slot
+    slot_ts = _slot_ts(datetime.now(timezone.utc))
     guarded = []
     skips = []
     for cand in ranked:
         ok, info = _guard_check(cand, private, demo_feed, state)
         if not ok:
             skips.append((cand["symbol"], info))
+            _log_passed_trade(state, cand, "guard", slot_ts)
             print(f"  [PICK] {cand['symbol']} (conv {cand['conviction']:.0f}) "
                   f"GUARD FAIL: {info}")
             continue
@@ -660,6 +709,7 @@ def select_pick(analysis: list[dict], private, demo_feed, state: dict):
                    f"{cand['conviction']:.0f} < {CONVICTION_FLOOR:.0f} floor, "
                    f"not gambling in a quiet market")
             skips.append((cand["symbol"], msg))
+            _log_passed_trade(state, cand, "calm_gate", slot_ts)
             print(f"  [PICK] {cand['symbol']} CALM-REGIME SKIP: {msg}")
             continue
         # stop-out cooldown: don't re-take a setup that just stopped us out
@@ -680,6 +730,7 @@ def select_pick(analysis: list[dict], private, demo_feed, state: dict):
                        f"conv {stamp['conviction']:.0f} — signal no stronger, "
                        f"cooling down")
                 skips.append((cand["symbol"], msg))
+                _log_passed_trade(state, cand, "cooldown", slot_ts)
                 print(f"  [PICK] {cand['symbol']} COOLDOWN SKIP: {msg}")
                 continue
         # ONE-THESIS GUARD (2026-07-24 upgrade: a MIXED book — both
@@ -689,6 +740,7 @@ def select_pick(analysis: list[dict], private, demo_feed, state: dict):
         if cand["symbol"] in CORRELATED_CLUSTER and cluster_mixed:
             msg = "crypto book is MIXED (both directions open) — no new cluster risk until coherent"
             skips.append((cand["symbol"], msg))
+            _log_passed_trade(state, cand, "one_thesis", slot_ts)
             print(f"  [PICK] {cand['symbol']} ONE-THESIS SKIP: {msg}")
             continue
         # clean lean: reject a cluster pick that fights it
@@ -698,6 +750,7 @@ def select_pick(analysis: list[dict], private, demo_feed, state: dict):
             msg = (f"opposes correlated crypto exposure "
                    f"(cluster is {'long' if cluster_dir>0 else 'short'})")
             skips.append((cand["symbol"], msg))
+            _log_passed_trade(state, cand, "correlation", slot_ts)
             print(f"  [PICK] {cand['symbol']} (conv {cand['conviction']:.0f}) "
                   f"CORRELATION SKIP: {msg}")
             continue
@@ -781,7 +834,8 @@ def _bucket(conviction: float) -> str:
 def _fresh_dp() -> dict:
     return {"last_slot_ts": None, "open_trades": [],
             "conviction_ledger": _fresh_ledger(), "picks": [],
-            "daybook": [], "last_recap_date": None}
+            "daybook": [], "last_recap_date": None,
+            "passed_log": [], "gate_scoreboard": {}}
 
 
 def _migrate_dp(dp: dict) -> None:
@@ -804,6 +858,8 @@ def _migrate_dp(dp: dict) -> None:
     dp.setdefault("picks", [])
     dp.setdefault("daybook", [])
     dp.setdefault("last_recap_date", None)
+    dp.setdefault("passed_log", [])
+    dp.setdefault("gate_scoreboard", {})
 
 
 def _slot_ts(now: datetime) -> str:
@@ -818,6 +874,143 @@ def _slot_ts(now: datetime) -> str:
 
 
 # ===========================================================================
+# THE MISSED-TRADE LEDGER — counterfactual scoring
+# ===========================================================================
+
+def _simulate_bracket(live_feed, entry: dict, entry_dt: datetime):
+    """Replays the EXACT tight-zone bracket a real entry would have used
+    (same sl_ref/tp_ref formulas as _build_entry_plan) against REAL 1h
+    candles from `live_feed`, starting just after entry_dt and covering up
+    to MAX_HOLD_H. Returns (outcome_pct, exit_kind):
+      outcome_pct — the trade's % move in the risk-scaled sense (+stop_pct
+                    on a stop, +target_pct on a target, or the actual %
+                    move at the 4h close on a time exit) so the caller can
+                    scale it by risk_pct/stop_pct exactly like a real
+                    fixed-fractional fill.
+      exit_kind   — "stop" | "target" | "time", for debugging/audit.
+    Returns (None, None) if the candles needed to judge the window aren't
+    available — the caller leaves the entry unscored and retries on a
+    later day rather than guessing.
+
+    STOP-FIRST-ON-TIE: if a single 1h bar's range would trip BOTH the stop
+    and the target, this books the STOP — conservative, matching how a
+    real bracket order behaves when both levels sit inside one bar's
+    range (the stop is the safety net; it must win any ambiguity)."""
+    symbol = entry["symbol"]
+    direction = entry["direction"]
+    ref_price = entry["ref_price"]
+    stop_pct = entry["stop_pct"]
+    target_pct = entry["target_pct"]
+    if direction == "long":
+        sl_ref = ref_price * (1 - stop_pct / 100)
+        tp_ref = ref_price * (1 + target_pct / 100)
+    else:
+        sl_ref = ref_price * (1 + stop_pct / 100)
+        tp_ref = ref_price * (1 - target_pct / 100)
+
+    window_end = entry_dt + timedelta(hours=MAX_HOLD_H)
+    try:
+        end_ms = int((window_end + timedelta(hours=1)).timestamp() * 1000)
+        candles = live_feed.get_candles(symbol, "1h", limit=12, end_ms=end_ms)
+    except Exception:
+        return None, None
+    if candles is None or candles.empty:
+        return None, None
+    bars = candles[(candles["timestamp"] > entry_dt)
+                   & (candles["timestamp"] <= window_end)]
+    if bars.empty:
+        return None, None
+
+    last_close = ref_price
+    for _, bar in bars.iterrows():
+        last_close = float(bar["close"])
+        hi, lo = float(bar["high"]), float(bar["low"])
+        if direction == "long":
+            stop_hit, target_hit = lo <= sl_ref, hi >= tp_ref
+        else:
+            stop_hit, target_hit = hi >= sl_ref, lo <= tp_ref
+        if stop_hit:
+            return -stop_pct, "stop"
+        if target_hit:
+            return target_pct, "target"
+
+    # no bar in the window hit either level -> the same 4h reduce-only time
+    # exit run_daily_pick's own reconcile loop would have applied to a real
+    # trade, booked at the last closed bar's close inside the window.
+    if direction == "long":
+        time_pct = (last_close / ref_price - 1) * 100
+    else:
+        time_pct = (ref_price / last_close - 1) * 100
+    return time_pct, "time"
+
+
+def score_passed_trades(live_feed, state: dict) -> int:
+    """Counterfactually scores every unscored state["daily_pick"]["passed_log"]
+    entry older than MAX_HOLD_H: replays the tight-zone bracket against real
+    candles (_simulate_bracket) and records `counterfactual_pnl` on the same
+    risk basis a real trade would use. Marks each entry `scored` so it is
+    NEVER re-fetched/re-simulated. Returns the count of entries scored this
+    call. Run once per UTC day, inside the daily-recap path, before the
+    recap message is composed (run_daily_pick), so the aggregates it
+    updates — state["daily_pick"]["gate_scoreboard"][reason] = {passed_n,
+    cf_pnl}, accumulating across days — are current when the recap reads
+    them.
+
+    HONESTY NOTES (read before trusting a number out of this):
+    - Fees use CF_TAKER_FEE_BPS on BOTH legs (no maker/taker nuance — a real
+      TP exit often fills maker at a lower fee than modeled here).
+    - No slippage is modeled at all.
+    - The trade is assumed to fill exactly at the logged ref_price (a real
+      order can slip on entry too).
+    All three assumptions flatter the missed trade relative to what a real
+    fill would have looked like — that is the CONSERVATIVE direction for
+    judging a gate: a gate has to beat even a flattered counterfactual to
+    prove it's earning its keep, not just an average one.
+    - EQUITY: risk_pct is computed the same way _build_entry_plan would
+      (RISK_PCT, halved via LOW_CONV_RISK_MULT for a sub-CONVICTION_FLOOR
+      pick), but scaled against state["virtual_equity"] AT SCORING TIME —
+      not the equity that actually existed when the slot was passed, since
+      a historical equity snapshot isn't logged per passed candidate. Fine
+      for a "would this gate have helped or hurt" read; not a cent-accurate
+      ledger entry."""
+    dp = state.setdefault("daily_pick", _fresh_dp())
+    passed_log = dp.get("passed_log", [])
+    scoreboard = dp.setdefault("gate_scoreboard", {})
+    equity = state.get("virtual_equity", 0.0)
+    now = datetime.now(timezone.utc)
+    fee_pct = CF_TAKER_FEE_BPS * 2 / 100     # both legs, in percent terms
+    scored_n = 0
+    for entry in passed_log:
+        if entry.get("scored"):
+            continue
+        try:
+            entry_dt = datetime.strptime(
+                entry["ts"], "%Y-%m-%dT%H:%M UTC").replace(tzinfo=timezone.utc)
+        except Exception:
+            entry["scored"] = True   # unparsable timestamp -> never retry
+            continue
+        age_h = (now - entry_dt).total_seconds() / 3600
+        if age_h < MAX_HOLD_H:
+            continue                 # too soon to know the 4h outcome yet
+        outcome_pct, exit_kind = _simulate_bracket(live_feed, entry, entry_dt)
+        if outcome_pct is None:
+            continue                 # candle data unavailable — retry later
+        low_conv = entry["conviction"] < CONVICTION_FLOOR
+        risk_pct = RISK_PCT * (LOW_CONV_RISK_MULT if low_conv else 1.0)
+        net_pct = outcome_pct - fee_pct
+        cf_pnl = round(risk_pct * equity * (net_pct / entry["stop_pct"]), 2)
+        entry["scored"] = True
+        entry["counterfactual_pnl"] = cf_pnl
+        entry["exit_kind"] = exit_kind
+        reason = entry.get("reason", "other")
+        board = scoreboard.setdefault(reason, {"passed_n": 0, "cf_pnl": 0.0})
+        board["passed_n"] += 1
+        board["cf_pnl"] = round(board["cf_pnl"] + cf_pnl, 2)
+        scored_n += 1
+    return scored_n
+
+
+# ===========================================================================
 # daily recap (the learning loop's plain-English summary)
 # ===========================================================================
 
@@ -826,16 +1019,51 @@ def _yesterday_str(today_str: str) -> str:
     return f"{d:%Y-%m-%d}"
 
 
+def _missed_trade_lines(dp: dict, today_str: str) -> list[str]:
+    """1-2 plain-English lines off YESTERDAY's SCORED passed_log entries —
+    the missed-trade ledger's receipts. Only entries score_passed_trades()
+    has already marked `scored` are counted (an entry logged late yesterday
+    may still be < MAX_HOLD_H old and simply isn't judgeable yet; it picks
+    up on a later day's recap once it is — this line can under-count on the
+    very next day, which is the honest state of knowledge at that point,
+    not a bug). Returns [] when there's nothing scored to report."""
+    y = _yesterday_str(today_str)
+    rows = [r for r in dp.get("passed_log", [])
+           if r.get("scored") and r.get("ts", "")[:10] == y]
+    if not rows:
+        return []
+    n = len(rows)
+    saved = sum(-r["counterfactual_pnl"] for r in rows if r["counterfactual_pnl"] < 0)
+    cost = sum(r["counterfactual_pnl"] for r in rows if r["counterfactual_pnl"] > 0)
+    net = sum(r["counterfactual_pnl"] for r in rows)
+    lines = [f"Passed {n} trade{'s' if n != 1 else ''} yesterday: gates saved "
+            f"${saved:,.2f} / cost ${cost:,.2f} (net ${net:+,.2f})."]
+    winners = [r for r in rows if r["counterfactual_pnl"] > 0]
+    if winners:
+        biggest = max(winners, key=lambda r: r["counterfactual_pnl"])
+        label = REASON_LABEL.get(biggest["reason"], biggest["reason"])
+        lines.append(f"Biggest miss: {biggest['symbol']} {biggest['direction']} "
+                     f"({label}) would've made ${biggest['counterfactual_pnl']:,.2f}.")
+    return lines
+
+
 def _build_recap_message(dp: dict, state: dict, today_str: str) -> str:
     """Plain-English, ONE message, no book-name jargon (owner's one-voice
     mandate) — a trade count, win/loss, net PnL, and (when more than one
     setup group traded) the best- and worst-performing group from
     YESTERDAY's daybook entries, so Wallace sees the learning happening
-    without reading a single log line."""
+    without reading a single log line. ALSO appends the missed-trade
+    ledger's 1-2 lines (_missed_trade_lines) — what the gates that skipped
+    trades yesterday actually cost or saved, the receipts behind every
+    protective rule in select_pick()."""
     y = _yesterday_str(today_str)
     rows = [r for r in dp.get("daybook", []) if r.get("date") == y]
+    missed = _missed_trade_lines(dp, today_str)
+
     if not rows:
-        return "Learning engine yesterday: no trades logged (quiet 24h)."
+        base = "Learning engine yesterday: no trades logged (quiet 24h)."
+        return " ".join([base] + missed) if missed else base
+
     n = len(rows)
     wins = sum(1 for r in rows if r.get("outcome_pnl", 0.0) > 0)
     losses = n - wins
@@ -850,17 +1078,18 @@ def _build_recap_message(dp: dict, state: dict, today_str: str) -> str:
         g["n"] += 1
         g["wins"] += 1 if r.get("outcome_pnl", 0.0) > 0 else 0
     if len(groups) <= 1:
-        return headline
-
-    ranked_groups = sorted(groups.items(),
-                           key=lambda kv: kv[1]["wins"] / kv[1]["n"], reverse=True)
-    best_key, best = ranked_groups[0]
-    worst_key, worst = ranked_groups[-1]
-    benched = state.get("benched_triggers", [])
-    worst_tag = f"pick_{worst_key}" if worst_key != "low-conviction" else None
-    worst_note = " (benched)" if worst_tag and worst_tag in benched else ""
-    return (f"{headline} Best: {best_key} picks {best['wins']}/{best['n']}. "
-           f"Worst: {worst_key} picks {worst['wins']}/{worst['n']}{worst_note}.")
+        base = headline
+    else:
+        ranked_groups = sorted(groups.items(),
+                               key=lambda kv: kv[1]["wins"] / kv[1]["n"], reverse=True)
+        best_key, best = ranked_groups[0]
+        worst_key, worst = ranked_groups[-1]
+        benched = state.get("benched_triggers", [])
+        worst_tag = f"pick_{worst_key}" if worst_key != "low-conviction" else None
+        worst_note = " (benched)" if worst_tag and worst_tag in benched else ""
+        base = (f"{headline} Best: {best_key} picks {best['wins']}/{best['n']}. "
+               f"Worst: {worst_key} picks {worst['wins']}/{worst['n']}{worst_note}.")
+    return " ".join([base] + missed) if missed else base
 
 
 # ===========================================================================
@@ -1266,6 +1495,18 @@ def run_daily_pick(private, live_feed, demo_feed, state: dict, dry: bool = False
                 save_state(state)
         else:
             if dp.get("last_recap_date") != today_str:
+                # THE MISSED-TRADE LEDGER settles yesterday's passed
+                # candidates BEFORE the recap is composed, once per UTC day
+                # (this whole block is gated on last_recap_date), so
+                # _build_recap_message sees fresh counterfactuals. Skipped
+                # in dry mode — scoring mutates state (marks entries
+                # scored, updates gate_scoreboard) and dry mode makes no
+                # state side effects, same as last_slot_ts/last_recap_date.
+                if not dry:
+                    n_scored = score_passed_trades(live_feed, state)
+                    if n_scored:
+                        print(f"  [PICK{tag}] missed-trade ledger: scored "
+                              f"{n_scored} passed candidate(s)")
                 recap_msg = _build_recap_message(dp, state, today_str)
                 print(f"  [PICK{tag}] daily recap: {recap_msg}")
                 if not dry:
