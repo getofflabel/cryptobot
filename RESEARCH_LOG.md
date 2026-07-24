@@ -597,3 +597,17 @@ Discrepancy caught: live strikes trigger is RSI3<10 (code) vs <15
 transfer rests on gold's validation. NEXT: the replay TOURNAMENT
 (thousands of runs on this harness) + blind-slice as the standing
 benchmark all future brain versions must beat.
+
+## ROUND 71 — precision entries, iteration 1 (2026-07-24)
+Trimmed core (96 cells/asset, BTC+ETH incl. fresh 5.4y ETH 5m): the new
+architecture produced ZERO survivors — root cause identified: the fine
+triggers (15m turn candle fires on ~50% of bars) ADD noise instead of
+selecting (40-46% noise-stopout rate in the 15m/5m head-to-head); the
+ladder was NOT monotonic with common triggers (inverts R58, whose 1h
+reversal-bar trigger was RARE — rarity was the active ingredient).
+R58's exact config re-confirmed under TAKER costs on BTC (train $22.47
+x32 / val $52.20 x12) but did NOT fatten, FAILS ETH transfer, 35.9%
+fee-share, 8.7 tr/yr. ITERATION 2 DESIGN (make-it-work): triggers must
+be EVENTS not candle colors — level-anchored setups (range edges,
+prior-day extremes, pools) + structural sweep-reclaim/displacement
+triggers on 15m/5m; full 1,300-cell grid ready per results section 8.
