@@ -65,6 +65,12 @@ def full_cycle(private, live_feed, demo_feed, symbol, reason):
         run_lab(private, live_feed, demo_feed, load_state())
     except Exception as e:
         print(f"  shorts lab error: {str(e)[:120]}")
+    try:
+        from newsdesk import run_newsdesk
+        from step5_paper_trade import load_state
+        run_newsdesk(private, live_feed, demo_feed, load_state())
+    except Exception as e:
+        print(f"  newsdesk error: {str(e)[:120]}")
 
 
 def main():

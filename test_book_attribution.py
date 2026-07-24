@@ -36,6 +36,7 @@ import traceback
 
 import pandas as pd
 
+import newsdesk
 import shorts_lab
 import step5_paper_trade as s5
 import tactical
@@ -164,13 +165,16 @@ def make_state(**books) -> dict:
     make_state(ride={...}, lab={...})."""
     state = {"virtual_equity": 1000.0, "goal": 2000.0, "open_trade": None,
              "tactical": {"open_trade": None},
-             "shorts_lab": {"open_trade": None}}
+             "shorts_lab": {"open_trade": None},
+             "newsdesk": {"open_trade": None}}
     if "ride" in books:
         state["open_trade"] = books["ride"]
     if "tact" in books:
         state["tactical"]["open_trade"] = books["tact"]
     if "lab" in books:
         state["shorts_lab"]["open_trade"] = books["lab"]
+    if "newsdesk" in books:
+        state["newsdesk"]["open_trade"] = books["newsdesk"]
     return state
 
 
@@ -188,6 +192,22 @@ def lab_trade(contracts, entry=65000.0, trigger="forensic_short",
             "entry_fee_bps": 6.0, "entry_time": entry_time or s5.now_utc(),
             "tp_price": entry * 0.95, "sl_price": entry * 1.017,
             "tp_order_id": None, "tpsl_id": tpsl_id, "max_hold_h": 48}
+
+
+def newsdesk_trade(contracts, entry=65000.0, direction=-1, tpsl_id=None,
+                   entry_time=None):
+    """round 45B — news_momentum, either direction."""
+    if direction > 0:
+        tp, sl = entry * 1.024, entry * 0.988
+    else:
+        tp, sl = entry * 0.976, entry * 1.012
+    headline = "[WatcherGuru] JUST IN: test headline"
+    return {"trigger": "news_momentum", "direction": direction,
+            "contracts": contracts, "entry_price": entry,
+            "entry_fee_bps": 6.0, "entry_time": entry_time or s5.now_utc(),
+            "tp_price": round(tp, 1), "sl_price": round(sl, 1),
+            "tpsl_id": tpsl_id, "max_hold_h": 24, "headline": headline,
+            "event_ts": s5.now_utc(), "ctx": {"news": headline}}
 
 
 # ---------------------------------------------------------------------------
@@ -208,7 +228,7 @@ def _noop_save_state(state):
     pass
 
 
-for _mod in (s5, tactical, shorts_lab):
+for _mod in (s5, tactical, shorts_lab, newsdesk):
     _mod.notify = _noop_notify
     _mod.log_event = _noop_log_event
     _mod.save_state = _noop_save_state
@@ -385,6 +405,55 @@ def test_f_flaky_read_exception_never_acts():
         "a read exception must never lead to a re-arm"
 
 
+def test_g_newsdesk_incident_replay():
+    """SAME incident shape as test_a, for the new book: newsdesk holds a
+    recorded -69.6 ct short, the ride has no position, champion flat.
+    decide_and_trade must place ZERO orders and cancel NOTHING — the net
+    belongs entirely to newsdesk, whose attributed slice already matches
+    what it wants (nothing, from the ride's point of view)."""
+    state = make_state(newsdesk=newsdesk_trade(69.6, direction=-1))
+    private = FakePrivate(net=-69.6)
+    live_feed = FakeLiveFeed()
+
+    s5.load_state = lambda: state
+    s5.vol_filtered_ma = lambda *a, **kw: pd.Series([0])   # champion: flat
+
+    s5.decide_and_trade(private, live_feed, SYMBOL)
+
+    assert private.orders == [], f"expected zero orders, got {private.orders}"
+    assert private.cancels == [], f"expected zero cancels, got {private.cancels}"
+    assert state["newsdesk"]["open_trade"] is not None, \
+        "the newsdesk's own record must be untouched"
+    assert state["newsdesk"]["open_trade"]["contracts"] == 69.6
+
+
+def test_h_attribution_ride_long_newsdesk_short():
+    """Ride long 45 ct + newsdesk short -69.6 ct recorded, net -24.6 ->
+    attributed ride = +45, attributed newsdesk = -69.6, unexplained = 0."""
+    state = make_state(ride=ride_trade(45.0),
+                       newsdesk=newsdesk_trade(69.6, direction=-1))
+    net = -24.6   # 45 - 69.6
+
+    recorded = recorded_book_positions(state)
+    assert recorded["ride"] == 45.0
+    assert recorded["newsdesk"] == -69.6
+    assert recorded["tact"] == 0.0
+    assert recorded["lab"] == 0.0
+    assert recorded["apprentice"] == 0.0
+
+    assert abs(attributed_position(net, state, "ride") - 45.0) < 1e-9
+    assert abs(attributed_position(net, state, "newsdesk") - (-69.6)) < 1e-9
+    assert abs(unexplained_position(net, state) - 0.0) < 1e-9
+
+    # a newsdesk LONG layered alongside ride shouldn't confuse either slice
+    state2 = make_state(ride=ride_trade(45.0),
+                        newsdesk=newsdesk_trade(12.0, direction=1))
+    net2 = 57.0   # 45 + 12
+    assert abs(attributed_position(net2, state2, "ride") - 45.0) < 1e-9
+    assert abs(attributed_position(net2, state2, "newsdesk") - 12.0) < 1e-9
+    assert abs(unexplained_position(net2, state2) - 0.0) < 1e-9
+
+
 # ---------------------------------------------------------------------------
 # Runner
 # ---------------------------------------------------------------------------
@@ -397,6 +466,8 @@ def main():
         test_d_unexplained_vs_recorded_short,
         test_e_ensure_bracket_flaky_reads,
         test_f_flaky_read_exception_never_acts,
+        test_g_newsdesk_incident_replay,
+        test_h_attribution_ride_long_newsdesk_short,
     ]
     results = []
     for fn in tests:

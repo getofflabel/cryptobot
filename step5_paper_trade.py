@@ -129,7 +129,9 @@ def sync_ledger_to_account(private, symbol, state) -> None:
     mid-trade so an open position's math is never disturbed."""
     has_trade = (state.get("open_trade")
                  or state.get("tactical", {}).get("open_trade")
-                 or state.get("tactical_eth", {}).get("open_trade"))
+                 or state.get("tactical_eth", {}).get("open_trade")
+                 or state.get("shorts_lab", {}).get("open_trade")
+                 or state.get("newsdesk", {}).get("open_trade"))
     if has_trade:
         return
     try:
@@ -587,7 +589,8 @@ def decide_and_trade(private: BlofinDemoPrivate, live_feed, symbol: str):
         other_books_open = bool(
             state.get("tactical", {}).get("open_trade")
             or state.get("shorts_lab", {}).get("open_trade")
-            or state.get("apprentice", {}).get("open_trade"))
+            or state.get("apprentice", {}).get("open_trade")
+            or state.get("newsdesk", {}).get("open_trade"))
         if own_tpsl_id:
             try:
                 private.cancel_tpsl(symbol, str(own_tpsl_id))

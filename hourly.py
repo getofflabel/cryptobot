@@ -239,6 +239,30 @@ def main(storm=None):
         log_event({"action": "error", "book": "shorts_lab",
                    "error": str(e)[:300]})
 
+    # 3c. newsdesk (round 45B, the first sealed-test survivor), every hour —
+    #     same daemon handoff as tactical/shorts_lab. Timing note: newsdesk
+    #     only ever ENTERS on a bar-close decision cycle (matching the
+    #     backtest's fill timing exactly), but a mid-hour headline is
+    #     usually picked up sooner than that — the news-watch edge function
+    #     fires a workflow_dispatch wake, which runs this exact hourly.py
+    #     cycle immediately and (if the daemon isn't already alive and
+    #     owning trading) sets `pending` right away, well before the
+    #     direction bar even opens, let alone closes. See newsdesk.py's
+    #     module docstring for the full timing writeup.
+    try:
+        from step5_paper_trade import load_state
+        from newsdesk import run_newsdesk
+        state = state_holder.get("s") or load_state()
+        if not daemon_alive:
+            run_newsdesk(private, live_feed, demo_feed, state)
+        else:
+            print("  newsdesk skipped — daemon owns trading")
+    except Exception as e:
+        print(f"NEWSDESK cycle error: {str(e)[:150]}")
+        from step5_paper_trade import log_event
+        log_event({"action": "error", "book": "newsdesk",
+                   "error": str(e)[:300]})
+
 
 if __name__ == "__main__":
     import time as _t
