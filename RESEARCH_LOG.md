@@ -663,3 +663,34 @@ this validates generic break-and-continuation, not his recipe.
 SYNTHESIS w/ R71-iter1 (rare triggers were R58's magic) — the program's
 working rule: there is a SELECTIVITY SWEET SPOT; too little confirmation
 = noise, too much = never trades. 12 candidates banked, no look spent.
+
+## ROUND 77 — the real S&P playbook (2026-07-24)
+209 configs, six new families on SPY/ES/QQQ 1h+1d. FROM 1 RARE SETUP TO A
+PLAYBOOK: tradeable survivors — vol-gated opening-range breakout (SPY 1h,
+3/3, val edge RISES as the gate tightens $0.27->$1.71->$3.75/t, 66-132
+tr/yr); squeeze->expansion (ES, 5/12, both directions, 48-105 tr/yr);
+opening-range breakout+fade (6/32, 83-113 tr/yr); Mon->Fri weekly hold
+(~46 tr/yr). Rare-but-real: turn-of-month N=3 (R60's flagged t=2.43,
+now built, ~12/yr); SPY/QQQ catch-up divergence (one-sided: buy the
+laggard only); vol-gated dip-buy (gating adds nothing to R60's config).
+GRAVEYARDS: pullback-in-trend 0/24; THE STRUCTURE TOOLKIT 0/92 — our
+best crypto edge does NOT transfer to the index, decisively; mid-session
+reversal 0/12; gap-reaction 0/8. All train+val only; sealed looks not
+yet spent; still no venue.
+
+## ROUND 78 — the oil playbook (2026-07-24)
+290 configs on CL/BZ/USO. THE OVERDUE VERDICT ON WHAT WE WERE RUNNING:
+gold's donchian+structure-trail is directionally real on oil DAILY
+(transfers CL<->BZ) but fires 3.4/yr AND LOSES on the 1h timeframe we
+were also running it on; the index RSI2 dip-buy FAILS on all 5 datasets
+both timeframes. Neither was ever oil-validated. Train/val surfaced two
+candidates — the RSI2 spike-FADE short and an EIA-Wednesday REVERSAL
+(the release-hour reaction is a fade, not a continuation: all 12
+continuation configs failed) — and TWO SEALED LOOKS WERE SPENT ON EACH
+(erosion ~+29): EIA-Wed reversal 4h: CL -$4.99/t x25, BZ -$4.16/t x25
+FAIL; RSI2 spike-fade short: CL -$21.47/t x86, BZ -$22.65/t x76 FAIL
+(ungated -$20.67 / -$17.69, also FAIL). CAVEAT: the 1h sealed window is
+only 0.5y and coincides with a hard oil rally, which is brutal to any
+short — but the rule stands. OIL STILL HAS ZERO VALIDATED STRATEGIES,
+and now we also know the borrowed ones don't hold up. Also dead: sweep-
+and-reclaim 0/12, USO 0/40 (the retail-tradeable instrument).
