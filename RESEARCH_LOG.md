@@ -625,3 +625,22 @@ the unlock. KEEP: his sweep->confirm->retrace sequencing matches our
 R64 fake-out finding — feeds R71-iter2 as first-class configs on deep
 BTC 5m. No sealed looks (survivors are loosened-rule variants on thin
 regimes).
+
+## ROUND 73 — Alex Gonzalez (fxalexg) 10h course (2026-07-24)
+Distilled: body-close market structure (wicks excluded) -> break of a
+structure point -> retest -> ENGULFING confirmation (his stricter rule:
+must engulf the prior TWO bodies) -> stop beyond the invalidating wick,
+min 1:2 R:R. Same mechanism for his "reversal" and "continuation"
+chapters. He trades FOREX on camera exclusively (GBPCHF/USDJPY/GBPJPY/
+EURUSD/USDCAD/NZDCAD/USDCHF) despite claiming indices/commodities/crypto.
+CLAIMED vs REALIZED: claims 60-70% swing win rate; pooled realized at his
+own 1:2 floor = 0-59%, MEAN 35.2%. His "$100 -> $1M" is walked back on
+camera to "$300k -> $1M" with a mid-challenge account blow-up; risk
+sizing is gut feel (100% of account on trade 1, "never below 35%").
+GAUNTLET: 0 survivors / 106 configs — BUT 90 (85%) = INSUFFICIENT-SAMPLE
+(his ~1 trade per 25-90 days vs our 2y intraday-derived depth). The one
+deep dataset (BTC) cleared floors on 15/18 and FAILED all 15.
+GAP NAMED: his real stack is W/D/4H context -> 1H/30m/15m entries; our
+daily->4h approximation is shallower. FOLLOW-UP (R74): the DAILY-ONLY
+version on 20+ years of free forex dailies — the honest test his
+frequency actually deserves.
