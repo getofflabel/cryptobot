@@ -1,0 +1,486 @@
+<meta charset="utf-8">
+<title>The Playbook</title>
+<style>
+  body { font-family: Georgia, serif; font-size: 11pt; line-height: 1.5; color: #111; margin: 0; }
+  h1 { font-size: 26pt; margin: 0 0 4pt 0; }
+  h2 { font-size: 15.5pt; margin: 24pt 0 6pt 0; border-bottom: 1.5pt solid #111; padding-bottom: 3pt; }
+  h3 { font-size: 12.5pt; margin: 15pt 0 4pt 0; }
+  h4 { font-size: 11pt; margin: 11pt 0 3pt 0; font-style: italic; }
+  p, li { font-size: 11pt; }
+  ul, ol { margin: 4pt 0 8pt 0; }
+  li { margin-bottom: 3pt; }
+  table { border-collapse: collapse; width: 100%; margin: 8pt 0 12pt 0; font-size: 10pt; }
+  th { background: #eee; text-align: left; padding: 4pt 6pt; border: 0.5pt solid #999; }
+  td { padding: 4pt 6pt; border: 0.5pt solid #999; vertical-align: top; }
+  .sub { color: #555; font-size: 10.5pt; margin: 0 0 16pt 0; }
+  .boxtbl { border-collapse: collapse; width: 100%; margin: 10pt 0; }
+  .boxtbl td { border: 1pt solid #333; background: #f5f5f5; padding: 9pt 11pt; }
+  .rule { font-weight: bold; margin-bottom: 2pt; }
+  .quote { font-style: italic; color: #333; margin: 6pt 0 6pt 12pt; }
+</style>
+
+<h1>The Playbook</h1>
+<p class="sub">Everything we believe, how we decide, what we trade, and where we honestly stand.
+Written for Wallace Chen · Version 2 · 24 July 2026</p>
+
+<h2>1. The goal</h2>
+
+<p><strong>Get the practice account to $3,000, then keep compounding.</strong> That is the target
+this whole machine points at. It starts from about $1,350 today.</p>
+
+<p>The way we get there is not one big win. It is many ordinary trades, banked and re-bet.
+Wallace's own words, and this is the mathematics of the whole project:</p>
+
+<p class="quote">"Money doesn't have to be made in the big trades. It could be made in the small
+trades. It's compounding at the end of the day. You could be in and out within an hour."</p>
+
+<p>A machine that nets even a fraction of a percent a day, consistently, compounds to a large
+number in a year. A machine that waits for perfect trades makes twenty attempts a year and
+learns nothing. We are building the first kind.</p>
+
+<h3>How we count the money honestly</h3>
+<p>The bot's score starts at zero from the moment it began trading its own signals. Any profit
+that was in the account before that is Wallace's own trading and is never counted as the
+machine's performance. When this document says the machine made or lost money, it means trades
+the machine decided and placed itself. Paper trades on oil and the S&amp;P count too, because the
+machine decided, sized, executed and exited them at real prices, only the ledger holding the
+dollars is internal.</p>
+
+<h2>2. How we operate: the attitude</h2>
+
+<table class="boxtbl"><tr><td>
+<p class="rule">We do not say something can't be done.</p>
+<p class="quote">"There's no point of saying this won't work. Our job is to make it work. If
+there's people doing it, it can work."</p>
+<p>If a real person trades a style profitably, that style is possible, and any failure we get is
+a failure of <em>our version</em> of it. The correct response to a bad test result is "what did
+we get wrong," never "it can't be done." Defeatist framing is banned from this project.</p>
+
+<p class="rule">Profitable traders are profitable for a reason.</p>
+<p>When we study a trader like TJR, Alex Gonzalez or PB Blake and our coded version of their
+method loses money, the honest conclusion is that <strong>our formalisation is incomplete</strong>,
+not that they are lying. The job is to find the piece we failed to capture: the context they
+read, the setups they skipped, the judgment that lives on the chart and not in the words.</p>
+
+<p class="rule">Frequency is a symptom of knowledge, not a target.</p>
+<p>A trader who knows one setup waits weeks. A trader who knows twenty finds several a day in
+the same market. So when the machine is quiet, the diagnosis is "it does not know enough yet,"
+and the fix is more validated tools, never forcing trades.</p>
+
+<p class="rule">Speed of learning beats caution.</p>
+<p class="quote">"I'd rather you take ten to twenty trades tomorrow and have most of them lose,
+than take one trade or none. You can't learn from one trade a day."</p>
+<p>The practice account is tuition, not a trophy. Trading a lot, honestly recorded, is how the
+machine builds the judgment to become selective later.</p>
+</td></tr></table>
+
+<h2>3. How Wallace trades, and therefore how the machine should</h2>
+
+<p>The machine exists to trade the way its owner trades, not the way a textbook does.</p>
+
+<table>
+<tr><th style="width:26%">His preference</th><th>What it means for the machine</th></tr>
+<tr><td><strong>15-minute charts and below</strong></td><td>His words: "I heavily fancy fifteen
+minutes and below. I would even go into five minutes." New capability gets built in these
+timeframes first.</td></tr>
+<tr><td><strong>Not 4-hour, not multi-day holds</strong></td><td>"If I'm trading four hours, I'm
+expecting to be in a trade for days, if not weeks." He does not want that. Proven slow
+strategies stay on the payroll because they earn, but they are not the identity.</td></tr>
+<tr><td><strong>In and out the same day</strong></td><td>Ride real moves, but expect to be flat
+within hours, not weeks.</td></tr>
+<tr><td><strong>Active every day</strong></td><td>Even with real money, the expectation is
+240-plus trades a year, active on most days, because that is what a knowledgeable trader's year
+looks like. Thirty trades a year is not the plan at any stage.</td></tr>
+<tr><td><strong>One trader, one voice</strong></td><td>No internal codenames in anything he
+reads. Not "the Shorts Lab fired" but "shorted Bitcoin: crowded longs into a breakdown."
+Reasons, not org charts.</td></tr>
+</table>
+
+<h3>The trap we must avoid: mismatched timeframes</h3>
+<p>An expensive mistake we made and fixed: justifying a trade on the daily chart while placing a
+stop and target sized for a two-hour scalp. Those are two different trades wearing one ticket.
+If the reason is the daily chart, the trade needs days of room. If the stop is 1% away, then the
+intraday chart must be what justified it.</p>
+
+<h2>4. The trader's toolkit, and what actually tested true</h2>
+
+<p>These are the tools Wallace uses to read a chart. Every one has now been coded and tested on
+years of real data. This is what we found.</p>
+
+<table>
+<tr><th style="width:24%">Tool</th><th style="width:36%">What it means in plain words</th><th>What the data said</th></tr>
+<tr><td><strong>Liquidity and sweeps</strong></td><td>Clusters of equal highs or lows where
+stops pile up. A "sweep" is price raiding that pool then snapping back.</td><td>Useless as a
+signal on its own. Valuable as a vote alongside others. Confirmed: 62-89% of sharp breaks snap
+back, so the reclaim is the tradeable side, not the break.</td></tr>
+<tr><td><strong>Break of structure</strong></td><td>The chain of higher highs and higher lows
+breaking character.</td><td><strong>Works</strong>, and is the backbone of our best crypto
+edge, but only with agreement from other tools.</td></tr>
+<tr><td><strong>Fair value gaps</strong></td><td>Three-candle imbalances where price moved so
+fast it left a hole.</td><td>No edge alone. Useful as a supporting vote.</td></tr>
+<tr><td><strong>Equilibrium (premium/discount)</strong></td><td>The midpoint of the current
+range: buy the lower half, sell the upper half.</td><td>No edge alone. Good as a filter on top
+of a real signal.</td></tr>
+<tr><td><strong>Fibonacci retracement</strong></td><td>The 0.618 to 0.79 pullback zone of a
+move.</td><td>No edge alone in our tests. Contributes as a vote.</td></tr>
+<tr><td><strong>Confluence</strong></td><td>Only trade when several tools agree.</td><td><strong>This
+is the finding.</strong> A structure break with zero agreement loses money. With two or more
+agreeing, it was strongly profitable through the hardest recent market. Wallace's central claim
+tested true.</td></tr>
+<tr><td><strong>Candle patterns</strong></td><td>Pin bars, engulfing candles, inside bars.</td>
+<td>Zero survivors in 112 tested versions on Bitcoin. Adding "context" made them worse, not
+better.</td></tr>
+<tr><td><strong>Order blocks</strong></td><td>The last opposing candle before a strong
+move.</td><td>Zero survivors in 64 versions.</td></tr>
+<tr><td><strong>Divergence</strong></td><td>Price and momentum disagreeing.</td><td>The textbook
+reversal version is noise. The <em>continuation</em> version (hidden divergence) passed its
+sealed test and is now live.</td></tr>
+</table>
+
+<p><strong>The lesson underneath the table:</strong> individually, most of these tools are not
+signals. Together, they are a committee, and the committee has an edge. That is why our best
+crypto strategy requires a structure break plus at least two agreeing conditions.</p>
+
+<h3>The selectivity sweet spot</h3>
+<p>We measured both failure modes. Too little confirmation and you trade noise: a "reversal
+candle" on the 15-minute chart appears on roughly half of all bars. Too much and you never
+trade: one popular published system, tested honestly across 30 years, produced about one trade
+every two years. The target is the middle: enough agreement to have an edge, few enough
+conditions to actually fire.</p>
+
+<h2>5. Sessions and timeframes</h2>
+
+<h3>Sessions</h3>
+<p>Even though crypto never closes, the world's money keeps office hours, and it shows.</p>
+<ul>
+<li><strong>Asia</strong> (00:00-07:00 UTC): quieter, sets the overnight range.</li>
+<li><strong>London</strong> (07:00-13:00 UTC): the first real volume of the day.</li>
+<li><strong>New York</strong> (13:00-21:00 UTC): the heaviest hours; US equity and futures
+markets are open inside this window.</li>
+<li><strong>Weekend</strong>: crypto keeps trading with thinner liquidity, which changes what
+works.</li>
+</ul>
+<p>Measured, not assumed: adding the session lens to our research <em>tripled</em> the rate at
+which previously-dead tools showed a real edge. Our best structure strategy concentrates its
+profit in the New York session. Some tools only work in Asian hours; one only works on weekends.
+Session is now a first-class part of how the machine reads a situation.</p>
+
+<h3>Timeframes: what each chart is for</h3>
+<table>
+<tr><th style="width:22%">Chart</th><th>Its job</th></tr>
+<tr><td>Daily / 4-hour</td><td>Context and direction only. Never the justification for a quick
+trade.</td></tr>
+<tr><td>1-hour</td><td>The setup: where a tradeable situation is identified.</td></tr>
+<tr><td>15-minute / 5-minute</td><td>The trigger: precise entry timing, so the stop can be tight
+and the payoff large. This is the timeframe the machine is being grown into.</td></tr>
+<tr><td>Volatility</td><td>Permission. Fast trades need a market that is moving. In dead tape,
+only the strongest setups may fire.</td></tr>
+</table>
+
+<h3>There is no clock in crypto, but there is a clock on a thesis</h3>
+<p>Crypto trades 24/7, so we never close a position because "the market is closing." But some
+strategies do carry a time limit, and it is a limit on the <em>idea</em>, not the market. A news
+reaction is spent within about a day; after that, whatever price does is unrelated to the reason
+we entered, so we leave.</p>
+
+<h2>6. Reading the day before trading it</h2>
+
+<p>A good trader reads the situation first and then picks the tool. Our machine is being built
+to do the same thing, and the model for it is the kind of daily note Wallace's alpha group
+writes:</p>
+
+<p class="quote">"Bitcoin, provided it stays above 64K, is set for probably mid-range chop.
+Monday's low to Tuesday's high is 63.7 up to 67K, call it a 3K weekly range, and we're trading
+65 to 65.5, mid-range. Better trades present the closer we get to 64K or 67K. For now, let it
+chop."</p>
+
+<p>Everything in that paragraph is now computed automatically every day and stored as the
+machine's memory of the week: the weekly range, where price sits inside it, whether we are at an
+edge or stuck mid-range, which market is stronger, what the volatility regime is, plus the
+cross-market context (the S&amp;P's key level, and the price gap between Brent and American oil,
+which widens under global stress).</p>
+
+<p>Two rules come out of that read, and they are the machine's version of "let it chop":</p>
+<ul>
+<li><strong>Mid-range and quiet: only A-grade setups.</strong> The machine does not gamble in
+dead tape.</li>
+<li><strong>At the edges of the range: pay attention.</strong> That is where trades present.</li>
+</ul>
+
+<p>The bigger goal here is what we call reading the scenario. Instead of a rack of separate
+tripwires each waiting for its own signal, the machine classifies the day (trending or ranging,
+quiet or violent, news in the air or not, crowd leaning long or short, which session) and then
+uses the tools that have historically earned money <em>in that specific situation</em>. We have
+the map: for example, one short-selling tool has made money in exactly one condition, violent
+markets with the crowd heavily long, and shows no evidence of working anywhere else. Turning
+that map into the machine's live decision-making is the current major project.</p>
+
+<h2>7. What we believe about markets</h2>
+
+<ul>
+<li><strong>Most trading ideas do not work.</strong> We have tested roughly two thousand
+versions. The large majority lost money after costs. Any process that does not throw away most
+of its ideas is fooling itself.</li>
+<li><strong>Costs decide more than people think.</strong> A round trip on our exchange costs
+about 0.12%. If you are hunting a 0.2% move, most of your profit is gone before you start. This
+killed six families of fast-trading ideas. The fix is not "don't trade fast," it is "hunt moves
+much bigger than the cost of hunting them." Fast entry, full-sized target.</li>
+<li><strong>An edge is small and repeatable.</strong> Most profitable traders win 40-55% of the
+time and make money because winners are bigger than losers. We measure dollars per trade after
+costs, never win rate alone.</li>
+<li><strong>A tested idea can go stale.</strong> One of our own live strategies quietly started
+losing money as the market calmed. We caught it, fixed it, and made re-testing live strategies
+permanent. Passing a test buys confidence, not immortality.</li>
+<li><strong>The right tool depends on the situation.</strong> See section 6.</li>
+</ul>
+
+<h2>8. How we prove something works</h2>
+
+<p>We split history into three parts, in time order:</p>
+<table>
+<tr><th style="width:22%">Window</th><th style="width:14%">Share</th><th>What it is for</th></tr>
+<tr><td><strong>Training</strong></td><td>First 60%</td><td>Where we may tune and experiment
+freely.</td></tr>
+<tr><td><strong>Validation</strong></td><td>Next 20%</td><td>A check on data we did not tune on.
+Ideas that only worked in training die here.</td></tr>
+<tr><td><strong>Sealed test</strong></td><td>Final 20%</td><td>Untouched history, looked at
+<em>once</em>. The closest thing to having traded it live in the past.</td></tr>
+</table>
+<p>Minimum bars: at least 30 trades in training and 8 in validation, positive dollars per trade
+after all costs in both, and then one look at the sealed test. Every look we have ever spent is
+counted (about 25 so far) because repeated peeking turns an honest test into a fitted one.</p>
+
+<p><strong>The replay exam.</strong> Beyond single ideas, we drop the entire current machine into
+the past and let it trade forward bar by bar with no knowledge of the future. That is the closest
+honest answer to "would this have made money." Results in section 12.</p>
+
+<p><strong>The graveyard.</strong> Every failed idea is written down with the reason. It stops us
+re-testing dead ends and it tells us what kind of idea tends to fail here. Important caveat, per
+section 2: a failed test of someone's published method means our version failed, and the first
+question is always what we mis-coded.</p>
+
+<h2>9. What we trade, market by market</h2>
+
+<h3>Crypto (Bitcoin, Ethereum, Solana)</h3>
+<p><em>Character:</em> never closes, reacts to news within minutes, volatility shrinking year
+over year, and the three coins move together, so we treat them as one family and never hold
+opposing bets across them.</p>
+<p><em>What works:</em> trading the direction of the first hour after a market-moving headline;
+trend-following with a strict "the market is actually moving" filter; buying panic inside an
+uptrend but only after the selling visibly stops; hidden (continuation) divergence on the 4-hour
+chart; and a structure break backed by at least two agreeing conditions.</p>
+<p><em>What does not:</em> standing short strategies (five burials), chasing breakdowns (six),
+candle patterns, order blocks, textbook reversal divergence, and small-profit scalping (six, all
+killed by fees).</p>
+
+<h3>Gold</h3>
+<p><em>Character:</em> calmer than crypto so crypto settings never transfer; a long-running
+uptrend that punishes short-sellers; a rhythm tied to London and New York. We trade it on our
+exchange through a gold-backed token, the only gold instrument the practice venue offers, and it
+is now placing real orders there.</p>
+<p><em>What works:</em> buying a break above the highest price of the last 20 days, and then
+holding while a stop trails up behind the structure instead of taking a fixed profit. That exit
+change alone made roughly four times the money on identical entries.</p>
+<p><em>What does not:</em> buying dips against the trend, short-selling, and trading the
+London/New York opens as a standalone signal.</p>
+
+<h3>The S&amp;P 500</h3>
+<p><em>Character:</em> the most orderly market we have studied. Upward drift, session-bound, and
+it recovers from panics more reliably than anything else. Our news feed does not move it.</p>
+<p><em>What works:</em> buying an extreme multi-day flush while the index is still above its
+200-day average, and holding until it normalises. Profitable in 10 of the last 11 years, winning
+about 70% of the time. The cleanest edge we own.</p>
+<p><em>What does not:</em> momentum and trend-chasing (zero survivors in 24 versions), gap
+trading, and the famous overnight drift, which is real but too small to beat costs.</p>
+
+<h3>Oil</h3>
+<p><em>Where we honestly stand:</em> this is our weakest market. <strong>We do not yet have a
+single strategy tested and proven on oil itself.</strong> What runs there are strategies proven
+on gold and the index, borrowed on an untested assumption. Oil gets its own research program,
+the same treatment the S&amp;P received.</p>
+<p><em>What we do know:</em> it trends hard on geopolitics, and the price gap between Brent and
+American oil widens under global stress. We track that gap daily; it is currently in the top 10%
+of its recent range.</p>
+<p><em>First result:</em> on 24 July the oil system took its first trade and closed it at target
+for +$58.39 in about two hours, the machine's first winning closed trade.</p>
+
+<h3>Why oil and the S&amp;P trade on paper</h3>
+<p>Not by choice. Our exchange does not offer them, and every practice broker we tried
+(Alpaca, Capital.com, OANDA, TradingView's simulator) either failed or demanded identity
+verification. So those two markets trade against real prices on an internal ledger, are shown on
+the dashboard exactly like real positions, and count in the statistics. A daily check watches for
+the day our exchange lists them, and they switch to real orders immediately when it does.</p>
+
+<h2>10. How a trade happens, start to finish</h2>
+
+<ol>
+<li><strong>Read the day.</strong> Weekly range, position within it, volatility, session, crowd
+positioning.</li>
+<li><strong>Scan.</strong> Every two hours across all six markets, plus continuous watching by
+the specialist systems (a headline, a breakout, a divergence).</li>
+<li><strong>Score.</strong> Each market gets a number built from named components (daily trend,
+hourly trend, breakout proximity, washout, unusual volume, funding, momentum). Every component
+that fires is recorded, so every trade can be explained in plain words afterwards.</li>
+<li><strong>Check the guards.</strong> Is another system already in this symbol? Would this
+contradict our existing crypto position? Did we just get stopped out of this exact trade in the
+last six hours without the signal improving? Is the market too quiet for this kind of trade?
+Any failure and we pass, and the pass is logged with its reason.</li>
+<li><strong>Size by risk.</strong> Decide the risk (2% of the ledger), place the stop where the
+chart says it belongs, and let position size fall out of those two numbers. Never the reverse.</li>
+<li><strong>Enter with one market order.</strong> No resting limit orders, no sequences of small
+orders that can jam halfway.</li>
+<li><strong>Protect on the exchange.</strong> The stop goes on the exchange immediately, so it
+works even if our computer dies. Isolated margin, so this trade can only ever cost its own
+margin.</li>
+<li><strong>Manage.</strong> Every cycle, verify the protection is still live and re-place it if
+it vanished. Trailing stops move up, never down.</li>
+<li><strong>Exit</strong> at the stop, the target, a structure break, or the thesis's time limit.</li>
+<li><strong>Log and learn.</strong> Written into the daybook with reasoning, outcome and hold
+time. Setup types that keep losing get switched off automatically. Trades we <em>passed</em> are
+also logged and scored the next day, so every protective rule has to prove it saves more than it
+costs.</li>
+</ol>
+
+<h2>11. Exits: where the profit actually comes from</h2>
+
+<p>Exits turned out to matter as much as entries, and Wallace's instinct here changed the machine
+twice.</p>
+
+<ul>
+<li><strong>A target should come from the chart, not from a percentage.</strong> The old
+strategies used fixed targets like "+2.4%," chosen before anyone looked at the situation. Wallace
+called that out, and testing agreed: on gold, replacing the fixed exit with one that follows the
+chart's structure made about four times the money. On the news strategy, the fixed target had
+gone stale and was losing about $15 a trade; the structure-based exit turned it positive.</li>
+<li><strong>Where to put a target.</strong> Not at the obvious level, just in front of it. For a
+short, that means above the demand zone where buyers previously stepped in, so we get filled
+before the crowd waiting there. Never at the first bounce level, and never inside empty space
+when there is a real level just beyond it.</li>
+<li><strong>Banking half at a target, then trailing the rest,</strong> sounds better than it
+tested. On the news strategy it lost to pure trailing, because 70% of those trades never reach a
+target at all and the ones that do tend to keep running.</li>
+<li><strong>Stops move toward profit or they do not move.</strong> Widening a stop because a
+trade is losing is how small losses become large ones.</li>
+</ul>
+
+<h2>12. What is running right now, in plain words</h2>
+
+<table>
+<tr><th style="width:26%">System</th><th>What it actually does</th></tr>
+<tr><td>The learning engine</td><td>Every two hours, scores every market and takes the best
+available setup. This is the high-volume rep machine for phase one. Trades Bitcoin, Ethereum,
+Solana and gold with real demo orders.</td></tr>
+<tr><td>The news watcher</td><td>Watches headlines around the clock, waits one full hour to see
+which way price actually broke, then trades that direction. Works weekends, when most traders
+are away.</td></tr>
+<tr><td>The gold breakout system</td><td>Buys gold when it breaks its 20-day high, then trails a
+stop behind structure. Also watches the price tick-by-tick so it can enter the moment the level
+breaks rather than waiting for a daily close.</td></tr>
+<tr><td>The divergence system</td><td>Trades continuation divergence on the 4-hour Bitcoin
+chart, roughly 18 times a year.</td></tr>
+<tr><td>The trend system</td><td>The original: rides Bitcoin trends when volatility confirms the
+move is real. Fires around six times a year.</td></tr>
+<tr><td>The dip system</td><td>Buys sharp panics inside Bitcoin uptrends, now requiring a candle
+that shows the selling stopped.</td></tr>
+<tr><td>The short lab</td><td>Tests short setups in the one condition where they have shown an
+edge: violent markets with the crowd heavily long.</td></tr>
+<tr><td>The oil and S&amp;P desk</td><td>The same engine applied to oil and the index, on an
+internal ledger at real prices, with its own charts and position table on the dashboard.</td></tr>
+<tr><td>The S&amp;P panic-buyer</td><td>Waits for the index to flush inside its uptrend, then
+buys. It has not fired yet; that setup is rare by design.</td></tr>
+</table>
+
+<p>All of it reports to one dashboard and one phone feed, and it speaks in reasons, not system
+names.</p>
+
+<h2>13. The rules we never break</h2>
+
+<table class="boxtbl"><tr><td>
+<p class="rule">1. Never trade an idea that has not passed the wall.</p>
+<p class="rule">2. Every position has a stop on the exchange, always.</p>
+<p class="rule">3. Enter with market orders only, never resting limit orders.</p>
+<p class="rule">4. One thesis on crypto at a time. Never long one coin and short another.</p>
+<p class="rule">5. Isolated margin, so one accident cannot reach the rest of the account.</p>
+<p class="rule">6. Risk first, size second.</p>
+<p class="rule">7. Never move a stop away from price.</p>
+<p class="rule">8. The sealed test gets looked at once, and every look is counted.</p>
+<p class="rule">9. Report the truth immediately, especially when it is bad.</p>
+<p class="rule">10. Speak in reasons, not internal names.</p>
+</td></tr></table>
+
+<h2>14. Where we honestly stand</h2>
+
+<h3>The replay exam</h3>
+<p>The complete machine, walked through history with no knowledge of the future, at $250 of
+margin per trade:</p>
+<table>
+<tr><th>Market</th><th>All years</th><th>Trades</th><th>Years it had never seen</th></tr>
+<tr><td>Crypto</td><td>+$33,422</td><td>1,014</td><td><strong>+$2,036</strong> over 149 trades</td></tr>
+<tr><td>S&amp;P 500</td><td>+$5,686</td><td>157</td><td><strong>+$435</strong> over 13 trades</td></tr>
+<tr><td>Oil</td><td>+$4,707</td><td>236</td><td>Not certifiable (borrowed strategies)</td></tr>
+</table>
+<p>Nine of eleven years profitable on crypto, including the 2018 crash and the 2022 bear market,
+with losses under $2,000 in each. It never blew up. The honest headline is the right-hand
+column: on history it had genuinely never seen, it made money, modestly.</p>
+
+<h3>The live record</h3>
+<p>Five closed trades: four losses on crypto totalling about $91, and the first win, oil, +$58.39
+at target. Ledgers total roughly $3,400 across the real-venue account and the paper books. Three
+positions open at time of writing.</p>
+<p>Both of these are true at once: every stop did its job and the machinery now works after a
+week of fixing real bugs; and the live record is still too short to prove anything. The number
+that will settle it is a green week, not a green trade.</p>
+
+<h3>What the first week produced</h3>
+<ul>
+<li>Five validated strategies, each having survived a sealed test.</li>
+<li>Around 75 research rounds, every failure recorded with its reason.</li>
+<li>Nine systems trading around the clock across four markets.</li>
+<li>A dozen serious bugs found and permanently fixed, most of them caught by Wallace looking at
+the screen and asking why something looked wrong.</li>
+</ul>
+
+<h2>15. The plan to real money</h2>
+
+<table>
+<tr><th style="width:20%">Phase</th><th style="width:16%">Roughly when</th><th>What it means</th></tr>
+<tr><td><strong>1. Volume</strong></td><td>Now, about three weeks</td><td>Ten to thirty trades a
+day across every market. Losses expected, they are the tuition. The goal is a labelled record of
+what a good trade looks like versus a bad one.</td></tr>
+<tr><td><strong>2. Selectivity</strong></td><td>Around week four</td><td>Treat the practice
+account like real money. Forced trading stops; the machine trades only the setups its own record
+proves are good. Still active most days, because that is what knowledge produces.</td></tr>
+<tr><td><strong>3. Live</strong></td><td>Wallace's decision</td><td>Real funds, only after phase
+two's record earns it against a standard written down in advance.</td></tr>
+</table>
+<p>The bar to graduate from phase one is fixed now so it cannot move later: at least 200 recorded
+trades, and a clear separation in the record between the setups that earn and the setups that
+donate.</p>
+
+<h2>16. What we are still missing</h2>
+<ul>
+<li><strong>A proven fast-entry method.</strong> Wallace's own timeframe. The obstacle was never
+the timeframe, it was that early attempts hunted moves too small to survive fees. Current work
+aims at 5 and 15-minute entries into full-sized moves.</li>
+<li><strong>The scenario brain, live.</strong> We have the map of which tool works in which
+situation. It is not yet driving the machine's decisions.</li>
+<li><strong>A real venue for oil and the S&amp;P.</strong></li>
+<li><strong>An oil-specific edge.</strong></li>
+<li><strong>A green week.</strong> The only number that settles the argument.</li>
+</ul>
+
+<h2>17. The short version</h2>
+<table class="boxtbl"><tr><td>
+<p>We are getting a practice account to $3,000 by trading many ordinary trades well, not by
+waiting for perfect ones. We trade Wallace's way: fast entries, real moves, active most days,
+explained in plain words.</p>
+<p>We only trade what we have proven on history the idea never saw, and we throw away almost
+everything. We size by risk, protect every position on the exchange, never bet against ourselves,
+and keep an honest record including the trades we passed on.</p>
+<p>When something we believed turns out wrong, we say so the same day and fix it. When a method
+works for a real trader and fails for us, we assume we coded it wrong and go find out why. We do
+not say it cannot be done.</p>
+<p>Right now: five proven strategies, a machine that works, a decade-long test saying it would
+have made money, and a live record with one win in it. The job is to turn that into a green
+week, without breaking any of the sentences above.</p>
+</td></tr></table>
