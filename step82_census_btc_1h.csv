@@ -1,0 +1,94 @@
+state,structure,location,quality,momentum,bars,share_pct,populated
+transition|mid range|messy|contracting,transition,mid range,messy,contracting,3388,6.112,True
+transition|mid range|messy|expanding,transition,mid range,messy,expanding,3013,5.436,True
+uptrend|at range high|messy|contracting,uptrend,at range high,messy,contracting,2406,4.341,True
+downtrend|pulling back in trend|messy|contracting,downtrend,pulling back in trend,messy,contracting,2266,4.088,True
+uptrend|pulling back in trend|messy|contracting,uptrend,pulling back in trend,messy,contracting,2212,3.991,True
+uptrend|at range high|messy|expanding,uptrend,at range high,messy,expanding,1988,3.587,True
+downtrend|pulling back in trend|messy|expanding,downtrend,pulling back in trend,messy,expanding,1949,3.516,True
+transition|at range high|messy|contracting,transition,at range high,messy,contracting,1947,3.513,True
+uptrend|pulling back in trend|messy|expanding,uptrend,pulling back in trend,messy,expanding,1940,3.5,True
+transition|at range high|messy|expanding,transition,at range high,messy,expanding,1754,3.164,True
+downtrend|at range low|messy|contracting,downtrend,at range low,messy,contracting,1680,3.031,True
+transition|at range low|messy|contracting,transition,at range low,messy,contracting,1478,2.667,True
+downtrend|at range low|messy|expanding,downtrend,at range low,messy,expanding,1474,2.659,True
+transition|at range low|messy|expanding,transition,at range low,messy,expanding,1449,2.614,True
+transition|mid range|clean|contracting,transition,mid range,clean,contracting,1326,2.392,True
+transition|mid range|clean|expanding,transition,mid range,clean,expanding,1162,2.096,True
+transition|mid range|messy|stalling,transition,mid range,messy,stalling,980,1.768,True
+transition|at range high|clean|contracting,transition,at range high,clean,contracting,896,1.617,True
+downtrend|pulling back in trend|clean|contracting,downtrend,pulling back in trend,clean,contracting,891,1.607,True
+uptrend|pulling back in trend|clean|contracting,uptrend,pulling back in trend,clean,contracting,855,1.543,True
+uptrend|at range high|clean|contracting,uptrend,at range high,clean,contracting,838,1.512,True
+uptrend|pulling back in trend|clean|expanding,uptrend,pulling back in trend,clean,expanding,791,1.427,True
+downtrend|pulling back in trend|clean|expanding,downtrend,pulling back in trend,clean,expanding,785,1.416,True
+transition|at range high|clean|expanding,transition,at range high,clean,expanding,729,1.315,True
+transition|at range low|clean|contracting,transition,at range low,clean,contracting,721,1.301,True
+downtrend|at range high|messy|contracting,downtrend,at range high,messy,contracting,703,1.268,True
+uptrend|at range high|clean|expanding,uptrend,at range high,clean,expanding,681,1.229,True
+downtrend|at range low|clean|contracting,downtrend,at range low,clean,contracting,672,1.212,True
+downtrend|pulling back in trend|messy|stalling,downtrend,pulling back in trend,messy,stalling,671,1.211,True
+uptrend|at range high|messy|stalling,uptrend,at range high,messy,stalling,665,1.2,True
+transition|at range low|clean|expanding,transition,at range low,clean,expanding,662,1.194,True
+uptrend|pulling back in trend|messy|stalling,uptrend,pulling back in trend,messy,stalling,629,1.135,True
+uptrend|at range low|messy|contracting,uptrend,at range low,messy,contracting,629,1.135,True
+downtrend|at range high|messy|expanding,downtrend,at range high,messy,expanding,595,1.073,True
+uptrend|at range low|messy|expanding,uptrend,at range low,messy,expanding,581,1.048,True
+downtrend|at range low|clean|expanding,downtrend,at range low,clean,expanding,558,1.007,True
+transition|at range high|messy|stalling,transition,at range high,messy,stalling,509,0.918,False
+transition|mid range|clean|stalling,transition,mid range,clean,stalling,452,0.815,False
+downtrend|at range low|messy|stalling,downtrend,at range low,messy,stalling,442,0.797,False
+uptrend|breaking out|messy|expanding,uptrend,breaking out,messy,expanding,439,0.792,False
+downtrend|at range high|clean|contracting,downtrend,at range high,clean,contracting,431,0.778,False
+transition|breaking out|messy|expanding,transition,breaking out,messy,expanding,424,0.765,False
+transition|at range low|messy|stalling,transition,at range low,messy,stalling,400,0.722,False
+transition|breaking down|messy|expanding,transition,breaking down,messy,expanding,360,0.649,False
+downtrend|at range high|clean|expanding,downtrend,at range high,clean,expanding,349,0.63,False
+transition|breaking out|clean|expanding,transition,breaking out,clean,expanding,347,0.626,False
+uptrend|at range low|clean|contracting,uptrend,at range low,clean,contracting,326,0.588,False
+uptrend|breaking out|clean|expanding,uptrend,breaking out,clean,expanding,316,0.57,False
+transition|breaking down|clean|expanding,transition,breaking down,clean,expanding,304,0.548,False
+uptrend|pulling back in trend|clean|stalling,uptrend,pulling back in trend,clean,stalling,292,0.527,False
+downtrend|pulling back in trend|clean|stalling,downtrend,pulling back in trend,clean,stalling,291,0.525,False
+downtrend|breaking down|messy|expanding,downtrend,breaking down,messy,expanding,291,0.525,False
+downtrend|breaking down|clean|expanding,downtrend,breaking down,clean,expanding,283,0.511,False
+uptrend|at range low|clean|expanding,uptrend,at range low,clean,expanding,276,0.498,False
+uptrend|at range high|clean|stalling,uptrend,at range high,clean,stalling,257,0.464,False
+transition|at range high|clean|stalling,transition,at range high,clean,stalling,232,0.419,False
+downtrend|at range low|clean|stalling,downtrend,at range low,clean,stalling,191,0.345,False
+transition|at range low|clean|stalling,transition,at range low,clean,stalling,182,0.328,False
+uptrend|breaking down|messy|expanding,uptrend,breaking down,messy,expanding,182,0.328,False
+downtrend|breaking out|clean|expanding,downtrend,breaking out,clean,expanding,181,0.327,False
+downtrend|at range high|messy|stalling,downtrend,at range high,messy,stalling,162,0.292,False
+uptrend|breaking down|clean|expanding,uptrend,breaking down,clean,expanding,148,0.267,False
+uptrend|at range low|messy|stalling,uptrend,at range low,messy,stalling,143,0.258,False
+downtrend|breaking out|messy|expanding,downtrend,breaking out,messy,expanding,136,0.245,False
+downtrend|at range high|clean|stalling,downtrend,at range high,clean,stalling,100,0.18,False
+uptrend|at range low|clean|stalling,uptrend,at range low,clean,stalling,76,0.137,False
+transition|breaking out|messy|contracting,transition,breaking out,messy,contracting,71,0.128,False
+uptrend|breaking out|messy|contracting,uptrend,breaking out,messy,contracting,70,0.126,False
+transition|breaking out|clean|contracting,transition,breaking out,clean,contracting,65,0.117,False
+uptrend|breaking out|clean|contracting,uptrend,breaking out,clean,contracting,63,0.114,False
+uptrend|breaking out|messy|stalling,uptrend,breaking out,messy,stalling,50,0.09,False
+transition|breaking down|clean|contracting,transition,breaking down,clean,contracting,46,0.083,False
+downtrend|breaking down|clean|contracting,downtrend,breaking down,clean,contracting,44,0.079,False
+uptrend|breaking out|clean|stalling,uptrend,breaking out,clean,stalling,43,0.078,False
+downtrend|breaking out|clean|contracting,downtrend,breaking out,clean,contracting,43,0.078,False
+transition|breaking out|clean|stalling,transition,breaking out,clean,stalling,38,0.069,False
+uptrend|breaking down|clean|contracting,uptrend,breaking down,clean,contracting,37,0.067,False
+uptrend|breaking down|messy|contracting,uptrend,breaking down,messy,contracting,36,0.065,False
+transition|breaking down|clean|stalling,transition,breaking down,clean,stalling,35,0.063,False
+transition|breaking down|messy|stalling,transition,breaking down,messy,stalling,35,0.063,False
+transition|breaking down|messy|contracting,transition,breaking down,messy,contracting,35,0.063,False
+transition|breaking out|messy|stalling,transition,breaking out,messy,stalling,35,0.063,False
+downtrend|breaking down|messy|stalling,downtrend,breaking down,messy,stalling,35,0.063,False
+downtrend|breaking down|messy|contracting,downtrend,breaking down,messy,contracting,31,0.056,False
+downtrend|breaking out|messy|contracting,downtrend,breaking out,messy,contracting,24,0.043,False
+downtrend|breaking down|clean|stalling,downtrend,breaking down,clean,stalling,23,0.041,False
+downtrend|breaking out|messy|stalling,downtrend,breaking out,messy,stalling,21,0.038,False
+uptrend|breaking down|clean|stalling,uptrend,breaking down,clean,stalling,21,0.038,False
+downtrend|breaking out|clean|stalling,downtrend,breaking out,clean,stalling,20,0.036,False
+uptrend|breaking down|messy|stalling,uptrend,breaking down,messy,stalling,18,0.032,False
+range|at range low|clean|stalling,range,at range low,clean,stalling,1,0.002,False
+range|at range low|clean|expanding,range,at range low,clean,expanding,1,0.002,False
+range|mid range|clean|expanding,range,mid range,clean,expanding,1,0.002,False

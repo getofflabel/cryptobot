@@ -1,0 +1,290 @@
+family,indicator,tf,direction,state,btc_tr_exp,btc_va_exp,eth_tr_n,eth_tr_exp,eth_va_n,eth_va_exp,eth_verdict
+trend,SMA cross,1h,long,uptrend|at range high|messy|contracting,16.1779,1.723,25,-22.4144,11,62.7886,FAIL
+trend,SMA cross,15m,long,downtrend|pulling back in trend|messy|expanding,4.5753,23.5034,61,7.7269,12,8.0571,SURVIVOR
+trend,SMA cross,15m,long,uptrend|at range high|messy|expanding,1.022,16.447,68,-14.6229,17,-35.8886,FAIL
+trend,SMA cross,15m,short,transition|mid range|clean|contracting,10.3584,5.3815,57,0.3895,17,-10.7896,FAIL
+trend,EMA cross,15m,long,uptrend|at range high|messy|expanding,3.7419,13.628,59,-24.4306,21,-15.135,FAIL
+trend,EMA cross,15m,short,transition|mid range|clean|expanding,0.3946,38.9636,54,-20.7527,17,-1.8584,FAIL
+trend,EMA cross,15m,long,uptrend|at range high|clean|contracting,4.264,17.9749,31,13.4293,11,44.873,SURVIVOR
+trend,EMA cross,15m,long,transition|at range high|clean|expanding,0.0336,9.2782,94,-16.6949,35,-34.0807,FAIL
+trend,MACD line/signal cross,1h,long,transition|mid range|messy|contracting,15.9936,46.265,60,-7.4253,19,46.1282,FAIL
+trend,MACD line/signal cross,1h,long,downtrend|pulling back in trend|messy|contracting,33.2716,15.1679,84,14.6813,19,-0.0769,FAIL
+trend,MACD line/signal cross,1h,short,uptrend|at range high|messy|expanding,1.3887,12.0843,26,-53.8531,8,-17.5325,FAIL
+trend,MACD line/signal cross,1h,long,downtrend|pulling back in trend|clean|contracting,23.0956,26.9963,30,-56.3955,6,64.2895,UNRELIABLE
+trend,MACD line/signal cross,1h,short,uptrend|pulling back in trend|clean|contracting,59.6815,33.2117,23,-9.1644,8,-34.5123,FAIL
+trend,MACD line/signal cross,1h,short,uptrend|at range low|messy|expanding,10.9298,180.9829,31,51.39,15,46.7641,SURVIVOR
+trend,MACD line/signal cross,15m,long,uptrend|at range high|messy|contracting,2.7341,14.3834,44,0.1988,19,25.3679,SURVIVOR
+trend,MACD line/signal cross,15m,short,transition|at range high|messy|expanding,3.661,8.4535,43,-29.5869,13,-14.2214,FAIL
+trend,MACD line/signal cross,15m,short,transition|at range low|messy|expanding,1.439,11.8671,151,-9.9911,46,6.6024,FAIL
+trend,MACD histogram 0-cross,1h,long,transition|mid range|messy|contracting,15.9936,46.265,60,-7.4253,19,46.1282,FAIL
+trend,MACD histogram 0-cross,1h,long,downtrend|pulling back in trend|messy|contracting,33.2716,15.1679,84,14.6813,19,-0.0769,FAIL
+trend,MACD histogram 0-cross,1h,short,uptrend|at range high|messy|expanding,1.3887,12.0843,26,-53.8531,8,-17.5325,FAIL
+trend,MACD histogram 0-cross,1h,long,downtrend|pulling back in trend|clean|contracting,23.0956,26.9963,30,-56.3955,6,64.2895,UNRELIABLE
+trend,MACD histogram 0-cross,1h,short,uptrend|pulling back in trend|clean|contracting,59.6815,33.2117,23,-9.1644,8,-34.5123,FAIL
+trend,MACD histogram 0-cross,1h,short,uptrend|at range low|messy|expanding,10.9298,180.9829,31,51.39,15,46.7641,SURVIVOR
+trend,MACD histogram 0-cross,15m,long,uptrend|at range high|messy|contracting,2.7341,14.3834,44,0.1988,19,25.3679,SURVIVOR
+trend,MACD histogram 0-cross,15m,short,transition|at range high|messy|expanding,3.661,8.4535,43,-29.5869,13,-14.2214,FAIL
+trend,MACD histogram 0-cross,15m,short,transition|at range low|messy|expanding,1.439,11.8671,151,-9.9911,46,6.6024,FAIL
+trend,Aroon up/down cross,1h,long,downtrend|pulling back in trend|messy|contracting,8.3906,39.5229,43,-40.3029,18,-38.8869,FAIL
+trend,Aroon up/down cross,1h,long,transition|at range high|messy|expanding,11.6581,73.8319,60,-7.3933,22,-63.1375,FAIL
+trend,Aroon up/down cross,1h,short,transition|mid range|messy|stalling,17.4542,0.3584,19,38.9532,5,-49.4866,UNRELIABLE
+trend,Aroon up/down cross,1h,long,downtrend|pulling back in trend|clean|expanding,1.5278,56.1449,29,-6.364,6,164.7962,UNRELIABLE
+trend,Aroon up/down cross,15m,long,downtrend|at range low|messy|contracting,2.3572,10.9158,26,-10.1956,5,-36.8211,UNRELIABLE
+trend,Aroon up/down cross,15m,long,uptrend|at range high|clean|contracting,18.4885,36.6628,13,38.8414,5,4.3493,UNRELIABLE
+trend,Aroon up/down cross,15m,long,transition|at range high|clean|contracting,8.385,5.8819,73,1.5667,24,21.0991,SURVIVOR
+trend,Aroon oscillator 0-cross,1h,long,downtrend|pulling back in trend|messy|contracting,8.3906,39.5229,43,-40.3029,18,-38.8869,FAIL
+trend,Aroon oscillator 0-cross,1h,long,transition|at range high|messy|expanding,11.6581,73.8319,60,-7.3933,22,-63.1375,FAIL
+trend,Aroon oscillator 0-cross,1h,short,transition|mid range|messy|stalling,17.4542,0.3584,19,38.9532,5,-49.4866,UNRELIABLE
+trend,Aroon oscillator 0-cross,1h,long,downtrend|pulling back in trend|clean|expanding,1.5278,56.1449,29,-6.364,6,164.7962,UNRELIABLE
+trend,Aroon oscillator 0-cross,15m,long,downtrend|at range low|messy|contracting,2.3572,10.9158,26,-10.1956,5,-36.8211,UNRELIABLE
+trend,Aroon oscillator 0-cross,15m,long,uptrend|at range high|clean|contracting,18.4885,36.6628,13,38.8414,5,4.3493,UNRELIABLE
+trend,Aroon oscillator 0-cross,15m,long,transition|at range high|clean|contracting,8.385,5.8819,73,1.5667,24,21.0991,SURVIVOR
+trend,ADX/DMI DI cross,1h,short,transition|mid range|messy|contracting,8.7498,30.2517,75,11.9384,21,-11.6459,FAIL
+trend,ADX/DMI DI cross,1h,long,uptrend|pulling back in trend|messy|expanding,25.6146,16.619,29,-43.713,13,-22.2831,FAIL
+trend,ADX/DMI DI cross,1h,short,uptrend|pulling back in trend|messy|expanding,15.2892,0.3306,80,-0.11,33,-38.366,FAIL
+trend,ADX/DMI DI cross,1h,long,transition|at range high|messy|expanding,6.1761,28.4998,64,11.6563,32,10.0557,SURVIVOR
+trend,ADX/DMI DI cross,1h,long,transition|mid range|clean|expanding,45.8352,57.3718,47,-20.8039,16,-44.4105,FAIL
+trend,ADX/DMI DI cross,1h,short,transition|mid range|clean|expanding,8.0271,9.4988,41,37.1032,10,23.7218,SURVIVOR
+trend,ADX/DMI DI cross,1h,long,downtrend|at range high|messy|expanding,24.3678,22.6363,48,-9.9441,19,-15.4368,FAIL
+trend,ADX/DMI DI cross,1h,short,uptrend|at range low|messy|expanding,2.043,47.2888,43,-11.9832,23,10.104,FAIL
+trend,ADX/DMI DI cross,15m,long,transition|at range high|clean|contracting,1.9123,8.9582,55,-14.294,20,12.1836,FAIL
+trend,ADX/DMI DI-cross+ADX>thresh,1h,short,transition|mid range|messy|contracting,2.8929,121.9028,29,-22.91,9,40.115,FAIL
+trend,ADX/DMI DI-cross+ADX>thresh,1h,long,uptrend|at range high|messy|contracting,18.2874,95.1537,29,14.9695,8,-27.0439,FAIL
+trend,ADX/DMI DI-cross+ADX>thresh,1h,short,uptrend|pulling back in trend|messy|expanding,7.9138,54.5585,36,-23.2702,13,23.4445,FAIL
+trend,ADX/DMI DI-cross+ADX>thresh,1h,long,transition|at range high|clean|expanding,2.9321,3.9097,28,16.4001,3,139.8449,UNRELIABLE
+trend,ADX/DMI DI-cross+ADX>thresh,1h,short,uptrend|at range low|messy|expanding,7.3779,57.6515,31,-22.8632,18,-41.0913,FAIL
+trend,ADX/DMI DI-cross+ADX>thresh,15m,short,uptrend|at range high|messy|contracting,9.7103,23.7058,22,-13.5175,7,41.1212,UNRELIABLE
+trend,ADX/DMI DI-cross+ADX>thresh,15m,short,transition|at range high|messy|contracting,0.8821,2.322,36,0.6385,7,-18.9231,UNRELIABLE
+trend,ADX/DMI DI-cross+ADX>thresh,15m,long,downtrend|pulling back in trend|clean|contracting,23.775,40.6252,30,3.36,11,-21.9472,FAIL
+trend,ADX/DMI DI-cross+ADX>thresh,15m,long,uptrend|at range high|clean|contracting,7.6488,1.3714,56,-20.2964,15,15.5004,FAIL
+trend,ADX/DMI DI-cross+ADX>thresh,15m,short,uptrend|pulling back in trend|clean|expanding,17.0874,7.5094,77,6.3077,21,42.6774,SURVIVOR
+trend,SuperTrend,1h,short,uptrend|at range low|messy|expanding,15.1171,52.8555,17,-18.4913,9,-47.1224,UNRELIABLE
+trend,SuperTrend,15m,short,downtrend|at range low|messy|expanding,12.8702,9.0447,41,5.4122,7,41.5664,UNRELIABLE
+trend,Parabolic SAR,1h,long,downtrend|pulling back in trend|messy|contracting,10.9151,26.8587,63,15.3785,25,-19.8801,FAIL
+trend,Parabolic SAR,1h,short,uptrend|pulling back in trend|messy|contracting,16.6086,68.7131,40,3.3636,15,18.3204,SURVIVOR
+trend,Parabolic SAR,1h,long,transition|mid range|clean|expanding,9.2052,24.2162,40,-48.0237,16,6.5847,FAIL
+trend,Parabolic SAR,1h,long,downtrend|pulling back in trend|clean|expanding,16.396,4.2492,49,-6.6324,14,62.6055,FAIL
+trend,Parabolic SAR,15m,short,transition|mid range|messy|stalling,15.6323,23.1724,67,-26.3894,25,4.2745,FAIL
+trend,Parabolic SAR,15m,long,downtrend|at range low|clean|contracting,5.1378,27.1386,35,-16.5308,15,4.4905,FAIL
+trend,Parabolic SAR,15m,long,downtrend|at range high|messy|contracting,6.7087,30.2217,49,1.8874,14,-10.1482,FAIL
+trend,Vortex VI+/VI- cross,1h,long,transition|mid range|messy|contracting,3.8741,3.9063,136,-17.0203,41,-9.9066,FAIL
+trend,Vortex VI+/VI- cross,1h,short,uptrend|pulling back in trend|messy|contracting,3.0999,17.4219,80,-19.4961,31,16.4483,FAIL
+trend,Vortex VI+/VI- cross,1h,long,transition|at range high|messy|contracting,16.2732,16.1067,29,-48.0757,13,94.4969,FAIL
+trend,Vortex VI+/VI- cross,1h,long,transition|mid range|clean|expanding,2.9686,22.322,58,-51.5826,13,-33.2726,FAIL
+trend,Vortex VI+/VI- cross,1h,long,downtrend|pulling back in trend|clean|contracting,43.0855,0.3158,28,-54.3438,14,-79.7976,FAIL
+trend,Vortex VI+/VI- cross,1h,long,downtrend|pulling back in trend|clean|expanding,58.0947,6.9805,32,15.8667,9,90.0583,SURVIVOR
+trend,Vortex VI+/VI- cross,15m,long,uptrend|pulling back in trend|clean|expanding,2.0304,9.3673,84,-12.5205,29,-13.7952,FAIL
+trend,Vortex VI+/VI- cross,15m,short,transition|at range high|clean|expanding,8.1082,2.4229,29,-50.3488,7,-18.7019,UNRELIABLE
+trend,KAMA cross,1h,long,downtrend|pulling back in trend|messy|expanding,21.0386,13.7148,164,-7.1342,56,8.7966,FAIL
+trend,KAMA cross,1h,short,uptrend|pulling back in trend|messy|expanding,14.9753,7.5784,187,-3.4694,73,22.968,FAIL
+trend,KAMA cross,1h,long,transition|at range high|messy|expanding,9.3192,42.2008,91,-1.856,29,18.84,FAIL
+trend,KAMA cross,1h,short,transition|mid range|clean|contracting,1.0042,14.2661,44,14.4471,10,5.9372,SURVIVOR
+trend,KAMA cross,1h,long,downtrend|at range high|messy|expanding,43.6613,40.7692,61,3.6512,23,-61.1298,FAIL
+trend,KAMA cross,1h,short,uptrend|at range low|messy|expanding,7.2536,88.2611,58,33.7055,21,16.115,SURVIVOR
+trend,Hull MA cross,1h,long,downtrend|pulling back in trend|messy|expanding,21.6982,15.1864,216,-14.7401,60,-6.0986,FAIL
+trend,Hull MA cross,1h,short,transition|at range high|messy|contracting,0.9895,3.8481,177,-15.7447,61,-12.4014,FAIL
+trend,Hull MA cross,1h,long,transition|at range low|messy|contracting,5.1763,43.1748,139,-32.2678,49,-51.3792,FAIL
+trend,Hull MA cross,1h,long,transition|at range high|clean|contracting,43.6389,4.5749,40,-11.9146,11,-36.4027,FAIL
+trend,Hull MA cross,1h,short,uptrend|pulling back in trend|clean|expanding,15.4827,7.8979,58,19.8558,17,21.6226,SURVIVOR
+trend,Hull MA cross,1h,long,downtrend|pulling back in trend|messy|stalling,7.6546,8.8744,60,50.1905,16,21.1666,SURVIVOR
+trend,Hull MA cross,1h,long,uptrend|pulling back in trend|messy|stalling,2.6098,16.1703,33,-37.8963,19,-70.858,FAIL
+trend,Hull MA cross,1h,long,downtrend|at range high|messy|expanding,3.7645,32.7592,65,22.7281,28,-51.0287,FAIL
+trend,Hull MA cross,1h,short,uptrend|at range low|messy|expanding,10.3581,12.625,62,11.9337,20,49.165,SURVIVOR
+trend,DEMA cross,1h,long,downtrend|pulling back in trend|messy|contracting,57.2907,2.7863,53,-4.5174,18,-30.0595,FAIL
+trend,DEMA cross,1h,long,transition|mid range|clean|expanding,27.2925,146.3269,24,-25.5675,13,37.7033,FAIL
+trend,DEMA cross,1h,long,downtrend|pulling back in trend|clean|expanding,54.7653,159.3518,30,-14.2475,9,176.5774,FAIL
+trend,DEMA cross,1h,short,uptrend|at range low|messy|expanding,56.3758,207.6828,26,40.7956,13,52.6145,SURVIVOR
+trend,DEMA cross,15m,long,transition|at range high|messy|contracting,11.3025,5.5968,66,8.6488,15,-0.6268,FAIL
+trend,DEMA cross,15m,long,uptrend|at range high|messy|expanding,14.5689,9.6829,74,-21.9651,19,-2.0792,FAIL
+trend,DEMA cross,15m,short,transition|at range low|messy|expanding,0.3899,7.0033,146,6.2341,39,17.079,SURVIVOR
+trend,TEMA cross,1h,long,transition|mid range|messy|contracting,30.5633,9.2876,58,-1.4732,20,39.7497,FAIL
+trend,TEMA cross,1h,short,uptrend|pulling back in trend|messy|contracting,30.7463,47.5889,64,0.0947,23,6.8963,SURVIVOR
+trend,TEMA cross,1h,long,downtrend|pulling back in trend|messy|expanding,69.4721,10.2704,87,41.0331,39,-33.3531,FAIL
+trend,TEMA cross,1h,long,downtrend|pulling back in trend|clean|expanding,31.7199,6.6386,46,-41.4598,16,18.9449,FAIL
+trend,TEMA cross,1h,short,uptrend|pulling back in trend|messy|stalling,9.049,5.0922,34,-37.3278,7,-44.6899,UNRELIABLE
+trend,TEMA cross,1h,long,downtrend|at range high|messy|expanding,8.5999,5.8524,30,13.9191,10,-108.7331,FAIL
+trend,TEMA cross,1h,short,uptrend|at range low|messy|expanding,40.5684,126.7147,23,14.22,13,59.0423,SURVIVOR
+trend,TEMA cross,15m,long,uptrend|at range high|clean|contracting,23.5648,4.6787,30,-4.5267,6,-53.2952,UNRELIABLE
+trend,TEMA cross,15m,long,transition|at range high|clean|contracting,0.142,29.1072,36,6.5822,14,-31.6589,FAIL
+trend,TEMA cross,15m,long,downtrend|at range low|clean|contracting,0.2254,9.0981,51,-25.2566,15,-49.0143,FAIL
+trend,TEMA cross,15m,short,transition|at range low|clean|expanding,2.7292,13.8702,113,8.918,40,17.4729,SURVIVOR
+trend,Linreg slope sign,1h,short,transition|mid range|messy|expanding,8.9225,0.7727,64,-36.9617,16,-0.5793,FAIL
+trend,Linreg slope sign,1h,short,downtrend|pulling back in trend|messy|contracting,3.0733,31.705,21,19.7616,4,60.9637,UNRELIABLE
+trend,Linreg slope sign,1h,long,downtrend|pulling back in trend|messy|expanding,5.8089,17.8477,14,-4.4654,9,-54.6571,UNRELIABLE
+trend,Linreg slope sign,1h,short,uptrend|at range low|messy|contracting,18.4352,14.8052,29,-37.0663,5,-67.2204,UNRELIABLE
+trend,Linreg slope sign,1h,long,downtrend|at range high|messy|expanding,39.9071,67.6515,27,0.1914,10,-74.1211,FAIL
+trend,Linreg slope sign,15m,short,downtrend|at range low|messy|contracting,4.6219,5.1304,30,-20.3025,7,11.023,UNRELIABLE
+trend,Linreg slope sign,15m,short,uptrend|pulling back in trend|messy|stalling,11.8458,14.0129,40,-28.7519,14,-2.703,FAIL
+momentum,RSI OB/OS,15m,long,downtrend|at range low|clean|contracting,10.0945,19.235,32,12.8746,10,7.9505,SURVIVOR
+momentum,RSI OB/OS,15m,short,uptrend|at range high|messy|stalling,15.202,2.739,25,-5.0534,8,-51.4676,FAIL
+momentum,RSI 50-cross,1h,long,downtrend|pulling back in trend|messy|expanding,21.3881,18.846,120,18.6888,39,-30.4327,FAIL
+momentum,RSI 50-cross,1h,long,transition|mid range|messy|stalling,9.443,37.3333,39,14.6981,17,-22.3784,FAIL
+momentum,RSI 50-cross,1h,long,downtrend|at range high|messy|expanding,34.1565,0.4504,66,-3.1995,25,-44.1314,FAIL
+momentum,RSI 50-cross,1h,short,uptrend|at range low|messy|expanding,7.0612,48.2894,56,25.0521,27,-18.1722,FAIL
+momentum,RSI 50-cross,15m,short,uptrend|at range high|messy|contracting,7.6152,8.0691,29,-22.7822,9,14.2044,FAIL
+momentum,RSI 50-cross,15m,long,transition|mid range|clean|contracting,0.1543,9.2239,212,-13.7725,76,7.5364,FAIL
+momentum,RSI 50-cross,15m,short,transition|at range high|messy|expanding,0.4082,5.4487,50,-22.0123,11,16.6097,FAIL
+momentum,RSI 50-cross,15m,long,uptrend|at range high|clean|contracting,0.1583,7.4553,28,10.9791,7,-19.2717,UNRELIABLE
+momentum,RSI 50-cross,15m,short,transition|at range low|clean|contracting,1.3969,16.7128,49,-18.7629,21,-23.7956,FAIL
+momentum,RSI 50-cross,15m,short,transition|at range low|clean|expanding,2.0044,3.9277,171,-2.5906,48,9.9639,FAIL
+momentum,Stochastic %K/%D cross,1h,long,downtrend|pulling back in trend|messy|contracting,10.4068,46.4671,155,-5.5501,54,22.3348,FAIL
+momentum,Stochastic %K/%D cross,1h,long,downtrend|pulling back in trend|messy|expanding,23.2403,42.3154,227,-6.833,69,2.7776,FAIL
+momentum,Stochastic %K/%D cross,1h,short,uptrend|pulling back in trend|clean|expanding,16.049,47.5686,59,17.8624,18,30.456,SURVIVOR
+momentum,Stochastic %K/%D cross,1h,short,uptrend|at range low|messy|contracting,3.2806,23.1423,68,3.8177,16,33.9418,SURVIVOR
+momentum,Stochastic extremes,1h,short,downtrend|pulling back in trend|messy|expanding,10.2451,14.2233,69,-26.0915,18,4.4413,FAIL
+momentum,Stochastic extremes,1h,long,downtrend|at range low|messy|expanding,6.4225,46.3912,130,-6.2512,40,9.1491,FAIL
+momentum,Stochastic extremes,1h,long,uptrend|pulling back in trend|clean|expanding,1.4511,39.4991,38,-4.6922,12,-5.989,FAIL
+momentum,Stochastic extremes,1h,short,downtrend|pulling back in trend|clean|expanding,63.1896,15.0399,26,-21.2308,7,-30.4704,UNRELIABLE
+momentum,Stochastic extremes,15m,long,transition|mid range|messy|contracting,6.1141,6.4843,140,-3.0085,34,13.459,FAIL
+momentum,Stochastic extremes,15m,short,transition|mid range|clean|expanding,2.9688,2.2356,117,-5.781,41,-11.9519,FAIL
+momentum,Stochastic extremes,15m,long,downtrend|pulling back in trend|clean|expanding,0.4155,14.3251,29,-0.9069,4,-51.6982,UNRELIABLE
+momentum,Stochastic RSI extremes,1h,short,uptrend|at range high|messy|expanding,10.9818,23.4298,119,-29.2919,41,-32.8323,FAIL
+momentum,Stochastic RSI extremes,1h,long,transition|at range high|messy|contracting,0.9627,16.0879,22,-33.9214,6,134.7478,UNRELIABLE
+momentum,Stochastic RSI extremes,1h,short,downtrend|at range low|messy|expanding,5.2672,3.4137,40,-17.2562,7,98.2363,UNRELIABLE
+momentum,Stochastic RSI extremes,1h,long,downtrend|pulling back in trend|clean|expanding,10.3375,38.7906,9,57.3239,4,-154.0379,UNRELIABLE
+momentum,Stochastic RSI extremes,1h,long,transition|at range low|clean|contracting,15.7144,88.148,15,13.9206,4,49.944,UNRELIABLE
+momentum,Stochastic RSI extremes,1h,short,uptrend|at range high|clean|expanding,2.5257,20.3432,42,-57.5211,15,55.2594,FAIL
+momentum,Stochastic RSI extremes,15m,short,uptrend|pulling back in trend|clean|contracting,7.6587,29.0176,35,-12.0325,10,0.7172,FAIL
+momentum,Stochastic RSI extremes,15m,short,uptrend|pulling back in trend|messy|stalling,9.3823,40.6905,35,-27.8076,21,3.6045,FAIL
+momentum,CCI extremes,1h,long,downtrend|at range low|messy|contracting,32.4577,15.4925,34,-2.5193,10,47.494,FAIL
+momentum,CCI extremes,1h,long,transition|at range low|messy|expanding,9.0576,12.8188,133,-36.3316,41,-25.4193,FAIL
+momentum,CCI extremes,1h,short,uptrend|at range high|clean|expanding,1.5127,15.7235,44,-5.6347,11,6.2844,FAIL
+momentum,CCI extremes,15m,short,uptrend|pulling back in trend|messy|expanding,1.7548,7.7242,40,8.9765,22,-12.0744,FAIL
+momentum,Williams %R extremes,1h,short,downtrend|pulling back in trend|messy|expanding,10.2451,14.2233,69,-26.0915,18,4.4413,FAIL
+momentum,Williams %R extremes,1h,long,downtrend|at range low|messy|expanding,6.4225,46.3912,130,-6.2512,40,9.1491,FAIL
+momentum,Williams %R extremes,1h,long,uptrend|pulling back in trend|clean|expanding,1.4511,39.4991,38,-4.6922,12,-5.989,FAIL
+momentum,Williams %R extremes,1h,short,downtrend|pulling back in trend|clean|expanding,63.1896,15.0399,26,-21.2308,7,-30.4704,UNRELIABLE
+momentum,Williams %R extremes,15m,long,transition|mid range|messy|contracting,6.1141,6.4843,140,-3.0085,34,13.459,FAIL
+momentum,Williams %R extremes,15m,short,transition|mid range|clean|expanding,2.9688,2.2356,117,-5.781,41,-11.9519,FAIL
+momentum,Williams %R extremes,15m,long,downtrend|pulling back in trend|clean|expanding,0.4155,14.3251,29,-0.9069,4,-51.6982,UNRELIABLE
+momentum,ROC 0-cross,1h,long,downtrend|pulling back in trend|messy|contracting,0.3795,9.8377,102,11.2824,46,-21.1147,FAIL
+momentum,ROC 0-cross,1h,short,uptrend|pulling back in trend|messy|contracting,15.1453,2.4645,95,7.155,40,-23.142,FAIL
+momentum,ROC 0-cross,1h,long,downtrend|pulling back in trend|messy|expanding,6.4949,11.0124,152,34.5128,31,-19.6402,FAIL
+momentum,ROC 0-cross,1h,short,transition|at range high|messy|contracting,66.0559,18.5194,33,-38.5302,11,-81.3993,FAIL
+momentum,ROC 0-cross,1h,long,uptrend|pulling back in trend|messy|expanding,12.3472,11.2873,68,-30.1477,29,-0.9494,FAIL
+momentum,ROC 0-cross,1h,long,transition|at range high|messy|expanding,46.0975,36.8235,90,29.5364,36,-8.9818,FAIL
+momentum,ROC 0-cross,1h,short,transition|at range high|messy|expanding,30.487,104.2702,31,8.2694,7,-31.1431,UNRELIABLE
+momentum,ROC 0-cross,1h,short,transition|mid range|messy|stalling,4.3473,20.5245,55,-4.3264,18,10.9488,FAIL
+momentum,ROC 0-cross,1h,long,downtrend|pulling back in trend|clean|expanding,24.0214,33.8856,40,-7.3433,20,53.0038,FAIL
+momentum,ROC 0-cross,1h,long,downtrend|pulling back in trend|messy|stalling,17.111,2.5732,44,24.848,11,-40.339,FAIL
+momentum,ROC 0-cross,1h,short,uptrend|at range low|messy|expanding,6.0485,126.0818,56,12.4325,21,23.0016,SURVIVOR
+momentum,ROC 0-cross,15m,short,transition|at range low|clean|expanding,0.1297,4.1997,164,-6.8486,58,-2.8849,FAIL
+momentum,Momentum 0-cross,1h,long,transition|mid range|messy|expanding,0.6233,19.1996,168,-12.9912,50,26.7454,FAIL
+momentum,Momentum 0-cross,1h,long,downtrend|pulling back in trend|messy|contracting,12.2803,13.0255,137,-6.8175,40,-10.7098,FAIL
+momentum,Momentum 0-cross,1h,long,uptrend|pulling back in trend|messy|contracting,2.7587,28.4841,67,-19.9688,29,-22.5498,FAIL
+momentum,Momentum 0-cross,1h,long,downtrend|pulling back in trend|messy|expanding,14.31,8.636,161,16.6713,52,12.6261,SURVIVOR
+momentum,Momentum 0-cross,1h,short,downtrend|pulling back in trend|messy|expanding,4.8791,42.6666,72,-15.6904,22,-6.944,FAIL
+momentum,Momentum 0-cross,1h,long,transition|at range high|messy|contracting,22.0011,9.6567,53,-11.9086,15,-64.5825,FAIL
+momentum,Momentum 0-cross,1h,long,transition|at range high|messy|expanding,5.0057,14.115,84,-11.33,33,-64.0896,FAIL
+momentum,Momentum 0-cross,1h,short,transition|at range high|messy|expanding,8.0683,34.6975,24,-20.1195,10,-7.0818,FAIL
+momentum,Momentum 0-cross,1h,long,downtrend|pulling back in trend|clean|expanding,3.5943,24.7258,64,-16.0488,13,34.3993,FAIL
+momentum,Momentum 0-cross,1h,long,downtrend|pulling back in trend|messy|stalling,4.1763,21.8169,53,-14.4735,21,-4.1016,FAIL
+momentum,Momentum 0-cross,1h,short,uptrend|at range low|messy|expanding,31.2796,127.1548,58,23.0966,16,33.3283,SURVIVOR
+momentum,Momentum 0-cross,15m,long,transition|mid range|clean|contracting,6.4849,2.7369,240,-13.2449,87,-0.396,FAIL
+momentum,Momentum 0-cross,15m,long,downtrend|at range low|clean|expanding,4.9438,6.3507,44,-12.7485,11,-21.605,FAIL
+momentum,Awesome Oscillator 0-cross,1h,long,transition|mid range|messy|expanding,26.4404,58.6208,34,-41.358,13,26.8111,FAIL
+momentum,Awesome Oscillator 0-cross,15m,short,uptrend|pulling back in trend|messy|contracting,3.9226,11.5177,89,7.004,26,-0.8218,FAIL
+momentum,Awesome Oscillator 0-cross,15m,long,downtrend|pulling back in trend|clean|expanding,11.5375,20.0969,39,22.135,13,17.3901,SURVIVOR
+momentum,TSI 0-cross,1h,short,uptrend|at range low|messy|contracting,22.6766,128.6273,26,50.3417,14,62.5928,SURVIVOR
+momentum,TSI 0-cross,15m,long,transition|mid range|clean|contracting,19.5664,15.6487,29,-20.3712,5,-28.169,UNRELIABLE
+momentum,TSI 0-cross,15m,short,transition|mid range|clean|expanding,3.5687,9.9484,56,-17.2576,15,-5.5154,FAIL
+momentum,TSI 0-cross,15m,long,downtrend|pulling back in trend|clean|contracting,3.0774,10.0505,18,16.0921,7,40.8099,UNRELIABLE
+momentum,Fisher Transform 0-cross,1h,long,downtrend|pulling back in trend|messy|expanding,7.6754,57.3372,87,11.6136,21,61.17,SURVIVOR
+momentum,Fisher Transform 0-cross,1h,short,uptrend|pulling back in trend|messy|expanding,4.2507,43.7257,80,-1.184,27,-74.2003,FAIL
+momentum,Fisher Transform 0-cross,1h,long,downtrend|pulling back in trend|clean|contracting,1.5441,45.1503,33,-39.3982,8,-46.9213,FAIL
+momentum,Fisher Transform 0-cross,1h,short,transition|at range low|clean|contracting,22.838,15.6079,19,-53.594,5,18.7578,UNRELIABLE
+momentum,Fisher Transform 0-cross,1h,long,downtrend|pulling back in trend|messy|stalling,33.5355,36.9252,26,-12.1689,9,-148.4085,FAIL
+momentum,Fisher Transform 0-cross,15m,long,transition|mid range|clean|contracting,0.5241,0.3497,148,-18.5864,55,2.5027,FAIL
+momentum,Fisher Transform 0-cross,15m,short,downtrend|at range low|messy|contracting,0.0751,23.7397,37,-33.2203,11,35.9864,FAIL
+momentum,Fisher Transform 0-cross,15m,long,transition|at range high|clean|expanding,8.9272,1.2366,96,5.5089,39,-6.4141,FAIL
+momentum,Connors RSI extremes,15m,short,transition|mid range|messy|expanding,1.0832,19.5515,23,-25.9234,7,11.0444,UNRELIABLE
+volatility,Bollinger mean-revert,15m,short,transition|at range high|clean|contracting,2.2524,41.4268,26,-21.3432,10,-75.6651,FAIL
+volatility,Bollinger breakout,15m,long,transition|at range high|clean|expanding,5.3158,9.8337,76,-4.3234,34,-16.0326,FAIL
+volatility,Bollinger breakout,15m,long,uptrend|at range high|clean|expanding,3.2421,18.5257,51,5.7694,16,-43.5056,FAIL
+volatility,Chandelier exit,1h,long,transition|at range high|messy|contracting,16.2701,16.3354,18,-32.8514,8,-34.3379,UNRELIABLE
+volatility,Chandelier exit,1h,long,downtrend|at range high|messy|expanding,4.1393,39.4129,52,34.198,10,-12.4538,FAIL
+volatility,Chandelier exit,1h,short,uptrend|at range low|messy|expanding,19.698,83.7695,48,52.6603,22,-63.9822,FAIL
+volatility,Chandelier exit,15m,short,uptrend|pulling back in trend|clean|contracting,0.0429,23.9788,124,-8.346,18,13.3862,FAIL
+volatility,Chandelier exit,15m,short,transition|at range low|clean|expanding,1.2386,1.7642,168,-0.9875,46,-0.2583,FAIL
+volatility,BB-inside-KC squeeze release,15m,long,downtrend|at range high|messy|expanding,9.2478,3.5079,43,35.6414,11,-0.7421,FAIL
+volume,OBV trend (vs own MA),1h,long,downtrend|pulling back in trend|messy|contracting,8.0762,26.276,73,-17.8432,16,-6.4224,FAIL
+volume,OBV trend (vs own MA),1h,short,downtrend|pulling back in trend|messy|expanding,2.8042,4.4312,67,6.755,14,-41.3546,FAIL
+volume,OBV trend (vs own MA),1h,short,transition|at range high|messy|expanding,0.2204,36.4516,44,8.1011,15,-44.0944,FAIL
+volume,OBV trend (vs own MA),1h,long,transition|mid range|clean|expanding,3.0138,53.4428,52,1.0048,15,-3.5858,FAIL
+volume,OBV trend (vs own MA),1h,short,uptrend|pulling back in trend|clean|contracting,48.6854,41.7739,27,21.8425,9,53.9809,SURVIVOR
+volume,OBV trend (vs own MA),1h,long,downtrend|pulling back in trend|messy|stalling,5.2024,30.0574,32,-38.4401,7,-80.683,UNRELIABLE
+volume,OBV trend (vs own MA),1h,long,downtrend|at range high|messy|expanding,5.3362,17.7235,64,6.8511,14,-25.3759,FAIL
+volume,OBV trend (vs own MA),1h,short,uptrend|at range low|messy|expanding,0.3263,27.5368,32,-30.0167,20,16.0421,FAIL
+volume,OBV trend (vs own MA),15m,short,downtrend|at range low|clean|contracting,1.2694,12.9943,30,11.848,7,-18.8426,UNRELIABLE
+volume,OBV trend (vs own MA),15m,long,downtrend|at range low|clean|expanding,13.4682,46.9743,21,8.4467,3,-9.3274,UNRELIABLE
+volume,OBV divergence,15m,short,transition|at range high|clean|contracting,5.0311,21.0522,24,-10.7266,3,-77.675,UNRELIABLE
+volume,CMF 0-cross,1h,short,downtrend|pulling back in trend|messy|contracting,1.9542,9.6052,59,-4.3449,16,46.1024,FAIL
+volume,CMF 0-cross,1h,long,transition|mid range|clean|expanding,6.7958,70.5461,41,-6.9555,15,1.9163,FAIL
+volume,CMF 0-cross,1h,long,uptrend|pulling back in trend|clean|contracting,61.8916,99.7137,24,-58.6077,6,-78.0264,UNRELIABLE
+volume,CMF 0-cross,1h,long,downtrend|at range high|messy|expanding,56.1032,17.3143,33,-12.8261,9,-6.3424,FAIL
+volume,CMF 0-cross,1h,short,uptrend|at range low|messy|expanding,20.3386,110.7804,28,50.9348,17,-15.4465,FAIL
+volume,MFI extremes,1h,short,transition|at range high|messy|expanding,15.1296,3.3568,36,2.4275,15,-32.9645,FAIL
+volume,MFI extremes,1h,long,downtrend|at range low|messy|contracting,31.7947,21.425,30,-12.1095,11,2.3532,FAIL
+volume,MFI extremes,15m,short,uptrend|at range high|messy|expanding,0.3493,15.3506,116,-14.318,40,-28.1125,FAIL
+volume,MFI extremes,15m,short,downtrend|at range high|messy|contracting,0.0639,11.7629,37,-20.7762,13,21.97,FAIL
+volume,VWAP session cross,1h,long,transition|mid range|messy|contracting,10.9299,1.4066,170,-5.317,52,16.2276,FAIL
+volume,VWAP session cross,1h,long,downtrend|pulling back in trend|messy|expanding,6.3584,28.2738,203,9.8119,70,3.6164,SURVIVOR
+volume,VWAP session cross,1h,long,uptrend|pulling back in trend|messy|expanding,0.9268,11.3638,115,-3.1129,52,5.5357,FAIL
+volume,VWAP session cross,1h,short,transition|at range high|messy|expanding,29.4335,30.2699,51,20.2142,23,14.4076,SURVIVOR
+volume,VWAP session cross,1h,long,downtrend|pulling back in trend|clean|contracting,6.7776,34.4159,63,-38.9741,8,3.3954,FAIL
+volume,VWAP session cross,1h,short,uptrend|at range low|messy|expanding,7.3429,17.3097,45,23.4635,22,11.6749,SURVIVOR
+volume,VWAP session cross,15m,short,uptrend|at range high|messy|expanding,6.7315,2.1014,73,1.7402,23,-20.1339,FAIL
+volume,VWAP session cross,15m,short,transition|at range high|clean|contracting,7.8155,13.6843,43,18.4714,14,-39.5087,FAIL
+volume,VWAP session cross,15m,short,transition|at range low|clean|expanding,2.5766,6.2609,140,-9.0706,45,11.1083,FAIL
+volume,VWAP session cross,15m,long,downtrend|at range low|clean|expanding,0.4646,11.419,20,18.775,8,-53.0296,FAIL
+volume,VWAP fade band,1h,long,transition|mid range|messy|contracting,35.2899,36.9252,15,-45.0745,7,48.9533,UNRELIABLE
+volume,VWAP fade band,1h,short,downtrend|pulling back in trend|messy|expanding,8.7808,25.9689,55,14.2573,17,-34.0966,FAIL
+volume,VWAP fade band,15m,short,transition|mid range|clean|expanding,4.4754,8.5273,92,-7.9403,32,-15.2655,FAIL
+volume,VWAP fade band,15m,long,transition|mid range|messy|stalling,12.0892,12.3857,26,-6.2706,12,-45.6938,FAIL
+volume,VWAP fade band,15m,short,uptrend|pulling back in trend|messy|stalling,15.6276,20.4614,14,-16.0375,8,-25.3037,UNRELIABLE
+volume,VWAP fade band,15m,short,uptrend|at range high|messy|stalling,4.6751,45.5658,21,-18.4935,11,-57.5422,FAIL
+volume,Volume oscillator confirm,1h,long,downtrend|pulling back in trend|messy|contracting,1.237,7.9023,114,-21.8402,46,0.5916,FAIL
+volume,Volume oscillator confirm,1h,long,downtrend|pulling back in trend|messy|expanding,14.2661,61.1121,110,7.403,38,-38.3161,FAIL
+volume,Volume oscillator confirm,1h,short,downtrend|pulling back in trend|messy|expanding,8.1617,15.8894,83,8.1158,39,-58.2486,FAIL
+volume,Volume oscillator confirm,1h,long,uptrend|pulling back in trend|messy|expanding,7.9946,7.4103,117,-5.5835,49,13.202,FAIL
+volume,Volume oscillator confirm,1h,short,transition|mid range|messy|stalling,3.8514,6.6639,36,16.6156,15,50.6394,SURVIVOR
+volume,Volume oscillator confirm,1h,long,downtrend|at range high|messy|expanding,11.7014,63.7225,47,38.1227,15,-80.2062,FAIL
+volume,Volume oscillator confirm,1h,short,uptrend|at range low|messy|expanding,30.8638,38.9575,33,-9.7771,24,-27.9368,FAIL
+volume,A/D line trend (vs own MA),1h,long,transition|mid range|messy|expanding,15.6244,36.7611,127,-15.0888,24,-20.3803,FAIL
+volume,A/D line trend (vs own MA),1h,long,downtrend|pulling back in trend|messy|expanding,29.3801,34.535,107,37.4901,37,-48.5154,FAIL
+volume,A/D line trend (vs own MA),1h,long,transition|mid range|clean|expanding,1.6663,9.9606,68,-24.9966,21,16.4605,FAIL
+volume,A/D line trend (vs own MA),1h,short,uptrend|pulling back in trend|clean|contracting,14.9999,50.5052,30,-38.1198,10,-73.3888,FAIL
+volume,A/D line trend (vs own MA),1h,long,downtrend|at range high|messy|expanding,40.5348,10.3498,30,-18.9226,10,-73.5269,FAIL
+volume,A/D line trend (vs own MA),1h,long,downtrend|at range low|clean|expanding,26.0364,26.1331,16,-71.9953,5,53.5,UNRELIABLE
+volume,A/D line trend (vs own MA),1h,short,downtrend|at range low|clean|expanding,63.8265,21.08,24,-46.689,10,29.1253,FAIL
+volume,A/D line trend (vs own MA),15m,long,transition|at range high|clean|expanding,9.3284,5.6008,131,-14.7603,52,2.2969,FAIL
+volume,A/D line trend (vs own MA),15m,short,downtrend|at range low|clean|contracting,0.0287,2.211,67,-9.1861,19,-23.1462,FAIL
+volume,A/D line trend (vs own MA),15m,short,uptrend|at range high|messy|stalling,7.774,2.8674,52,-19.4252,27,-4.0584,FAIL
+volume,Force Index 0-cross,1h,long,uptrend|pulling back in trend|messy|contracting,9.086,27.2979,29,44.6696,9,-59.5084,FAIL
+volume,Force Index 0-cross,1h,short,uptrend|at range high|messy|expanding,6.719,5.5116,22,33.1917,5,51.3956,UNRELIABLE
+volume,Force Index 0-cross,1h,long,uptrend|pulling back in trend|messy|expanding,13.2796,44.5955,65,-9.7512,25,-3.5073,FAIL
+volume,Force Index 0-cross,1h,short,uptrend|pulling back in trend|messy|expanding,7.3742,10.5042,149,3.5185,52,44.2866,SURVIVOR
+volume,Force Index 0-cross,1h,long,transition|mid range|clean|expanding,1.5881,13.5654,66,-23.6302,24,-2.785,FAIL
+volume,Force Index 0-cross,1h,long,downtrend|at range high|messy|expanding,22.431,2.83,60,14.6702,20,-53.0545,FAIL
+volume,Force Index 0-cross,15m,long,downtrend|pulling back in trend|clean|contracting,1.0113,9.512,99,-7.0725,36,-3.4994,FAIL
+volume,Force Index 0-cross,15m,short,uptrend|at range high|clean|expanding,0.4552,6.4021,32,9.1546,13,1.6446,SURVIVOR
+volume,Force Index 0-cross,15m,short,transition|at range low|clean|contracting,9.5042,9.1673,34,2.2664,14,-6.8977,FAIL
+volume,Ease of Movement 0-cross,1h,long,downtrend|pulling back in trend|messy|expanding,18.2028,1.5214,217,-17.6147,74,-2.2687,FAIL
+volume,Ease of Movement 0-cross,1h,long,transition|at range high|messy|expanding,0.0221,14.4657,167,-16.9332,50,42.5427,FAIL
+volume,Ease of Movement 0-cross,1h,short,downtrend|at range low|messy|expanding,13.1792,13.7728,151,-17.5422,55,1.7348,FAIL
+volume,Ease of Movement 0-cross,1h,short,transition|mid range|clean|contracting,1.703,17.8285,140,-4.2212,34,-43.6787,FAIL
+volume,Ease of Movement 0-cross,1h,short,transition|mid range|messy|stalling,8.7499,2.9369,89,-24.4089,38,35.5823,FAIL
+volume,Ease of Movement 0-cross,1h,long,downtrend|pulling back in trend|clean|contracting,21.6558,0.8323,90,-28.1298,27,-3.3554,FAIL
+volume,Ease of Movement 0-cross,1h,long,transition|at range high|clean|expanding,2.2832,3.8497,41,-58.7412,13,36.0018,FAIL
+volume,Ease of Movement 0-cross,1h,short,uptrend|at range low|messy|contracting,0.4519,33.8819,75,-21.8949,20,-44.2893,FAIL
+volume,Ease of Movement 0-cross,1h,short,uptrend|at range low|messy|expanding,2.6104,13.8479,55,-22.2453,30,16.5251,FAIL
+levels,Camarilla pivots (reversion),1h,long,transition|at range low|messy|expanding,14.3382,48.6393,45,-37.7142,15,-3.4751,FAIL
+levels,Williams fractals,1h,long,transition|at range high|messy|contracting,14.6515,7.4474,76,18.9633,32,32.5479,SURVIVOR
+levels,Williams fractals,1h,short,transition|at range high|messy|expanding,17.594,37.72,39,-8.6985,20,-10.2894,FAIL
+levels,Williams fractals,1h,long,transition|at range low|messy|contracting,2.7528,45.4423,116,-35.5847,46,-29.5279,FAIL
+levels,Williams fractals,1h,short,downtrend|at range low|messy|expanding,0.9434,4.9709,86,-45.3526,28,7.949,FAIL
+levels,Williams fractals,1h,long,uptrend|pulling back in trend|clean|expanding,2.8021,1.1372,25,-75.938,6,10.4094,UNRELIABLE
+levels,Williams fractals,1h,short,transition|at range low|clean|contracting,10.0342,4.8903,18,64.3052,11,-47.8604,UNRELIABLE
+levels,Williams fractals,1h,long,downtrend|at range high|messy|expanding,26.1879,7.8118,48,3.1319,19,-68.4445,FAIL
+levels,Williams fractals,15m,long,transition|at range high|clean|expanding,1.559,5.5682,220,-0.5217,69,2.5799,FAIL
+levels,Williams fractals,15m,short,uptrend|at range high|messy|stalling,0.5582,7.2094,119,-10.6443,46,-10.1924,FAIL

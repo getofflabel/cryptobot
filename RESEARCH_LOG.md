@@ -694,3 +694,20 @@ only 0.5y and coincides with a hard oil rally, which is brutal to any
 short — but the rule stands. OIL STILL HAS ZERO VALIDATED STRATEGIES,
 and now we also know the borrowed ones don't hold up. Also dead: sweep-
 and-reclaim 0/12, USO 0/40 (the retail-tradeable instrument).
+
+## ROUND 85 — what real winning trades required (2026-07-24)
+36 documented setups from 24 sources, recording THE CONTEXT EACH TRADER
+REQUIRED before a setup counts. ★ THE FINDING, and it is a correction of
+our own work: R58 concluded REGULAR RSI divergence is noise (1 survivor
+in 96). But R58's regular-divergence definition fired on ANY confirmed
+swing with NO level-significance gate, NO confirmation candle, and NO
+trend-extreme restriction — while its HIDDEN-divergence definition DID
+implement the one condition the literature calls mandatory (trend-intact
+gating). So the asymmetry in our own results (regular = noise, hidden =
+sealed PASS +$52.03/t, live) is explained by TEST SPECIFICATION, not by
+the patterns. We measured an under-specified test and reported it as a
+dead pattern. Wallace was right that "it's famous for a reason."
+Also omitted across R76: MACD crossovers never gated on structural
+confirmation; breakout survivors never volume-gated; pivot/range
+reversion tested with no regime gate. 8 precise testable proposals
+produced -> R86.
