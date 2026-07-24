@@ -515,6 +515,43 @@ def run_morning_read(live_feed, state: dict, dry: bool = False, now=None,
     from step5_paper_trade import notify, save_state
     title = f"\U0001f305 Morning read — {now.strftime('%A')}"
     notify(title, text)
+
+    try:
+        _fresh = check_demo_listings(state)
+        for _sym in _fresh:
+            notify("🆕 Demo listing unlocked",
+                   f"{_sym} just became TRADEABLE on the demo exchange — "
+                   f"the paper strategy for it can be promoted to real "
+                   f"orders. Flag this to the lead.")
+    except Exception:
+        pass
     state["morning_read_date"] = today
     save_state(state)
     return text
+
+
+# DEMO LISTING WATCH (2026-07-24, owner spotted SPY in the demo UI: the demo
+# web frontend SHOWS prod market data, but the demo trading backend serves
+# only 88 instruments — the shop window displays items the register can't
+# sell. This probe checks the register daily: the day BloFin promotes any
+# watched TradFi instrument to demo trading, we hear about it and the paper
+# book gets promoted to real orders.)
+LISTING_WATCHLIST = ("SPY-USDT", "XAU-USDT", "WTIOIL-USDT", "TSLA-USDT",
+                     "NVDA-USDT", "XAG-USDT")
+
+
+def check_demo_listings(state) -> list:
+    """Returns newly demo-tradeable watchlist instruments (and remembers
+    what it has already announced in state['demo_listing_seen'])."""
+    import requests
+    try:
+        r = requests.get("https://demo-trading-openapi.blofin.com"
+                         "/api/v1/market/instruments", timeout=15).json()
+        ids = {i["instId"] for i in (r.get("data") or [])}
+    except Exception:
+        return []
+    seen = set(state.get("demo_listing_seen") or [])
+    fresh = [s_ for s_ in LISTING_WATCHLIST if s_ in ids and s_ not in seen]
+    if fresh:
+        state["demo_listing_seen"] = sorted(seen | set(fresh))
+    return fresh
