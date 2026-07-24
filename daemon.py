@@ -190,8 +190,13 @@ def main():
     try:
         boot_px = live_feed.get_ticker(symbol).last   # proves BloFin reachable
         from step5_paper_trade import log_event, notify, load_state, save_state
+        # RENDER_GIT_COMMIT is injected by Render on every deploy. Logging
+        # it makes "did my push actually reach the live worker?" a fact to
+        # read rather than a guess — before this, a boot event looked
+        # identical whether it ran the new build or a crash-looped old one.
         log_event({"action": "daemon_boot", "host": "render",
-                   "price": boot_px})
+                   "price": boot_px,
+                   "build": (os.environ.get("RENDER_GIT_COMMIT") or "local")[:12]})
         # PHONE ALERT GATE: only ping on boot if the last boot-ping was >2h
         # ago. Routine redeploys (minutes apart) must NOT spam the phone with
         # "worker online" price messages — that noise is what buried the real
