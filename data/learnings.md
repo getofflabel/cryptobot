@@ -10,8 +10,8 @@ Ledger: $1,360.28 / goal $3,000
 
 ## AI news judges (on probation)
 
-- **opus**: 23/36 graded calls (64% right)
-- **sonnet**: 24/39 graded calls (62% right)
+- **opus**: 24/37 graded calls (65% right)
+- **sonnet**: 25/40 graded calls (62% right)
 
 ## Trade reviews (newest first)
 
