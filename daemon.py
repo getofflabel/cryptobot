@@ -38,6 +38,38 @@ def _now():
     return datetime.now(timezone.utc)
 
 
+# BOOK HEALTH WATCHDOG (2026-07-24): a book that crashes every cycle is the
+# WORST failure mode — it silently misses trades, which biases the live track
+# record (it can still take losers while crashing through winners). The bs4
+# bug did exactly this to the Newsdesk on launch night: "newsdesk error" every
+# cycle, visible only in Render logs nobody was reading. Now: 3 consecutive
+# failures of the same book -> ONE loud Telegram alert (per boot, so it can't
+# spam), plus a log_event every failure so the journal shows the outage.
+_book_fail_counts: dict = {}
+_book_alerted: set = set()
+
+
+def _run_book(name, fn):
+    try:
+        fn()
+        _book_fail_counts[name] = 0
+    except Exception as e:
+        _book_fail_counts[name] = _book_fail_counts.get(name, 0) + 1
+        n = _book_fail_counts[name]
+        print(f"  {name} error ({n} in a row): {str(e)[:120]}")
+        try:
+            from step5_paper_trade import log_event, notify
+            log_event({"action": "book_error", "book": name,
+                       "consecutive": n, "error": str(e)[:200]})
+            if n >= 3 and name not in _book_alerted:
+                _book_alerted.add(name)
+                notify(f"🚨 {name} IS DOWN (demo)",
+                       f"{name} has crashed {n} cycles in a row and is "
+                       f"MISSING ITS TRADES: {str(e)[:120]}")
+        except Exception:
+            pass
+
+
 def full_cycle(private, live_feed, demo_feed, symbol, reason):
     """Run the whole decision stack once (same work the hourly job does)."""
     print(f"\n[{_now():%H:%M:%S}] === DECISION CYCLE ({reason}) ===")
@@ -47,30 +79,31 @@ def full_cycle(private, live_feed, demo_feed, symbol, reason):
     except Exception as e:
         print(f"  ledger sync skipped: {str(e)[:60]}")
     hour = _now().hour
-    try:
+
+    def _ride():
         if hour % 4 == 0 or reason.startswith("shock"):
             from step5_paper_trade import decide_and_trade
             decide_and_trade(private, live_feed, symbol)
-    except Exception as e:
-        print(f"  ride error: {str(e)[:120]}")
-    try:
+
+    def _strikes():
         from tactical import run_strikes
         from step5_paper_trade import load_state
         run_strikes(private, live_feed, demo_feed, load_state())
-    except Exception as e:
-        print(f"  strikes error: {str(e)[:120]}")
-    try:
+
+    def _lab():
         from shorts_lab import run_lab
         from step5_paper_trade import load_state
         run_lab(private, live_feed, demo_feed, load_state())
-    except Exception as e:
-        print(f"  shorts lab error: {str(e)[:120]}")
-    try:
+
+    def _news():
         from newsdesk import run_newsdesk
         from step5_paper_trade import load_state
         run_newsdesk(private, live_feed, demo_feed, load_state())
-    except Exception as e:
-        print(f"  newsdesk error: {str(e)[:120]}")
+
+    _run_book("The Ride", _ride)
+    _run_book("The Strikes", _strikes)
+    _run_book("Shorts Lab", _lab)
+    _run_book("The Newsdesk", _news)
 
 
 def main():
