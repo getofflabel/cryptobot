@@ -32,7 +32,14 @@ no vibes.
 - Venue notes: demo trades XAUT only (whole-contract lots, cv 0.001);
   weekend oracle ranges shrink 60-75% but never freeze; young-listing
   funding runs hot (~20%/yr on some TradFi perps).
-- OPEN: R55 (EMA crosses, sessions, intraday families) running.
+- R55 VERDICT (2026-07-24): 114 configs, 23 two-window survivors, TOP 2
+  EXECUTED AT SEALED: daily z-MR -$45.80/t x26 over 5.2y (the 2021-26
+  trend regime kills gold mean reversion); 1h EMA20/50 -$61.86/t on its
+  thin 5.8mo window (WATCH LIST — retest when hourly history grows, not
+  dead). Sessions 0/6 (London/NY opens are NOT an edge here), pullback-
+  in-trend 0/16, ALL shorts 0/36. Donchian fractals down (1h/4h two-
+  window) but un-looked — thin-window rule applies. GOLD'S BAG REMAINS:
+  breakouts, singular and proven.
 
 ## S&P 500 (SPY/ES=F research)
 - VENUE (verified 2026-07-24): **SPY-USDT on BloFin prod IS the real S&P

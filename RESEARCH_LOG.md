@@ -419,3 +419,17 @@ The ride's honest modern cadence: ~6-7 entries/yr, each heavily paid.
 Owner's activity mandate is served by the other books, not by loosening
 the sniper. Gold book separately fixed this session (donchian 55->20,
 sealed-passed on both instruments — see commit).
+
+## ROUND 55 — the Gold System (2026-07-24)
+5 families / 114 configs on GC=F 20y-daily + 2.4y-1h/4h + XAUT venue
+checks. 23 two-window survivors. TWO sealed looks spent (erosion ~+17):
+- daily z-MR z24<-1.5 ungated: train $32.40/val $41.34, all decades
+  positive -> SEALED -$45.80/t x26 (5.2y) FAIL. The sealed slice IS
+  gold's 2021-26 supertrend; reversion dies against it. BURIED.
+- 1h EMA20/50 long (owner's named indicator; beat donchian on 1h, 4/4
+  XAUT venue-transfer): SEALED (5.8mo thin) -$61.86/t x30 FAIL ->
+  WATCH LIST, re-examine when hourly history matures. Not re-tuned.
+Sessions (London/NY/Asia) 0/6; pullback-in-trend 0/16; shorts 0/36.
+Bonus: donchian+EMA20exit fractals to 1h (152/55t) and 4h (41/17t)
+two-window — un-looked (thin-window discipline). GOLD PLAYBOOK STANDS:
+breakout trend-following is gold's one proven native language.
