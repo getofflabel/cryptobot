@@ -54,7 +54,6 @@ import time
 import numpy as np
 import pandas as pd
 import requests
-from bs4 import BeautifulSoup
 
 from backtest import CostModel
 from step7_deep_search import fetch_bybit_deep
@@ -99,6 +98,10 @@ def parse_page(html):
     """Extract (message_id, utc_timestamp, text) for every post block on
     one preview page. Robust to media-only posts (empty text kept, not
     dropped — classification will simply find no keywords in them)."""
+    from bs4 import BeautifulSoup   # lazy: only the HARVEST needs bs4.
+    # The live bot imports this module solely for classify_headline(), and
+    # Render does not ship bs4 — a module-level import killed the Newsdesk
+    # on 2026-07-24 ("No module named 'bs4'" every cycle). Harvest-only dep.
     soup = BeautifulSoup(html, "html.parser")
     out = []
     for msg in soup.select("div.tgme_widget_message[data-post]"):
