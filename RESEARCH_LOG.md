@@ -611,3 +611,17 @@ fee-share, 8.7 tr/yr. ITERATION 2 DESIGN (make-it-work): triggers must
 be EVENTS not candle colors — level-anchored setups (range edges,
 prior-day extremes, pools) + structural sweep-reclaim/displacement
 triggers on 15m/5m; full 1,300-cell grid ready per results section 8.
+
+## ROUND 72 — TJR 2026 strategy (2026-07-24)
+Distilled from his own 58-min video: sweep session/1h/4h liquidity ->
+5m BOS/IFVG confirm -> 5m continuation -> 1m retrace-entry, partials to
+the next pool; ES+NQ alignment filter. GAUNTLET: NQ 1h 7/16 survive
+(extended window), ES 2/16 (only with HIS alignment filter OFF), SPY
+0/16, BTC full-cascade transfer 1/16. Claimed 64.29% WR never
+reproduces (42-58% everywhere); flat 1.0R beats his stated 1.33R.
+CAVEAT: index legs tested at 1h only (yfinance 60d cap below) — the
+real 5m/1m cascade untested on home turf; paid intraday index data =
+the unlock. KEEP: his sweep->confirm->retrace sequencing matches our
+R64 fake-out finding — feeds R71-iter2 as first-class configs on deep
+BTC 5m. No sealed looks (survivors are loosened-rule variants on thin
+regimes).
