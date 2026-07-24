@@ -192,6 +192,21 @@ def main():
                     write_live_read(live_feed, st)
                 except Exception:
                     pass
+            # GOLD FAST WATCH (sealed-validated intraday touch entry):
+            # poll XAUT every ~3rd cycle (~15s) and fire the moment the
+            # 20-day breakout level is touched. Wrapped so gold trouble can
+            # never disturb the BTC loop.
+            if int(t) % 15 < POLL_SECONDS:
+                try:
+                    gold_tick = live_feed.get_ticker("XAUT-USDT").last
+                    from gold_book import intraday_check
+                    from step5_paper_trade import load_state
+                    intraday_check(private, live_feed, load_state(),
+                                   float(gold_tick))
+                except Exception as e:
+                    if "throttle" not in str(e).lower():
+                        print(f"  gold fast-watch: {str(e)[:60]}")
+
             price_history.append((t, px))
             price_history[:] = [(ts, p) for ts, p in price_history
                                 if t - ts <= SHOCK_WINDOW_S]

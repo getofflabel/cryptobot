@@ -144,6 +144,14 @@ SYMBOL = "XAUT-USDT"          # see module docstring: the demo-tradeable
 # +$83.72/t, +24.3%, 5.2y). ~5.4 trades/yr vs 3.0, and fires on a +3.3% move
 # instead of a +17.7% one. Faster trigger, same discipline, sealed-validated.
 ENTRY_N = 20                  # donchian breakout lookback, in daily bars
+
+# INTRADAY TOUCH ENTRY (2026-07-24): validated Turtle-style — enter the
+# MOMENT price touches the prior 20-day high instead of waiting for the
+# daily close. Sealed-PASSED on both instruments (GLD +$127.65/t +38.3%
+# DD-15.9% 4.4y; GC=F +$68.99/t +23.9% 5.2y). The daemon's fast loop calls
+# intraday_check() every ~15s; the daily cycle still owns exits and level
+# refresh. No resting orders ever — the trigger lives in code, the entry
+# is an instant market order.
 EMA_N = 20                    # EMA exit span, in daily bars
 CANDLE_BARS = 400             # requested history depth (warmup margin)
 
@@ -496,3 +504,76 @@ def run_gold_book(private, live_feed, state: dict, dry: bool = False) -> dict:
     status = "holding" if have_position else "flat, no signal"
     print(f"  [GOLD] {status} — nothing to do")
     return {"action": "hold", **dec}
+
+
+def compute_trigger_level(live_feed):
+    """Today's intraday entry level = prior ENTRY_N-day high (shift 1 — the
+    current, unfinished day never defines its own level)."""
+    d = _load_daily(live_feed)
+    if d is None or len(d) < ENTRY_N + 2:
+        return None
+    return float(d["high"].rolling(ENTRY_N).max().shift(1).iloc[-1])
+
+
+def intraday_check(private, live_feed, state, price: float):
+    """Sealed-validated Turtle-style entry (2026-07-24): fire the MOMENT a
+    fresh XAUT tick touches the prior 20-day high (GLD +$127.65/t +38.3%,
+    GC=F +$68.99/t +23.9% on their sealed windows). Called from the daemon
+    fast loop; the daily cycle keeps owning exits and level refresh. No
+    resting orders — the trigger lives in code, the entry is market.
+    Returns True on entry so the caller can stop hot-polling."""
+    gb = _book(state)
+    if gb.get("open_trade"):
+        return False
+    from datetime import datetime, timezone
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    lvl = gb.get("intraday_level")
+    if gb.get("intraday_level_date") != today or lvl is None:
+        lvl = compute_trigger_level(live_feed)
+        if lvl is None:
+            return False
+        gb["intraday_level"] = lvl
+        gb["intraday_level_date"] = today
+        from step5_paper_trade import save_state
+        save_state(state)
+        print(f"  [GOLD] intraday trigger armed at ${lvl:,.1f}")
+    if price < lvl:
+        return False
+    # TOUCHED — enter now, matching the validated sim (fill ~= the level)
+    from step5_paper_trade import notify, log_event, now_utc, save_state
+    spec = _instrument_spec(live_feed)
+    equity = float(state.get("virtual_equity", 0) or 0)
+    notional = equity * GOLD_ALLOC * GOLD_LEV
+    contracts = _round_lot(notional / price / spec["contract_value"],
+                           spec["lot_size"], spec["min_size"])
+    private.ensure_leverage(SYMBOL, int(GOLD_LEV), "cross")
+    remaining = contracts
+    while remaining > spec["lot_size"] / 2:
+        step = min(50.0, remaining)
+        private.market_order(SYMBOL, "buy", step)
+        remaining = round(remaining - step, 2)
+    import time as _t; _t.sleep(1.5)
+    net = private.net_position_contracts(SYMBOL)
+    if abs(net) < spec["min_size"]:
+        print("  [GOLD] touch entry produced no position — aborting book")
+        return False
+    sl = round(price * (1 - CRASH_SL_PCT), 1)
+    tpsl_id = None
+    try:
+        tpsl_id = private.place_tpsl(SYMBOL, "sell", abs(net), None, sl)
+    except Exception as e:
+        print(f"  [GOLD] SL FAILED: {str(e)[:80]}")
+        notify("⚠️ gold SL failed (demo)", "position unprotected — check BloFin")
+    gb["open_trade"] = {
+        "direction": 1, "contracts": abs(net), "entry_price": price,
+        "entry_fee_bps": 6.0, "entry_time": now_utc(), "tp_price": None,
+        "sl_price": sl, "tpsl_id": tpsl_id, "trigger": "gold_breakout_touch",
+    }
+    save_state(state)
+    log_event({"action": "gold_enter", "fill_price": price,
+               "contracts": abs(net), "sl": sl, "note": "intraday touch"})
+    notify("🥇 GOLD LONG on your BloFin (demo)",
+           f"Gold touched its 20-day breakout ${lvl:,.0f} — LONG "
+           f"{abs(net):.0f} ct XAUT @ ${price:,.1f}. Crash stop ${sl:,.0f}. "
+           f"Rides until the trend breaks.")
+    return True
