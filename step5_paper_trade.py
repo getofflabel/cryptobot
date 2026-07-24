@@ -422,15 +422,35 @@ def execute_market_clips(private, demo_feed, symbol: str, side: str,
     (6bps vs 2) — the price of clean, atomic, interruption-proof entries;
     the old maker-and-wait loop left orphaned resting orders and partial
     naked positions whenever a deploy or crash hit mid-loop.
-    Returns (approx_fill_price, was_maker=False)."""
-    import math as _m
-    remaining = round(contracts, 1)
-    clip = 5.0
-    while remaining > 0.05:
-        step = min(clip, remaining)
-        private.market_order(symbol, side, round(step, 1),
-                             reduce_only=reduce_only)
-        remaining = round(remaining - step, 1)
+    Returns (approx_fill_price, was_maker=False).
+
+    2026-07-24 REWRITE (owner: "partial fills should not exist — the
+    problem itself should not exist"): the old version sent 5-contract
+    clips, so a 361ct entry became 73 rapid API calls — which tripped the
+    demo host's rate limiter mid-sequence and left a naked partial (the
+    XAUT orphan). Diagnosis confirmed empirically: the same 361ct sells
+    fine as ONE order (BloFin's own maxMarketSize is 6k-150k contracts on
+    every symbol we trade — 5-clip was inherited superstition). New shape:
+      * ONE market order for the whole size -> atomic, no partial possible
+      * transient API hiccups RETRIED (3 attempts, 1.5s apart) instead of
+        treated as fatal — the actual failure mode was a momentary stumble
+      * only after retries exhaust does it raise (callers roll back)"""
+    import time as _t
+    size = round(contracts, 1)
+    last_err = None
+    for attempt in range(3):
+        try:
+            private.market_order(symbol, side, size, reduce_only=reduce_only)
+            last_err = None
+            break
+        except Exception as e:
+            last_err = e
+            print(f"  order attempt {attempt+1}/3 failed ({str(e)[:60]}) — "
+                  f"retrying" if attempt < 2 else
+                  f"  order failed after 3 attempts: {str(e)[:80]}")
+            _t.sleep(1.5)
+    if last_err is not None:
+        raise last_err
     # approximate fill from the live quote (fills endpoint lags); books
     # reconcile against the exchange anyway.
     try:
