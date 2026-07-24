@@ -139,11 +139,17 @@ POS_NEAR_LOW = 0.20
 # ordinary upper/lower halves. Symmetric on purpose.
 
 # --- quality (is this chart "clean" or "messy" to a disciplined trader) --
-QUALITY_WINDOW = 10
-# Bars examined for direction-change rate, body/range ratio, and overlap.
-# 10 bars is enough to see a genuine pattern (not 2-3 bars of noise) while
-# staying local enough that a regime change from 30 bars ago doesn't mask
-# what's happening right now.
+QUALITY_WINDOW = 8
+# CALIBRATED AGAINST A REAL FRAME (2026-07-24, BTC-USDT 1h): a 10-bar window
+# let a single large capitulation bar sitting 9 bars back drag its
+# trend-efficiency into the window and mask the tight, overlapping
+# congestion that followed it — a human reviewer looking at the same PNG
+# called the tail "textbook congestion, messy" while the 10-bar read said
+# "clean." The read must describe WHERE PRICE IS **NOW**, not the shape of
+# the move that got it there. At 8 bars the window is short enough that an
+# outlier bar from the PRIOR regime ages out within a bar or two of it
+# happening, while still spanning close to a third of a trading day on this
+# project's 1h chart — enough to tell real chop from 2-3 noisy prints.
 
 DIRECTION_CHANGE_MESSY = 0.5
 # If half or more of consecutive bar pairs flip direction (green-then-red-
@@ -183,12 +189,19 @@ RANGE_WINDOW = 20
 # range" a trader is implicitly comparing price to — same window length as
 # the body baseline, for the same reason (about a trading day of context).
 
-RANGE_EDGE_HIGH = 0.85
-RANGE_EDGE_LOW = 0.15
-# Price in the top/bottom 15% of the active range reads as "at the edge" —
-# tighter than the close-position bands above because location is about
-# the whole recent range, a much noisier reference than one bar's own
-# high-low, so the edge zone needs to be a real edge, not a soft one.
+RANGE_EDGE_HIGH = 0.70
+RANGE_EDGE_LOW = 0.30
+# CALIBRATED AGAINST A REAL FRAME (2026-07-24, BTC-USDT 1h): price sitting
+# ~20% off the low of a ~$2,080 range read as "mid range" under the old
+# 0.85/0.15 split — a human reviewer looking at the same PNG called that
+# "down near the lows," not mid-range. The old split made the outer edges
+# too narrow (only the extreme top/bottom 15%); a trader actually talks
+# about range location closer to thirds. Bottom 30% = "at range low," top
+# 30% = "at range high," the middle 40% = "mid range." Still wider than the
+# close-position bands above, deliberately — location is judged against the
+# whole recent range, a noisier reference than one bar's own high-low, so
+# the edge zone still has to mean something, just not so narrow that a
+# trader's own "down near the lows" call falls outside it.
 
 # --- momentum (body/range progression) -----------------------------------
 MOMENTUM_LOOKBACK = 4

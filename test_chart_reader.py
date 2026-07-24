@@ -106,6 +106,61 @@ def _last_bar_price(n_base: int = 20, base_body: float = 1.0) -> float:
     return 100.0 + n_base * base_body
 
 
+# ---------------------------------------------------------------------------
+# REAL BTC-USDT 1h frame, 2026-07-24 — hard-coded from an actual live pull
+# (chart_reader.py's own demo, run 2026-07-24 ~21:00 UTC) so it can't drift.
+# This is the exact frame a vision-capable reviewer looked at in
+# chart_reads_demo/BTC-USDT_1h_zoom.png and used to calibrate two
+# thresholds: RANGE_EDGE_LOW/HIGH (location) and QUALITY_WINDOW (quality).
+# The reviewer's direct read of the rendered image is the ground truth for
+# both fixtures below: price sitting near the LOW of the ~63,687-65,772
+# range (not mid-range), on a MESSY, congested tail (not clean) after the
+# capitulation move that preceded it.
+# ---------------------------------------------------------------------------
+
+_BTC_20260724_CAPITULATION_ROWS = [
+    {"timestamp": datetime(2026, 7, 23, 16, tzinfo=timezone.utc), "open": 64940.5, "high": 64940.5, "low": 64702.7, "close": 64745.0, "volume": 166.4636},
+    {"timestamp": datetime(2026, 7, 23, 17, tzinfo=timezone.utc), "open": 64735.6, "high": 64874.6, "low": 64636.0, "close": 64655.2, "volume": 249.2666},
+    {"timestamp": datetime(2026, 7, 23, 18, tzinfo=timezone.utc), "open": 64655.4, "high": 64922.9, "low": 64654.3, "close": 64842.4, "volume": 239.4382},
+    {"timestamp": datetime(2026, 7, 23, 19, tzinfo=timezone.utc), "open": 64845.0, "high": 64908.1, "low": 64668.3, "close": 64832.4, "volume": 122.0922},
+    {"timestamp": datetime(2026, 7, 23, 20, tzinfo=timezone.utc), "open": 64818.6, "high": 65168.6, "low": 64817.5, "close": 65117.6, "volume": 273.5966},
+    {"timestamp": datetime(2026, 7, 23, 21, tzinfo=timezone.utc), "open": 65119.9, "high": 65170.0, "low": 64985.0, "close": 65137.4, "volume": 123.2036},
+    {"timestamp": datetime(2026, 7, 23, 22, tzinfo=timezone.utc), "open": 65137.4, "high": 65188.6, "low": 64985.0, "close": 65158.3, "volume": 58.0389},
+    {"timestamp": datetime(2026, 7, 23, 23, tzinfo=timezone.utc), "open": 65158.3, "high": 65189.5, "low": 65018.9, "close": 65069.5, "volume": 109.9638},
+    {"timestamp": datetime(2026, 7, 24, 0, tzinfo=timezone.utc), "open": 65077.0, "high": 65079.1, "low": 64733.2, "close": 64948.4, "volume": 227.8905},
+    {"timestamp": datetime(2026, 7, 24, 1, tzinfo=timezone.utc), "open": 64948.4, "high": 65146.4, "low": 64922.6, "close": 65057.6, "volume": 103.9112},
+    {"timestamp": datetime(2026, 7, 24, 2, tzinfo=timezone.utc), "open": 65057.5, "high": 65160.0, "low": 64903.5, "close": 65083.2, "volume": 63.3024},
+    {"timestamp": datetime(2026, 7, 24, 3, tzinfo=timezone.utc), "open": 65083.2, "high": 65452.5, "low": 65045.0, "close": 65425.3, "volume": 282.3083},
+    {"timestamp": datetime(2026, 7, 24, 4, tzinfo=timezone.utc), "open": 65425.4, "high": 65440.0, "low": 65237.5, "close": 65277.6, "volume": 89.2032},
+    {"timestamp": datetime(2026, 7, 24, 5, tzinfo=timezone.utc), "open": 65284.8, "high": 65362.2, "low": 65225.0, "close": 65274.2, "volume": 77.4737},
+    {"timestamp": datetime(2026, 7, 24, 6, tzinfo=timezone.utc), "open": 65274.2, "high": 65487.5, "low": 65250.6, "close": 65439.6, "volume": 191.8085},
+    {"timestamp": datetime(2026, 7, 24, 7, tzinfo=timezone.utc), "open": 65439.6, "high": 65772.5, "low": 65338.0, "close": 65469.2, "volume": 356.5999},
+    {"timestamp": datetime(2026, 7, 24, 8, tzinfo=timezone.utc), "open": 65471.3, "high": 65475.3, "low": 65276.4, "close": 65276.4, "volume": 105.4564},
+    {"timestamp": datetime(2026, 7, 24, 9, tzinfo=timezone.utc), "open": 65277.4, "high": 65290.7, "low": 64921.2, "close": 65088.2, "volume": 305.2097},
+    {"timestamp": datetime(2026, 7, 24, 10, tzinfo=timezone.utc), "open": 65088.3, "high": 65115.0, "low": 64877.3, "close": 64927.8, "volume": 149.5241},
+    {"timestamp": datetime(2026, 7, 24, 11, tzinfo=timezone.utc), "open": 64927.7, "high": 65060.2, "low": 64821.9, "close": 65043.3, "volume": 122.0516},
+    {"timestamp": datetime(2026, 7, 24, 12, tzinfo=timezone.utc), "open": 65044.8, "high": 65100.0, "low": 64727.7, "close": 64751.8, "volume": 173.2649},
+    {"timestamp": datetime(2026, 7, 24, 13, tzinfo=timezone.utc), "open": 64746.5, "high": 64774.4, "low": 63882.3, "close": 64131.5, "volume": 1064.5654},
+    {"timestamp": datetime(2026, 7, 24, 14, tzinfo=timezone.utc), "open": 64126.5, "high": 64169.0, "low": 63686.7, "close": 64033.5, "volume": 513.0869},
+    {"timestamp": datetime(2026, 7, 24, 15, tzinfo=timezone.utc), "open": 64028.1, "high": 64299.9, "low": 63827.6, "close": 64065.1, "volume": 310.8331},
+    {"timestamp": datetime(2026, 7, 24, 16, tzinfo=timezone.utc), "open": 64065.1, "high": 64172.4, "low": 63856.3, "close": 63933.3, "volume": 172.2145},
+    {"timestamp": datetime(2026, 7, 24, 17, tzinfo=timezone.utc), "open": 63932.1, "high": 64175.0, "low": 63889.6, "close": 64154.9, "volume": 115.0878},
+    {"timestamp": datetime(2026, 7, 24, 18, tzinfo=timezone.utc), "open": 64154.1, "high": 64262.3, "low": 64105.1, "close": 64242.8, "volume": 101.3249},
+    {"timestamp": datetime(2026, 7, 24, 19, tzinfo=timezone.utc), "open": 64250.0, "high": 64266.7, "low": 64115.5, "close": 64199.5, "volume": 103.3677},
+    {"timestamp": datetime(2026, 7, 24, 20, tzinfo=timezone.utc), "open": 64204.1, "high": 64260.1, "low": 64105.0, "close": 64139.7, "volume": 50.4067},
+    {"timestamp": datetime(2026, 7, 24, 21, tzinfo=timezone.utc), "open": 64139.6, "high": 64194.0, "low": 64098.7, "close": 64098.7, "volume": 27.5920},
+]
+
+
+def btc_20260724_capitulation_frame() -> pd.DataFrame:
+    """The exact 30-bar BTC-USDT 1h frame reviewed live on 2026-07-24: a
+    run-up to a 65,772.5 high, a sharp capitulation bar (13:00 UTC, range
+    ~892), then eight bars of tight, overlapping, alternating-direction
+    congestion into the close at 64,098.7 — near the LOW of the range this
+    frame's own high/low define."""
+    return pd.DataFrame(_BTC_20260724_CAPITULATION_ROWS)
+
+
 def _png_dimensions(path: Path) -> tuple:
     data = path.read_bytes()
     assert data[:8] == b"\x89PNG\r\n\x1a\n", f"{path} is not a PNG (bad signature)"
@@ -349,6 +404,53 @@ def test_o_verify_read_marks_the_forming_bar_in_both_images():
     assert Path(images["zoom"]).exists()
 
 
+def test_p_real_btc_frame_reads_at_range_low():
+    """CALIBRATION FIXTURE (2026-07-24): a vision-capable reviewer looked at
+    chart_reads_demo/BTC-USDT_1h_zoom.png for this exact frame and called
+    price 'down near the lows' of the ~63,687-65,772 range — not mid-range.
+    That direct human read is the ground truth this fixture locks in.
+    Price closes at 64,098.7, ~19.8% off the low of its own trailing
+    20-bar range — inside the recalibrated bottom-30% 'at range low' band,
+    outside the old (too narrow) bottom-15% band that mis-called it 'mid
+    range'."""
+    df = btc_20260724_capitulation_frame()
+    read = cr.read_chart(df, now=_closed_now(df))
+    _assert_schema_shape(read)
+    assert read["location"] == "at range low", read["location"]
+
+
+def test_q_real_btc_frame_congestion_tail_reads_messy():
+    """CALIBRATION FIXTURE (2026-07-24): the same reviewer called the last
+    ~8 bars of this frame 'textbook congestion' by eye — small, overlapping,
+    alternating-direction bodies in a tight band after the capitulation bar
+    — and said a disciplined trader skips it. The original 10-bar quality
+    window let the capitulation bar's trend-efficiency leak into the read
+    and called it 'clean'; QUALITY_WINDOW=8 correctly ages that bar out and
+    reads the CURRENT tape, not the move that produced it.
+
+    Also locks in the fields the reviewer confirmed were ALREADY right, so
+    this recalibration can't quietly break them: verdict (stand aside /
+    untradeable), momentum (contracting — bodies collapsed after the
+    capitulation bar), and the current-candle read (small red body, long
+    upper wick, closed near its low, a rejection tell)."""
+    df = btc_20260724_capitulation_frame()
+    read = cr.read_chart(df, now=_closed_now(df))
+    _assert_schema_shape(read)
+
+    assert read["quality"] == "messy", read["quality"]
+    assert read["best_tool"] == "stand aside", read["best_tool"]
+    assert read["tradeable"] is False
+
+    assert read["momentum"] == "contracting", read["momentum"]
+
+    cc = read["current_candle"]
+    assert cc["color"] == "red", cc
+    assert cc["body"] == "small", cc
+    assert cc["wicks"] == "long upper", cc
+    assert cc["close_position"] == "near low", cc
+    assert cc["forming"] is False
+
+
 def main():
     tests = [
         test_a_py_compile_both_files,
@@ -366,6 +468,8 @@ def main():
         test_m_read_chart_rejects_empty_frame,
         test_n_verify_read_renders_full_and_zoom_pngs_matching_the_read,
         test_o_verify_read_marks_the_forming_bar_in_both_images,
+        test_p_real_btc_frame_reads_at_range_low,
+        test_q_real_btc_frame_congestion_tail_reads_messy,
     ]
     results = []
     for fn in tests:
