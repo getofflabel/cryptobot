@@ -1,21 +1,26 @@
 """
-step53_pick_smoke.py — REAL BloFin smoke test for daily_pick.py.
+step53_pick_smoke.py — REAL BloFin smoke test for daily_pick.py, THE
+LEARNING ENGINE (2026-07-24 upgrade: 2h slots, up to 3 concurrent picks —
+see daily_pick.py's module docstring for the full design).
 
 READ-ONLY + DRY: pulls REAL candles (config.make_exchange("live"), the PROD
 market-data host — full history for the whole named universe regardless of
 demo availability), probes the REAL demo host for which symbols are
 actually tradeable there, reads the REAL current account state (positions,
-other books), then:
+other books, open daily-pick slots), then:
 
   1. prints the FULL ranked scoreboard — every instrument in UNIVERSE, both
      long/short scores, every component that fired, conviction, direction
-     (this ALWAYS runs, independent of the 13:00 UTC pick-time gate, so the
+     (this ALWAYS runs, independent of the 2h slot-due gate, so the
      scoreboard is visible no matter what time this script happens to run)
-  2. shows what select_pick() would choose RIGHT NOW, guards and all
+  2. shows what select_pick() would choose RIGHT NOW, guards and all —
+     including the different-symbols rule against this book's own
+     currently-open slots
   3. runs daily_pick.run_daily_pick(private, live_feed, demo_feed, state,
-     dry=True) — the actual per-cycle decision (reconcile / holding /
-     waiting / would_enter, whichever applies at the moment this runs),
-     proving dry mode makes zero orders and zero state writes
+     dry=True) — the actual per-cycle decision THIS SLOT would make
+     (reconcile every open trade, then the entry decision if due and
+     capacity allows), proving dry mode makes zero orders and zero state
+     writes
 
 Places NO orders, sets NO leverage, makes NO state/log/notify side effect.
 
@@ -32,7 +37,8 @@ from blofin_private import BlofinDemoPrivate, load_env
 
 def main():
     print("=" * 78)
-    print("DAILY PICK SMOKE TEST — REAL BloFin data, dry run, zero orders")
+    print("DAILY PICK SMOKE TEST — THE LEARNING ENGINE — REAL BloFin data, "
+          "dry run, zero orders")
     print("=" * 78)
 
     env = load_env()
@@ -49,6 +55,11 @@ def main():
     print("(see daily_pick.py's module docstring for why this list is "
           "short — a BloFin DEMO-host availability limit, censused live, "
           "not a design choice)")
+    print(f"CADENCE: a fresh slot every {dp.SLOT_INTERVAL_H}h (even UTC "
+          f"hours) | MAX_CONCURRENT: {dp.MAX_CONCURRENT} | MAX_HOLD: "
+          f"{dp.MAX_HOLD_H:.0f}h | RISK_PCT: {dp.RISK_PCT*100:.2f}% "
+          f"(half at {dp.LOW_CONV_RISK_MULT*dp.RISK_PCT*100:.2f}% on a "
+          f"low-conviction pick, conviction < {dp.CONVICTION_FLOOR:.0f})")
 
     # -- 0. universe probe: what's actually tradeable on demo right now -----
     print("\n-- universe probe (real DEMO candle fetch per symbol) --")
@@ -58,11 +69,17 @@ def main():
         tag = "ACTIVE" if sym in active else "DROPPED (demo unavailable)"
         print(f"  {sym:12s} {tag}")
 
+    state = load_state()
+    dp_state_before = state.get("daily_pick")
+    benched = state.get("benched_triggers", [])
+
     # -- 1. FULL ranked scoreboard, unconditionally -------------------------
     print("\n" + "=" * 78)
     print("FULL SCOREBOARD (real PROD candles, every named instrument)")
     print("=" * 78)
-    analysis = dp.analyze_universe(live_feed, dp.UNIVERSE)
+    if benched:
+        print(f"(auto-benched setup types currently silenced: {benched})")
+    analysis = dp.analyze_universe(live_feed, dp.UNIVERSE, benched)
     ranked = sorted(analysis,
                     key=lambda a: (a["ok"] and not a["stale"],
                                    a["conviction"] if a["conviction"] is not None else -1),
@@ -91,30 +108,34 @@ def main():
 
     # -- 2. what select_pick() would choose right now ------------------------
     print("\n" + "=" * 78)
-    print("SELECTION WALK (guards a-d)")
+    print("SELECTION WALK (guards a-d, including this book's own open slots)")
     print("=" * 78)
-    chosen, boredom, skips = dp.select_pick(analysis, private, demo_feed,
-                                            load_state())
+    open_trades = (dp_state_before or {}).get("open_trades")
+    if open_trades is None:
+        legacy = (dp_state_before or {}).get("open_trade")
+        open_trades = [legacy] if legacy else []
+    print(f"  currently open: {[t['symbol'] for t in open_trades]} "
+          f"({len(open_trades)}/{dp.MAX_CONCURRENT})")
+    chosen, low_conv, skips = dp.select_pick(analysis, private, demo_feed, state)
     for sym, reason in skips:
         print(f"  SKIP {sym}: {reason}")
     if chosen is None:
-        print("\n>>> RIGHT NOW: nothing clears every guard — the book would "
-              "book NOTHING this cycle (retries next cycle). <<<")
+        print("\n>>> RIGHT NOW: nothing clears every guard — a due slot would "
+              "book NOTHING (slot passed — all guarded). <<<")
     else:
         cand, spec = chosen
-        state_now = load_state()
-        plan = dp._build_entry_plan(cand, spec, state_now.get("virtual_equity", 0.0),
-                                    boredom)
+        plan = dp._build_entry_plan(cand, spec, state.get("virtual_equity", 0.0),
+                                    low_conv)
         explain = dp._explain(cand)
         print(f"\n>>> RIGHT NOW this book WOULD PICK: "
               f"{cand['direction'].upper()} {cand['symbol']} "
               f"({dp.NICE_NAMES.get(cand['symbol'], cand['symbol'])}) — "
               f"conviction {cand['conviction']:.0f}%"
-              f"{' [BOREDOM PICK, half size]' if boredom else ''}")
+              f"{' [LOW CONVICTION, half risk]' if low_conv else ''}")
         print(f"    why: {explain}")
         print(f"    sizing: {plan['contracts']:.4g} ct (~${plan['notional']:,.0f} "
-              f"notional, {plan['leverage']:.0f}x leverage, "
-              f"{plan['alloc']*100:.1f}% of equity)")
+              f"notional, {plan['leverage']:.0f}x leverage, risking "
+              f"{plan['risk_pct']*100:.2f}% of equity)")
         print(f"    ref price ~{plan['ref_price']:,.4f} | est TP "
               f"{plan['tp_ref']:,.4f} | est SL {plan['sl_ref']:,.4f} | "
               f"stop {plan['stop_pct']:.2f}% / target {plan['target_pct']:.2f}%")
@@ -123,32 +144,43 @@ def main():
               f"max_leverage={spec['max_leverage']}")
 
     # -- 3. current book state + the real dry-mode cycle ----------------------
-    state = load_state()
-    dp_state_before = state.get("daily_pick")
     print("\n" + "=" * 78)
     print("CURRENT daily_pick STATE")
     print("=" * 78)
-    print(f"  last_pick_date   : {(dp_state_before or {}).get('last_pick_date')}")
-    print(f"  open_trade       : {(dp_state_before or {}).get('open_trade')}")
+    print(f"  last_slot_ts     : {(dp_state_before or {}).get('last_slot_ts')}")
+    print(f"  open_trades      : {[t['symbol'] for t in open_trades]}")
     print(f"  conviction_ledger: {(dp_state_before or {}).get('conviction_ledger')}")
     print(f"  picks logged     : {len((dp_state_before or {}).get('picks', []))}")
+    print(f"  daybook entries  : {len((dp_state_before or {}).get('daybook', []))}")
+    print(f"  last_recap_date  : {(dp_state_before or {}).get('last_recap_date')}")
     print(f"  shared virtual_equity: ${state.get('virtual_equity', 0):,.2f}")
 
     # snapshot BEFORE the call: run_daily_pick does an unconditional
-    # state.setdefault("daily_pick", ...) up front (exactly like every
-    # other book's run_* — see newsdesk.py's identical `nd = state.setdefault(...)`
-    # pattern) even in dry mode, which harmlessly populates the IN-MEMORY
-    # dict with fresh defaults. That's not a persisted write; comparing a
-    # deep-copied snapshot of the true PRE-call value against what actually
-    # got persisted (state_after, freshly reloaded from disk/cloud) is the
-    # real proof, not comparing live-mutated dict identity.
+    # state.setdefault("daily_pick", ...) + _migrate_dp(...) up front (exactly
+    # like every other book's run_* — see newsdesk.py's identical
+    # `nd = state.setdefault(...)` pattern) even in dry mode, which harmlessly
+    # populates the IN-MEMORY dict with fresh defaults. That's not a
+    # persisted write; comparing a deep-copied snapshot of the true PRE-call
+    # value against what actually got persisted (state_after, freshly
+    # reloaded from disk/cloud) is the real proof, not comparing
+    # live-mutated dict identity.
     dp_snapshot_before = copy.deepcopy(state.get("daily_pick"))
 
     print("\n" + "=" * 78)
-    print("run_daily_pick(private, live_feed, demo_feed, state, dry=True)")
+    print("run_daily_pick(private, live_feed, demo_feed, state, dry=True) — "
+          "WHAT THIS SLOT WOULD DO")
     print("=" * 78)
     result = dp.run_daily_pick(private, live_feed, demo_feed, state, dry=True)
-    print(f"\nDECISION SUMMARY: {result}")
+    print(f"\nslot due            : {result['due']} (slot {result['slot_ts']})")
+    print(f"currently holding   : {[h['symbol'] for h in result['holding']]} "
+          f"({result['open_count']}/{dp.MAX_CONCURRENT})")
+    if result["exits"]:
+        print("would exit this cycle:")
+        for e in result["exits"]:
+            print(f"    {e}")
+    else:
+        print("would exit this cycle: (none)")
+    print(f"this slot's entry decision: {result['entry']}")
 
     # -- 4. prove dry mode made no PERSISTED state changes ---------------------
     state_after = load_state()

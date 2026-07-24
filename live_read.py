@@ -97,9 +97,15 @@ def _open_position(state):
     # — including it here is what put an ETH trade on the Bitcoin card with
     # BTC prices (the fake +$10k of 2026-07-24). The Daily Pick counts only
     # when the symbol it holds IS BTC.
-    pick_t = state.get("daily_pick", {}).get("open_trade")
-    if pick_t and pick_t.get("symbol") not in (None, "BTC-USDT"):
-        pick_t = None
+    # daily_pick moved from a single open_trade to a concurrent open_trades
+    # list (2026-07-24 learning-engine upgrade) — read defensively so an
+    # un-migrated state file (pre-upgrade shape) doesn't crash this card.
+    pick_open_trades = state.get("daily_pick", {}).get("open_trades")
+    if pick_open_trades is None:
+        legacy = state.get("daily_pick", {}).get("open_trade")
+        pick_open_trades = [legacy] if legacy else []
+    pick_t = next((t for t in pick_open_trades if t.get("symbol") == "BTC-USDT"),
+                  None)
     books = [("The Ride", state.get("open_trade"), CONTRACT_SIZE["The Ride"]),
              ("The Strikes", state.get("tactical", {}).get("open_trade"),
               CONTRACT_SIZE["The Strikes"]),
@@ -191,19 +197,27 @@ def _build_symbols(state, position, thesis, waiting, armed, gold_daily):
         }
 
     # --- Daily Pick rotation (SOL-USDT, TSLA-USDT, + whatever else it's --
-    # --- holding) — read defensively, this book may not be deployed yet --
+    # --- holding) — read defensively, this book may not be deployed yet.
+    # 2026-07-24 learning-engine upgrade: daily_pick can now hold UP TO 3
+    # CONCURRENT positions (state["daily_pick"]["open_trades"] is a list,
+    # replacing the old single open_trade) — index by symbol so every
+    # concurrently-held symbol gets its own card, not just the first. ------
     dp = state.get("daily_pick", {}) or {}
-    dp_open = dp.get("open_trade")
-    dp_symbol = dp_open.get("symbol") if dp_open else None
+    dp_open_trades = dp.get("open_trades")
+    if dp_open_trades is None:
+        legacy = dp.get("open_trade")
+        dp_open_trades = [legacy] if legacy else []
+    dp_by_symbol = {t["symbol"]: t for t in dp_open_trades if t}
     rotation_status = {"mode": "rotation",
                        "text": "in the Daily Pick rotation, scored every "
-                               "morning"}
+                               "2 hours"}
 
     for sym in ("SOL-USDT", "TSLA-USDT"):
-        if dp_open and dp_symbol == sym:
+        t = dp_by_symbol.get(sym)
+        if t:
             symbols[sym] = {
                 "display": DISPLAY_NAMES[sym], "book": "Daily Pick",
-                "position": _norm_trade("Daily Pick", dp_open,
+                "position": _norm_trade("Daily Pick", t,
                                         CONTRACT_SIZE["Daily Pick"]),
             }
         else:
@@ -213,15 +227,16 @@ def _build_symbols(state, position, thesis, waiting, armed, gold_daily):
             }
 
     # any OTHER symbol the daily pick currently holds (not one of the named
-    # ones above) still gets exposed, under its own instId
-    if dp_open and dp_symbol and dp_symbol not in symbols:
-        symbols[dp_symbol] = {
-            "display": DISPLAY_NAMES.get(dp_symbol,
-                                         dp_symbol.replace("-USDT", "")),
-            "book": "Daily Pick",
-            "position": _norm_trade("Daily Pick", dp_open,
-                                    CONTRACT_SIZE["Daily Pick"]),
-        }
+    # ones above, and there may be several now that up to 3 can be open at
+    # once) still gets exposed, under its own instId
+    for sym, t in dp_by_symbol.items():
+        if sym not in symbols:
+            symbols[sym] = {
+                "display": DISPLAY_NAMES.get(sym, sym.replace("-USDT", "")),
+                "book": "Daily Pick",
+                "position": _norm_trade("Daily Pick", t,
+                                        CONTRACT_SIZE["Daily Pick"]),
+            }
 
     return symbols
 
