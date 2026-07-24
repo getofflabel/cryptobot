@@ -13,9 +13,15 @@ effect — enforced inside run_gold_book itself.
 Prints, in order:
   1. the XAU-USDT/XAUT-USDT instrument spec found on BloFin (both hosts)
   2. the real candle history pulled and its span
-  3. current price, 55-day high, EMA20, in/out signal
-  4. what the book WOULD do right now (would-enter sizing, or would-exit,
-     or hold/stay flat), and the current live account position
+  3. current price, ENTRY_N-day high, EMA20 (informational only — round 59
+     retired it as the exit; see gold_book's ROUND 59 EXIT SWAP), breakout
+     signal
+  4. the CURRENT STRUCTURE-TRAILING FLOOR if a trade is open (round 59:
+     gold_book._compute_trail_floor — the sealed-validated exit; there is
+     no more book-computed "would-exit", the exchange's own bracket owns
+     that), what the book WOULD do right now (would-enter sizing / would-
+     hold + floor preview / stay flat), and the current live account
+     position
   5. proof the dry run made zero state writes (reload from source of truth)
 
 Run:  python3 step51_gold_smoke.py
@@ -75,13 +81,14 @@ def main():
           f"{d['timestamp'].iloc[0]:%Y-%m-%d} -> {d['timestamp'].iloc[-1]:%Y-%m-%d}")
 
     dec = gold_book._decision(d)
-    hi55_str = f"${dec['hi55']:.2f}" if dec["hi55"] is not None else "n/a"
-    print(f"\nlatest CLOSED bar   : {dec['bar_date']}")
-    print(f"latest close        : ${dec['close']:.2f}")
-    print(f"55-day high (shift1): {hi55_str}")
-    print(f"EMA20 of close      : ${dec['ema20']:.2f}")
-    print(f"donchian55/EMA20 signal right now: "
-          f"{'IN A BREAKOUT (long)' if dec['desired_in'] else 'FLAT (waiting for a breakout)'}")
+    hi_str = f"${dec['hi55']:.2f}" if dec["hi55"] is not None else "n/a"
+    print(f"\nlatest CLOSED bar        : {dec['bar_date']}")
+    print(f"latest close             : ${dec['close']:.2f}")
+    print(f"{gold_book.ENTRY_N}-day high (shift1)     : {hi_str}")
+    print(f"EMA20 of close (info only, no longer drives any exit — see "
+          f"gold_book's ROUND 59 EXIT SWAP): ${dec['ema20']:.2f}")
+    print(f"donchian{gold_book.ENTRY_N} breakout right now: "
+          f"{'YES — fresh breakout today' if dec['desired_in'] else 'no'}")
 
     # -- 2. current state + real account position ----------------------------
     from gold_book import _fresh_book
@@ -91,11 +98,30 @@ def main():
     gb_before = gb_raw_before
     if gb_before is None or "realized_pnl_total" not in gb_before:
         gb_before = _fresh_book()
-    print(f"\ngold_book open_trade       : {gb_before.get('open_trade')}")
+    open_trade = gb_before.get("open_trade")
+    print(f"\ngold_book open_trade       : {open_trade}")
     print(f"gold_book last_bar_date    : {gb_before.get('last_bar_date')}")
     print(f"gold_book trades booked    : {len(gb_before.get('trades', []))}")
     print(f"gold_book realized_pnl_total: ${gb_before.get('realized_pnl_total', 0.0):+,.2f}")
     print(f"shared ledger virtual_equity: ${state.get('virtual_equity', 0):,.2f}")
+
+    # STRUCTURE-TRAILING floor (round 59): recomputed fresh, exactly like
+    # gold_book.run_gold_book does every cycle while holding — see
+    # gold_book._compute_trail_floor's docstring for the ratchet/fallback
+    # rule this mirrors from step59_exit_science's sealed-validated X3.
+    current_floor = None
+    if open_trade is not None:
+        current_floor = gold_book._compute_trail_floor(
+            d, gold_book._entry_date_of(open_trade), open_trade["entry_price"])
+        moved = (open_trade.get("trail_floor") is None
+                or current_floor > open_trade.get("trail_floor", 0) + 1e-9)
+        print(f"CURRENT TRAILING FLOOR      : ${current_floor:,.2f}")
+        if moved and open_trade.get("trail_floor") is not None:
+            print(f"  (this is HIGHER than the last recorded floor "
+                  f"${open_trade['trail_floor']:,.2f} — the next live/dry "
+                  f"cycle would ratchet the exchange bracket up to this)")
+    else:
+        print("CURRENT TRAILING FLOOR      : n/a (flat, no open trade)")
 
     private = BlofinDemoPrivate(env["BLOFIN_DEMO_API_KEY"],
                                 env["BLOFIN_DEMO_API_SECRET"],
@@ -112,17 +138,20 @@ def main():
     result = gold_book.run_gold_book(private, live_feed, state, dry=True)
     print("--- end run_gold_book ---\n")
     print(f"DECISION SUMMARY: {result}")
+    print(f"  -> trail_floor from the decision dict: "
+          f"{result.get('trail_floor')}")
 
     have_position = gb_before.get("open_trade") is not None
     if not have_position and dec["desired_in"]:
-        print("\n>>> RIGHT NOW: gold is IN A DONCHIAN-55 BREAKOUT. The real "
-              "book would go LONG on the next live cycle. <<<")
-    elif have_position and not dec["desired_in"]:
-        print("\n>>> RIGHT NOW: the open trade's close is BELOW EMA20. The "
-              "real book would EXIT on the next live cycle. <<<")
+        print(f"\n>>> RIGHT NOW: gold just broke its {gold_book.ENTRY_N}-day "
+              f"high. The real book would go LONG on the next live cycle, "
+              f"protected by a structure-trailing floor (not a fixed TP/EMA "
+              f"exit). <<<")
     elif have_position:
-        print("\n>>> RIGHT NOW: holding an open long, still above EMA20 — "
-              "no action. <<<")
+        print(f"\n>>> RIGHT NOW: holding an open long. The ONLY real exit is "
+              f"the structure-trailing floor's exchange-side stop — "
+              f"currently {'$' + f'{current_floor:,.2f}' if current_floor is not None else 'n/a'} "
+              f"— firing there, never a book-computed close check. <<<")
     else:
         print("\n>>> RIGHT NOW: flat, no breakout — waiting. <<<")
 
