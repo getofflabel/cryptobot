@@ -459,3 +459,16 @@ grid's tightest DDs). NO looks spent — family to WATCH LIST pending
 neighbor-cluster scrutiny (the val>>train shape has failed sealed 2x
 historically). FVG/order-block overlap only ~1.1x chance = tools are
 distinct, not redundant.
+
+## ROUND 56 — SMC toolkit (2026-07-24)
+274 configs. ★ FOURTH VALIDATED EDGE: CHoCH k8 + CONFLUENCE>=2 (1h,
+tgt 2x, train-median structural stop): train $15.45/t x52, val $72.51/t
+x24, MONOTONIC dose-response in BOTH windows (thresh 0->1->2: train
+-29.82->+1.54->+15.45; val -77.04->+7.64->+72.51) + neighbor island ->
+SEALED (erosion ~+19): 16t, +$99.52/t, +15.9%, DD -11.4% through the
+drought. PASS. Build queued after the Diver. Standalone tools DIED:
+sweeps 0/96, FVG 0/24, fib 0/48 — they earn their living only as
+confluence VOTES. "ANY-tool" pooling never survived (dilution) =
+owner's "different weapons" framing confirmed over "everything always".
+15m floor never cleared (FVG turned out DENSE ~1/2h, not sparse).
+Caveat on 4h BOS/fib: wild train/val sign flips = overfit terrain.
