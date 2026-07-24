@@ -162,7 +162,12 @@ _oracle_sig = s48.donchian_ema_exit(FULL, gold_book.ENTRY_N,
 ENTRY_DAY = int(_oracle_sig[_oracle_sig > 0].index[0])
 EXIT_DAY = int(_oracle_sig.iloc[ENTRY_DAY:][_oracle_sig.iloc[ENTRY_DAY:] == 0]
               .index[0])
-assert ENTRY_DAY == 60, f"synthetic data should break out on bar 60, got {ENTRY_DAY}"
+# ENTRY_DAY is derived from the ORACLE (the real imported strategy fn with
+# the book's live ENTRY_N), never hardcoded — so changing ENTRY_N (55 -> 20
+# on 2026-07-24) cannot silently break the suite. We only require that the
+# synthetic series produces exactly one well-formed trade to test against.
+assert ENTRY_DAY is not None and ENTRY_DAY >= gold_book.ENTRY_N, (
+    f"synthetic data must break out after warmup (ENTRY_N={gold_book.ENTRY_N}), got {ENTRY_DAY}")
 assert EXIT_DAY > ENTRY_DAY, "exit must come after entry"
 
 STARTING_EQUITY = 2000.0
