@@ -42,7 +42,8 @@ from strategy import vol_gated_ma, rsi
 
 CONTRACT_SIZE = {"The Ride": 0.001, "The Strikes": 0.001,
                  "ETH Amplifier": 0.01, "Shorts Lab": 0.001,
-                 "The Gold Book": 0.001, "Daily Pick": 0.001}
+                 "The Gold Book": 0.001, "Daily Pick": 0.001,
+                 "The Diver": 0.001}
 
 # instId -> the plain-English name the HUD shows next to it.
 DISPLAY_NAMES = {
@@ -106,6 +107,8 @@ def _open_position(state):
               CONTRACT_SIZE["Shorts Lab"]),
              ("The Newsdesk", state.get("newsdesk", {}).get("open_trade"),
               0.001),
+             ("The Diver", state.get("diver", {}).get("open_trade"),
+              CONTRACT_SIZE["The Diver"]),
              ("Daily Pick", pick_t, 0.001)]
     for name, t, csize in books:
         if not t:

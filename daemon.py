@@ -124,6 +124,18 @@ def full_cycle(private, live_feed, demo_feed, symbol, reason):
     _run_book("The Gold Book", _gold)
     _run_book("Daily Pick", _pick)
 
+    def _diver():
+        # THE DIVER (round 58, 4h hidden RSI divergence continuation, see
+        # diver.py's module docstring). Safe to call on EVERY full_cycle:
+        # state["diver"]["last_bar_ts"] makes every call a no-op except the
+        # first one after a NEW 4h bar closes, and it reconciles against
+        # the exchange's own position every time before deciding anything.
+        from diver import run_diver
+        from step5_paper_trade import load_state
+        run_diver(private, live_feed, demo_feed, load_state())
+
+    _run_book("The Diver", _diver)
+
 
 def main():
     env = load_env()

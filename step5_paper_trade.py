@@ -135,13 +135,18 @@ def sync_ledger_to_account(private, symbol, state) -> None:
     silently folded into virtual_equity mid-trade the moment every BTC book
     happened to be flat. gold_book.open_trade is now checked exactly like
     every other book's — this is the one line this rewire is allowed to
-    touch here."""
+    touch here.
+
+    ROUND-58 EXTENSION: the Diver (diver.py) now places REAL demo orders on
+    BTC-USDT too — same guard, same reasoning, checked exactly like every
+    other BTC book above it."""
     has_trade = (state.get("open_trade")
                  or state.get("tactical", {}).get("open_trade")
                  or state.get("tactical_eth", {}).get("open_trade")
                  or state.get("shorts_lab", {}).get("open_trade")
                  or state.get("newsdesk", {}).get("open_trade")
-                 or state.get("gold_book", {}).get("open_trade"))
+                 or state.get("gold_book", {}).get("open_trade")
+                 or state.get("diver", {}).get("open_trade"))
     if has_trade:
         return
     try:
@@ -629,7 +634,8 @@ def decide_and_trade(private: BlofinDemoPrivate, live_feed, symbol: str):
             state.get("tactical", {}).get("open_trade")
             or state.get("shorts_lab", {}).get("open_trade")
             or state.get("apprentice", {}).get("open_trade")
-            or state.get("newsdesk", {}).get("open_trade"))
+            or state.get("newsdesk", {}).get("open_trade")
+            or state.get("diver", {}).get("open_trade"))
         if own_tpsl_id:
             try:
                 private.cancel_tpsl(symbol, str(own_tpsl_id))

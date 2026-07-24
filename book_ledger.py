@@ -53,13 +53,21 @@ def recorded_book_positions(state: dict) -> dict:
                                                                   promoted to
                                                                   live demo
                                                                   orders)
+      "diver"      state["diver"]["open_trade"]                — signed by
+                                                                  "direction"
+                                                                  (round 58,
+                                                                  4h hidden
+                                                                  RSI
+                                                                  divergence,
+                                                                  see
+                                                                  diver.py)
 
     state["tactical_eth"] is EXCLUDED on purpose — it trades ETH-USDT, a
     different symbol with its own separate exchange net. Mixing it in here
     would silently corrupt the BTC attribution.
     """
     out = {"ride": 0.0, "tact": 0.0, "lab": 0.0, "apprentice": 0.0,
-           "newsdesk": 0.0}
+           "newsdesk": 0.0, "diver": 0.0}
 
     ride = state.get("open_trade")
     if ride:
@@ -86,6 +94,12 @@ def recorded_book_positions(state: dict) -> dict:
         direction = news.get("direction", 0) or 0
         sign = 1 if direction > 0 else (-1 if direction < 0 else 0)
         out["newsdesk"] = sign * abs(float(news.get("contracts", 0) or 0))
+
+    diver = state.get("diver", {}).get("open_trade")
+    if diver:
+        direction = diver.get("direction", 0) or 0
+        sign = 1 if direction > 0 else (-1 if direction < 0 else 0)
+        out["diver"] = sign * abs(float(diver.get("contracts", 0) or 0))
 
     return out
 

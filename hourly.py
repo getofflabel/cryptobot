@@ -285,7 +285,28 @@ def main(storm=None):
         log_event({"action": "error", "book": "gold_book",
                    "error": str(e)[:300]})
 
-    # 3e. DAILY PICK backstop (daemon owns it when alive)
+    # 3e. THE DIVER (round 58, 4h hidden RSI divergence continuation, see
+    #     diver.py's module docstring). Same daemon handoff as
+    #     tactical/shorts_lab/newsdesk/gold as a backstop; it is also
+    #     idempotent per 4h bar (state["diver"]["last_bar_ts"]) AND
+    #     reconciles against the exchange's own position every call, so
+    #     running it here even right after the daemon's own hourly call is
+    #     always safe and never double-trades.
+    try:
+        from step5_paper_trade import load_state
+        from diver import run_diver
+        state = state_holder.get("s") or load_state()
+        if not daemon_alive:
+            run_diver(private, live_feed, demo_feed, state)
+        else:
+            print("  the diver skipped — daemon owns trading")
+    except Exception as e:
+        print(f"THE DIVER cycle error: {str(e)[:150]}")
+        from step5_paper_trade import log_event
+        log_event({"action": "error", "book": "diver",
+                   "error": str(e)[:300]})
+
+    # 3f. DAILY PICK backstop (daemon owns it when alive)
     if not daemon_alive:
         try:
             from daily_pick import run_daily_pick

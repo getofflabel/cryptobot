@@ -36,6 +36,7 @@ import traceback
 
 import pandas as pd
 
+import diver
 import newsdesk
 import shorts_lab
 import step5_paper_trade as s5
@@ -166,7 +167,8 @@ def make_state(**books) -> dict:
     state = {"virtual_equity": 1000.0, "goal": 2000.0, "open_trade": None,
              "tactical": {"open_trade": None},
              "shorts_lab": {"open_trade": None},
-             "newsdesk": {"open_trade": None}}
+             "newsdesk": {"open_trade": None},
+             "diver": {"open_trade": None, "last_bar_ts": None}}
     if "ride" in books:
         state["open_trade"] = books["ride"]
     if "tact" in books:
@@ -175,6 +177,8 @@ def make_state(**books) -> dict:
         state["shorts_lab"]["open_trade"] = books["lab"]
     if "newsdesk" in books:
         state["newsdesk"]["open_trade"] = books["newsdesk"]
+    if "diver" in books:
+        state["diver"]["open_trade"] = books["diver"]
     return state
 
 
@@ -210,6 +214,24 @@ def newsdesk_trade(contracts, entry=65000.0, direction=-1, tpsl_id=None,
             "event_ts": s5.now_utc(), "ctx": {"news": headline}}
 
 
+def diver_trade(contracts, entry=65000.0, direction=1, tpsl_id=None,
+                entry_time=None, bar_ts="2026-07-23 12:00 UTC"):
+    """round 58 — hidden_divergence, either direction."""
+    if direction > 0:
+        tp = round(entry * (1 + diver.TARGET_PCT / 100), 1)
+        sl = round(entry * (1 - diver.STOP_PCT / 100), 1)
+    else:
+        tp = round(entry * (1 - diver.TARGET_PCT / 100), 1)
+        sl = round(entry * (1 + diver.STOP_PCT / 100), 1)
+    return {"trigger": "hidden_divergence", "direction": direction,
+            "contracts": contracts, "entry_price": entry,
+            "entry_fee_bps": 6.0, "entry_time": entry_time or s5.now_utc(),
+            "tp_price": tp, "sl_price": sl, "tpsl_id": tpsl_id,
+            "max_hold_h": 48, "bar_ts": bar_ts, "rsi_at_entry": 30.0,
+            "champ_at_entry": 1 if direction > 0 else 0,
+            "ctx": {"news": None}}
+
+
 # ---------------------------------------------------------------------------
 # Neutralize every side effect that would otherwise touch the network or
 # real local files. Do this once, at import time, for every module that
@@ -228,7 +250,7 @@ def _noop_save_state(state):
     pass
 
 
-for _mod in (s5, tactical, shorts_lab, newsdesk):
+for _mod in (s5, tactical, shorts_lab, newsdesk, diver):
     _mod.notify = _noop_notify
     _mod.log_event = _noop_log_event
     _mod.save_state = _noop_save_state
@@ -239,6 +261,7 @@ s5.CLOUD_STATE = False        # belt-and-suspenders: never let a stray path
 
 tactical.time.sleep = lambda *_a, **_kw: None
 shorts_lab.time.sleep = lambda *_a, **_kw: None
+diver.time.sleep = lambda *_a, **_kw: None
 
 
 # ---------------------------------------------------------------------------
@@ -454,6 +477,65 @@ def test_h_attribution_ride_long_newsdesk_short():
     assert abs(unexplained_position(net2, state2) - 0.0) < 1e-9
 
 
+def test_i_diver_incident_replay():
+    """SAME incident shape as test_a/test_g, for the newest book: the diver
+    holds a recorded -69.6 ct short, the ride has no position, champion
+    flat. decide_and_trade must place ZERO orders and cancel NOTHING — the
+    net belongs entirely to the diver, whose attributed slice already
+    matches what it wants (nothing, from the ride's point of view)."""
+    state = make_state(diver=diver_trade(69.6, direction=-1))
+    private = FakePrivate(net=-69.6)
+    live_feed = FakeLiveFeed()
+
+    s5.load_state = lambda: state
+    s5.vol_filtered_ma = lambda *a, **kw: pd.Series([0])   # champion: flat
+
+    s5.decide_and_trade(private, live_feed, SYMBOL)
+
+    assert private.orders == [], f"expected zero orders, got {private.orders}"
+    assert private.cancels == [], f"expected zero cancels, got {private.cancels}"
+    assert state["diver"]["open_trade"] is not None, \
+        "the diver's own record must be untouched"
+    assert state["diver"]["open_trade"]["contracts"] == 69.6
+
+
+def test_j_attribution_ride_long_diver_short():
+    """Ride long 45 ct + diver short -69.6 ct recorded, net -24.6 ->
+    attributed ride = +45, attributed diver = -69.6, unexplained = 0. Also
+    confirms recorded_book_positions() carries the "diver" key (registered
+    2026-07-24, round 58) alongside every other book, all zero unless set."""
+    state = make_state(ride=ride_trade(45.0),
+                       diver=diver_trade(69.6, direction=-1))
+    net = -24.6   # 45 - 69.6
+
+    recorded = recorded_book_positions(state)
+    assert recorded["ride"] == 45.0
+    assert recorded["diver"] == -69.6
+    assert recorded["tact"] == 0.0
+    assert recorded["lab"] == 0.0
+    assert recorded["apprentice"] == 0.0
+    assert recorded["newsdesk"] == 0.0
+
+    assert abs(attributed_position(net, state, "ride") - 45.0) < 1e-9
+    assert abs(attributed_position(net, state, "diver") - (-69.6)) < 1e-9
+    assert abs(unexplained_position(net, state) - 0.0) < 1e-9
+
+    # a diver LONG layered alongside ride shouldn't confuse either slice
+    state2 = make_state(ride=ride_trade(45.0),
+                        diver=diver_trade(12.0, direction=1))
+    net2 = 57.0   # 45 + 12
+    assert abs(attributed_position(net2, state2, "ride") - 45.0) < 1e-9
+    assert abs(attributed_position(net2, state2, "diver") - 12.0) < 1e-9
+    assert abs(unexplained_position(net2, state2) - 0.0) < 1e-9
+
+    # unknown-book guard still rejects anything not in the registered set
+    try:
+        attributed_position(net, state, "not_a_real_book")
+        assert False, "expected ValueError for an unknown book name"
+    except ValueError:
+        pass
+
+
 # ---------------------------------------------------------------------------
 # Runner
 # ---------------------------------------------------------------------------
@@ -468,6 +550,8 @@ def main():
         test_f_flaky_read_exception_never_acts,
         test_g_newsdesk_incident_replay,
         test_h_attribution_ride_long_newsdesk_short,
+        test_i_diver_incident_replay,
+        test_j_attribution_ride_long_diver_short,
     ]
     results = []
     for fn in tests:
