@@ -119,6 +119,19 @@
         </div>
         ${pos.target ? `<div class="cbhud-bar"><div class="cbhud-bar-fill ${cls}" style="width:${prog}%"></div></div>` : ""}
         <div class="cbhud-thought">${state.thought || ""}</div>`;
+    } else if (state.armed) {
+      // A news trade is COCKED — show the countdown, never "nothing to do"
+      const a = state.armed;
+      let when = "at the bar close";
+      if (a.decision_ts) {
+        const d = new Date(a.decision_ts);
+        when = "at " + d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+      }
+      html = `
+        <div class="cbhud-flat">📰 NEWS TRADE ARMED</div>
+        <div class="cbhud-why" style="margin-top:2px">${(a.headline || "").replace(/^\[WatcherGuru\]\s*/, "")}</div>
+        <div class="cbhud-mini" style="margin-top:8px">Direction decides ${when} — then it enters with a 1.2% stop, 2.4% target.</div>
+        <div class="cbhud-thought">${state.thought || ""}</div>`;
     } else if (state.thesis) {
       // FLAT: show the trade the bot WOULD take right now — entry/TP/SL,
       // reward:risk, and a live conviction score. "Here's how I'd trade it."

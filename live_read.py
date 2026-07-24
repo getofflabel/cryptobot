@@ -136,6 +136,23 @@ def compute_live_read(candles_1h, candles_4h, candles_1d, funding_bps,
     position = _open_position(state)
     thesis = _thesis(champ, price, fb, r3, lo20, pop4h)
 
+    # the Newsdesk's armed/pending news trade — the HUD must NEVER say
+    # "nothing to do" while a trade is cocked and counting down
+    armed = None
+    nd_pending = state.get("newsdesk", {}).get("pending")
+    if nd_pending:
+        try:
+            from datetime import datetime as _dt, timedelta as _td
+            bar_open = _dt.strptime(nd_pending["direction_bar_open_ts"],
+                                    "%Y-%m-%d %H:%M:%S UTC")
+            decision_iso = (bar_open + _td(hours=1)).strftime(
+                "%Y-%m-%dT%H:%M:%SZ")
+        except Exception:
+            decision_iso = None
+        armed = {"book": "The Newsdesk",
+                 "headline": str(nd_pending.get("headline", ""))[:160],
+                 "decision_ts": decision_iso}
+
     # --- what each book is waiting for (only meaningful when flat) ----------
     benched = state.get("benched_triggers", [])
     waiting = []
@@ -176,6 +193,8 @@ def compute_live_read(candles_1h, candles_4h, candles_1d, funding_bps,
     # --- one-line thought ---------------------------------------------------
     if position:
         thought = f"In a {position['side'].lower()} ({position['book']}) — managing it."
+    elif armed:
+        thought = "News trade ARMED — direction decides at the bar close."
     elif any(w.get("ready") for w in waiting):
         armed = ", ".join(w["name"] for w in waiting if w.get("ready"))
         thought = f"{armed} armed — watching for the entry."
@@ -193,6 +212,7 @@ def compute_live_read(candles_1h, candles_4h, candles_1d, funding_bps,
         "funding_bps": fb,
         "atr1h_pct": atr1h_pct,
         "position": position,
+        "armed": armed,
         "thesis": thesis,
         "waiting": waiting,
         "benched": benched,
