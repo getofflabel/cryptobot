@@ -520,3 +520,24 @@ the "wrong" long survived to green. SIXTH burial of breakdown-chasing
 (first in conditional-flip form). Rule stands: honor the stop, never
 reverse into a waterfall. The pattern's real value is the OTHER side —
 sweep-fade longs, already a confluence vote in the sealed CHoCH edge.
+
+## ROUND 65 — the news trade gets eyes (2026-07-24)
+Owner critique ("you pre-know your TP — no real trader does this") tested
+on the validated news trigger: N0 incumbent vs structure targets vs
+structure trailing vs context veto vs ATR brackets. FINDINGS:
+- INCUMBENT GONE STALE: N0 fails val on grown data (-$18.39/t) AND the
+  SEALED slice (2026-05->07): -$14.93/t x105, -15.7%. The live config
+  was bleeding in the current regime.
+- ★ N2 STRUCTURE-TRAILING (stop = entry-bar extreme ±0.3%, trail
+  confirmed k=5 swing lows, no TP, 24h cap): train +$9.57 x315, val
+  +$4.34 x112, SEALED +$10.35/t x104, +10.8% — PASS on all three
+  windows. Deployed to the live newsdesk (build + review same day).
+- Structure TARGETS (N1) all fail; ATR brackets fail; CONTEXT VETO
+  fails (refuses 78-94% of sample; vetoed trades were often mildly
+  profitable — location-veto cuts sample, doesn't sharpen it).
+- Big-trade autopsy: N2's edge is aggregate stop discipline (surviving
+  losers), not single-trade brilliance; it clipped one +$276 winner
+  to -$69. Caveat: one 13mo regime, a handful of trades swing totals.
+Erosion ~+25. Owner's exit philosophy now sealed-validated on TWO live
+books (gold R59 4x, news R65 sign-flip); "pre-known % targets" retired
+from both.
