@@ -70,3 +70,21 @@ its evidence exists — same law as every strategy.
 live expectancy inside backtest bands; fills consistent with model; zero
 unexplained ledger/exchange divergences; infra clean. All five auditable
 via `python3 audit.py`. Then the capital decision is Wallace's.
+
+## THE CURRICULUM (Wallace, 2026-07-24 — the official path to real money)
+PHASE 1 — VOLUME (now -> ~3 weeks): 10-30 trades/day across EVERYTHING
+tradeable (cryptos, gold, and every market a venue allows), tuition-sized.
+Losses are the point: every trade labeled (setup, scenario, conviction,
+outcome), losing setup-types benched automatically, daily report cards.
+The goal is not profit — it is the fastest possible accumulation of
+"what a good trade looks like vs a bad one."
+PHASE 2 — SELECTIVITY (~week 4): "demo treated like real money." The
+cadence floor comes OFF; the trained brain trades only what it now KNOWS
+is good, sized and scored exactly as real money would be. Measured
+against the pre-registered proof standard (audit.py).
+PHASE 3 — LIVE: when Phase 2's record clears the proof bar, Wallace
+decides on real funds. Never before.
+GRADUATION 1->2: >=200 labeled trades in the daybook AND the per-setup
+records clearly separate the earners from the donors (benched list
+stable). The volume phase exists to MAKE selectivity possible — "you
+don't force those trades anymore, but you know what a good trade is."
