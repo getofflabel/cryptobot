@@ -555,19 +555,44 @@ def run_gold_book(private, live_feed, state: dict, dry: bool = False) -> dict:
                                 dec["bar_date"])
         return {"action": "reconciled_floor_exit", **dec, "pnl": realized}
 
-    # -- reconcile: exchange shows a position the book has no record of ----
+    # -- reconcile: a XAUT position this book has no record of -------------
+    # 2026-07-24: XAUT stopped being this book's private symbol when the
+    # learning engine was allowed to trade gold for real. The comment below
+    # used to say "no other book trades this symbol" — that assumption went
+    # stale the same afternoon and turned every cycle into a false alarm
+    # (Wallace: "a bunch of new notifications that a gold trade couldn't go
+    # through"). A position another book RECORDS is explained, not orphaned:
+    # only the slice no book claims deserves a warning, and it only deserves
+    # ONE — an alert repeated every cycle is noise, and noise is what buries
+    # the alerts that matter.
     if not have_position and abs(net) > 0.5:
-        print(f"  [GOLD{tag}] ⚠️ unexplained {SYMBOL} position on "
-              f"the exchange (net {net:+.1f} ct) — no other book trades "
-              f"this symbol and the gold book has no record of it. NOT "
-              f"trading this cycle — check BloFin by hand.")
+        claimed = 0.0
+        for t_ in (state.get("daily_pick", {}).get("open_trades") or []):
+            if t_.get("symbol") == SYMBOL:
+                claimed += t_["contracts"] * (1 if t_["direction"] > 0 else -1)
+        unclaimed = net - claimed
+        if abs(unclaimed) <= 0.5:
+            print(f"  [GOLD{tag}] {net:+.1f} ct on {SYMBOL} belongs to the "
+                  f"learning engine — standing down (not ours to manage)")
+            if not dry:
+                gb.pop("unexplained_alerted", None)
+            return {"action": "other_book_holds", "net": net, **dec}
+        print(f"  [GOLD{tag}] ⚠️ {unclaimed:+.1f} ct of the {net:+.1f} ct "
+              f"{SYMBOL} position is claimed by NO book — not trading this "
+              f"cycle; check BloFin by hand.")
         if not dry:
             from step5_paper_trade import log_event, notify
-            log_event({"action": "gold_unexplained_position", "net": net})
-            notify("⚠️ Unexplained gold position (demo)",
-                   f"BloFin shows {net:+.1f} ct net on {SYMBOL} that the "
-                   f"gold book never opened — check the app.")
-        return {"action": "unexplained_position", "net": net, **dec}
+            log_event({"action": "gold_unexplained_position", "net": net,
+                       "unclaimed": round(unclaimed, 1)})
+            # alert ONCE per episode, not once per cycle
+            if not gb.get("unexplained_alerted"):
+                gb["unexplained_alerted"] = True
+                save_state(state)
+                notify("⚠️ Unexplained gold position (demo)",
+                       f"{unclaimed:+.1f} ct on {SYMBOL} that no book "
+                       f"claims — check the app. (One alert per episode.)")
+        return {"action": "unexplained_position", "net": net,
+                "unclaimed": unclaimed, **dec}
 
     # -- dry mode: compute and print every possible action, write nothing --
     if dry:
