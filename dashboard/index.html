@@ -480,6 +480,261 @@
     font-style: italic;
   }
 
+  /* ---------- paper desk ---------- */
+
+  .paper-section { margin-top: 32px; }
+
+  .paper-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .paper-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-1);
+  }
+  .paper-title-sub {
+    font-size: 11.5px;
+    color: var(--text-3);
+    margin-top: 2px;
+  }
+
+  .paper-tabs {
+    display: flex;
+    gap: 4px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--card-border);
+    border-radius: 11px;
+    padding: 4px;
+  }
+  .paper-tab {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--text-2);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 7px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .paper-tab:hover { color: var(--text-1); }
+  .paper-tab.active { background: var(--accent-soft); color: #bcd4ff; }
+
+  .paper-market { display: flex; flex-direction: column; gap: 14px; }
+
+  .paper-chart-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--r-lg);
+    padding: 16px 16px 10px;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  .paper-chart-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .paper-chart-name { font-size: 13.5px; font-weight: 700; color: var(--text-1); }
+  .paper-chart-asof { font-size: 11px; color: var(--text-3); }
+  .paper-chart-asof.stale { color: var(--gold); }
+  .paper-chart-svg { width: 100%; height: auto; display: block; }
+  .paper-chart-empty {
+    padding: 46px 12px;
+    text-align: center;
+    color: var(--text-3);
+    font-size: 12.5px;
+    font-style: italic;
+  }
+
+  .paper-books-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 14px;
+  }
+
+  .paper-book-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--r-lg);
+    padding: 16px 18px 14px;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  .paper-book-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    margin-bottom: 12px;
+  }
+  .paper-book-name {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text-1);
+  }
+  .paper-book-name .tag {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-3);
+    margin-left: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .paper-book-ledger {
+    font-size: 12px;
+    color: var(--text-2);
+    text-align: right;
+  }
+  .paper-book-ledger .val { color: var(--text-1); font-weight: 700; }
+  .paper-book-record {
+    font-size: 11px;
+    color: var(--text-3);
+    text-align: right;
+    margin-top: 1px;
+  }
+
+  .paper-flat {
+    padding: 22px 8px;
+    text-align: center;
+    color: var(--text-3);
+    font-size: 12.5px;
+    font-style: italic;
+    border: 1px dashed var(--card-border);
+    border-radius: var(--r-md);
+    margin-bottom: 14px;
+  }
+
+  .paper-pos {
+    border: 1px solid var(--card-border);
+    border-radius: var(--r-md);
+    padding: 12px 14px;
+    margin-bottom: 14px;
+    background: rgba(255,255,255,0.02);
+  }
+  .paper-pos-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .paper-pos-side {
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    padding: 3px 8px;
+    border-radius: 5px;
+    color: #fff;
+    flex: none;
+  }
+  .paper-pos-side.long { background: #0f7a53; }
+  .paper-pos-side.short { background: #a6303a; }
+  .paper-pos-held {
+    margin-left: auto;
+    font-size: 11.5px;
+    color: var(--text-3);
+  }
+  .paper-pos-pnl {
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-bottom: 2px;
+  }
+  .paper-pos-pnl.pos { color: var(--green); }
+  .paper-pos-pnl.neg { color: var(--red); }
+  .paper-pos-pnl.neutral { color: var(--text-2); }
+  .paper-pos-pnlpct {
+    font-size: 12px;
+    color: var(--text-2);
+    margin-bottom: 10px;
+  }
+  .paper-pos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(84px, 1fr));
+    gap: 8px 14px;
+    font-size: 12px;
+  }
+  .paper-pos-grid .lbl {
+    color: var(--text-3);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 2px;
+  }
+  .paper-pos-grid .v { color: var(--text-1); font-variant-numeric: tabular-nums; }
+  .paper-pos-grid .v.stop { color: var(--red); }
+  .paper-pos-grid .v.target { color: var(--green); }
+
+  .paper-log-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 6px;
+  }
+  .paper-log {
+    max-height: 260px;
+    overflow-y: auto;
+  }
+  .paper-log-empty {
+    font-size: 12px;
+    color: var(--text-3);
+    font-style: italic;
+    padding: 8px 2px;
+  }
+  .paper-log-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 2px;
+    border-bottom: 1px solid rgba(255,255,255,0.055);
+    font-size: 11.5px;
+  }
+  .paper-log-row:last-child { border-bottom: none; }
+  .paper-log-time { color: var(--text-3); flex: none; width: 64px; }
+  .paper-log-side {
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #fff;
+    flex: none;
+  }
+  .paper-log-side.long { background: #0f7a53; }
+  .paper-log-side.short { background: #a6303a; }
+  .paper-log-prices {
+    color: var(--text-2);
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .paper-log-reason { color: var(--text-3); flex: none; font-size: 10.5px; }
+  .paper-log-pnl {
+    font-weight: 700;
+    flex: none;
+    width: 74px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .paper-log-pnl.pos { color: var(--green); }
+  .paper-log-pnl.neg { color: var(--red); }
+  .paper-log-pnl.neutral { color: var(--text-2); }
+
   /* ---------- footer ---------- */
 
   .footer-note {
@@ -501,12 +756,15 @@
     .controls-row { flex-direction: column; align-items: stretch; }
     .tabs, .view-toggle { justify-content: space-between; }
     .grid { grid-template-columns: 1fr 1fr; }
+    .paper-heading { flex-direction: column; align-items: stretch; }
+    .paper-books-row { grid-template-columns: 1fr; }
   }
 
   @media (max-width: 460px) {
     .grid { grid-template-columns: 1fr; }
     .brand-mark { font-size: 16px; }
     .drawer { width: 100vw; }
+    .paper-pos-grid { grid-template-columns: repeat(2, 1fr); }
   }
 </style>
 </head>
@@ -553,6 +811,17 @@
 
   <div class="grid" id="grid"></div>
 
+  <div class="paper-section" id="paper-section" hidden>
+    <div class="paper-heading">
+      <div>
+        <div class="paper-title">Paper desk</div>
+        <div class="paper-title-sub">internal paper books · oil &amp; S&amp;P — no real venue exists for these yet, tracked like real trades</div>
+      </div>
+      <div class="paper-tabs" id="paper-tabs"></div>
+    </div>
+    <div class="paper-market" id="paper-content"></div>
+  </div>
+
   <div class="footer-note">demo account · updates every 30s</div>
 </div>
 
@@ -574,6 +843,13 @@
   'use strict';
 
   var RPC_URL = 'https://gpgjujfkktxghqeqvrvh.supabase.co/rest/v1/rpc/cryptobot_pnl_sheet';
+  // The paper desk reads the SAME public, read-only, anon-key RPC the HUD
+  // Chrome extension already polls (hud-extension/background.js) — it
+  // passes through whatever's in state["live_read"], which now includes
+  // the `paper` block live_read.py publishes. No new Supabase object
+  // needed: adding a key to that Python dict is enough for it to show up
+  // here on the next 60s publish cycle.
+  var LIVE_READ_RPC_URL = 'https://gpgjujfkktxghqeqvrvh.supabase.co/rest/v1/rpc/cryptobot_live_read';
   var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdwZ2p1amZra3R4Z2hxZXF2cnZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4MzUzNjQsImV4cCI6MjA5ODQxMTM2NH0.J6x9aJ83axmEHCn0cZNev7HnU37D2SY6EedqO_zwhqg';
   var POLL_MS = 30000;
 
@@ -632,8 +908,13 @@
     view: 'markets',
     drawer: null,
     lastFetch: null,
-    fetchFailed: false
+    fetchFailed: false,
+    paper: { books: [] },
+    paperMarket: 'Oil',
+    paperFetchFailed: false
   };
+
+  var PAPER_MARKETS = ['Oil', 'S&P 500'];
 
   var els = {};
 
@@ -1132,6 +1413,315 @@
     els.updatedAgo.textContent = (state.fetchFailed ? 'connection issue · last update ' : 'updated ') + label;
   }
 
+  // ---------------- paper desk ----------------
+  // "I don't want alerts. I want to SEE the trade happening visually, and
+  // I want it logged. Basically a copy of what I have on BloFin, just
+  // automated." — the internal paper books (tradfi_engine.py's oil/S&P
+  // slots + spx_book.py's dedicated S&P dip-buy) rendered as a real
+  // trading screen: a candlestick chart with the position drawn on it,
+  // a BloFin-style position card with live PnL, and a trade log.
+
+  function fetchPaperData() {
+    fetch(LIVE_READ_RPC_URL, {
+      method: 'POST',
+      headers: {
+        apikey: ANON_KEY,
+        Authorization: 'Bearer ' + ANON_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: '{}'
+    }).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    }).then(function (data) {
+      state.paper = (data && data.paper) || { books: [] };
+      state.paperFetchFailed = false;
+      renderPaper();
+    }).catch(function (e) {
+      state.paperFetchFailed = true;
+      if (window.console) console.error('cryptobot paper desk fetch failed', e);
+    });
+  }
+
+  function paperBooksForMarket(market) {
+    return (state.paper.books || []).filter(function (b) { return b.market === market; });
+  }
+
+  function fmtHeld(openedAtStr) {
+    if (!openedAtStr) return '—';
+    var opened = Date.parse(openedAtStr.replace(' UTC', 'Z').replace(' ', 'T'));
+    if (isNaN(opened)) opened = Date.parse(openedAtStr);
+    if (isNaN(opened)) return '—';
+    var mins = Math.max(0, Math.round((Date.now() - opened) / 60000));
+    if (mins < 60) return mins + 'm';
+    var h = Math.floor(mins / 60), m = mins % 60;
+    return h + 'h ' + m + 'm';
+  }
+
+  function positionPnl(book) {
+    var t = book.open;
+    if (!t || t.entry == null) return null;
+    var mark = (book.last_price && book.last_price.price != null)
+      ? book.last_price.price
+      : (book.candles && book.candles.length ? book.candles[book.candles.length - 1].c : null);
+    if (mark == null) return null;
+    var qty = t.contracts_or_notional || 0;
+    var dollars = t.side === 'SHORT' ? (t.entry - mark) * qty : (mark - t.entry) * qty;
+    var margin = (t.notional && t.leverage) ? (t.notional / t.leverage)
+      : (t.notional || (t.entry * qty)) || null;
+    var pct = margin ? (dollars / margin) * 100 : null;
+    return { mark: mark, dollars: dollars, pct: pct };
+  }
+
+  // ---- SVG candlestick chart, BloFin-style position overlay ----
+
+  function buildCandleChartSvg(candles, opens) {
+    var W = 900, H = 300, padL = 8, padR = 66, padT = 14, padB = 22;
+    var innerW = W - padL - padR, innerH = H - padT - padB;
+    var n = candles.length;
+    if (!n) return '';
+
+    var lo = Infinity, hi = -Infinity;
+    candles.forEach(function (c) {
+      if (c.l < lo) lo = c.l;
+      if (c.h > hi) hi = c.h;
+    });
+    (opens || []).forEach(function (t) {
+      [t.entry, t.stop, t.target].forEach(function (v) {
+        if (v != null) { if (v < lo) lo = v; if (v > hi) hi = v; }
+      });
+    });
+    if (!isFinite(lo) || !isFinite(hi)) return '';
+    if (lo === hi) { lo -= 1; hi += 1; }
+    var span = (hi - lo) * 1.08;
+    var mid = (hi + lo) / 2;
+    lo = mid - span / 2; hi = mid + span / 2;
+
+    function y(v) { return padT + innerH - ((v - lo) / (hi - lo)) * innerH; }
+    var slot = innerW / n;
+    var bodyW = Math.max(1.5, Math.min(9, slot * 0.62));
+
+    var svg = '<svg class="paper-chart-svg" viewBox="0 0 ' + W + ' ' + H +
+      '" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">';
+
+    // gridlines (4 horizontal)
+    for (var g = 0; g <= 3; g++) {
+      var gy = padT + (innerH / 3) * g;
+      svg += '<line x1="' + padL + '" y1="' + gy.toFixed(1) + '" x2="' + (W - padR) +
+        '" y2="' + gy.toFixed(1) + '" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>';
+    }
+
+    // candles
+    for (var i = 0; i < n; i++) {
+      var c = candles[i];
+      var cx = padL + slot * i + slot / 2;
+      var up = c.c >= c.o;
+      var color = up ? '#34d399' : '#f87171';
+      var yO = y(c.o), yC = y(c.c), yH = y(c.h), yL = y(c.l);
+      svg += '<line x1="' + cx.toFixed(1) + '" y1="' + yH.toFixed(1) + '" x2="' + cx.toFixed(1) +
+        '" y2="' + yL.toFixed(1) + '" stroke="' + color + '" stroke-width="1"/>';
+      var top = Math.min(yO, yC), h = Math.max(1, Math.abs(yC - yO));
+      svg += '<rect x="' + (cx - bodyW / 2).toFixed(1) + '" y="' + top.toFixed(1) +
+        '" width="' + bodyW.toFixed(1) + '" height="' + h.toFixed(1) + '" fill="' + color + '"/>';
+    }
+
+    // position overlay: shaded risk/reward bands + entry/stop/target lines
+    (opens || []).forEach(function (t) {
+      if (t.entry == null) return;
+      var yE = y(t.entry);
+      if (t.stop != null) {
+        var yS = y(t.stop);
+        svg += '<rect x="' + padL + '" y="' + Math.min(yE, yS).toFixed(1) + '" width="' + innerW +
+          '" height="' + Math.max(1, Math.abs(yS - yE)).toFixed(1) +
+          '" fill="rgba(248,113,113,0.10)"/>';
+      }
+      if (t.target != null) {
+        var yT = y(t.target);
+        svg += '<rect x="' + padL + '" y="' + Math.min(yE, yT).toFixed(1) + '" width="' + innerW +
+          '" height="' + Math.max(1, Math.abs(yT - yE)).toFixed(1) +
+          '" fill="rgba(52,211,153,0.10)"/>';
+      }
+      function hline(v, color, label) {
+        var yy = y(v);
+        svg += '<line x1="' + padL + '" y1="' + yy.toFixed(1) + '" x2="' + (W - padR) +
+          '" y2="' + yy.toFixed(1) + '" stroke="' + color +
+          '" stroke-width="1.25" stroke-dasharray="4,3"/>';
+        svg += '<rect x="' + (W - padR + 4) + '" y="' + (yy - 8).toFixed(1) +
+          '" width="' + (padR - 6) + '" height="16" rx="3" fill="' + color + '"/>';
+        svg += '<text x="' + (W - padR + 4 + (padR - 6) / 2) + '" y="' + (yy + 3.5).toFixed(1) +
+          '" font-size="10" font-weight="700" text-anchor="middle" fill="#0a0b0f" font-family="inherit">' +
+          escapeHtml(label) + '</text>';
+      }
+      hline(t.entry, 'rgba(238,240,245,0.85)', fmtPrice(t.entry));
+      if (t.stop != null) hline(t.stop, '#f87171', fmtPrice(t.stop));
+      if (t.target != null) hline(t.target, '#34d399', fmtPrice(t.target));
+    });
+
+    svg += '</svg>';
+    return svg;
+  }
+
+  // ---- position card ----
+
+  function buildPositionCardHtml(book, domIdx) {
+    var t = book.open;
+    if (!t) {
+      return '<div class="paper-flat">flat — waiting for a setup</div>';
+    }
+    var sideCls = t.side === 'SHORT' ? 'short' : 'long';
+    var pnl = positionPnl(book);
+    var pnlDollars = pnl ? pnl.dollars : null;
+    var pnlPct = pnl ? pnl.pct : null;
+    var mark = pnl ? pnl.mark : null;
+    var cls = pnlClass(pnlDollars);
+    var qty = t.contracts_or_notional;
+    return '' +
+      '<div class="paper-pos" data-paper-pos="' + domIdx + '">' +
+        '<div class="paper-pos-top">' +
+          '<span class="paper-pos-side ' + sideCls + '">' + t.side + '</span>' +
+          '<span class="paper-pos-held" data-field="held">' + fmtHeld(t.opened_at) + '</span>' +
+        '</div>' +
+        '<div class="paper-pos-pnl tabular ' + cls + '" data-field="pnl">' +
+          (pnlDollars == null ? '—' : fmtMoney(pnlDollars)) + '</div>' +
+        '<div class="paper-pos-pnlpct tabular ' + cls + '" data-field="pnlpct">' +
+          (pnlPct == null ? '' : (pnlPct >= 0 ? '+' : '') + pnlPct.toFixed(2) + '% of margin') + '</div>' +
+        '<div class="paper-pos-grid">' +
+          '<div><div class="lbl">Entry</div><div class="v tabular">' + fmtPrice(t.entry) + '</div></div>' +
+          '<div><div class="lbl">Mark</div><div class="v tabular" data-field="mark">' + fmtPrice(mark) + '</div></div>' +
+          '<div><div class="lbl">Stop</div><div class="v stop tabular">' + (t.stop == null ? '— (signal exit)' : fmtPrice(t.stop)) + '</div></div>' +
+          '<div><div class="lbl">Target</div><div class="v target tabular">' + (t.target == null ? '— (signal exit)' : fmtPrice(t.target)) + '</div></div>' +
+          '<div><div class="lbl">Size</div><div class="v tabular">' + (qty == null ? '—' : qty.toFixed(2)) + '</div></div>' +
+          '<div><div class="lbl">Notional</div><div class="v tabular">' + (t.notional == null ? '—' : fmtMoneyPlain(t.notional)) + '</div></div>' +
+        '</div>' +
+      '</div>';
+  }
+
+  function tickPaperLive() {
+    var active = paperBooksForMarket(state.paperMarket);
+    active.forEach(function (book, i) {
+      var el = document.querySelector('[data-paper-pos="' + i + '"]');
+      if (!el || !book.open) return;
+      var held = el.querySelector('[data-field="held"]');
+      if (held) held.textContent = fmtHeld(book.open.opened_at);
+      var pnl = positionPnl(book);
+      if (!pnl) return;
+      var markEl = el.querySelector('[data-field="mark"]');
+      if (markEl) markEl.textContent = fmtPrice(pnl.mark);
+      var cls = pnlClass(pnl.dollars);
+      var pnlEl = el.querySelector('[data-field="pnl"]');
+      if (pnlEl) {
+        pnlEl.textContent = fmtMoney(pnl.dollars);
+        pnlEl.className = 'paper-pos-pnl tabular ' + cls;
+      }
+      var pctEl = el.querySelector('[data-field="pnlpct"]');
+      if (pctEl && pnl.pct != null) {
+        pctEl.textContent = (pnl.pct >= 0 ? '+' : '') + pnl.pct.toFixed(2) + '% of margin';
+        pctEl.className = 'paper-pos-pnlpct tabular ' + cls;
+      }
+    });
+  }
+
+  // ---- trade log ----
+
+  function buildTradeLogHtml(book) {
+    var rows = book.trades || [];
+    if (!rows.length) {
+      return '<div class="paper-log-label">Trade log</div><div class="paper-log-empty">no closed trades yet</div>';
+    }
+    var html = '<div class="paper-log-label">Trade log · last ' + rows.length + '</div><div class="paper-log">';
+    rows.forEach(function (t) {
+      var sideCls = t.side === 'SHORT' ? 'short' : 'long';
+      var priceBit = (t.entry != null && t.exit != null)
+        ? (fmtPrice(t.entry) + ' → ' + fmtPrice(t.exit))
+        : '—';
+      html += '<div class="paper-log-row">' +
+        '<span class="paper-log-time">' + escapeHtml(t.closed_date || '—') + '</span>' +
+        '<span class="paper-log-side ' + sideCls + '">' + escapeHtml(t.side || '—') + '</span>' +
+        '<span class="paper-log-prices">' + priceBit + '</span>' +
+        '<span class="paper-log-reason">' + escapeHtml((t.reason || '').replace(/_/g, ' ') || '') + '</span>' +
+        '<span class="paper-log-pnl tabular ' + pnlClass(t.pnl) + '">' + (t.pnl == null ? '—' : fmtMoney(t.pnl)) + '</span>' +
+      '</div>';
+    });
+    html += '</div>';
+    return html;
+  }
+
+  // ---- assembly ----
+
+  function renderPaper() {
+    var books = state.paper.books || [];
+    els.paperSection.hidden = books.length === 0;
+    if (!books.length) return;
+
+    buildPaperTabsUi();
+    var marketBooks = paperBooksForMarket(state.paperMarket);
+    if (!marketBooks.length) marketBooks = books;
+
+    var chartBook = marketBooks.filter(function (b) { return b.candles && b.candles.length; })[0];
+    var opens = marketBooks.filter(function (b) { return b.open; }).map(function (b) { return b.open; });
+
+    var asOfLabel = '';
+    var stale = false;
+    if (chartBook && chartBook.last_price) {
+      asOfLabel = 'price as of ' + (chartBook.last_price.as_of || '—');
+      stale = !!chartBook.last_price.stale;
+    }
+
+    var chartHtml;
+    if (chartBook && chartBook.candles && chartBook.candles.length) {
+      chartHtml = buildCandleChartSvg(chartBook.candles, opens);
+    } else {
+      chartHtml = '<div class="paper-chart-empty">chart data warming up — check back next publish cycle</div>';
+    }
+
+    var html = '<div class="paper-chart-card">' +
+      '<div class="paper-chart-head">' +
+        '<div class="paper-chart-name">' + escapeHtml(state.paperMarket) + ' · 1h</div>' +
+        '<div class="paper-chart-asof' + (stale ? ' stale' : '') + '">' + escapeHtml(asOfLabel) + (stale ? ' (stale)' : '') + '</div>' +
+      '</div>' +
+      chartHtml +
+    '</div>';
+
+    html += '<div class="paper-books-row">';
+    marketBooks.forEach(function (book, i) {
+      html += '<div class="paper-book-card">' +
+        '<div class="paper-book-head">' +
+          '<div class="paper-book-name">' + escapeHtml(book.name) + '<span class="tag">paper</span></div>' +
+          '<div>' +
+            '<div class="paper-book-ledger">ledger <span class="val tabular">' + fmtMoneyPlain(book.ledger_equity) + '</span></div>' +
+            '<div class="paper-book-record">' + (book.record ? (book.record.w + 'W / ' + book.record.l + 'L') : '—') +
+              ' · today ' + fmtMoney(book.today_pnl) + '</div>' +
+          '</div>' +
+        '</div>' +
+        buildPositionCardHtml(book, i) +
+        buildTradeLogHtml(book) +
+      '</div>';
+    });
+    html += '</div>';
+
+    els.paperContent.innerHTML = html;
+  }
+
+  function buildPaperTabsUi() {
+    var present = {};
+    (state.paper.books || []).forEach(function (b) { present[b.market] = true; });
+    var markets = PAPER_MARKETS.filter(function (m) { return present[m]; });
+    if (markets.indexOf(state.paperMarket) === -1 && markets.length) {
+      state.paperMarket = markets[0];
+    }
+    els.paperTabs.innerHTML = '';
+    markets.forEach(function (m) {
+      var btn = document.createElement('button');
+      btn.className = 'paper-tab' + (m === state.paperMarket ? ' active' : '');
+      btn.textContent = m;
+      btn.addEventListener('click', function () {
+        state.paperMarket = m;
+        renderPaper();
+      });
+      els.paperTabs.appendChild(btn);
+    });
+  }
+
   // ---------------- init ----------------
 
   function cacheEls() {
@@ -1155,6 +1745,9 @@
     els.drawerSub = $('#drawer-sub');
     els.drawerList = $('#drawer-list');
     els.drawerClose = $('#drawer-close');
+    els.paperSection = $('#paper-section');
+    els.paperTabs = $('#paper-tabs');
+    els.paperContent = $('#paper-content');
   }
 
   function init() {
@@ -1173,6 +1766,10 @@
     setInterval(fetchData, POLL_MS);
     setInterval(tickUpdatedAgo, 1000);
     tickUpdatedAgo();
+
+    fetchPaperData();
+    setInterval(fetchPaperData, POLL_MS);
+    setInterval(tickPaperLive, 1000);
   }
 
   document.addEventListener('DOMContentLoaded', init);

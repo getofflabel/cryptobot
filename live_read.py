@@ -34,6 +34,7 @@ DISPLAY ONLY. Nothing here feeds the bot's own sizing or entries.
 
 from __future__ import annotations
 
+import json
 import math
 from datetime import datetime, timezone
 
@@ -50,6 +51,320 @@ DISPLAY_NAMES = {
     "BTC-USDT": "Bitcoin", "ETH-USDT": "Ethereum", "XAUT-USDT": "Gold",
     "SOL-USDT": "Solana", "TSLA-USDT": "Tesla",
 }
+
+# ---------------------------------------------------------------------------
+# THE VISIBLE PAPER DESK (2026-07-24) — surfacing tradfi_engine.py's and
+# spx_book.py's internal-paper ledgers so Wallace can watch them the way he
+# watches BloFin. Every real TradFi demo broker (Alpaca/Capital.com/OANDA)
+# demands ID verification he won't do, and BloFin demo has no real S&P/oil
+# instruments — so these stay self-contained paper books, but they no
+# longer stay INVISIBLE. This file only READS tradfi_engine's and
+# spx_book's state dicts (never imports those modules — no coupling, no
+# risk of touching their trading logic) and republishes a display-only
+# `paper` snapshot, exactly like the rest of this file does for every
+# other book.
+#
+# tradfi_engine.py trades ONE shared paper ledger (state["tradfi_engine"])
+# across its 2-symbol universe (CL=F oil, SPY S&P) — MAX_CONCURRENT=2, so
+# both can be open at once. spx_book.py is a SEPARATE, dedicated S&P
+# dip-buy system with its OWN ledger (state["spx_book"]). That's 3 cards,
+# not 2: TradFi-Oil and TradFi-S&P share one equity number (it IS one
+# account trading two instruments — shown honestly, not hidden), and
+# S&P Dip-Buy has its own.
+# v2 (2026-07-24, "I want to SEE the trade happening, like BloFin, just
+# automated"): the paper desk grew from a stats table into a real trading
+# screen — a candlestick chart per market with the position drawn on it
+# (entry/stop/target lines) plus a trade log. The chart data is fetched
+# SERVER-SIDE (yfinance, in write_live_read) and published straight into
+# the `paper` block specifically to dodge CORS entirely — no client-side
+# third-party fetch, no browser blocking a cross-origin request the way
+# Yahoo/Stooq both do (see write_live_read's paper-price comment for what
+# was actually tested).
+PAPER_START_EQUITY_FALLBACK = 2000.0   # display-only fallback if a book's
+                                       # own state hasn't initialized yet
+                                       # (mirrors both books' own starting
+                                       # ledger — NOT imported from them)
+
+PAPER_TRADFI_MARKETS = [
+    ("CL=F", "Oil", "TradFi Engine · Oil"),
+    ("SPY", "S&P 500", "TradFi Engine · S&P 500"),
+]
+
+PAPER_TRADE_LOG_CAP = 20      # "I want it logged" — last 20 closed trades
+PAPER_CANDLE_BARS = 120       # 1h bars — the chart's visible window
+
+
+def _paper_recent(rows, n=PAPER_TRADE_LOG_CAP):
+    """Cap any trade/daybook list to the most recent `n` entries. Every
+    source list here (daybook, sb['trades']) is already append-order
+    (oldest-first), so the tail is the most recent — reversed so index 0
+    is the newest, matching how the dashboard shows other trade lists."""
+    return list(reversed(rows[-n:])) if rows else []
+
+
+def _tradfi_log_exits(symbol, limit=PAPER_TRADE_LOG_CAP):
+    """BEST-EFFORT enrichment only: entry/exit price + the exit reason
+    (SL hit/TP hit/time exit) for tradfi_engine's most recent closed
+    trades. state['tradfi_engine']['daybook'] (the authoritative source
+    for PnL/W-L, read directly in _tradfi_book_entry) does NOT carry
+    entry/exit prices or a reason label — only tradfi_engine.py's
+    log_event() calls do (action 'tradfi_enter'/'tradfi_exit'), mirrored
+    to this process's LOCAL event log (step5_paper_trade.LOG_FILE).
+
+    This file is ephemeral on a cloud redeploy and this pairing is index
+    a heuristic (FIFO-matched by symbol, newest-first, aligned against
+    the daybook by position) — never authoritative. A miss just means
+    the trade log's entry/exit/reason columns show blank for that row;
+    the PnL and date (from the daybook) are never affected. Wrapped
+    entirely in try/except — this must never be the reason a paper card
+    fails to publish."""
+    try:
+        from step5_paper_trade import LOG_FILE
+        import os
+        if not os.path.exists(LOG_FILE):
+            return []
+        pending_entries = []
+        exits = []
+        with open(LOG_FILE) as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    ev = json.loads(line)
+                except Exception:
+                    continue
+                if ev.get("symbol") != symbol:
+                    continue
+                action = ev.get("action")
+                if action == "tradfi_enter":
+                    pending_entries.append(ev)
+                elif action == "tradfi_exit":
+                    entry_ev = pending_entries.pop(0) if pending_entries \
+                        else None
+                    exits.append({
+                        "entry": entry_ev.get("entry") if entry_ev else None,
+                        "exit": ev.get("exit_price"),
+                        "reason": ev.get("reason"),
+                    })
+        return exits[-limit:]
+    except Exception:
+        return []
+
+
+def _fmt_candles(hist_df, bars=PAPER_CANDLE_BARS):
+    """A yfinance OHLC DataFrame (Datetime index, Open/High/Low/Close
+    columns) -> [{t, o, h, l, c}, ...], oldest-first, capped to the last
+    `bars` rows, timestamps normalized to UTC ISO8601. Any row that fails
+    to convert is skipped rather than aborting the whole chart."""
+    if hist_df is None or not len(hist_df):
+        return []
+    out = []
+    for ts, row in hist_df.tail(bars).iterrows():
+        try:
+            t_iso = ts.tz_convert("UTC").isoformat() if ts.tzinfo is not None \
+                else ts.tz_localize("UTC").isoformat()
+            out.append({
+                "t": t_iso,
+                "o": round(float(row["Open"]), 4),
+                "h": round(float(row["High"]), 4),
+                "l": round(float(row["Low"]), 4),
+                "c": round(float(row["Close"]), 4),
+            })
+        except Exception:
+            continue
+    return out
+
+
+def _tradfi_open_dict(t):
+    """state['tradfi_engine']['open_trades'][i] -> the paper block's
+    {side, entry, stop, target, contracts_or_notional, opened_at} shape.
+    tradfi_engine's trade dict uses stop_price/target_price/shares (NOT
+    sl_price/tp_price/contracts like the crypto books' _norm_trade
+    expects) — normalized separately here rather than overloading
+    _norm_trade with a third key-naming convention."""
+    if not t:
+        return None
+    direction = t.get("direction", 1)
+    return {
+        "side": "SHORT" if direction < 0 else "LONG",
+        "entry": t.get("entry_price"),
+        "stop": t.get("stop_price"),
+        "target": t.get("target_price"),
+        "contracts_or_notional": t.get("shares"),
+        "notional": t.get("notional"),
+        "leverage": t.get("leverage"),
+        "opened_at": t.get("entry_time"),
+    }
+
+
+def _spx_open_dict(t):
+    """spx_book's open_trade -> the same {side, entry, stop, target,
+    contracts_or_notional, opened_at} shape. This book is a pure dip-buy
+    (always LONG) that exits on an RSI/SMA SIGNAL, not a price level — it
+    carries no stop/target at all (see spx_book.py's module docstring: "no
+    per-trade stop"), so those two fields degrade to None rather than a
+    fabricated number."""
+    if not t:
+        return None
+    return {
+        "side": "LONG",
+        "entry": t.get("entry_price"),
+        "stop": None,
+        "target": None,
+        "contracts_or_notional": t.get("shares"),
+        "notional": t.get("notional"),
+        "leverage": None,   # spx_book doesn't store per-trade leverage
+        "opened_at": t.get("entry_time") or t.get("entry_date"),
+    }
+
+
+def _tradfi_book_entry(eng, symbol, market, name, market_data=None):
+    """One TradFi-engine card (Oil or S&P) for the paper block. `eng` is
+    state.get('tradfi_engine', {}) — every read below is defensive
+    (.get with defaults) so a partially-initialized or pre-migration
+    engine dict degrades to a flat/empty card instead of raising.
+    `market_data` is write_live_read's {symbol: {price, as_of, candles,
+    stale}} — this function never fetches network data itself."""
+    ledger_equity = round(float(eng.get("ledger_equity",
+                                        PAPER_START_EQUITY_FALLBACK) or 0), 2)
+    open_trades = eng.get("open_trades", []) or []
+    t = next((x for x in open_trades if x.get("symbol") == symbol), None)
+    daybook = [r for r in (eng.get("daybook", []) or [])
+              if r.get("symbol") == symbol]
+    wins = sum(1 for r in daybook if (r.get("outcome_pnl") or 0) > 0)
+    losses = len(daybook) - wins
+    today_str = f"{datetime.now(timezone.utc):%Y-%m-%d}"
+    today_pnl = round(sum(r.get("outcome_pnl") or 0 for r in daybook
+                          if r.get("date") == today_str), 2)
+    all_time_pnl = round(sum(r.get("outcome_pnl") or 0 for r in daybook), 2)
+
+    recent_daybook = _paper_recent(daybook)              # newest-first
+    log_exits_desc = list(reversed(_tradfi_log_exits(symbol)))  # newest-first
+    trades = []
+    for i, r in enumerate(recent_daybook):
+        log_row = log_exits_desc[i] if i < len(log_exits_desc) else {}
+        trades.append({
+            "side": (r.get("dir") or "").upper() or None,
+            "entry": log_row.get("entry"), "exit": log_row.get("exit"),
+            "pnl": r.get("outcome_pnl"), "reason": log_row.get("reason"),
+            "closed_date": r.get("date"), "hold_min": r.get("hold_min"),
+            "setup": r.get("setup"),
+        })
+
+    book = {
+        "name": name, "market": market, "symbol": symbol,
+        "ledger_equity": ledger_equity,
+        "open": _tradfi_open_dict(t),
+        "record": {"w": wins, "l": losses},
+        "today_pnl": today_pnl, "all_time_pnl": all_time_pnl,
+        "trades": trades,
+        "candles": [],
+    }
+    md = (market_data or {}).get(symbol)
+    if md:
+        if md.get("price") is not None:
+            book["last_price"] = {"price": md["price"], "as_of": md.get("as_of"),
+                                  "stale": bool(md.get("stale"))}
+        book["candles"] = md.get("candles") or []
+    return book
+
+
+def _spx_book_entry(sb, market_data=None):
+    """The spx_book.py card for the paper block. `sb` is
+    state.get('spx_book', {}) — same defensive-read contract as
+    _tradfi_book_entry. Shares its chart/price feed with TradFi's S&P
+    slot (both trade SPY) — keyed the same way in `market_data`."""
+    ledger_equity = round(float(sb.get("virtual_equity",
+                                       PAPER_START_EQUITY_FALLBACK) or 0), 2)
+    wins = int(sb.get("wins", 0) or 0)
+    n = int(sb.get("n", 0) or 0)
+    losses = max(0, n - wins)
+    trades_log = sb.get("trades", []) or []
+    today_str = f"{datetime.now(timezone.utc):%Y-%m-%d}"
+    today_pnl = round(sum(t.get("pnl") or 0 for t in trades_log
+                          if t.get("exit_date") == today_str), 2)
+    all_time_pnl = round(float(sb.get("realized_pnl_total", 0.0) or 0), 2)
+    trades = [{"side": "LONG", "entry": t.get("entry_price"),
+              "exit": t.get("exit_price"), "pnl": t.get("pnl"),
+              "closed_date": t.get("exit_date"), "reason": t.get("reason")}
+             for t in _paper_recent(trades_log)]
+    book = {
+        "name": "S&P Dip-Buy", "market": "S&P 500", "symbol": "SPY",
+        "ledger_equity": ledger_equity,
+        "open": _spx_open_dict(sb.get("open_trade")),
+        "record": {"w": wins, "l": losses},
+        "today_pnl": today_pnl, "all_time_pnl": all_time_pnl,
+        "trades": trades,
+        "candles": [],
+    }
+    md = (market_data or {}).get("SPY")
+    if md:
+        if md.get("price") is not None:
+            book["last_price"] = {"price": md["price"], "as_of": md.get("as_of"),
+                                  "stale": bool(md.get("stale"))}
+        book["candles"] = md.get("candles") or []
+    return book
+
+
+def _build_paper(state, market_data=None):
+    """The paper block: {books: [...], updated}. Reads ONLY
+    state['tradfi_engine'] and state['spx_book'] — never imports either
+    module. Missing state keys (this engine hasn't run its first cycle
+    yet) degrade to an empty books list rather than fabricating cards for
+    a book that has never actually initialized; a present-but-fresh dict
+    (the book HAS run, just flat) still builds full flat/empty-looking
+    cards. Every book is built in its own try/except so one book's bad
+    data can never blank out the others or the rest of the snapshot.
+    `market_data` is write_live_read's {symbol: {price, as_of, candles,
+    stale}} — see that function for how it's sourced and why."""
+    books = []
+    if "tradfi_engine" in state:
+        eng = state.get("tradfi_engine") or {}
+        for symbol, market, name in PAPER_TRADFI_MARKETS:
+            try:
+                books.append(_tradfi_book_entry(eng, symbol, market, name,
+                                                market_data))
+            except Exception as e:
+                print(f"  live_read: paper book {name} skipped "
+                     f"({str(e)[:60]})")
+    if "spx_book" in state:
+        try:
+            books.append(_spx_book_entry(state.get("spx_book") or {},
+                                         market_data))
+        except Exception as e:
+            print(f"  live_read: paper book S&P Dip-Buy skipped "
+                 f"({str(e)[:60]})")
+    return {"books": books,
+            "updated": datetime.now(timezone.utc).isoformat()}
+
+
+def _paper_hud_position(book, t, side="from_trade"):
+    """Same normalized position shape every OTHER symbols[...] card uses
+    (see _norm_trade) — book/side/dir/entry/stop/target/contracts/
+    contract_size/trigger — built from a TradFi-engine trade dict
+    (stop_price/target_price/shares naming, not _norm_trade's sl_price/
+    tp_price/contracts) or an spx_book open_trade (no stop/target at
+    all, always long)."""
+    if not t:
+        return None
+    if side == "long_only":          # spx_book: always long, signal exit
+        direction = 1
+        stop = target = None
+    else:
+        direction = t.get("direction", 1)
+        stop, target = t.get("stop_price"), t.get("target_price")
+    return {
+        "book": book,
+        "side": "SHORT" if direction < 0 else "LONG",
+        "dir": direction,
+        "entry": t.get("entry_price"),
+        "stop": stop,
+        "target": target,
+        "contracts": t.get("shares", 0),
+        "contract_size": 1,
+        "trigger": book,
+    }
 
 
 def _annualized_vol(daily):
@@ -238,6 +553,54 @@ def _build_symbols(state, position, thesis, waiting, armed, gold_daily):
                                         CONTRACT_SIZE["Daily Pick"]),
             }
 
+    # --- OIL-PAPER / SPX-PAPER — the paper desk, pseudo-instIds so a HUD
+    # viewer on a relevant page can render them like any other symbol.
+    # Never BloFin instIds (no such venue exists for these) — "-PAPER"
+    # marks them unmistakably as the internal paper books, never mistaken
+    # for a real tradeable instrument. ------------------------------------
+    eng = state.get("tradfi_engine", {}) or {}
+    eng_open = eng.get("open_trades", []) or []
+    oil_t = next((x for x in eng_open if x.get("symbol") == "CL=F"), None)
+    spx_tradfi_t = next((x for x in eng_open if x.get("symbol") == "SPY"),
+                        None)
+    symbols["OIL-PAPER"] = {
+        "display": "Oil (paper)", "book": "TradFi Engine · Oil",
+        "position": _paper_hud_position("TradFi Engine · Oil", oil_t),
+    }
+    if not oil_t:
+        symbols["OIL-PAPER"]["status"] = {
+            "mode": "rotation",
+            "text": "paper book — scored every 2h, no real venue exists yet",
+        }
+
+    # S&P has TWO paper systems (tradfi_engine's SPY slot + spx_book's
+    # dedicated dip-buy) — spx_book's own dedicated position wins when
+    # both happen to be flat/open at once, since it's literally "the S&P
+    # book"; falls back to the TradFi engine's SPY slot when spx_book is
+    # flat, so a live TradFi S&P trade is never hidden either.
+    sb = state.get("spx_book", {}) or {}
+    spx_dipbuy_t = sb.get("open_trade")
+    if spx_dipbuy_t:
+        symbols["SPX-PAPER"] = {
+            "display": "S&P 500 (paper)", "book": "S&P Dip-Buy",
+            "position": _paper_hud_position("S&P Dip-Buy", spx_dipbuy_t,
+                                            side="long_only"),
+        }
+    elif spx_tradfi_t:
+        symbols["SPX-PAPER"] = {
+            "display": "S&P 500 (paper)", "book": "TradFi Engine · S&P 500",
+            "position": _paper_hud_position("TradFi Engine · S&P 500",
+                                            spx_tradfi_t),
+        }
+    else:
+        symbols["SPX-PAPER"] = {
+            "display": "S&P 500 (paper)", "book": "S&P Dip-Buy",
+            "position": None,
+            "status": {"mode": "rotation",
+                      "text": "paper book — dip-buy waits for RSI2 < 5 "
+                              "above the 200-day"},
+        }
+
     return symbols
 
 
@@ -292,7 +655,7 @@ def _thesis(champ, price, fb, r3, lo20, pop4h):
 
 
 def compute_live_read(candles_1h, candles_4h, candles_1d, funding_bps,
-                      state, gold_daily=None) -> dict:
+                      state, gold_daily=None, tradfi_market=None) -> dict:
     price = float(candles_1h["close"].iloc[-1])
     cv = vol_gated_ma(candles_4h, fast=20, slow=100, min_atr_pct=1.5).iloc[-1]
     champ = int(cv) if cv == cv else 0
@@ -383,6 +746,7 @@ def compute_live_read(candles_1h, candles_4h, candles_1d, funding_bps,
 
     symbols = _build_symbols(state, position, thesis, waiting, armed,
                              gold_daily)
+    paper = _build_paper(state, tradfi_market)
 
     return {
         # --- OLD v2 keys, kept verbatim for one deploy cycle (backward
@@ -409,6 +773,7 @@ def compute_live_read(candles_1h, candles_4h, candles_1d, funding_bps,
             "armed": armed,
         },
         "symbols": symbols,
+        "paper": paper,
     }
 
 
@@ -432,7 +797,68 @@ def write_live_read(live_feed, state, save=True):
             print(f"  live_read: gold candles unavailable ({str(e)[:60]})")
             gold_daily = None
 
-        snap = compute_live_read(c1, c4, cd, fb, state, gold_daily=gold_daily)
+        # PAPER DESK live prices + chart — tested (2026-07-24) from a REAL
+        # browser fetch() (not just curl): Yahoo's query endpoints send no
+        # Access-Control-Allow-Origin header (blocked by CORS before the
+        # 429 rate-limit even matters) and Stooq's CSV endpoint now sits
+        # behind a JS proof-of-work challenge a plain cross-origin fetch
+        # can never pass — both came back "TypeError: Failed to fetch" in
+        # an actual page context. So both the price AND the chart's
+        # candles are sourced HERE, server-side, straight off yfinance —
+        # deliberately NOT via tradfi_engine (never import that module) —
+        # and published into the snapshot so the dashboard never makes its
+        # own network call for them at all. One call per symbol, each
+        # isolated so a Yahoo hiccup degrades that ONE book, never the
+        # rest of the snapshot. On a hiccup, this reuses the PREVIOUS
+        # snapshot's candles (read off state — the one from before this
+        # function overwrites it below) so the chart never goes blank,
+        # just stale — marked "stale": true so the dashboard can say so.
+        prev_paper_books = {
+            b.get("symbol"): b
+            for b in (state.get("live_read", {}) or {}).get("paper", {})
+                          .get("books", []) or []
+            if b.get("symbol")
+        }
+        # `_yf` is resolved ONCE, outside the per-symbol loop, but a failure
+        # here (yfinance not installed / import error) must NOT skip the
+        # per-symbol previous-candles fallback below — a total import
+        # failure degrades exactly like a single symbol's fetch failing,
+        # never worse. That's why the fallback loop is unconditional and
+        # `_yf` is simply None (never fetched) on an import failure.
+        try:
+            import yfinance as _yf
+        except Exception as e:
+            print(f"  live_read: yfinance unavailable for paper prices/"
+                 f"charts ({str(e)[:60]})")
+            _yf = None
+
+        tradfi_market = {}
+        for _sym in ("CL=F", "SPY"):
+            entry = {}
+            if _yf is not None:
+                try:
+                    hist = _yf.Ticker(_sym).history(period="10d", interval="1h")
+                    if hist is not None and len(hist):
+                        entry["price"] = round(float(hist["Close"].iloc[-1]), 2)
+                        entry["as_of"] = f"{datetime.now(timezone.utc):%H:%M UTC}"
+                        entry["candles"] = _fmt_candles(hist)
+                except Exception as e:
+                    print(f"  live_read: {_sym} paper price/chart "
+                         f"unavailable ({str(e)[:60]})")
+            if not entry.get("candles"):
+                prev = prev_paper_books.get(_sym) or {}
+                prev_candles = prev.get("candles")
+                if prev_candles:
+                    entry.setdefault("candles", prev_candles)
+                    prev_price = prev.get("last_price", {}) or {}
+                    entry.setdefault("price", prev_price.get("price"))
+                    entry.setdefault("as_of", prev_price.get("as_of"))
+                    entry["stale"] = True
+            if entry:
+                tradfi_market[_sym] = entry
+
+        snap = compute_live_read(c1, c4, cd, fb, state, gold_daily=gold_daily,
+                                 tradfi_market=tradfi_market)
         state["live_read"] = snap
         if save:
             save_state(state)
