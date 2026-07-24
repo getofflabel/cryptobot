@@ -92,17 +92,21 @@ def _open_position(state):
     """Return BTC-USDT's single open book as a panel-ready dict, or None.
     Checks each BTC book; the exchange nets to one position so at most one
     is open at a time."""
+    # BTC-USDT books ONLY. The ETH Amplifier lives under symbols["ETH-USDT"]
+    # — including it here is what put an ETH trade on the Bitcoin card with
+    # BTC prices (the fake +$10k of 2026-07-24). The Daily Pick counts only
+    # when the symbol it holds IS BTC.
+    pick_t = state.get("daily_pick", {}).get("open_trade")
+    if pick_t and pick_t.get("symbol") not in (None, "BTC-USDT"):
+        pick_t = None
     books = [("The Ride", state.get("open_trade"), CONTRACT_SIZE["The Ride"]),
              ("The Strikes", state.get("tactical", {}).get("open_trade"),
               CONTRACT_SIZE["The Strikes"]),
-             ("ETH Amplifier", state.get("tactical_eth", {}).get("open_trade"),
-              CONTRACT_SIZE["ETH Amplifier"]),
              ("Shorts Lab", state.get("shorts_lab", {}).get("open_trade"),
               CONTRACT_SIZE["Shorts Lab"]),
              ("The Newsdesk", state.get("newsdesk", {}).get("open_trade"),
               0.001),
-             ("Daily Pick", state.get("daily_pick", {}).get("open_trade"),
-              0.001)]
+             ("Daily Pick", pick_t, 0.001)]
     for name, t, csize in books:
         if not t:
             continue
