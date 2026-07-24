@@ -5,8 +5,8 @@ Ledger: $1,468.58 / goal $3,000
 
 ## AI news judges (on probation)
 
-- **opus**: 9/18 graded calls (50% right)
-- **sonnet**: 11/22 graded calls (50% right)
+- **opus**: 9/20 graded calls (45% right)
+- **sonnet**: 11/25 graded calls (44% right)
 
 _No completed trades yet — reviews appear here as the bot trades. A quiet market means no forced trades._
 
