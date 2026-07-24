@@ -1,0 +1,147 @@
+  BTCUSDT funding: 6936 settlements from cache
+  BTCUSDT 15m: 221972 bars from cache
+  BTCUSDT 1h: 55493 bars from cache
+  BTCUSDT 4h: 13863 bars from cache
+  ETHUSDT funding: 6307 settlements from cache
+  ETHUSDT 15m: 187934 bars from cache
+  ETHUSDT 1h: 46983 bars from cache
+  ETHUSDT 4h: 11735 bars from cache
+[     0.1s] harvested 102 indicator x tf entries (51 distinct indicators)
+[     0.2s] labeled BTC 1h: 55493 bars
+[     0.5s] labeled BTC 15m: 221972 bars
+[     0.6s] labeled ETH 1h: 46983 bars
+[     0.8s] labeled ETH 15m: 187934 bars
+[     0.9s] census written
+[     0.9s] populated states 1h: 36
+[     0.9s] populated states 15m: 34
+[     0.9s] BTC 1h exit params: stop=1.215% target=2.429% max_hold=24 (train n=33295, val n=11099)
+[     0.9s] BTC 15m exit params: stop=0.542% target=1.085% max_hold=48 (train n=133183, val n=44394)
+[     0.9s] ETH 1h exit params: stop=1.466% target=2.932% max_hold=24 (train n=28189, val n=9397)
+[     0.9s] ETH 15m exit params: stop=0.674% target=1.348% max_hold=48 (train n=112760, val n=37587)
+[    97.2s] ...10/102 indicator x tf entries scored (700 matrix rows so far)
+[   201.6s] ...20/102 indicator x tf entries scored (1400 matrix rows so far)
+[   299.3s] ...30/102 indicator x tf entries scored (2100 matrix rows so far)
+[   390.3s] ...40/102 indicator x tf entries scored (2800 matrix rows so far)
+[   484.4s] ...50/102 indicator x tf entries scored (3500 matrix rows so far)
+[   574.2s] ...60/102 indicator x tf entries scored (4200 matrix rows so far)
+[   630.4s] ...70/102 indicator x tf entries scored (4900 matrix rows so far)
+[   711.0s] ...80/102 indicator x tf entries scored (5600 matrix rows so far)
+[   806.1s] ...90/102 indicator x tf entries scored (6300 matrix rows so far)
+[   891.8s] ...100/102 indicator x tf entries scored (7000 matrix rows so far)
+[   913.0s] wrote step82_matrix.csv: 7140 rows
+[   913.9s] part3: levels / Camarilla pivots (reversion) (15m) done
+[   914.1s] part3: levels / Camarilla pivots (reversion) (1h) done
+[   915.6s] part3: levels / Williams fractals (15m) done
+[   915.9s] part3: levels / Williams fractals (1h) done
+[   916.8s] part3: momentum / Awesome Oscillator 0-cross (15m) done
+[   917.0s] part3: momentum / Awesome Oscillator 0-cross (1h) done
+[   919.0s] part3: momentum / CCI extremes (15m) done
+[   919.5s] part3: momentum / CCI extremes (1h) done
+[   920.8s] part3: momentum / Connors RSI extremes (15m) done
+[   921.1s] part3: momentum / Connors RSI extremes (1h) done
+[   922.2s] part3: momentum / Fisher Transform 0-cross (15m) done
+[   922.5s] part3: momentum / Fisher Transform 0-cross (1h) done
+[   923.4s] part3: momentum / Momentum 0-cross (15m) done
+[   923.6s] part3: momentum / Momentum 0-cross (1h) done
+[   924.5s] part3: momentum / ROC 0-cross (15m) done
+[   924.7s] part3: momentum / ROC 0-cross (1h) done
+[   925.6s] part3: momentum / RSI 50-cross (15m) done
+[   925.8s] part3: momentum / RSI 50-cross (1h) done
+[   926.6s] part3: momentum / RSI OB/OS (15m) done
+[   926.8s] part3: momentum / RSI OB/OS (1h) done
+[   927.8s] part3: momentum / Stochastic %K/%D cross (15m) done
+[   928.0s] part3: momentum / Stochastic %K/%D cross (1h) done
+[   928.9s] part3: momentum / Stochastic RSI extremes (15m) done
+[   929.1s] part3: momentum / Stochastic RSI extremes (1h) done
+[   930.0s] part3: momentum / Stochastic extremes (15m) done
+[   930.2s] part3: momentum / Stochastic extremes (1h) done
+[   931.1s] part3: momentum / TSI 0-cross (15m) done
+[   931.3s] part3: momentum / TSI 0-cross (1h) done
+[   932.2s] part3: momentum / Ultimate Oscillator extremes (15m) done
+[   933.1s] part3: momentum / Williams %R extremes (15m) done
+[   933.3s] part3: momentum / Williams %R extremes (1h) done
+[   934.9s] part3: trend / ADX/DMI DI cross (15m) done
+[   935.3s] part3: trend / ADX/DMI DI cross (1h) done
+[   937.3s] part3: trend / ADX/DMI DI-cross+ADX>thresh (15m) done
+[   937.7s] part3: trend / ADX/DMI DI-cross+ADX>thresh (1h) done
+[   939.0s] part3: trend / Aroon oscillator 0-cross (15m) done
+[   939.3s] part3: trend / Aroon oscillator 0-cross (1h) done
+[   940.6s] part3: trend / Aroon up/down cross (15m) done
+[   940.9s] part3: trend / Aroon up/down cross (1h) done
+[   941.8s] part3: trend / DEMA cross (15m) done
+[   942.0s] part3: trend / DEMA cross (1h) done
+[   942.9s] part3: trend / EMA cross (15m) done
+[   943.1s] part3: trend / EMA cross (1h) done
+[   944.0s] part3: trend / Hull MA cross (15m) done
+[   944.2s] part3: trend / Hull MA cross (1h) done
+[   945.2s] part3: trend / KAMA cross (15m) done
+[   945.5s] part3: trend / KAMA cross (1h) done
+[   946.4s] part3: trend / Linreg slope sign (15m) done
+[   946.6s] part3: trend / Linreg slope sign (1h) done
+[   947.5s] part3: trend / MACD histogram 0-cross (15m) done
+[   947.7s] part3: trend / MACD histogram 0-cross (1h) done
+[   948.6s] part3: trend / MACD line/signal cross (15m) done
+[   948.8s] part3: trend / MACD line/signal cross (1h) done
+[   957.3s] part3: trend / Parabolic SAR (15m) done
+[   959.4s] part3: trend / Parabolic SAR (1h) done
+[   960.3s] part3: trend / SMA cross (15m) done
+[   960.5s] part3: trend / SMA cross (1h) done
+[   961.6s] part3: trend / SuperTrend (15m) done
+[   961.8s] part3: trend / SuperTrend (1h) done
+[   962.7s] part3: trend / TEMA cross (15m) done
+[   962.9s] part3: trend / TEMA cross (1h) done
+[   963.8s] part3: trend / TRIX 0-cross (15m) done
+[   964.0s] part3: trend / TRIX 0-cross (1h) done
+[   964.9s] part3: trend / Vortex VI+/VI- cross (15m) done
+[   965.2s] part3: trend / Vortex VI+/VI- cross (1h) done
+[   966.1s] part3: volatility / BB-inside-KC squeeze release (15m) done
+[   966.3s] part3: volatility / BB-inside-KC squeeze release (1h) done
+[   967.2s] part3: volatility / Bollinger breakout (15m) done
+[   967.4s] part3: volatility / Bollinger breakout (1h) done
+[   968.2s] part3: volatility / Bollinger mean-revert (15m) done
+[   968.4s] part3: volatility / Bollinger mean-revert (1h) done
+[   969.6s] part3: volatility / Chandelier exit (15m) done
+[   969.8s] part3: volatility / Chandelier exit (1h) done
+[   970.7s] part3: volatility / Keltner breakout (15m) done
+[   971.6s] part3: volatility / Keltner mean-revert (15m) done
+[   972.4s] part3: volatility / Stdev channel mean-revert (15m) done
+[   973.3s] part3: volume / A/D line trend (vs own MA) (15m) done
+[   973.5s] part3: volume / A/D line trend (vs own MA) (1h) done
+[   974.5s] part3: volume / CMF 0-cross (15m) done
+[   974.7s] part3: volume / CMF 0-cross (1h) done
+[   975.6s] part3: volume / Ease of Movement 0-cross (15m) done
+[   975.8s] part3: volume / Ease of Movement 0-cross (1h) done
+[   976.7s] part3: volume / Force Index 0-cross (15m) done
+[   976.9s] part3: volume / Force Index 0-cross (1h) done
+[   979.0s] part3: volume / MFI extremes (15m) done
+[   979.5s] part3: volume / MFI extremes (1h) done
+[   980.3s] part3: volume / OBV divergence (15m) done
+[   980.5s] part3: volume / OBV divergence (1h) done
+[   981.4s] part3: volume / OBV trend (vs own MA) (15m) done
+[   981.6s] part3: volume / OBV trend (vs own MA) (1h) done
+[   982.5s] part3: volume / VWAP fade band (15m) done
+[   982.7s] part3: volume / VWAP fade band (1h) done
+[   983.6s] part3: volume / VWAP session cross (15m) done
+[   983.8s] part3: volume / VWAP session cross (1h) done
+[   984.7s] part3: volume / Volume oscillator confirm (15m) done
+[   984.9s] part3: volume / Volume oscillator confirm (1h) done
+[   984.9s] wrote step82_part3_comparison.csv: 96 rows
+[  1058.6s] wrote step82_eth_transfer.csv: 289 rows (289 BTC eye-gated survivors identified)
+[  1058.6s] DONE: {
+  "n_indicators": 51,
+  "n_captured": 102,
+  "n_matrix_rows": 7140,
+  "n_survivors_eye_gated": 289,
+  "n_survivors_eth_transfer": 40,
+  "census_bars": {
+    "btc_1h": 55428,
+    "btc_15m": 221907,
+    "eth_1h": 46918,
+    "eth_15m": 187869
+  },
+  "populated_state_counts": {
+    "1h": 36,
+    "15m": 34
+  },
+  "runtime_sec": 1058.6
+}

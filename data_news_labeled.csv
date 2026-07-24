@@ -1,0 +1,1801 @@
+message_id,relevance_0_3,asset,implied_direction,event_type,reason
+9303,1,macro,bullish,opinion,"official stablecoin-dollar framing, no new action"
+9306,1,macro,neutral,opinion,generic economic status remark
+9307,1,crypto-broad,bullish,company-news,"expands USDC collateral utility, minor product news"
+9308,1,BTC,bullish,regulation,state-level minor BTC tax exemption bill
+9309,1,crypto-broad,bullish,opinion,"presidential rhetoric, no concrete action"
+9310,2,crypto-broad,bullish,regulation,Senate passed crypto market-structure bill
+9311,1,crypto-broad,bullish,opinion,"rhetoric, no new info"
+9312,0,none,neutral,other,unrelated to crypto/markets
+9313,3,equities,bearish,geopolitics,"missile strikes a stock exchange building, major escalation"
+9314,2,macro,bullish,opinion,Trump pressures Fed for rate cuts
+9316,1,equities,bullish,company-news,"new fintech in-app investing feature, minor"
+9317,1,macro,bullish,opinion,"repeat Powell attack, no new info"
+9319,0,none,neutral,other,"general cybersecurity breach, not markets-specific"
+9323,2,crypto-broad,ambiguous,whale-flows,"large $4.1B options expiry, can drive volatility"
+9324,2,macro,bullish,macro-policy,Fed official signals possible July rate cut
+9327,1,crypto-broad,bullish,regulation,"Coinbase EU regulatory license, moderate"
+9328,1,crypto-broad,bullish,opinion,"CEO opinion, no new info"
+9330,2,crypto-broad,bearish,whale-flows,significant $200M liquidation in 60 min
+9331,2,crypto-broad,bullish,etf,Bloomberg raises alt-ETF approval odds to 90%
+9332,2,macro,bullish,opinion,Trump escalates threat to fire Powell
+9334,1,macro,neutral,opinion,"one congressman's stance, unlikely to pass"
+9336,0,BTC,neutral,other,"trivia comparison, no new info"
+9339,0,BTC,bullish,opinion,"long-horizon speculative prediction, not tradeable"
+9340,1,BTC,bearish,other,"price milestone crossed, no new fundamental info"
+9342,3,BTC,bullish,adoption,first US state signs BTC reserve into law
+9344,1,BTC,bearish,other,"price milestone, no new info"
+9345,1,crypto-broad,bearish,other,"price milestone, no new info"
+9347,2,crypto-broad,bearish,whale-flows,large $370M liquidation cascade
+9348,1,BTC,bullish,opinion,"hint only, no confirmed purchase"
+9349,3,macro,bearish,geopolitics,"Iran approves closing Strait of Hormuz, oil chokepoint risk"
+9351,1,BTC,bearish,other,"price milestone, no new info"
+9353,2,crypto-broad,bearish,whale-flows,large $875M liquidation over 24h
+9354,2,BTC,bearish,other,major psychological $100k level breached
+9355,2,macro,bearish,geopolitics,"US warns Iran over Hormuz threats, escalation risk"
+9356,1,BTC,bearish,other,"price milestone, no new info"
+9357,0,none,neutral,other,unrelated Tesla product launch
+9359,2,macro,bearish,geopolitics,US pressures China over Iran/Hormuz oil flows
+9362,2,BTC,bullish,whale-flows,notable corporate treasury BTC purchase ($111M)
+9364,2,BTC,bullish,adoption,public company raises capital for BTC treasury
+9365,1,BTC,bullish,whale-flows,routine incremental Strategy purchase
+9366,1,macro,neutral,opinion,general oil-price rhetoric
+9368,3,BTC,bearish,geopolitics,BTC drops under $100k on imminent Iran attack fears
+9370,3,crypto-broad,bullish,regulation,Fed formally eases crypto banking restrictions
+9371,2,BTC,bullish,geopolitics,BTC recovers as Trump calls for Iran peace
+9374,1,BTC,bullish,other,"price milestone, no new info"
+9375,1,BTC,bullish,whale-flows,moderate short-liquidation cascade
+9376,0,other,bullish,opinion,"pundit one-word call, low information content"
+9377,2,macro,neutral,macro-policy,"Fed chair inflation assessment, mixed signal"
+9378,1,macro,neutral,macro-policy,"reassurance remark, no policy change"
+9379,2,macro,bearish,macro-policy,Fed signals no rate cut on inflation forecast
+9380,2,crypto-broad,bullish,regulation,Fed clarifies banks free to conduct crypto activities
+9381,1,crypto-broad,bullish,adoption,payments giant crypto infrastructure partnership
+9383,1,crypto-broad,bullish,company-news,large VC funding round for crypto prediction platform
+9385,0,crypto-broad,bullish,opinion,"CEO opinion, no new info"
+9386,1,crypto-broad,bullish,regulation,"legislative progress update, no vote yet"
+9387,2,crypto-broad,bullish,etf,high-profile new BTC/ETH ETF filing
+9388,0,crypto-broad,bullish,opinion,generic motivational tweet
+9390,1,macro,bullish,opinion,"political pressure on Fed, no policy change"
+9392,1,BTC,bullish,other,"price milestone, no new info"
+9393,0,equities,neutral,company-news,"equities-only, not crypto-relevant"
+9395,1,macro,bullish,opinion,repeat Powell attack rhetoric
+9397,1,crypto-broad,bullish,macro-policy,Fed chair positive stablecoin remark
+9398,2,macro,bullish,macro-policy,conditional dovish signal tied to trade deals
+9399,0,crypto-broad,neutral,opinion,"vague institutional statement, no new info"
+9400,3,BTC,bullish,adoption,White House confirms plan to accumulate BTC
+9401,2,BTC,bullish,regulation,federal housing regulator recognizes crypto as mortgage asset
+9402,1,crypto-broad,bullish,regulation,SEC official self-critical remark on BTC ETPs
+9403,2,crypto-broad,bearish,regulation,"XRP case litigation continues, minor setback"
+9404,0,BTC,bullish,opinion,"motivational opinion, no new info"
+9406,1,crypto-broad,neutral,regulation,vague litigation status update
+9407,2,crypto-broad,bullish,regulation,official commits to crypto market-structure bill timeline
+9408,2,crypto-broad,bullish,company-news,Coinbase launches new US derivatives product
+9409,2,BTC,bullish,opinion,official rhetoric reinforcing BTC accumulation stance
+9410,0,other,neutral,other,unrelated manufacturing reshoring news
+9411,1,macro,bullish,geopolitics,"trade tension easing signal, EU tariff consideration"
+9413,2,macro,bullish,geopolitics,US-China trade deal signed
+9415,2,BTC,bullish,adoption,potential large corporate BTC purchase plan
+9417,1,macro,bullish,geopolitics,trade deal optimism signal
+9418,1,BTC,bullish,whale-flows,"recurring exec buying statement, no size disclosed"
+9421,1,crypto-broad,bullish,opinion,vague anticipatory statement
+9422,2,macro,bearish,geopolitics,confirms elevated tariff levels amid trade tension
+9423,1,macro,bullish,macro-policy,favorable inflation-adjacent data point
+9424,0,macro,neutral,opinion,"dismissive rhetoric, no new policy info"
+9425,1,BTC,bullish,opinion,"presidential rhetoric, no new action"
+9426,1,BTC,bullish,opinion,"presidential rhetoric, no new action"
+9427,2,macro,bearish,geopolitics,trade relations breakdown with Canada
+9429,1,equities,bullish,other,"equities record close, risk-on backdrop"
+9431,3,crypto-broad,bullish,regulation,XRP lawsuit formally resolved after years
+9433,1,macro,bullish,opinion,repeat Powell attack rhetoric
+9435,2,macro,bullish,opinion,escalated public call for Fed chair resignation
+9436,0,BTC,neutral,other,historical trivia
+9437,1,macro,bearish,opinion,high-profile critique of major legislation
+9439,0,BTC,bullish,opinion,"vague hint, no new info"
+9440,2,macro,bullish,opinion,presidential push for aggressive rate cuts
+9441,1,other,neutral,regulation,"state law on precious metals, not crypto"
+9443,1,macro,bullish,geopolitics,trade friction easing between US/Canada
+9444,3,BTC,bullish,whale-flows,very large Strategy BTC purchase ($531M)
+9445,1,crypto-broad,bullish,adoption,new tokenized-stocks product in EU
+9446,1,crypto-broad,bearish,regulation,"privacy setback for crypto users, minor"
+9447,2,macro,bullish,macro-policy,Fed leadership transition process underway
+9449,2,crypto-broad,bullish,regulation,stablecoin bill timeline confirmed
+9452,1,crypto-broad,bullish,adoption,new staking product launch
+9455,1,macro,neutral,macro-policy,repeat of earlier statement
+9456,2,macro,bullish,opinion,aggressive rate-cut demand repeated
+9457,1,BTC,bullish,regulation,"proposed tax bill, not yet law"
+9459,1,macro,bullish,geopolitics,"anticipated trade deal, not yet signed"
+9460,1,crypto-broad,bullish,adoption,"major bank plans crypto services, distant timeline"
+9461,1,equities,bullish,other,"equities record close, general risk-on"
+9462,2,crypto-broad,bullish,regulation,stablecoin issuer seeks federal bank charter
+9464,0,other,neutral,other,unrelated AI/healthcare news
+9465,2,crypto-broad,bullish,etf,further raised alt-ETF approval odds to 95%
+9466,1,BTC,bearish,regulation,"single state rejects BTC reserve, minor"
+9467,0,other,neutral,other,"political feud, non-crypto/markets"
+9469,2,crypto-broad,bullish,adoption,"major bank crypto custody plan, distant timeline"
+9470,0,other,neutral,other,political feud continuation
+9472,1,crypto-broad,bullish,macro-policy,Fed chair supportive stablecoin remark
+9473,0,other,neutral,other,political feud continuation
+9474,1,macro,bullish,opinion,repeat Fed criticism
+9475,2,macro,ambiguous,macro-policy,major fiscal bill passes Senate
+9476,0,crypto-broad,neutral,other,"philanthropy, not market-moving"
+9478,3,crypto-broad,bullish,etf,SEC approves multi-crypto Grayscale ETF conversion
+9479,1,macro,bearish,geopolitics,trade deal uncertainty with Japan
+9480,2,BTC,bullish,whale-flows,notable corporate treasury BTC ETF allocation
+9481,1,macro,bullish,opinion,repeat Powell attack rhetoric
+9483,2,BTC,bullish,whale-flows,"BlackRock ETF BTC holdings update, large but routine"
+9485,0,BTC,bullish,opinion,"philosophical quote, no new info"
+9487,2,macro,bullish,geopolitics,new US-Vietnam trade deal announced
+9488,1,BTC,bullish,other,"price milestone, no new info"
+9489,1,macro,bearish,macro-policy,political pressure escalation on Fed chair
+9490,2,crypto-broad,bullish,regulation,major crypto firm seeks US bank charter
+9491,1,BTC,bullish,whale-flows,"ETF revenue comparison, sentiment positive"
+9493,1,macro,ambiguous,macro-policy,"legislative blocking threat, outcome uncertain"
+9495,1,crypto-broad,bullish,other,"price milestone, no new info"
+9497,1,macro,bullish,opinion,repeat escalated Powell rhetoric
+9499,1,macro,bullish,geopolitics,trade tension eases on tech export restrictions
+9501,1,BTC,bullish,other,"price milestone, no new info"
+9502,2,macro,bullish,macro-policy,stronger than expected labor market data
+9503,2,macro,bullish,macro-policy,stronger than expected jobs report
+9504,1,BTC,bullish,opinion,repeat accumulation rhetoric
+9505,1,BTC,bullish,regulation,proposed minor transaction tax exemption
+9506,2,macro,ambiguous,macro-policy,major fiscal bill passes House
+9507,1,macro,bearish,macro-policy,prediction-market debt forecast
+9509,2,crypto-broad,bullish,regulation,dedicated legislative week for crypto bills
+9510,2,BTC,ambiguous,whale-flows,"large dormant wallet movement, direction unclear"
+9511,0,BTC,neutral,other,historical price trivia
+9512,3,BTC,ambiguous,whale-flows,"massive dormant Satoshi-era wallet movement, $8.6B"
+9514,1,macro,bearish,geopolitics,new tariff threat on EU food exports
+9516,2,macro,ambiguous,macro-policy,major fiscal bill signed into law
+9517,0,crypto-broad,neutral,opinion,"nostalgic opinion, no new info"
+9519,0,crypto-broad,neutral,other,"trivia stat, no new info"
+9520,1,macro,bearish,other,"UK wealth-migration stat, indirect macro signal"
+9522,0,crypto-broad,neutral,opinion,"celebrity pop-culture mention, no market info"
+9524,1,crypto-broad,neutral,regulation,"law-enforcement anti-scam operation, minor"
+9526,0,other,neutral,other,"US political party formation, not crypto/markets"
+9528,0,other,neutral,opinion,"political feud, non-crypto"
+9529,1,macro,bullish,macro-policy,White House adviser dismisses recession risk
+9530,2,macro,ambiguous,geopolitics,new tariff deadline confirmed
+9531,2,BTC,bullish,other,"record weekly close, momentum signal"
+9532,0,other,neutral,other,political feud
+9534,1,BTC,bullish,opinion,new political party signals pro-BTC stance
+9536,2,macro,bearish,geopolitics,new tariff threat tied to BRICS alignment
+9538,2,BTC,bullish,whale-flows,large corporate BTC purchase ($240.8M)
+9540,0,crypto-broad,neutral,opinion,"cautionary opinion, no new info"
+9542,1,macro,neutral,geopolitics,"anticipatory trade-deal announcement, no details"
+9543,2,crypto-broad,bullish,regulation,DOJ drops appeal in landmark crypto-privacy case
+9544,2,macro,bearish,geopolitics,new major tariff on key allies
+9545,1,crypto-broad,ambiguous,whale-flows,small government wallet movement
+9547,1,crypto-broad,neutral,regulation,"upcoming Senate testimony, no outcome yet"
+9548,1,macro,bearish,geopolitics,additional tariffs on smaller economies
+9550,1,macro,bearish,geopolitics,"batch tariff announcements, smaller economies"
+9551,2,macro,bullish,geopolitics,"lower tariff offer to EU, trade de-escalation"
+9553,0,crypto-broad,bullish,opinion,"CEO opinion, no new info"
+9554,1,crypto-broad,bullish,regulation,vague legislative rhetoric
+9555,1,macro,bullish,opinion,escalated political pressure on Fed chair
+9556,2,macro,bullish,opinion,"Trump dismisses inflation impact, demands cuts"
+9558,1,macro,bearish,macro-policy,"debt-level milestone, ongoing trend"
+9560,0,equities,neutral,company-news,"insider equity sale, not crypto-relevant"
+9562,1,macro,neutral,geopolitics,anticipatory trade announcement
+9563,1,crypto-broad,bullish,adoption,airline payments integration partnership
+9564,1,crypto-broad,bullish,adoption,major custodian bank partnership for stablecoin
+9565,1,crypto-broad,bullish,opinion,senator supportive rhetoric
+9566,0,other,neutral,company-news,unrelated corporate leadership change
+9568,1,macro,bearish,geopolitics,"batch tariff announcements, smaller economies"
+9569,0,BTC,neutral,opinion,political sparring over BTC terminology
+9570,0,equities,neutral,company-news,"semiconductor/AI news, not crypto-relevant"
+9572,0,equities,bearish,company-news,"retail sales data, not crypto-relevant"
+9573,1,crypto-broad,bullish,other,"price milestone, no new info"
+9575,0,other,neutral,other,unrelated tech product news
+9577,0,crypto-broad,bullish,opinion,repeat senator rhetoric
+9578,0,none,neutral,other,"channel self-promotion, not news"
+9579,0,other,neutral,other,unrelated celebrity/entertainment news
+9581,3,BTC,bullish,other,fresh all-time-high milestone
+9583,1,BTC,bullish,whale-flows,"unrealized profit update, no new purchase"
+9585,2,macro,bearish,geopolitics,steep new tariff on Brazil
+9587,2,BTC,bullish,whale-flows,large short-liquidation cascade
+9588,1,BTC,bullish,adoption,sovereign reserve unrealized-profit update
+9590,2,BTC,bullish,etf,strong ETF trading-volume day
+9591,0,crypto-broad,bullish,opinion,"generic opinion, no new info"
+9593,1,macro,bullish,opinion,repeat senator call for Fed chair resignation
+9595,2,macro,bearish,geopolitics,new steep tariff on copper imports
+9596,0,other,neutral,company-news,unrelated AI product launch
+9598,1,crypto-broad,bullish,other,"price milestone, no new info"
+9600,1,crypto-broad,bullish,opinion,presidential rhetoric on markets
+9601,2,crypto-broad,bullish,regulation,Treasury formally removes crypto reporting rule
+9602,1,crypto-broad,bullish,adoption,staking product formally launched
+9605,2,BTC,bullish,other,incremental new ATH milestone
+9607,1,BTC,bullish,whale-flows,moderate short liquidation
+9608,1,BTC,bullish,other,"prediction-market odds, not a confirmed event"
+9610,1,BTC,bullish,other,"price milestone, no new info"
+9611,2,macro,bullish,macro-policy,Fed official signals near-term rate cut possible
+9612,0,macro,neutral,regulation,unrelated housing tax bill
+9613,1,crypto-broad,bullish,regulation,anticipatory legislative rhetoric
+9614,1,BTC,bullish,whale-flows,corporate BTC holdings profit update
+9616,0,BTC,bullish,opinion,"rhetorical quote, no new info"
+9618,1,equities,bullish,other,equities record close
+9620,3,BTC,bullish,other,fresh major all-time high
+9622,2,BTC,bullish,whale-flows,large short-liquidation cascade
+9623,1,crypto-broad,bullish,other,"price milestone, no new info"
+9625,2,crypto-broad,bullish,whale-flows,large single-day market-cap inflow
+9626,2,macro,bearish,geopolitics,new steep tariff on Canada
+9628,1,BTC,bearish,other,retrospective analysis of past govt BTC sale
+9629,0,BTC,bullish,opinion,"retrospective performance stat, not new info"
+9630,1,BTC,bullish,other,"price milestone, no new info"
+9631,1,crypto-broad,bullish,other,"price milestone, no new info"
+9633,3,BTC,bullish,other,fresh all-time-high milestone
+9635,1,crypto-broad,bullish,whale-flows,moderate short liquidation
+9636,0,BTC,neutral,opinion,generic market commentary
+9638,3,BTC,bullish,etf,record-breaking ETF asset-growth milestone
+9640,1,BTC,bullish,whale-flows,"unrealized profit update, no new purchase"
+9642,1,crypto-broad,bullish,regulation,repeat senator rhetoric on tax bill
+9643,1,crypto-broad,bullish,other,"market-cap milestone, no new info"
+9644,0,BTC,bullish,opinion,"pundit commentary, no new info"
+9645,1,crypto-broad,bullish,opinion,anticipatory rhetoric
+9646,1,macro,bullish,macro-policy,positive fiscal surplus data point
+9647,0,BTC,bullish,opinion,"retrospective performance stat, not new info"
+9648,2,macro,bullish,macro-policy,"Fed chair resignation speculation, unconfirmed"
+9649,2,BTC,bullish,etf,very strong ETF trading-volume day
+9650,2,macro,bearish,geopolitics,steep new tariffs on EU and Mexico
+9653,1,macro,bearish,geopolitics,"summary of week's tariff announcements, mostly repeat"
+9654,1,crypto-broad,bullish,whale-flows,large token-sale demand signal
+9655,0,BTC,bullish,opinion,"rhetorical quote, no new info"
+9656,0,BTC,bullish,opinion,"vague hint, no new info"
+9657,1,macro,bearish,opinion,confirms legal pressure option on Fed chair
+9659,1,BTC,bullish,other,"market-cap milestone, no new info"
+9660,3,BTC,bullish,other,fresh all-time-high milestone
+9662,1,BTC,bullish,whale-flows,modest short liquidation
+9663,1,BTC,bullish,adoption,sovereign reserve value milestone
+9665,1,macro,bullish,opinion,political pressure escalation on Fed
+9667,0,BTC,bullish,opinion,"rhetorical quote, no new info"
+9669,1,BTC,bullish,other,repeat record-close report
+9671,1,macro,bullish,opinion,repeat Fed criticism rhetoric
+9672,1,BTC,bullish,other,"price milestone, no new info"
+9673,1,BTC,bullish,whale-flows,moderate incremental corporate BTC buy
+9675,3,BTC,bullish,other,fresh all-time-high milestone
+9677,2,BTC,bullish,whale-flows,large short-liquidation cascade
+9678,1,BTC,bullish,whale-flows,unrealized profit update
+9680,0,BTC,bullish,opinion,"long-term bullish opinion, no new info"
+9682,1,BTC,bullish,other,"price milestone, no new info"
+9683,2,crypto-broad,bullish,whale-flows,large short liquidation over several hours
+9684,1,BTC,bullish,other,"price milestone, no new info"
+9685,1,crypto-broad,bullish,other,"market-cap milestone, no new info"
+9686,1,BTC,bullish,adoption,sovereign reserve value milestone
+9688,1,crypto-broad,bullish,regulation,"committee rhetoric, no concrete action"
+9689,0,other,neutral,company-news,unrelated AI/defense contract news
+9690,2,macro,bearish,geopolitics,tariff threat tied to Russia negotiations deadline
+9692,2,BTC,bullish,etf,BTC ETF becomes issuer's top-performing product
+9693,0,macro,neutral,opinion,"self-aggrandizing rhetoric, no new info"
+9694,0,crypto-broad,bullish,opinion,"pundit speculation, no new info"
+9695,1,BTC,bullish,adoption,BTC lending product milestone
+9696,0,equities,neutral,opinion,unrelated equities pundit advice
+9698,2,crypto-broad,bullish,adoption,major global bank launches institutional crypto trading
+9699,3,macro,bearish,macro-policy,hotter-than-expected CPI print
+9700,1,crypto-broad,bullish,regulation,rhetoric ahead of crypto-week vote
+9701,1,macro,bullish,geopolitics,new trade deal announced
+9702,2,macro,bullish,opinion,aggressive rate-cut demand
+9703,2,crypto-broad,bullish,regulation,DOJ drops investigation into crypto prediction market
+9705,2,crypto-broad,bullish,regulation,anticipatory rhetoric ahead of major crypto vote
+9706,1,crypto-broad,bullish,opinion,repeat rhetoric
+9707,2,crypto-broad,bullish,adoption,"major bank reverses stance, enters stablecoins"
+9710,1,BTC,bullish,opinion,"bank research note, sentiment positive"
+9712,1,BTC,bullish,opinion,"exec supportive opinion, no new info"
+9713,3,crypto-broad,bearish,regulation,major crypto legislation package fails to advance
+9714,2,crypto-broad,bearish,regulation,vote breakdown detail on failed crypto bills
+9715,1,crypto-broad,bearish,regulation,delay confirmation on crypto legislation
+9716,2,macro,bullish,macro-policy,specific successor named for Fed chair
+9717,1,crypto-broad,bullish,other,"price milestone, no new info"
+9719,2,crypto-broad,bullish,regulation,vote-count shift toward passing crypto bills
+9720,1,macro,bullish,macro-policy,unverified resignation rumor
+9721,1,crypto-broad,bullish,adoption,stablecoin expands to new blockchain
+9722,2,macro,bullish,macro-policy,cooler-than-expected producer-price data
+9723,0,macro,neutral,other,"inflation trivia, no new info"
+9724,1,crypto-broad,bullish,other,"price milestone, no new info"
+9725,0,BTC,bullish,opinion,"speculative opinion, no new info"
+9727,1,crypto-broad,bullish,whale-flows,modest short liquidation
+9728,2,macro,bullish,macro-policy,escalated report of imminent Fed chair firing
+9730,3,macro,bullish,macro-policy,major report of concrete action to remove Fed chair
+9731,2,crypto-broad,bullish,adoption,major bank plans own stablecoin
+9732,3,crypto-broad,bullish,regulation,major crypto legislation formally advances
+9733,1,crypto-broad,bearish,regulation,"vote breakdown detail, bills still advanced overall"
+9734,1,crypto-broad,bullish,other,"price milestone, no new info"
+9735,1,crypto-broad,neutral,adoption,"diplomatic crypto meeting, no concrete outcome"
+9736,1,BTC,bullish,opinion,"pundit price prediction, no new info"
+9737,1,BTC,bullish,regulation,proposed bill recognizing crypto for mortgages
+9738,2,macro,bearish,macro-policy,Fed official signals no near-term rate cut
+9739,1,crypto-broad,bullish,other,"price milestone, no new info"
+9741,1,BTC,bullish,other,"price milestone, no new info"
+9742,1,crypto-broad,bearish,opinion,"senator warns systemic risk, no policy action"
+9743,0,BTC,bullish,opinion,"rhetorical quote, no new info"
+9745,1,crypto-broad,bullish,other,"market-cap milestone, no new info"
+9746,1,crypto-broad,bullish,other,"market-cap milestone, no new info"
+9747,1,crypto-broad,bearish,opinion,congressman critical rhetoric
+9748,1,crypto-broad,bullish,adoption,major Russian bank crypto-custody launch
+9749,0,crypto-broad,bullish,opinion,"congressman supportive rhetoric, no new info"
+9750,1,crypto-broad,bearish,opinion,congressman opposes crypto bill
+9751,2,crypto-broad,bullish,etf,major ETF issuer files to add staking
+9753,0,crypto-broad,bearish,opinion,repeat critical rhetoric
+9754,1,macro,bearish,geopolitics,steep tariff on narrow product category
+9755,1,crypto-broad,bullish,regulation,administration supports minor tax exemption
+9756,3,crypto-broad,bullish,regulation,major crypto market-structure bill passes House
+9757,3,crypto-broad,bullish,regulation,major stablecoin bill passes House
+9758,2,crypto-broad,bullish,regulation,anti-CBDC bill passes House
+9759,1,crypto-broad,bullish,regulation,"SEC chair supportive statement, repeat news"
+9761,3,crypto-broad,bullish,regulation,huge potential new crypto capital-inflow channel
+9762,1,crypto-broad,bullish,other,"price milestone, no new info"
+9764,2,crypto-broad,bullish,other,large 24h rally and market-cap milestone
+9766,2,macro,bearish,macro-policy,escalated legal-action threat against Fed chair
+9768,1,crypto-broad,bullish,regulation,SEC considers regulatory relief for tokenization
+9769,1,crypto-broad,bullish,other,"market-cap milestone, no new info"
+9770,1,crypto-broad,bullish,other,"market-cap milestone, no new info"
+9771,1,crypto-broad,bullish,other,"price milestone, no new info"
+9773,0,crypto-broad,bullish,opinion,"celebrity anecdote, retrospective"
+9774,2,equities,bullish,company-news,Coinbase equity reaches multi-year high
+9776,1,crypto-broad,bullish,regulation,repeat supportive SEC statement
+9777,1,crypto-broad,bullish,opinion,repeat administration rhetoric
+9778,2,crypto-broad,bullish,adoption,major brokerage launches crypto trading
+9779,1,crypto-broad,bullish,opinion,payments giant supportive statement
+9782,0,crypto-broad,bullish,opinion,"CEO opinion, no new info"
+9783,1,crypto-broad,bullish,opinion,"CEO enthusiastic reaction, no new info"
+9785,1,crypto-broad,bullish,opinion,presidential rhetoric
+9786,1,crypto-broad,bullish,opinion,presidential rhetoric
+9787,3,crypto-broad,bullish,regulation,major stablecoin bill signed into law
+9788,1,crypto-broad,bullish,opinion,presidential rhetoric
+9789,1,crypto-broad,bullish,company-news,crypto-adjacent fintech joins major index
+9790,1,crypto-broad,bullish,opinion,repeat celebratory statement
+9791,1,crypto-broad,bullish,opinion,repeat celebratory statement
+9792,0,crypto-broad,bullish,opinion,speculative CEO prediction
+9793,0,other,neutral,other,unrelated corporate scandal news
+9795,0,BTC,neutral,other,historical performance trivia
+9796,2,macro,bullish,macro-policy,"further resignation speculation, unconfirmed"
+9798,0,other,neutral,opinion,unrelated AI commentary
+9801,0,other,neutral,opinion,vague unrelated comment
+9802,1,crypto-broad,bullish,other,"price milestone, no new info"
+9804,0,BTC,bullish,opinion,"vague hint, no new info"
+9805,1,crypto-broad,bullish,other,"market-cap milestone, no new info"
+9806,1,crypto-broad,bullish,other,"price milestone, no new info"
+9808,1,macro,bullish,opinion,repeat Powell criticism
+9810,1,crypto-broad,bullish,other,notable single-day altcoin rally
+9812,0,BTC,neutral,opinion,"vague presidential post, no info"
+9813,0,crypto-broad,neutral,other,"market-cap milestone, low-relevance segment"
+9815,0,crypto-broad,neutral,opinion,vague rhetorical quote
+9816,1,crypto-broad,bullish,other,"market-cap milestone, no new info"
+9818,3,BTC,bullish,whale-flows,very large Strategy BTC purchase ($734M)
+9819,3,BTC,bullish,whale-flows,massive corporate BTC treasury purchase ($2B)
+9821,2,macro,bearish,macro-policy,Treasury Secretary calls for full Fed review
+9823,1,crypto-broad,bullish,company-news,crypto prediction market US re-entry via acquisition
+9825,1,crypto-broad,bullish,other,"market-cap milestone, no new info"
+9827,3,crypto-broad,bullish,regulation,SEC formally states ETH is not a security
+9828,2,macro,bearish,macro-policy,formal criminal referral filed against Fed chair
+9830,1,crypto-broad,bullish,opinion,repeat supportive SEC statement
+9831,2,crypto-broad,bullish,company-news,major derivatives product formally launched
+9832,1,equities,bullish,other,equities record close
+9834,2,crypto-broad,bullish,etf,strong ETH ETF trading-volume day
+9835,1,crypto-broad,bullish,other,"price milestone, no new info"
+9837,1,macro,bullish,macro-policy,repeat unverified resignation rumor
+9839,2,crypto-broad,bullish,adoption,major bank considers crypto-collateral lending
+9840,2,crypto-broad,bullish,adoption,huge user-base crypto wallet rollout
+9842,2,crypto-broad,bullish,adoption,major regional bank partners for crypto services
+9844,2,crypto-broad,bullish,regulation,FBI drops investigation into exchange founder
+9846,0,crypto-broad,bullish,opinion,senator generic supportive rhetoric
+9847,1,macro,bullish,opinion,repeat Fed criticism
+9849,1,macro,bullish,macro-policy,proposed tax-policy change under consideration
+9850,2,macro,bullish,geopolitics,new trade deal with tariff terms specified
+9852,1,macro,bullish,macro-policy,"repeat resignation speculation, softened"
+9853,2,BTC,bullish,other,price milestone recovery
+9854,1,BTC,bullish,adoption,payments platform enables BTC acceptance
+9856,3,crypto-broad,bullish,etf,SEC approves diversified multi-crypto ETF conversion
+9857,3,macro,bullish,geopolitics,historic trade/investment deal with Japan
+9860,1,crypto-broad,bullish,other,altcoin all-time high
+9862,2,crypto-broad,bullish,adoption,major banks launch tokenization product
+9863,1,crypto-broad,bearish,whale-flows,moderate liquidation over several hours
+9864,1,macro,neutral,macro-policy,housing market data point
+9865,0,other,neutral,other,unrelated robotics product news
+9866,2,macro,bullish,geopolitics,"trade deal nearing finalization, lower tariff"
+9868,0,crypto-broad,bullish,opinion,pundit personal opinion
+9869,1,crypto-broad,neutral,regulation,anticipatory report announcement
+9870,0,equities,bullish,company-news,unrelated equities earnings
+9871,2,BTC,bullish,whale-flows,confirms major corporate holder did not sell BTC
+9873,1,macro,neutral,macro-policy,"anticipatory event, unusual presidential Fed visit"
+9874,1,crypto-broad,bullish,regulation,"new country regulatory framework, minor market"
+9875,0,other,neutral,opinion,vague supportive rhetoric
+9877,1,crypto-broad,bullish,adoption,"repeat trend confirmation, banks entering stablecoins"
+9880,2,macro,bullish,opinion,cabinet official escalates call for Fed chair resignation
+9882,1,macro,neutral,macro-policy,anticipatory event build-up
+9884,0,none,neutral,other,unrelated internet outage
+9885,2,macro,neutral,macro-policy,notable direct meeting between president and Fed chair
+9886,1,macro,bullish,opinion,repeat rate-cut rhetoric
+9887,0,crypto-broad,neutral,other,"celebrity scandal/lawsuit, low systemic relevance"
+9889,2,crypto-broad,bearish,whale-flows,large 24h liquidation total
+9890,1,BTC,bearish,other,"price milestone, no new info"
+9892,1,macro,bullish,opinion,speculative presidential remark
+9894,1,crypto-broad,neutral,company-news,notable personnel move between crypto firms
+9895,1,crypto-broad,bullish,opinion,"bank supportive statement, no new info"
+9896,2,macro,neutral,macro-policy,Fed chair directly denies resignation rumors
+9897,0,macro,neutral,other,novelty government payment feature
+9900,0,BTC,bullish,opinion,repeat senator rhetoric
+9901,2,macro,bullish,macro-policy,anticipation ahead of FOMC rate decision
+9903,1,macro,bullish,opinion,major asset-manager exec calls for cuts
+9904,1,crypto-broad,neutral,other,"price milestone, no new info"
+9906,2,macro,bullish,geopolitics,"trade truce extension, reduces uncertainty"
+9907,1,crypto-broad,bullish,other,"market-cap milestone, no new info"
+9909,2,macro,bullish,geopolitics,confirmed EU trade deal
+9910,1,crypto-broad,bullish,other,"price milestone, no new info"
+9912,1,crypto-broad,bullish,other,altcoin all-time high
+9914,1,BTC,bullish,whale-flows,moderate incremental corporate BTC buy
+9916,1,crypto-broad,bullish,adoption,payments giant crypto-acceptance expansion
+9917,1,crypto-broad,bullish,adoption,brokerage considers stablecoin funding option
+9920,1,crypto-broad,bullish,opinion,asset manager supportive statement
+9923,0,BTC,bullish,opinion,"CEO opinion, no new info"
+9924,2,crypto-broad,bullish,whale-flows,analyst projects major structural ETH demand
+9926,1,crypto-broad,bullish,adoption,brokerage launches tokenized equities product
+9928,1,BTC,bullish,regulation,proposed bill recognizing crypto in mortgage eligibility
+9929,2,macro,bullish,geopolitics,confirmed trade truce extension
+9930,1,macro,neutral,macro-policy,fiscal data point on tariff revenue
+9931,1,crypto-broad,bullish,etf,"procedural SEC acknowledgment, not approval"
+9933,2,macro,bearish,macro-policy,major asset manager forecasts no rate cut
+9935,0,crypto-broad,bullish,opinion,repeat supportive statement
+9936,3,BTC,bullish,whale-flows,"massive Strategy BTC purchase, largest yet ($2.46B)"
+9938,3,crypto-broad,bullish,etf,SEC allows in-kind BTC/ETH ETF creation/redemption
+9939,2,macro,bearish,geopolitics,new tariff plus penalty on India
+9942,2,crypto-broad,bullish,adoption,major bank partners with Coinbase
+9944,2,macro,bullish,macro-policy,stronger-than-expected GDP growth
+9945,2,BTC,bearish,regulation,anticipated report omits key BTC reserve details
+9946,0,BTC,bullish,opinion,"rhetorical quote, no new info"
+9948,2,macro,bearish,macro-policy,Treasury Sec sets expectations ahead of FOMC
+9950,3,macro,bearish,macro-policy,"actual FOMC rate decision, held steady"
+9951,0,other,neutral,opinion,unrelated political accusation
+9953,1,macro,bullish,opinion,speculative presidential remark on future cuts
+9954,1,macro,neutral,macro-policy,Fed chair declines to commit on future cuts
+9955,1,crypto-broad,bearish,whale-flows,moderate liquidation cascade
+9956,0,crypto-broad,bullish,opinion,"promotional video, no new info"
+9957,1,crypto-broad,bullish,opinion,"White House rhetoric, no new action"
+9958,2,crypto-broad,bullish,etf,new Solana ETF filing
+9959,1,BTC,bullish,opinion,"official pro-BTC rhetoric, no new action"
+9961,0,other,neutral,opinion,unrelated political denial
+9962,2,macro,bullish,geopolitics,"new trade deal with South Korea, tariff terms set"
+9963,1,macro,bearish,geopolitics,dismissive rhetoric toward India/Russia economies
+9966,1,macro,neutral,opinion,"one congressman's stance, unlikely to pass"
+9968,1,macro,bullish,opinion,repeat Powell attack rhetoric
+9970,0,equities,neutral,company-news,"equities-only, not crypto-relevant"
+9972,0,crypto-broad,bullish,opinion,"CEO opinion, no new info"
+9973,2,crypto-broad,bullish,opinion,major bank CEO shifts stance positively on stablecoins
+9974,3,crypto-broad,bullish,regulation,SEC launches major pro-crypto regulatory initiative
+9975,3,crypto-broad,bullish,regulation,SEC chair signals broad non-security classification
+9976,1,crypto-broad,bullish,regulation,repeat priority statement
+9977,1,crypto-broad,bullish,opinion,SEC chair rhetoric on tokenization demand
+9978,0,other,neutral,regulation,unrelated pharma pricing order
+9980,0,macro,neutral,regulation,unrelated Congress stock-trading ethics policy
+9981,0,other,neutral,other,unrelated political mishap
+9982,0,crypto-broad,bullish,opinion,"generic opinion, no new info"
+9984,3,BTC,bullish,whale-flows,major capital raise specifically to buy more BTC ($4.2B)
+9986,2,crypto-broad,bullish,company-news,Coinbase launches tokenized stocks and prediction markets
+9987,2,BTC,bullish,whale-flows,corporate BTC purchase disclosure ($222M)
+9989,1,BTC,bullish,whale-flows,"holdings disclosure, not a new purchase"
+9990,1,BTC,bullish,opinion,"corporate price prediction, not new info"
+9991,2,macro,bearish,geopolitics,tariff on Canada raised further
+9993,1,BTC,bearish,other,"price milestone, no new info"
+9995,2,crypto-broad,bearish,whale-flows,large liquidation over 4 hours
+9996,3,macro,bearish,macro-policy,"weak jobs report, big miss vs expectations"
+9997,1,macro,bullish,opinion,repeat Powell attack rhetoric
+9999,1,crypto-broad,bullish,opinion,Treasury Secretary vague supportive statement
+10000,1,crypto-broad,bullish,opinion,Treasury Secretary supportive rhetoric
+10001,2,crypto-broad,bearish,whale-flows,large 24h liquidation total
+10002,1,crypto-broad,bullish,regulation,SEC to host crypto roundtables
+10003,1,macro,bearish,macro-policy,president disputes credibility of jobs data
+10004,2,macro,ambiguous,macro-policy,Fed board resignation opens door for new appointee
+10005,1,macro,bearish,macro-policy,president claims jobs data rigged
+10006,1,crypto-broad,bearish,other,"price milestone, no new info"
+10008,3,equities,bearish,other,massive single-day equity market-cap loss
+10009,1,BTC,bullish,opinion,presidential family member buy-the-dip call
+10012,1,macro,bullish,opinion,vague optimistic economic forecast
+10013,1,crypto-broad,bearish,whale-flows,moderate liquidation cascade
+10014,0,BTC,neutral,other,historical trivia
+10015,1,BTC,bullish,other,"price milestone, no new info"
+10017,1,BTC,bullish,whale-flows,moderate incremental corporate BTC buy
+10020,2,macro,neutral,macro-policy,anticipated key Fed/BLS personnel announcements
+10021,0,other,neutral,opinion,"political insult, no new info"
+10023,2,macro,bearish,geopolitics,tariff on India set to rise further
+10024,1,crypto-broad,bullish,other,"price milestone, no new info"
+10026,2,equities,bullish,other,large single-day equity market-cap gain
+10027,2,crypto-broad,bullish,regulation,CFTC initiative for spot crypto trading on federal exchanges
+10028,2,crypto-broad,bullish,regulation,planned executive order against crypto debanking
+10029,2,macro,bullish,macro-policy,major bank forecasts September rate cut
+10031,1,crypto-broad,bullish,adoption,Coinbase PayPal integration for Canadian users
+10033,0,other,neutral,company-news,unrelated open-source AI model release
+10034,3,crypto-broad,bullish,regulation,SEC formally clarifies liquid staking is not a security
+10035,1,macro,bullish,macro-policy,repeat Powell-replacement speculation
+10036,0,BTC,bullish,opinion,"rhetorical quote, no new info"
+10038,3,macro,bearish,geopolitics,executive order imposing major new tariff on India
+10041,0,other,neutral,other,unrelated presidential salary donation
+10042,1,crypto-broad,bullish,regulation,Dubai approves crypto options license
+10043,2,macro,bearish,geopolitics,coordinated bloc response to US tariffs floated
+10044,3,crypto-broad,bullish,regulation,"China reverses stance, allows first stablecoin"
+10045,2,macro,bullish,geopolitics,major domestic investment pledge announced
+10047,3,macro,bearish,geopolitics,steep blanket tariff on critical semiconductor sector
+10048,0,other,neutral,opinion,unrelated political feud softening
+10050,1,macro,bearish,opinion,official criticizes Fed chair on housing impact
+10051,2,macro,ambiguous,geopolitics,reciprocal tariffs take effect at midnight
+10052,3,crypto-broad,bullish,regulation,anticipated major executive order opening 401k to crypto
+10053,1,BTC,bullish,other,"price milestone, no new info"
+10054,2,macro,bullish,macro-policy,"major central bank rate cut, risk-on signal"
+10055,1,equities,bullish,other,broad earnings beat despite tariffs
+10056,2,crypto-broad,bullish,regulation,anticipated executive order against crypto debanking
+10057,0,other,neutral,company-news,unrelated AI product launch
+10058,0,other,neutral,opinion,unrelated AI rivalry commentary
+10061,1,BTC,bullish,other,"price milestone, no new info"
+10063,3,crypto-broad,bullish,regulation,landmark executive order opens $12.5T 401k market to crypto
+10064,1,macro,neutral,macro-policy,anticipatory 'major announcement' teaser
+10065,2,crypto-broad,bullish,regulation,executive order formally signed against crypto debanking
+10066,1,macro,bearish,geopolitics,new tariff on gold bars
+10068,0,none,neutral,other,unrelated video-game release date
+10069,3,crypto-broad,bullish,regulation,landmark XRP case formally closed
+10070,1,crypto-broad,bullish,opinion,official touts reach of new crypto executive orders
+10071,1,crypto-broad,bullish,other,"price milestone, no new info"
+10073,2,macro,bearish,macro-policy,large Canadian labor-market decline
+10075,1,crypto-broad,bullish,other,"price milestone, no new info"
+10077,1,crypto-broad,bullish,whale-flows,modest short liquidation
+10078,0,BTC,bullish,opinion,"rhetorical quote, no new info"
+10079,1,macro,neutral,macro-policy,"personnel change, low direct market relevance"
+10082,2,BTC,bullish,whale-flows,major university endowment BTC ETF allocation
+10084,0,BTC,bullish,opinion,"rhetorical quote, no new info"
+10087,0,crypto-broad,bullish,opinion,"rhetorical quote, no new info"
+10089,1,crypto-broad,bullish,other,"price milestone, no new info"
+10091,2,crypto-broad,bullish,whale-flows,large short-liquidation cascade
+10092,1,crypto-broad,bullish,other,"price milestone, no new info"
+10094,1,macro,bearish,macro-policy,"debt-level milestone, ongoing trend"
+10095,1,crypto-broad,ambiguous,company-news,key crypto policy official departs
+10096,1,crypto-broad,bullish,other,"market-cap milestone, no new info"
+10097,1,crypto-broad,bullish,other,"price milestone, no new info"
+10100,0,other,neutral,opinion,unrelated political accusation
+10102,1,crypto-broad,bullish,other,"market-cap ranking milestone, no new info"
+10104,1,BTC,bullish,other,"price milestone, no new info"
+10106,0,crypto-broad,bullish,other,"weekly recap digest, repeat info"
+10107,1,BTC,bullish,other,"price milestone, no new info"
+10109,2,equities,bearish,regulation,unusual govt revenue-share deal on chip exports to China
+10110,1,BTC,bullish,other,"price milestone, no new info"
+10111,1,BTC,bullish,whale-flows,moderate short liquidation
+10112,1,BTC,bullish,other,"price milestone, no new info"
+10114,2,BTC,bullish,other,rapid consecutive ATH-adjacent milestones
+10116,0,macro,bullish,opinion,vague tariff-benefit rhetoric
+10117,2,crypto-broad,bullish,other,market-wide all-time-high milestone
+10118,1,macro,bullish,geopolitics,confirms gold exempt from tariffs
+10120,2,macro,bullish,geopolitics,trade truce extension reduces near-term risk
+10121,0,other,neutral,other,unrelated product outage
+10122,2,crypto-broad,bullish,etf,strong ETH ETF trading-volume day
+10123,0,other,neutral,other,unrelated corporate legal dispute
+10125,1,BTC,bullish,whale-flows,moderate incremental corporate BTC buy
+10127,2,macro,neutral,macro-policy,"inflation print in line with prior, no surprise"
+10128,1,crypto-broad,bullish,other,"price milestone, no new info"
+10130,1,crypto-broad,bullish,whale-flows,modest short liquidation
+10132,2,macro,bearish,macro-policy,escalated legal threat against Fed chair
+10134,1,crypto-broad,bullish,other,"price milestone, no new info"
+10136,1,crypto-broad,bullish,other,"price milestone, no new info"
+10138,2,macro,bullish,macro-policy,Treasury Sec pushes for large 50bps rate cut
+10139,2,crypto-broad,bullish,whale-flows,large short-liquidation cascade
+10140,1,macro,bearish,geopolitics,Treasury Sec says India uncooperative in trade talks
+10141,2,crypto-broad,bullish,whale-flows,large single-day market-cap inflow
+10142,1,macro,bearish,macro-policy,debt-level milestone commentary
+10144,1,crypto-broad,bullish,other,"price milestone, no new info"
+10146,1,crypto-broad,bullish,opinion,analyst price-target raise
+10148,1,BTC,bullish,other,"price milestone, no new info"
+10150,1,macro,bullish,opinion,repeat aggressive rate-cut demand
+10151,0,macro,neutral,regulation,unrelated Congress stock-trading ethics policy
+10153,0,other,neutral,other,unrelated fraud indictment
+10154,1,BTC,bullish,whale-flows,"holdings value milestone, no new purchase"
+10155,1,BTC,bullish,adoption,sovereign reserve unrealized-profit update
+10157,2,crypto-broad,bullish,regulation,Google reverses restrictive crypto-wallet policy
+10158,3,BTC,bullish,other,fresh all-time-high milestone
+10160,1,BTC,bullish,other,"market-cap ranking milestone, no new info"
+10162,1,BTC,bullish,other,"price milestone, no new info"
+10164,3,macro,bearish,macro-policy,hot producer-price inflation surprise
+10165,3,crypto-broad,bearish,whale-flows,very fast large liquidation in 20 minutes
+10166,3,crypto-broad,bearish,whale-flows,massive single-day market-cap loss
+10167,2,BTC,bearish,macro-policy,Treasury explicitly denies BTC accumulation plan
+10168,0,BTC,bullish,opinion,"rhetorical quote, no new info"
+10170,1,crypto-broad,bullish,regulation,anticipated SEC Project Crypto discussion
+10171,1,crypto-broad,bullish,adoption,major bank adds stablecoin payments/custody
+10172,2,BTC,bullish,macro-policy,Treasury reopens possibility of BTC accumulation
+10174,1,macro,neutral,macro-policy,anticipated Fed chair policy speech
+10176,2,crypto-broad,ambiguous,whale-flows,"large options expiry, can drive volatility"
+10177,1,macro,bearish,geopolitics,president disparages China's economy
+10178,1,crypto-broad,bullish,regulation,"SEC chair rhetoric, no new action"
+10179,3,crypto-broad,bullish,regulation,Fed formally ends crypto debanking scrutiny program
+10180,0,BTC,bullish,opinion,"rhetorical quote, no new info"
+10182,2,crypto-broad,bullish,etf,new Dogecoin ETF S-1 filing
+10183,2,crypto-broad,bullish,etf,record weekly ETF trading volume
+10184,0,BTC,bullish,opinion,vague buy-the-dip call
+10187,0,BTC,neutral,other,historical trivia
+10188,1,BTC,bullish,whale-flows,moderate incremental corporate BTC buy
+10190,1,crypto-broad,bearish,whale-flows,moderate long liquidation
+10191,1,crypto-broad,bullish,adoption,tourist crypto-to-fiat conversion program
+10192,1,BTC,bullish,whale-flows,routine incremental Strategy purchase
+10193,1,equities,neutral,other,unrelated equity-ownership talks
+10195,1,crypto-broad,bullish,opinion,Treasury Secretary supportive stablecoin rhetoric
+10198,1,macro,neutral,macro-policy,tariff revenue earmarked for debt paydown
+10199,2,crypto-broad,bullish,whale-flows,large corporate ETH treasury purchase ($667M)
+10200,1,crypto-broad,bullish,adoption,new token listing on major platform
+10201,1,crypto-broad,bullish,regulation,anticipated Project Crypto discussion
+10202,2,crypto-broad,bullish,adoption,first US state launches own stablecoin
+10203,1,crypto-broad,bullish,regulation,SEC outreach to early-stage crypto projects
+10204,0,macro,neutral,opinion,unrelated property-tax proposal
+10206,1,crypto-broad,bullish,regulation,"SEC framework rhetoric, no concrete rule yet"
+10207,1,macro,bullish,opinion,"repeat Powell criticism, rate-cut demand"
+10209,1,macro,bearish,macro-policy,"non-US inflation data, indirect relevance"
+10210,1,crypto-broad,bullish,opinion,bank projects large stablecoin market
+10211,2,crypto-broad,bullish,regulation,China considers major new yuan stablecoin framework
+10212,2,macro,bearish,macro-policy,criminal referral against sitting Fed governor
+10213,2,macro,bearish,macro-policy,president calls for Fed governor resignation
+10215,1,crypto-broad,bullish,opinion,Fed governor supportive stablecoin remark
+10216,0,BTC,bullish,opinion,"long-horizon speculative prediction, not tradeable"
+10217,1,crypto-broad,bullish,other,altcoin all-time high
+10219,2,macro,bearish,macro-policy,"Fed governor resists pressure, prolongs uncertainty"
+10220,2,macro,bullish,geopolitics,confirmed major EU trade deal with investment terms
+10221,0,other,neutral,other,unrelated legal-penalty reversal
+10222,2,macro,bearish,macro-policy,market-implied rate-cut odds decline
+10224,2,macro,bearish,macro-policy,DOJ escalates pressure to remove Fed governor
+10225,2,crypto-broad,bullish,regulation,DOJ narrows criminal-enforcement scope for DeFi devs
+10226,1,crypto-broad,bullish,regulation,CFTC launches crypto policy initiative
+10227,1,macro,bearish,geopolitics,China aligns with India against US tariffs
+10230,1,crypto-broad,bearish,other,"celebrity memecoin crash, narrow segment"
+10232,2,crypto-broad,bullish,regulation,EU accelerates major digital-euro stablecoin plan
+10235,3,macro,bullish,macro-policy,Fed chair signals dovish pivot on rate cuts
+10236,1,crypto-broad,bullish,other,"price milestone, no new info"
+10238,1,crypto-broad,bullish,other,"price milestone, no new info"
+10240,1,BTC,bullish,other,"price milestone, no new info"
+10242,1,macro,bullish,geopolitics,Canada removes retaliatory tariffs on US goods
+10243,2,crypto-broad,bullish,whale-flows,large short-liquidation cascade
+10244,1,crypto-broad,bullish,other,"market-cap milestone, no new info"
+10245,1,crypto-broad,bullish,other,"price milestone, no new info"
+10247,1,crypto-broad,bullish,other,"prediction-market odds, not confirmed"
+10249,2,macro,bearish,macro-policy,president threatens to fire Fed governor
+10250,1,crypto-broad,bullish,other,"price milestone, no new info"
+10252,1,macro,bullish,opinion,repeat Powell criticism
+10254,1,crypto-broad,bullish,other,altcoin all-time high
+10256,1,crypto-broad,ambiguous,company-news,key IRS crypto official departs
+10257,2,equities,bullish,other,large single-day equity market-cap gain
+10258,1,equities,neutral,other,"unusual govt equity stake, not crypto-relevant"
+10260,3,crypto-broad,bullish,other,fresh all-time-high milestone
+10262,1,crypto-broad,bullish,other,"price milestone, no new info"
+10264,2,crypto-broad,bullish,etf,new XRP ETF S-1 filing
+10265,3,crypto-broad,bullish,whale-flows,massive single-day market-cap inflow ($250B)
+10266,0,BTC,bullish,opinion,"speculative price prediction, not new info"
+10268,0,BTC,bullish,opinion,"rhetorical quote, no new info"
+10270,3,crypto-broad,bullish,other,fresh all-time-high milestone
+10272,2,crypto-broad,bearish,whale-flows,large fast long-liquidation cascade
+10273,1,BTC,bullish,whale-flows,small incremental corporate BTC buy
+10275,1,crypto-broad,bullish,etf,new Avalanche ETF S-1 filing
+10276,2,BTC,bullish,whale-flows,large corporate BTC purchase ($342M)
+10277,1,crypto-broad,bullish,adoption,new crypto-linked credit card product
+10278,0,other,neutral,other,unrelated corporate antitrust lawsuit
+10281,0,other,neutral,opinion,unrelated drug-price rhetoric
+10282,1,macro,ambiguous,macro-policy,govt signals more equity stakes in companies
+10283,2,BTC,bearish,other,significant pullback from recent highs
+10284,3,macro,bearish,macro-policy,unprecedented firing of sitting Fed governor
+10286,2,macro,bearish,macro-policy,"governor disputes legality, prolongs uncertainty"
+10288,2,crypto-broad,bullish,whale-flows,large corporate ETH treasury purchase ($252M)
+10289,1,crypto-broad,bullish,whale-flows,notable political-family investment in crypto platform
+10291,1,crypto-broad,bullish,adoption,govt to publish economic data on blockchain
+10292,0,other,neutral,other,unrelated corporate branding reversal
+10294,2,BTC,bullish,whale-flows,large capital raise for future BTC purchases
+10295,2,macro,bullish,geopolitics,EU proposes removing tariffs on US industrial goods
+10297,0,equities,bullish,company-news,unrelated equities earnings beat
+10298,0,BTC,neutral,other,historical trivia/tribute
+10300,2,macro,bullish,macro-policy,"upward GDP revision, best quarter in years"
+10301,2,crypto-broad,bullish,adoption,federal agency partners for onchain economic data
+10303,0,crypto-broad,bullish,opinion,repeat agency rhetoric
+10304,1,BTC,bullish,opinion,major bank calls BTC undervalued vs gold
+10305,1,crypto-broad,bullish,regulation,CFTC clarification on offshore exchange access
+10306,1,equities,bullish,other,equities record close
+10307,1,crypto-broad,bearish,whale-flows,moderate liquidation cascade
+10308,0,BTC,bullish,opinion,"rhetorical family endorsement, no new info"
+10310,2,macro,bearish,macro-policy,large Canadian GDP contraction
+10312,0,crypto-broad,bullish,opinion,"generic opinion, no new info"
+10314,3,macro,bullish,geopolitics,major court ruling finds Trump tariffs illegal
+10315,2,macro,ambiguous,geopolitics,administration defies adverse tariff ruling
+10316,0,BTC,bullish,opinion,"rhetorical quote, no new info"
+10318,2,BTC,bullish,whale-flows,"reaches 20,000 BTC corporate holding milestone"
+10320,2,macro,bullish,geopolitics,India reportedly offers to cut tariffs to zero
+10321,1,macro,bearish,macro-policy,speculation of national housing emergency declaration
+10322,1,macro,bullish,other,"gold record high, safe-haven/inflation signal"
+10324,1,BTC,bullish,other,"price milestone, no new info"
+10325,0,equities,bearish,opinion,pundit seasonal-weakness comment
+10326,2,BTC,bullish,whale-flows,large corporate BTC purchase ($444M)
+10327,1,crypto-broad,ambiguous,other,"politician memecoin launch, novelty"
+10328,2,macro,ambiguous,geopolitics,emergency response to adverse tariff ruling
+10329,0,macro,neutral,opinion,vague market-uncertainty rhetoric
+10330,1,crypto-broad,bearish,whale-flows,modest ETH Foundation sale
+10331,2,crypto-broad,bullish,regulation,SEC/CFTC allow spot crypto trading on registered exchanges
+10332,0,equities,neutral,company-news,unrelated antitrust ruling
+10334,1,macro,neutral,macro-policy,fiscal data point on tariff revenue
+10335,2,macro,bullish,macro-policy,Fed governor signals multiple cuts ahead
+10336,1,macro,bullish,other,gold record high
+10338,1,crypto-broad,bullish,regulation,Fed conference covering crypto topics
+10339,1,macro,ambiguous,geopolitics,speculative tax-policy proposal via tariffs
+10340,2,crypto-broad,bullish,regulation,formal CFTC approval for crypto prediction market
+10342,0,macro,neutral,opinion,unrelated Congress trading-ban proposal
+10343,0,equities,neutral,regulation,unrelated EU privacy fine on Google
+10345,2,macro,bearish,macro-policy,escalation to full criminal investigation of Fed governor
+10347,2,crypto-broad,bullish,regulation,SEC unveils rulemaking plan to reform crypto rules
+10348,1,macro,bearish,opinion,bank calls dollar overvalued
+10350,2,BTC,bullish,other,BTC-holding company nears major index inclusion
+10351,0,crypto-broad,bullish,opinion,repeat priority statement
+10353,0,crypto-broad,bullish,opinion,"repeat statement, no new info"
+10354,1,macro,ambiguous,adoption,sovereign BTC-holder diversifies into gold
+10356,0,equities,neutral,company-news,unrelated executive pay package
+10358,1,macro,bullish,other,gold record high
+10360,3,macro,bearish,macro-policy,significant labor-market deterioration
+10361,2,crypto-broad,ambiguous,whale-flows,"large options expiry, can drive volatility"
+10362,2,macro,bullish,macro-policy,major bank projects two rate cuts this year
+10364,1,macro,bullish,opinion,repeat Powell criticism
+10366,1,crypto-broad,bearish,whale-flows,moderate liquidation cascade
+10367,1,macro,bearish,macro-policy,youth unemployment data point
+10368,0,crypto-broad,bullish,opinion,"rhetorical growth claim, no new info"
+10369,1,macro,bearish,geopolitics,considering outsourcing restrictions on India
+10371,1,macro,bullish,other,gold record high
+10373,1,macro,ambiguous,geopolitics,major trade-agreement renegotiation begins
+10376,2,crypto-broad,bullish,adoption,first Solana treasury company approved for Nasdaq
+10377,2,BTC,bearish,other,BTC-holding company denied major index inclusion
+10378,2,equities,bullish,company-news,crypto-adjacent fintech joins major index
+10380,0,other,neutral,opinion,unrelated political immigration remark
+10381,0,BTC,bullish,opinion,"vague hint, no new info"
+10383,1,BTC,neutral,opinion,stablecoin issuer clarifies reserve-composition rumor
+10386,1,BTC,bullish,whale-flows,routine incremental Strategy purchase
+10387,2,crypto-broad,bullish,regulation,major exchange files for tokenized stock listings
+10388,1,macro,bullish,other,gold record high
+10390,1,macro,ambiguous,regulation,"unrelated agency-independence ruling, precedent-relevant"
+10391,1,crypto-broad,bullish,regulation,committee urges Senate action on market-structure bill
+10392,2,crypto-broad,bearish,hack-exploit,supply-chain hack warning across crypto ecosystem
+10393,0,crypto-broad,bullish,opinion,"rhetorical quote, no new info"
+10394,1,crypto-broad,bullish,regulation,anticipated SEC public crypto roundtable
+10395,1,macro,bullish,other,gold record high
+10397,2,crypto-broad,bullish,adoption,major exchange invests in crypto exchange
+10398,1,crypto-broad,bullish,regulation,new country crypto trading trial program
+10399,2,crypto-broad,bullish,adoption,major exchange launches continuous crypto futures
+10400,3,macro,bearish,macro-policy,"largest-ever payroll revision, major labor-data shock"
+10401,1,BTC,bullish,opinion,official reaffirms Strategic Bitcoin Reserve priority
+10403,1,crypto-broad,ambiguous,company-news,board-seat removal due to listing rules
+10404,2,macro,bullish,opinion,major asset-manager exec calls for large rate cut
+10406,0,other,neutral,company-news,unrelated Apple product launch
+10407,0,other,neutral,company-news,unrelated Apple product launch
+10411,0,other,neutral,company-news,unrelated Apple product launch
+10415,0,other,neutral,company-news,unrelated Apple product launch
+10419,0,other,neutral,company-news,unrelated Apple product pricing
+10423,0,BTC,bullish,other,"purchasing-power trivia, no new info"
+10424,1,macro,neutral,geopolitics,"ongoing trade-negotiation update, no deal yet"
+10425,2,macro,bearish,macro-policy,"court blocks removal, prolongs Fed leadership uncertainty"
+10427,1,crypto-broad,bearish,regulation,India reluctance to regulate crypto formally
+10428,2,macro,bullish,macro-policy,cooler-than-expected producer-price data
+10429,1,macro,bullish,opinion,repeat Powell attack rhetoric
+10431,1,crypto-broad,bullish,adoption,major asset manager partners with Binance
+10432,1,BTC,bullish,other,"price milestone, no new info"
+10434,2,crypto-broad,bearish,etf,"SEC delays ETH ETF staking approval, minor setback"
+10435,1,crypto-broad,bullish,regulation,SEC chair rhetoric on onchain capital raising
+10436,0,crypto-broad,neutral,opinion,"bank assessment, no new info"
+10437,3,macro,bearish,macro-policy,CPI print hotter than prior month
+10438,1,macro,bullish,macro-policy,"large mortgage-rate drop, easing conditions"
+10439,2,crypto-broad,bullish,adoption,major asset manager to tokenize funds on blockchain
+10440,2,crypto-broad,bullish,adoption,major asset manager explores tradable ETF tokens
+10441,1,equities,bullish,other,equities record close
+10443,2,crypto-broad,bullish,etf,procedural DTCC listing ahead of possible ETF trading
+10444,1,BTC,bullish,other,"price milestone, no new info"
+10446,1,BTC,bullish,other,"price milestone, no new info"
+10448,2,crypto-broad,ambiguous,whale-flows,"large options expiry, can drive volatility"
+10449,1,crypto-broad,bullish,other,"price milestone, no new info"
+10451,1,crypto-broad,bullish,adoption,new short-interval crypto prediction-market product
+10452,2,crypto-broad,bullish,adoption,major stablecoin issuer launches US-regulated product
+10453,2,macro,bullish,macro-policy,major bank expects rate cut next week
+10455,1,crypto-broad,bullish,company-news,large VC valuation offers for prediction platform
+10456,2,crypto-broad,bullish,whale-flows,large single-day market-cap inflow
+10457,0,crypto-broad,bullish,opinion,"generic opinion, no new info"
+10459,0,BTC,bullish,opinion,"vague hint, no new info"
+10460,1,crypto-broad,bullish,regulation,SEC shifts to warnings-first enforcement posture
+10461,1,BTC,bullish,whale-flows,routine incremental Strategy purchase
+10462,1,equities,ambiguous,regulation,proposed change to earnings reporting frequency
+10463,2,crypto-broad,bullish,whale-flows,very large SOL purchase by major fund ($1.58B)
+10464,2,crypto-broad,bullish,adoption,major payments platform integrates BTC/ETH into P2P system
+10467,1,macro,neutral,geopolitics,anticipated call to finalize TikTok deal
+10469,1,macro,bullish,other,gold record high
+10471,1,equities,bullish,other,"equities record close, first time above level"
+10473,2,BTC,bullish,regulation,direct lobbying push for Strategic Bitcoin Reserve bill
+10474,2,macro,bearish,macro-policy,appeals court blocks Fed governor removal before FOMC
+10475,0,BTC,bullish,opinion,"rhetorical quote, no new info"
+10477,2,crypto-broad,bullish,adoption,major tech giant integrates crypto payments protocol
+10479,0,other,neutral,other,unrelated rare-earth mining fund talks
+10480,1,macro,bullish,other,gold record high
+10482,2,crypto-broad,bullish,regulation,new US-UK crypto cooperation deal announced
+10483,1,crypto-broad,bullish,other,altcoin all-time high
+10485,1,BTC,bullish,regulation,continued lobbying visibility for SBR bill
+10487,1,BTC,bullish,other,"price milestone, no new info"
+10489,1,equities,bearish,geopolitics,"China chip-purchase ban, indirect risk-off"
+10491,0,crypto-broad,bullish,opinion,"rhetorical quote, no new info"
+10492,3,macro,bullish,macro-policy,"actual FOMC rate-cut decision, 25bps"
+10493,2,macro,bearish,macro-policy,hawkish-leaning pushback after cut
+10494,2,macro,bearish,macro-policy,Fed chair downgrades job-market assessment
+10495,1,crypto-broad,bearish,whale-flows,moderate liquidation cascade
+10496,1,macro,bearish,macro-policy,Fed chair confirms economic slowdown
+10497,1,macro,neutral,macro-policy,Fed chair comments on tariff pass-through
+10498,0,crypto-broad,bullish,opinion,"generic opinion, no new info"
+10499,0,BTC,neutral,other,symbolic novelty statue event
+10500,3,crypto-broad,bullish,regulation,SEC streamlines crypto ETF approval process broadly
+10501,2,crypto-broad,bullish,etf,SEC approves multi-crypto fund for trading
+10502,1,crypto-broad,bullish,opinion,"CEO lobbying update, no new info"
+10504,1,crypto-broad,bullish,other,altcoin all-time high
+10506,0,equities,neutral,company-news,unrelated chip-industry investment
+10508,0,macro,bullish,opinion,vague investment-total rhetoric
+10509,0,macro,bullish,opinion,vague market-optimism rhetoric
+10511,1,crypto-broad,bullish,etf,fund trading launch announced for next day
+10512,1,crypto-broad,bullish,other,"price milestone, no new info"
+10514,1,equities,bullish,other,equities record close
+10516,2,crypto-broad,ambiguous,whale-flows,"large options expiry, can drive volatility"
+10517,1,crypto-broad,bullish,etf,multi-crypto fund trading goes live
+10518,1,crypto-broad,bullish,adoption,wallet adds in-app perpetuals trading
+10519,0,crypto-broad,neutral,opinion,"exec insult toward former regulator, no new info"
+10521,1,macro,bullish,macro-policy,Fed governor downplays tariff inflation impact
+10522,1,macro,bullish,geopolitics,president confirms TikTok deal approved
+10525,1,crypto-broad,bearish,whale-flows,moderate long liquidation
+10526,0,other,neutral,other,"unrelated Russian domestic policy, fringe source"
+10528,1,macro,bearish,geopolitics,proposed steep new visa fee
+10529,2,macro,bearish,geopolitics,formal executive order confirms steep visa fee
+10530,0,BTC,neutral,other,nostalgic trivia anecdote
+10531,1,crypto-broad,bullish,other,altcoin all-time high
+10533,1,macro,bullish,geopolitics,clarification softens prior visa-fee policy impact
+10534,0,BTC,bullish,opinion,"vague hint, no new info"
+10535,0,BTC,bullish,opinion,"rhetorical quote, no new info"
+10537,0,crypto-broad,bullish,opinion,"generic opinion, no new info"
+10539,0,other,neutral,other,unrelated political photo-op
+10540,2,crypto-broad,bearish,whale-flows,large long-liquidation cascade
+10541,1,BTC,bearish,other,"price milestone, no new info"
+10542,3,crypto-broad,bearish,whale-flows,massive fast liquidation cascade ($1B/30min)
+10543,3,BTC,bullish,whale-flows,very large corporate BTC purchase ($633M)
+10545,1,macro,bullish,other,gold record high
+10547,1,BTC,bullish,whale-flows,routine incremental Strategy purchase
+10548,1,crypto-broad,bullish,regulation,US-UK task force on crypto regulation
+10549,1,BTC,bullish,opinion,bank speculates on future central-bank BTC holdings
+10551,1,crypto-broad,bullish,regulation,lawmakers push SEC to implement 401k crypto order
+10553,1,crypto-broad,bullish,etf,procedural DOGE ETF listing
+10554,0,crypto-broad,bearish,opinion,"pundit wants rally pause, contrarian-ish"
+10556,1,crypto-broad,bullish,regulation,White House expects market-structure bill to pass
+10557,1,BTC,bullish,adoption,new BTC credit-card partnership
+10560,2,crypto-broad,bullish,regulation,SEC eases path for crypto product launches
+10561,0,BTC,bullish,opinion,"rhetorical quote, no new info"
+10563,2,crypto-broad,bullish,adoption,major brokerage to offer crypto trading in 2026
+10565,0,equities,neutral,company-news,unrelated AI-chip competition news
+10568,0,macro,bullish,opinion,vague market-optimism rhetoric
+10570,0,other,neutral,other,unrelated political/media controversy
+10572,1,crypto-broad,bullish,adoption,exchange reduces chain transaction fees
+10574,1,macro,neutral,macro-policy,Fed chair notes inflation-path uncertainty
+10575,1,macro,neutral,macro-policy,Fed chair reassurance after rate cut
+10576,2,crypto-broad,bullish,regulation,CFTC formally allows stablecoin collateral in derivatives
+10577,2,crypto-broad,bullish,company-news,huge private valuation for stablecoin issuer
+10578,0,crypto-broad,neutral,other,celebrity/prison novelty post
+10580,0,BTC,bullish,opinion,"long-horizon speculative prediction, not tradeable"
+10582,2,crypto-broad,bearish,regulation,senator calls to investigate presidential family crypto deals
+10584,1,BTC,bullish,other,"price milestone, no new info"
+10585,1,crypto-broad,bearish,whale-flows,moderate long liquidation
+10586,2,macro,bullish,macro-policy,further upward GDP revision
+10587,2,crypto-broad,bearish,whale-flows,large fast liquidation cascade
+10588,2,BTC,bearish,other,significant round-number level breached
+10590,2,crypto-broad,bearish,whale-flows,large long-liquidation cascade
+10591,0,other,neutral,other,unrelated to crypto/markets
+10593,2,BTC,bullish,etf,new derivative-income BTC ETF filing
+10595,3,crypto-broad,bearish,whale-flows,massive single-day market-cap loss
+10596,1,macro,bullish,opinion,repeat Powell criticism
+10598,3,crypto-broad,ambiguous,whale-flows,very large options expiry
+10599,2,crypto-broad,bullish,company-news,major exchange large funding round at $15B valuation
+10600,0,BTC,bullish,opinion,"speculative price prediction, not new info"
+10602,1,macro,bullish,opinion,"symbolic meme escalation, not action"
+10603,0,BTC,bullish,opinion,"vague hint, no new info"
+10604,1,crypto-broad,bullish,whale-flows,modest short liquidation
+10605,0,crypto-broad,bullish,opinion,pundit one-word call
+10606,1,BTC,bullish,whale-flows,routine incremental Strategy purchase
+10607,1,BTC,bullish,other,"price milestone, no new info"
+10609,1,BTC,bullish,other,"price milestone, no new info"
+10610,1,crypto-broad,bullish,whale-flows,moderate short-liquidation total
+10611,1,macro,bullish,geopolitics,proposed investment to secure lower tariffs
+10613,2,macro,ambiguous,macro-policy,government-shutdown threatens key jobs-data release
+10614,1,crypto-broad,bullish,opinion,"CEO lobbying rhetoric, no new info"
+10615,1,crypto-broad,ambiguous,company-news,top crypto regulator resigns
+10616,0,crypto-broad,bullish,opinion,repeat priority statement
+10617,0,other,neutral,other,unrelated lawsuit settlement
+10619,1,macro,bullish,other,gold record high
+10621,3,BTC,bullish,whale-flows,very large corporate BTC purchase by stablecoin issuer ($1B)
+10623,2,crypto-broad,bullish,regulation,SEC considers fast onchain stock trading
+10624,2,macro,bearish,macro-policy,president signals likely government shutdown
+10625,0,macro,neutral,opinion,pundit reassurance on shutdown
+10626,0,equities,neutral,company-news,equities-only market-cap milestone
+10628,0,BTC,bullish,opinion,"speculative price prediction, not new info"
+10631,3,macro,bearish,macro-policy,confirmed government shutdown begins
+10632,2,BTC,bullish,whale-flows,large corporate BTC purchase ($600M)
+10634,0,crypto-broad,bullish,opinion,"rhetorical quote, no new info"
+10635,1,BTC,bullish,other,"price milestone, no new info"
+10637,2,crypto-broad,bullish,adoption,huge asset manager considers crypto offering
+10638,1,BTC,bullish,other,"price milestone, no new info"
+10640,1,crypto-broad,bullish,whale-flows,moderate short-liquidation total
+10641,0,BTC,bullish,opinion,seasonal rhetorical quote
+10642,1,BTC,bullish,other,"price milestone, no new info"
+10644,1,macro,bullish,opinion,repeat Powell criticism
+10646,0,other,neutral,other,unrelated personal wealth milestone
+10647,1,BTC,bullish,other,"price milestone, no new info"
+10648,1,crypto-broad,bullish,other,"price milestone, no new info"
+10650,0,crypto-broad,bullish,opinion,"CEO opinion, no new info"
+10651,2,macro,bullish,macro-policy,prediction market signals high odds of rate cut
+10653,1,crypto-broad,neutral,adoption,exchange founder diplomatic crypto meeting
+10654,2,BTC,bullish,opinion,major bank raises BTC price target
+10656,1,crypto-broad,bullish,other,"price milestone, no new info"
+10658,1,BTC,bullish,other,"price milestone, no new info"
+10660,1,BTC,bullish,etf,strong ETF trading-volume day
+10661,1,equities,bullish,other,equities record close
+10663,1,BTC,bullish,whale-flows,"milestone holdings-value update, no new purchase"
+10665,1,macro,bullish,macro-policy,proposed stimulus checks using tariff revenue
+10666,2,crypto-broad,bullish,whale-flows,large single-day market-cap inflow
+10667,1,crypto-broad,bullish,other,altcoin all-time high
+10669,2,crypto-broad,ambiguous,whale-flows,"large options expiry, can drive volatility"
+10670,1,crypto-broad,bullish,adoption,exchange partners with major smartphone maker
+10672,1,BTC,bullish,regulation,major exchange lobbies to lift retail BTC ban
+10673,1,crypto-broad,bullish,opinion,bank notes rising institutional ETH participation
+10675,1,BTC,bullish,other,"price milestone, no new info"
+10677,1,BTC,bullish,other,"price milestone, no new info"
+10678,1,crypto-broad,bullish,whale-flows,moderate short liquidation
+10680,0,BTC,bullish,opinion,"rhetorical quote, no new info"
+10682,1,BTC,bullish,other,"prediction-market odds, not confirmed"
+10684,0,BTC,bullish,opinion,"rhetorical quote, no new info"
+10686,0,other,neutral,other,unrelated coin-minting novelty
+10687,0,BTC,neutral,other,trivia stat on dormant wallet value
+10688,3,BTC,bullish,other,fresh all-time-high milestone
+10690,1,crypto-broad,bullish,whale-flows,moderate short liquidation
+10691,1,BTC,bullish,adoption,sovereign reserve unrealized-profit update
+10693,3,BTC,bullish,other,fresh all-time-high milestone
+10695,0,BTC,bearish,other,retrospective trivia on past govt BTC sale
+10696,1,BTC,bullish,other,"market-cap milestone, no new info"
+10697,1,crypto-broad,bullish,other,"price milestone, no new info"
+10699,1,BTC,bullish,whale-flows,"reaffirms holding, no new purchase this week"
+10700,2,BTC,bullish,adoption,major brokerage opens BTC allocation to financial advisors
+10702,1,macro,bullish,other,gold record high
+10704,2,crypto-broad,bullish,etf,Grayscale approved for ETH ETP staking
+10705,2,BTC,bullish,macro-policy,narrative shift: BTC framed as shutdown safe haven
+10707,1,equities,bearish,other,"platform outage, minor"
+10708,2,macro,bearish,macro-policy,significant dollar depreciation stat
+10710,1,crypto-broad,bullish,other,"price milestone, no new info"
+10712,3,BTC,bullish,other,fresh all-time-high milestone
+10714,2,BTC,bullish,other,rapid consecutive ATH progression
+10716,1,crypto-broad,bullish,other,"market-cap ranking milestone, no new info"
+10718,1,crypto-broad,bullish,adoption,world's largest custodian bank explores tokenized deposits
+10719,1,crypto-broad,bullish,other,altcoin all-time high
+10721,2,crypto-broad,bullish,adoption,major index provider launches dedicated crypto index
+10722,1,BTC,bullish,opinion,prominent investor supportive statement
+10724,3,crypto-broad,bullish,company-news,"largest-ever private crypto funding round, NYSE owner invests"
+10726,1,crypto-broad,bearish,whale-flows,moderate long-liquidation cascade
+10727,0,crypto-broad,bullish,opinion,generic hype quote
+10729,1,macro,bullish,opinion,bank CEO dismisses shutdown market risk
+10730,2,BTC,bullish,etf,strong ETF trading-volume day
+10731,1,crypto-broad,bullish,regulation,SEC plans to formalize crypto exemption by year-end
+10732,0,other,neutral,company-news,unrelated AI equity investment
+10733,1,macro,bullish,other,gold record high
+10735,0,other,neutral,opinion,unrelated personal commentary
+10737,1,crypto-broad,bullish,adoption,wallet adds in-app perpetuals trading
+10739,0,BTC,bullish,opinion,"rhetorical quote, no new info"
+10741,1,crypto-broad,bullish,adoption,prediction market enables direct BTC deposits
+10743,1,macro,bearish,macro-policy,IRS furloughs half staff amid shutdown
+10744,1,crypto-broad,ambiguous,etf,"procedural listing, novelty token ETF"
+10745,0,BTC,bullish,regulation,repeat senator rhetoric on tax bill
+10747,2,BTC,bullish,adoption,sovereign wealth fund allocates to spot BTC ETFs
+10748,1,BTC,bullish,whale-flows,"holdings update, routine ETF growth"
+10750,1,macro,bullish,other,silver record high
+10752,2,BTC,bullish,opinion,survey shows majority institutions plan to raise crypto allocation
+10753,0,crypto-broad,bullish,adoption,repeat fee-reduction claim
+10755,0,equities,neutral,company-news,equities-only market-cap milestone
+10757,1,crypto-broad,bullish,regulation,first fully licensed exchange in UAE
+10759,0,equities,bullish,opinion,"bank research note, no crypto relevance"
+10761,1,crypto-broad,bearish,whale-flows,moderate liquidation cascade
+10762,2,macro,bullish,macro-policy,Fed official calls for more rate cuts
+10763,1,BTC,bullish,opinion,bank speculates on future central-bank BTC holdings
+10766,0,crypto-broad,bullish,opinion,"CEO opinion, no new info"
+10767,1,crypto-broad,bearish,regulation,central bank calls for stricter stablecoin rules
+10768,2,crypto-broad,bullish,adoption,major brokerage removes crypto restriction for all clients
+10770,3,crypto-broad,bullish,adoption,consortium of major global banks launches joint stablecoin
+10774,2,crypto-broad,bullish,regulation,Russia allows regulated bank crypto activity
+10775,2,BTC,bullish,etf,very strong opening-hour ETF trading volume
+10776,3,macro,bearish,geopolitics,major new tariff escalation threat vs China
+10778,2,crypto-broad,bearish,whale-flows,fast liquidation cascade in 15 minutes
+10779,0,BTC,bullish,opinion,"rhetorical quote, no new info"
+10781,1,crypto-broad,bearish,other,"price milestone, no new info"
+10783,1,crypto-broad,bullish,regulation,president considers pardon for exchange founder
+10785,3,equities,bearish,other,massive single-day equity market loss
+10786,3,macro,bearish,geopolitics,confirmed massive tariff escalation vs China
+10788,2,BTC,bearish,other,significant drop amid tariff shock
+10790,3,crypto-broad,bearish,whale-flows,massive market-cap loss tied to tariff shock
+10791,3,BTC,bearish,other,"rapid further breakdown, major crash event"
+10793,3,crypto-broad,bearish,whale-flows,"extreme liquidation cascade, historic scale"
+10794,1,crypto-broad,bearish,opinion,"retrospective irony, not new info"
+10797,2,crypto-broad,bearish,other,major exchanges strained by extreme volatility
+10799,3,crypto-broad,bearish,whale-flows,record-scale daily liquidation total
+10800,3,crypto-broad,bearish,whale-flows,confirmed historic single-day liquidation event
+10801,2,crypto-broad,bullish,company-news,exchange offers compensation after crash
+10803,1,crypto-broad,bearish,opinion,"retrospective irony, not new info"
+10804,3,crypto-broad,bearish,whale-flows,very large 24h long-liquidation total
+10805,1,crypto-broad,neutral,company-news,"exchange apology, reputational not directly price-moving"
+10807,2,macro,bearish,geopolitics,China blames US for escalating trade war
+10809,2,macro,bearish,geopolitics,China vows to stand firm against tariffs
+10811,0,BTC,bullish,opinion,"rhetorical quote, no new info"
+10814,0,BTC,bullish,opinion,"vague hint, no new info"
+10815,1,crypto-broad,bullish,other,"price milestone, no new info"
+10817,2,macro,bullish,geopolitics,de-escalation signal after tariff shock
+10818,2,macro,bearish,geopolitics,China declines US call after export controls
+10820,1,macro,bullish,macro-policy,official predicts markets will calm
+10821,1,crypto-broad,bullish,whale-flows,moderate short liquidation
+10822,1,macro,bullish,opinion,de-escalation rhetoric toward China
+10823,2,crypto-broad,bullish,company-news,exchange compensates users after token depeg
+10824,2,BTC,bullish,other,recovery from crash lows
+10826,2,macro,bearish,geopolitics,reaffirms tariff threat despite de-escalation talk
+10827,0,equities,bullish,opinion,pundit recovery quip
+10828,1,crypto-broad,bullish,other,"price milestone, no new info"
+10830,1,BTC,bullish,other,"price milestone, no new info"
+10831,1,macro,bullish,other,gold record high
+10833,2,macro,bearish,macro-policy,Treasury Secretary confirms shutdown economic damage
+10834,1,BTC,bullish,whale-flows,routine incremental Strategy purchase
+10835,2,BTC,bullish,etf,very strong opening ETF trading volume
+10836,1,macro,bullish,other,gold record high
+10838,1,crypto-broad,bullish,adoption,major bank plans crypto custody service
+10839,2,macro,bearish,geopolitics,China vows to fight trade war to the end
+10841,0,BTC,bullish,opinion,"rhetorical quote, no new info"
+10843,1,crypto-broad,bearish,whale-flows,moderate liquidation over several hours
+10844,1,equities,bearish,opinion,pundit warns crypto speculation distorting equities
+10845,1,BTC,bullish,opinion,major asset-manager CEO bullish remark
+10847,1,crypto-broad,bullish,adoption,major asset manager developing tokenization tech
+10849,1,crypto-broad,bullish,opinion,CEO calls for faster regulatory clarity
+10850,1,BTC,bullish,etf,repeat strong-volume report
+10851,0,equities,bearish,opinion,pundit wants rotation out of crypto
+10852,3,BTC,bullish,etf,fastest-ever ETF to $100B AUM milestone
+10853,3,BTC,ambiguous,hack-exploit,massive government seizure tied to scam network
+10854,2,crypto-broad,bullish,company-news,exchange compensation after market crash
+10855,1,crypto-broad,bullish,adoption,wallet integrates prediction market
+10856,1,macro,neutral,geopolitics,anticipated trade meeting confirmed
+10857,1,crypto-broad,bullish,opinion,asset-manager CEO tokenization rhetoric
+10858,1,macro,bullish,macro-policy,Fed chair notes resilient pre-shutdown growth
+10859,0,macro,neutral,macro-policy,Fed chair declines to comment on BTC/gold
+10862,1,crypto-broad,bullish,adoption,payments giant adds stablecoin subscription payments
+10863,1,macro,bearish,geopolitics,president frames BRICS as dollar attack
+10865,1,macro,bullish,geopolitics,Treasury Secretary optimistic on China talks
+10866,2,macro,bullish,macro-policy,Fed governor signals two more cuts realistic
+10867,1,crypto-broad,bearish,other,"price milestone, no new info"
+10869,1,macro,bullish,other,gold record high
+10871,0,macro,bullish,opinion,vague optimistic economic rhetoric
+10873,1,crypto-broad,bullish,adoption,major exchange to list altcoin
+10875,1,crypto-broad,bullish,other,"developer-ecosystem ranking, sentiment positive"
+10876,2,macro,bearish,geopolitics,president confirms active trade war with China
+10878,0,macro,neutral,opinion,vague tariff/security rhetoric
+10879,1,crypto-broad,ambiguous,other,disclosure of political family's crypto profits
+10880,1,macro,bullish,other,gold record high
+10882,2,macro,bullish,geopolitics,China signals willingness to resolve trade dispute
+10883,0,other,neutral,other,unrelated novelty fast-food product
+10885,2,BTC,bearish,other,significant round-number level breached
+10887,2,crypto-broad,bearish,whale-flows,fast liquidation cascade
+10888,2,BTC,bearish,other,"further breakdown, significant level breached"
+10889,1,macro,bullish,other,gold record high
+10891,0,crypto-broad,bullish,opinion,"CEO long-horizon speculation, no new info"
+10893,1,macro,bullish,other,gold market-cap milestone
+10895,1,macro,bullish,macro-policy,Fed official downplays slowdown concerns
+10896,0,BTC,bearish,opinion,"pundit rivalry quote, no new info"
+10897,2,crypto-broad,bearish,whale-flows,large liquidation cascade
+10898,2,BTC,bearish,other,"further breakdown, significant level breached"
+10900,2,macro,ambiguous,geopolitics,confusing presidential signal on tariff status
+10902,1,macro,bullish,geopolitics,president expresses confidence on China
+10903,1,macro,bullish,geopolitics,official denies active trade war framing
+10904,1,macro,bullish,macro-policy,official floats three rate cuts as reasonable start
+10905,2,crypto-broad,bullish,whale-flows,large capital raise to buy own token
+10906,1,macro,bearish,geopolitics,WTO warns of large GDP hit from US-China decoupling
+10907,0,macro,neutral,macro-policy,company reports no shutdown impact yet
+10910,0,macro,neutral,opinion,"pundit gold characterization, no new info"
+10912,1,BTC,bearish,other,"prediction-market odds, not confirmed"
+10914,2,macro,bearish,geopolitics,president considers accelerating tariff deadline
+10916,0,crypto-broad,bullish,opinion,"SEC chair rhetoric, no new action"
+10918,0,BTC,neutral,opinion,"semantic opinion, no new info"
+10920,2,macro,bullish,geopolitics,president says Xi open to trade deal
+10922,1,BTC,bullish,other,"price milestone, no new info"
+10924,0,crypto-broad,bullish,opinion,"CEO accessibility rhetoric, no new info"
+10927,1,macro,bearish,geopolitics,reaffirms tariffs on India tied to Russian oil
+10930,1,macro,ambiguous,geopolitics,China removes top trade negotiator
+10931,1,BTC,bullish,whale-flows,routine incremental Strategy purchase
+10932,2,macro,bullish,macro-policy,official signals shutdown likely ending soon
+10933,2,BTC,bullish,etf,very strong ETF trading volume in early hours
+10934,2,macro,bearish,geopolitics,threatens steep 155% tariff without a deal
+10935,1,macro,bullish,geopolitics,president expresses confidence in China deal
+10936,0,BTC,bullish,opinion,"speculative long-horizon claim, no new info"
+10939,1,macro,bullish,geopolitics,planned presidential visit to China announced
+10940,1,crypto-broad,bullish,company-news,exchange acquires investing platform ($375M)
+10942,1,crypto-broad,bullish,other,stablecoin user-count milestone
+10944,2,crypto-broad,bullish,regulation,Fed explores crypto/fintech access to payment rails
+10945,1,BTC,bullish,other,"price milestone, no new info"
+10947,1,BTC,bullish,other,"price milestone, no new info"
+10948,1,crypto-broad,bullish,whale-flows,moderate short liquidation
+10949,1,BTC,bullish,other,"price milestone, no new info"
+10950,0,equities,neutral,company-news,unrelated automation/labor announcement
+10952,0,BTC,bullish,opinion,"rhetorical quote, no new info"
+10955,1,crypto-broad,bullish,other,"price milestone, no new info"
+10957,0,other,neutral,company-news,unrelated browser product launch
+10958,1,BTC,bullish,other,"price milestone, no new info"
+10960,2,macro,bearish,geopolitics,planned Trump-Xi meeting thrown into doubt
+10961,0,macro,neutral,opinion,vague tariff-revenue rhetoric
+10962,1,crypto-broad,bullish,opinion,Fed governor supportive crypto remark
+10963,1,macro,bullish,opinion,"president touts lower prices, jabs at Fed"
+10964,1,macro,bullish,geopolitics,president predicts unsustainable Chinese tariff burden
+10965,2,macro,bearish,other,large single-day gold market-cap loss
+10967,1,BTC,bearish,other,"price milestone, no new info"
+10969,2,crypto-broad,bullish,etf,first spot Solana ETF approved in major market
+10970,0,crypto-broad,bullish,opinion,pundit vague bullish call
+10971,1,crypto-broad,bullish,adoption,new altcoin listing on major platform
+10973,0,BTC,bullish,opinion,"rhetorical quote, no new info"
+10975,1,crypto-broad,bullish,regulation,senator touts progress on market-structure bill
+10976,0,BTC,bullish,opinion,"rhetorical quote, no new info"
+10978,2,BTC,bullish,adoption,new BTC-rewards credit card launched by major partners
+10979,1,crypto-broad,bullish,adoption,prediction market adds altcoin deposits
+10981,2,BTC,bullish,whale-flows,confirms major corporate holder did not sell BTC
+10983,1,macro,bearish,macro-policy,"debt-level milestone, ongoing trend"
+10985,0,BTC,bearish,opinion,"conspiracy-flavored personal opinion, no new info"
+10986,0,other,neutral,opinion,unrelated robotics commentary
+10988,2,macro,bullish,macro-policy,major bank expects Fed to end quantitative tightening
+10989,0,BTC,neutral,other,"pundit rivalry challenge, novelty"
+10991,0,macro,bullish,opinion,vague optimistic rhetoric
+10993,3,crypto-broad,bullish,regulation,presidential pardon of major exchange founder
+10995,1,macro,bullish,macro-policy,mortgage rates fall to multi-year low
+10996,1,crypto-broad,bullish,opinion,"exchange founder gratitude statement, no new info"
+10998,2,crypto-broad,bullish,regulation,CEO signals crypto legislation nearing passage
+10999,1,macro,neutral,geopolitics,confirmed upcoming presidential meeting
+11001,1,macro,neutral,geopolitics,confirmed Treasury-level trade meeting
+11002,0,BTC,neutral,other,"pundit debate agreement, novelty"
+11004,1,crypto-broad,bullish,opinion,president defends pardon rationale
+11005,0,other,neutral,opinion,unrelated presidential press exchange
+11006,1,crypto-broad,ambiguous,other,"political donation disclosure, reputational"
+11007,2,macro,bearish,geopolitics,president terminates trade talks with Canada
+11009,2,crypto-broad,bullish,adoption,major bank allows crypto as institutional collateral
+11012,0,macro,bullish,opinion,vague tariff-benefit rhetoric
+11013,2,macro,bullish,macro-policy,CPI rise softer than feared despite uptick
+11014,1,crypto-broad,ambiguous,other,reputational fact-check on senator's claim
+11015,0,other,neutral,opinion,unrelated platform-algorithm commentary
+11017,1,crypto-broad,bullish,regulation,CEO intensifies Senate lobbying for legislation
+11018,0,crypto-broad,neutral,opinion,"supportive pardon commentary, no new info"
+11020,0,BTC,neutral,other,historical trivia
+11021,2,macro,bearish,geopolitics,additional tariff imposed on Canada
+11022,2,macro,bullish,geopolitics,US-China reach early trade agreement
+11023,2,macro,bullish,geopolitics,China reportedly ready to remove 100% tariff via deal
+11025,1,crypto-broad,bullish,adoption,major payments processor adds stablecoin support
+11028,1,BTC,bullish,other,"price milestone, no new info"
+11030,1,crypto-broad,bullish,whale-flows,moderate short liquidation
+11031,1,BTC,bullish,other,"price milestone, no new info"
+11032,1,BTC,bullish,whale-flows,routine incremental Strategy purchase
+11033,1,macro,bullish,geopolitics,diplomatic goodwill statement ahead of meeting
+11035,1,macro,bearish,other,gold pulls back below round level
+11037,0,equities,neutral,company-news,unrelated energy/AI infrastructure deal
+11039,2,macro,bullish,macro-policy,president signals timeline for new Fed chair
+11041,2,crypto-broad,bullish,adoption,major bank partners with Coinbase on stablecoins
+11042,0,crypto-broad,bullish,opinion,"CEO rhetoric, no new info"
+11044,1,BTC,bullish,adoption,claim of foreign sovereign BTC accumulation
+11045,0,equities,bearish,company-news,unrelated layoff announcement
+11046,1,equities,bullish,other,"equities record close, first time above level"
+11048,1,crypto-broad,bearish,regulation,proposed bill banning officials from owning crypto
+11049,1,macro,bullish,macro-policy,repeat Powell-departure speculation
+11051,1,macro,bullish,geopolitics,repeat of Japan investment pledge
+11052,1,crypto-broad,bullish,adoption,major payments processor plans blockchain stablecoin platform
+11053,0,equities,neutral,company-news,unrelated AI equity-stake disclosure
+11055,0,equities,neutral,company-news,equities-only market-cap milestone
+11057,2,macro,bullish,macro-policy,near-certain odds of rate cut tomorrow
+11059,0,equities,neutral,company-news,unrelated chip-industry investment
+11061,2,crypto-broad,bullish,adoption,major remittance company plans stablecoin launch
+11063,0,equities,neutral,company-news,unrelated corporate partnership
+11065,0,equities,bullish,opinion,"pundit stock endorsement, not crypto-relevant"
+11068,0,equities,neutral,other,equities-only price milestone
+11070,2,crypto-broad,bullish,regulation,major prediction market to formally launch in US
+11072,1,equities,bullish,other,equities record close
+11074,1,crypto-broad,bullish,opinion,payments CEO frames digital assets as inevitable
+11075,1,crypto-broad,bearish,whale-flows,moderate liquidation cascade
+11076,0,BTC,bearish,opinion,"pundit bubble call, no new info"
+11078,1,crypto-broad,ambiguous,other,"legal threat against senator, reputational"
+11080,2,macro,bullish,geopolitics,Senate passes bill to end Brazil tariffs
+11081,0,macro,bullish,opinion,vague optimistic rhetoric
+11082,1,macro,ambiguous,geopolitics,chip-export topic to be discussed at summit
+11083,1,macro,bullish,geopolitics,vague optimistic pre-meeting rhetoric
+11085,0,equities,neutral,company-news,equities-only market-cap milestone
+11087,0,equities,neutral,other,equities-only market-cap comparison
+11088,1,crypto-broad,ambiguous,adoption,new perpetuals-trading platform launch for stocks
+11089,0,BTC,bullish,opinion,"speculative price prediction, not new info"
+11090,1,crypto-broad,bearish,whale-flows,moderate liquidation cascade
+11091,0,other,neutral,other,unrelated cloud-service outage
+11093,3,macro,bullish,macro-policy,"actual FOMC rate-cut decision, 25bps"
+11094,2,macro,bullish,macro-policy,Fed sets date to end quantitative tightening
+11095,1,macro,bearish,macro-policy,Fed chair warns of shutdown economic impact
+11096,1,macro,bearish,macro-policy,Fed chair notes tariff-driven price pressure
+11097,2,macro,bearish,macro-policy,Fed chair pushes back on rate-cut certainty
+11098,2,crypto-broad,bearish,whale-flows,liquidation cascade tied directly to FOMC speech
+11100,2,macro,bearish,macro-policy,Fed chair explicitly links tariffs to higher inflation
+11101,2,crypto-broad,bullish,company-news,major payments company acquires crypto infrastructure startup
+11103,0,equities,bullish,company-news,unrelated equities earnings beat
+11105,2,macro,bullish,geopolitics,South Korea agrees to large payment to lower tariffs
+11106,0,other,neutral,company-news,unrelated AI-company IPO news
+11107,1,BTC,bearish,other,"price milestone, no new info"
+11109,2,macro,neutral,geopolitics,confirmed high-profile Trump-Xi summit meeting
+11110,2,crypto-broad,bearish,whale-flows,liquidation cascade tied to summit meeting
+11111,1,macro,bullish,geopolitics,"president calls summit amazing, vague on details"
+11112,0,equities,neutral,company-news,unrelated corporate bond sale
+11113,1,crypto-broad,bearish,whale-flows,moderate liquidation cascade
+11114,2,BTC,bullish,etf,strong opening ETF trading volume
+11115,2,crypto-broad,bullish,adoption,major bank to launch tokenization platform in 2026
+11116,1,crypto-broad,bullish,opinion,bank CEO supportive stablecoin remark
+11117,1,BTC,bearish,other,"price milestone, no new info"
+11118,1,equities,bullish,company-news,exchange equity earnings beat
+11119,2,BTC,bullish,whale-flows,corporate BTC purchase disclosure ($299M)
+11121,0,equities,bullish,company-news,unrelated equities earnings beat
+11123,1,BTC,bullish,whale-flows,quarterly unrealized-profit disclosure
+11125,0,crypto-broad,neutral,other,"disputed retrospective claim, no new info"
+11127,0,crypto-broad,neutral,opinion,vague market-cycle comment
+11129,0,BTC,neutral,other,historical anniversary trivia
+11131,1,crypto-broad,bullish,adoption,Treasury Secretary meeting to boost crypto adoption abroad
+11132,0,BTC,neutral,other,historical price trivia
+11133,2,macro,bullish,geopolitics,president open to further China tariff reduction
+11134,1,macro,bullish,geopolitics,president frames trade deal as durable
+11135,2,macro,bullish,geopolitics,official confirms trade-deal signing timeline
+11136,1,BTC,bullish,adoption,novel corporate Bitcoin reserve program announced
+11138,0,other,neutral,opinion,unrelated speculative product tease
+11139,0,equities,neutral,opinion,pundit vague market timing comment
+11141,0,BTC,bullish,opinion,rhetorical anniversary quote
+11143,0,crypto-broad,neutral,other,repeat adoption-rate trivia
+11144,0,other,neutral,opinion,unrelated self-driving-car commentary
+11145,1,macro,bullish,macro-policy,official supports continued rate cuts
+11146,2,macro,bullish,macro-policy,Fed governor calls for December cut
+11148,0,equities,neutral,opinion,unrelated manufacturing commentary
+11149,1,equities,bullish,geopolitics,trade deal seen easing chip-market access for China
+11152,1,crypto-broad,bearish,whale-flows,moderate long-liquidation cascade
+11153,1,crypto-broad,bullish,opinion,president reiterates crypto-leadership priority
+11154,1,macro,bullish,geopolitics,president claims China going big into crypto
+11155,1,BTC,bullish,whale-flows,routine incremental Strategy purchase
+11156,1,crypto-broad,bullish,adoption,major crypto firm launches prime brokerage in US
+11157,0,equities,neutral,company-news,unrelated AI partnership deal
+11159,1,macro,bullish,macro-policy,Fed official expresses cautious optimism
+11160,2,crypto-broad,bearish,whale-flows,large long-liquidation cascade
+11161,0,other,neutral,other,unrelated political retirement announcement
+11163,1,BTC,bearish,other,"prediction-market odds, not confirmed"
+11165,0,other,neutral,other,unrelated local political stunt
+11167,1,macro,bullish,geopolitics,Treasury Secretary positive on China relations
+11168,2,BTC,bearish,other,significant further breakdown
+11170,2,crypto-broad,bearish,whale-flows,large long-liquidation cascade
+11171,3,BTC,bearish,other,major psychological $100k level breached
+11173,1,crypto-broad,bullish,regulation,administration claims end to prior crypto crackdown era
+11174,3,crypto-broad,bearish,whale-flows,massive single-day market-cap loss
+11175,2,equities,bearish,other,large single-day equity market loss
+11176,0,crypto-broad,bullish,opinion,"senator rhetoric, no new info"
+11177,0,macro,bullish,opinion,vague record-highs rhetoric
+11179,1,macro,bullish,geopolitics,president signals diplomatic goodwill toward China
+11181,0,macro,bullish,opinion,vague market-optimism rhetoric
+11182,2,crypto-broad,bullish,company-news,major crypto firm raises capital at $40B valuation
+11183,1,BTC,bullish,etf,repeat strong opening-volume report
+11184,0,macro,bullish,opinion,vague economic-optimism rhetoric
+11185,1,macro,neutral,macro-policy,anticipated major economic speech
+11186,0,crypto-broad,bullish,opinion,"senator rhetoric, no new info"
+11187,1,crypto-broad,bullish,adoption,payments giant partners for stablecoin card settlement
+11189,1,macro,bullish,opinion,repeat Powell insult
+11190,1,crypto-broad,bullish,opinion,repeat presidential crypto rhetoric
+11191,1,crypto-broad,bullish,opinion,repeat presidential crypto-leadership rhetoric
+11192,2,crypto-broad,bullish,adoption,major brokerage confirms crypto trading launch plan
+11193,0,equities,bearish,opinion,unrelated AI-race commentary
+11194,1,crypto-broad,bullish,regulation,"official touts legislative progress, no new detail"
+11195,1,macro,neutral,geopolitics,official signals measured approach to China leverage
+11196,0,BTC,bullish,opinion,"rhetorical quote, no new info"
+11198,2,BTC,bullish,opinion,major bank sets bullish 6-12mo BTC price target
+11200,2,BTC,bullish,adoption,major fintech considers corporate BTC treasury
+11202,0,crypto-broad,bullish,opinion,"vague success claim, no new info"
+11203,1,crypto-broad,bullish,opinion,bank CEO supportive stablecoin remark
+11204,2,crypto-broad,bullish,adoption,major tech giant integrates prediction market into search
+11206,2,macro,bullish,macro-policy,Fed governor expects another December cut
+11207,1,macro,ambiguous,geopolitics,president floats contingency for adverse tariff ruling
+11208,1,crypto-broad,bullish,opinion,Fed governor notes stablecoin payment competition
+11211,0,equities,bearish,other,"unrelated video-game delay, stock reaction"
+11212,0,crypto-broad,bullish,opinion,"CEO rhetoric, no new info"
+11214,0,equities,neutral,company-news,unrelated executive pay-package approval
+11216,1,macro,bullish,geopolitics,new trade deal announced with Uzbekistan
+11217,2,crypto-broad,bullish,adoption,sovereign crypto reserve fund plan announced
+11218,1,macro,bullish,macro-policy,official predicts recovery once shutdown ends
+11219,0,other,neutral,opinion,unrelated political accusation
+11221,1,BTC,bullish,whale-flows,bank discloses moderate BTC ETF holdings
+11223,1,macro,bullish,macro-policy,anticipated record tax refunds next year
+11224,1,macro,bullish,opinion,"president touts low inflation, further-cut hope"
+11225,0,other,neutral,opinion,unrelated AI-bubble commentary
+11226,1,crypto-broad,bullish,opinion,Fed governor notes crypto's economic impact
+11227,0,BTC,bullish,opinion,"speculative price prediction, not new info"
+11228,0,other,neutral,regulation,unrelated welfare-funding court order
+11229,0,crypto-broad,neutral,opinion,"exchange founder reaction, no new info"
+11230,0,BTC,bullish,opinion,"vague buy call, no new info"
+11232,2,macro,bullish,macro-policy,proposed direct stimulus payment to Americans
+11233,0,macro,bullish,opinion,vague tariff-benefit rhetoric
+11235,0,BTC,bullish,opinion,"vague hint, no new info"
+11236,0,macro,bullish,opinion,vague tariff-benefit rhetoric
+11237,2,macro,bearish,macro-policy,Treasury Secretary warns shutdown impact worsening
+11238,2,macro,bullish,macro-policy,Senate leader signals shutdown deal near
+11239,1,BTC,bullish,other,"price milestone, no new info"
+11241,3,macro,bullish,macro-policy,confirmed Senate deal to end government shutdown
+11242,1,macro,bullish,macro-policy,president signals shutdown ending soon
+11243,2,macro,bullish,macro-policy,Senate formally advances bill to end shutdown
+11244,1,crypto-broad,bearish,regulation,central bank caps individual stablecoin holdings
+11245,1,BTC,bullish,whale-flows,routine incremental Strategy purchase
+11246,1,macro,bullish,geopolitics,China signals continued cooperation with US
+11247,0,crypto-broad,neutral,company-news,unrelated stablecoin-issuer ad spend
+11249,0,macro,bullish,opinion,repeat tariff-revenue debt-paydown rhetoric
+11250,2,BTC,bullish,whale-flows,notable political figure's firm large BTC purchase
+11252,2,macro,bullish,macro-policy,Fed governor calls for large 50bps December cut
+11253,2,macro,bullish,macro-policy,odds of shutdown ending this week rise sharply
+11255,2,crypto-broad,bullish,regulation,formal guidance clears path for crypto ETP staking rewards
+11256,2,macro,bullish,geopolitics,president signals imminent India trade deal
+11257,1,macro,bearish,geopolitics,president warns of tariff-ruling economic disaster
+11258,1,macro,bullish,opinion,president predicts inflation dropping to 1.5%
+11259,2,equities,bullish,other,large single-day equity market gain
+11260,2,crypto-broad,bullish,regulation,Senate committee releases formal market-structure draft bill
+11262,2,macro,bullish,macro-policy,Senate on track to pass shutdown-ending bill
+11263,2,macro,bullish,other,large single-day gold market-cap gain
+11265,3,macro,bullish,macro-policy,confirmed Senate passage to reopen government
+11266,0,macro,bullish,opinion,vague tariff-benefit rhetoric
+11267,2,crypto-broad,bullish,adoption,first chartered US bank launches crypto trading
+11268,1,macro,bullish,geopolitics,China signals cooperative posture on supply chains
+11269,0,crypto-broad,bullish,opinion,"vague progress claim, no new info"
+11270,0,equities,neutral,opinion,pundit vague market comment
+11271,0,crypto-broad,bullish,opinion,"company rhetoric, no new info"
+11272,1,macro,bullish,macro-policy,president predicts House will vote to end shutdown
+11273,0,equities,neutral,opinion,pundit vague blockchain comment
+11274,1,crypto-broad,bullish,opinion,ex-exec bullish ETH infrastructure claim
+11275,2,crypto-broad,bullish,adoption,major bank launches institutional blockchain deposit token
+11276,1,macro,neutral,geopolitics,"teased tariff news, no detail yet"
+11277,1,macro,bullish,macro-policy,"teased large tax refunds, no detail yet"
+11278,1,macro,bullish,geopolitics,China signals room for trade cooperation
+11279,1,BTC,bullish,adoption,UK political leader pledges national BTC reserve
+11281,1,crypto-broad,bearish,whale-flows,moderate liquidation cascade
+11282,2,crypto-broad,bullish,regulation,SEC unveils new crypto classification framework
+11283,1,macro,bullish,other,gold surpasses key level
+11285,2,crypto-broad,bullish,etf,"formal listing notice, procedural step toward XRP ETF launch"
+11286,1,macro,neutral,geopolitics,"notable business-government dinner, no concrete outcome yet"
+11287,2,macro,bullish,macro-policy,House passes bill to end government shutdown
+11288,3,macro,bullish,macro-policy,confirmed shutdown formally ends
+11289,1,crypto-broad,bullish,adoption,sports league partners with prediction market
+11291,2,BTC,bullish,adoption,"central bank buys BTC, notable precedent despite small size"
+11293,3,crypto-broad,bullish,etf,first spot XRP ETF begins US trading
+11294,0,BTC,bullish,opinion,"long-horizon speculative prediction, not tradeable"
+11295,2,BTC,bearish,other,major psychological $100k level breached
+11297,1,BTC,bearish,other,"price milestone, no new info"
+11299,2,crypto-broad,bearish,whale-flows,large long-liquidation cascade
+11300,2,BTC,bearish,other,further breakdown during selloff
+11302,3,crypto-broad,bearish,whale-flows,"fast large liquidation, $300M in 10 minutes"
+11303,0,BTC,neutral,opinion,rhetorical seasonal quote
+11305,2,BTC,bullish,whale-flows,major holder denies rumor of selling
+11307,2,BTC,bearish,other,further breakdown during selloff
+11309,0,crypto-broad,neutral,opinion,vague volatility-warning rhetoric
+11310,1,BTC,bullish,whale-flows,confirms continued buying through the week
+11312,2,macro,bullish,geopolitics,targeted tariff removal to lower grocery costs
+11313,0,other,neutral,opinion,unrelated robotics utopian claim
+11315,0,BTC,bullish,opinion,"vague hint, no new info"
+11316,2,macro,bullish,geopolitics,US targets finalizing China trade deal by Thanksgiving
+11317,1,crypto-broad,bearish,whale-flows,moderate long liquidation
+11318,2,BTC,bearish,other,further breakdown during selloff
+11319,3,BTC,bullish,whale-flows,"massive buy during a crash ($835M), contrarian signal"
+11320,2,crypto-broad,bearish,regulation,proposed expanded IRS foreign-crypto tax access
+11321,2,BTC,bearish,other,further breakdown during selloff
+11323,2,crypto-broad,bearish,other,psychological level broken during crash
+11325,1,crypto-broad,bearish,whale-flows,moderate long liquidation
+11326,1,macro,bullish,macro-policy,confirmed timeline for tariff-dividend payment
+11327,2,BTC,bullish,whale-flows,"sovereign buys BTC during crash, contrarian signal"
+11329,2,BTC,bearish,other,further breakdown during selloff
+11330,3,BTC,bearish,other,major psychological $90k level breached during crash
+11332,0,BTC,bullish,opinion,"confident buy-the-dip claim, no new info"
+11334,0,other,neutral,other,unrelated infrastructure outage
+11335,0,other,neutral,company-news,unrelated AI model launch
+11336,1,crypto-broad,bullish,regulation,regulator clarifies bank crypto fee-payment allowance
+11337,1,macro,bullish,geopolitics,large foreign sovereign investment pledge
+11338,1,macro,bullish,opinion,repeat Powell-replacement rhetoric
+11340,1,macro,neutral,macro-policy,president signals decided but undisclosed Powell successor
+11341,1,crypto-broad,bullish,regulation,CEO signals possible December legislative passage
+11342,0,other,neutral,other,unrelated celebrity photo-op
+11343,1,macro,neutral,macro-policy,timeline set for Fed chair decision
+11344,0,BTC,neutral,opinion,conspiracy-flavored pundit remark
+11347,0,equities,neutral,other,equities-only price milestone
+11349,1,crypto-broad,bullish,company-news,major exchange files for US IPO
+11350,0,other,neutral,opinion,unrelated AI/robotics utopian claim
+11351,0,BTC,bearish,opinion,"pundit dismissive claim, no new info"
+11353,1,crypto-broad,bearish,whale-flows,moderate liquidation cascade
+11354,0,macro,bullish,opinion,vague rate-level complaint
+11355,0,other,neutral,opinion,unrelated personal remark
+11356,2,BTC,bullish,whale-flows,sovereign wealth fund triples BTC ETF stake
+11357,2,crypto-broad,bullish,etf,major asset manager files new staked ETH trust
+11358,0,equities,bullish,company-news,unrelated equities earnings beat
+11359,1,BTC,bullish,opinion,prominent investor discloses BTC allocation
+11361,2,macro,bullish,macro-policy,stronger-than-expected jobs report
+11362,1,BTC,bullish,regulation,proposed bill for BTC tax payments and reserve funding
+11363,2,macro,bearish,macro-policy,major bank reverses December rate-cut expectation
+11364,1,BTC,bearish,other,"price milestone, no new info"
+11366,1,crypto-broad,bearish,other,"price milestone, no new info"
+11368,1,crypto-broad,bearish,whale-flows,moderate liquidation cascade
+11369,2,BTC,bearish,other,further breakdown during selloff
+11370,2,macro,bullish,macro-policy,White House adviser signals data supports December cut
+11371,3,crypto-broad,bearish,whale-flows,large combined equity/crypto selloff day
+11373,0,other,neutral,other,unrelated platform feature rollout
+11375,2,BTC,bearish,other,further breakdown during selloff
+11376,2,crypto-broad,bearish,whale-flows,fast liquidation cascade in 15 minutes
+11377,3,crypto-broad,bearish,whale-flows,"very large hourly liquidation, $1B"
+11378,0,equities,neutral,opinion,unrelated hyperbolic earnings remark
+11379,0,equities,bullish,opinion,pundit vague rally call
+11380,1,equities,bullish,geopolitics,administration considers easing chip export restrictions
+11383,0,BTC,bullish,opinion,rhetorical buy-the-dip quote
+11384,0,BTC,neutral,other,historical trivia
+11385,0,other,neutral,other,unrelated platform feature rollout
+11386,1,macro,bullish,macro-policy,official downplays recession risk
+11387,2,macro,bullish,macro-policy,Fed governor advocates December rate cut
+11388,1,crypto-broad,bearish,opinion,senator criticizes major bank's crypto stance
+11390,1,macro,bullish,geopolitics,confirmed diplomatic state-visit exchange planned
+11391,1,BTC,bullish,adoption,political family showcases BTC mining facility
+11392,1,BTC,bearish,other,"price milestone, no new info"
+11394,1,BTC,neutral,other,"comparative price context, no new info"
+11396,2,macro,bullish,macro-policy,Fed governor calls for large rate cuts
+11397,3,crypto-broad,bullish,regulation,formal CFTC approval to operate as retail exchange
+11399,1,crypto-broad,bullish,regulation,Russia expands regulated crypto-linked investment options
+11401,0,BTC,bullish,regulation,"repeat proposal, no new info"
+11402,2,macro,bullish,macro-policy,clear frontrunner named for next Fed chair
+11404,2,BTC,bullish,adoption,first US state actually purchases BTC for reserve
+11406,1,crypto-broad,bullish,opinion,major bank frames crypto as tradable macro asset
+11407,0,macro,bullish,opinion,vague record-refunds rhetoric
+11408,1,equities,bullish,opinion,bank issues bullish S&P 500 2026 target
+11410,1,BTC,bullish,other,"price milestone, no new info"
+11411,0,BTC,bullish,opinion,"rhetorical quote, no new info"
+11413,1,BTC,neutral,other,stablecoin issuer diversification stat
+11415,2,macro,bullish,macro-policy,major bank expects December rate cut
+11417,1,BTC,bullish,other,"price milestone, no new info"
+11418,0,BTC,neutral,other,historical price trivia
+11419,1,macro,bullish,macro-policy,speculative full income-tax elimination remark
+11420,2,crypto-broad,ambiguous,whale-flows,"large options expiry, can drive volatility"
+11421,1,BTC,bullish,other,"price milestone, no new info"
+11423,0,BTC,bullish,opinion,seasonal rhetorical quote
+11425,1,macro,bullish,other,silver record high
+11427,0,macro,bullish,opinion,vague market-optimism rhetoric
+11428,2,macro,bullish,macro-policy,odds of December rate cut rise sharply
+11430,1,crypto-broad,bearish,regulation,UK plans crypto tax-avoidance crackdown
+11431,0,equities,bullish,other,unrelated retail sales record
+11432,1,BTC,bullish,etf,asset manager confirms BTC ETF as top revenue driver
+11434,0,BTC,neutral,other,historical trivia
+11435,0,BTC,bullish,opinion,"vague hint, no new info"
+11436,1,macro,neutral,macro-policy,official signals willingness to serve as Fed chair
+11437,0,BTC,bearish,opinion,"pundit dismissive claim, no new info"
+11439,0,BTC,bullish,opinion,"rhetorical quote, no new info"
+11440,0,other,neutral,opinion,unrelated AI/labor utopian claim
+11441,1,crypto-broad,bearish,whale-flows,moderate long liquidation
+11442,1,BTC,bearish,other,"price milestone, no new info"
+11443,2,crypto-broad,bearish,other,market-wide cap milestone breached during selloff
+11444,1,macro,bullish,other,gold surpasses key level
+11446,1,BTC,bearish,other,"price milestone, no new info"
+11447,3,crypto-broad,bearish,whale-flows,"massive fast market-cap loss, $140B in 4h"
+11448,2,BTC,bearish,other,further breakdown during selloff
+11449,2,BTC,bearish,other,further breakdown during selloff
+11451,1,BTC,bullish,whale-flows,routine incremental Strategy purchase
+11452,1,BTC,bullish,whale-flows,"holdings update, no new signal"
+11453,1,crypto-broad,bearish,other,"price milestone, no new info"
+11455,2,crypto-broad,bearish,whale-flows,large 24h long-liquidation total
+11456,2,macro,bullish,macro-policy,odds of specific Fed chair pick rise sharply
+11458,0,BTC,bullish,opinion,"speculative price prediction, not new info"
+11459,1,macro,bullish,macro-policy,gas prices fall to multi-year low
+11460,2,BTC,bearish,other,"sentiment index at extreme fear, contrarian signal"
+11461,1,crypto-broad,neutral,regulation,anticipated major SEC speech
+11462,2,crypto-broad,bullish,adoption,huge asset manager opens crypto ETF access to clients
+11463,0,none,neutral,other,"meme-style comparison post, no info"
+11465,1,crypto-broad,bullish,regulation,Fed official confirms stablecoin-rule work underway
+11466,0,equities,neutral,company-news,unrelated executive departure
+11467,2,BTC,bullish,etf,huge distribution platform lists BTC ETF for trading
+11468,2,macro,bullish,macro-policy,Fed formally ends quantitative tightening
+11469,1,crypto-broad,bullish,regulation,SEC chair confirms January timeline for exemption
+11470,0,crypto-broad,bullish,opinion,"speculative prediction, no new info"
+11471,2,BTC,bullish,opinion,major bank issues formal BTC allocation recommendation
+11473,1,BTC,bullish,other,"price milestone, no new info"
+11474,1,crypto-broad,bullish,other,"price milestone, no new info"
+11475,1,BTC,bullish,other,"price milestone, no new info"
+11476,0,equities,neutral,company-news,unrelated AI-chip product launch
+11477,1,crypto-broad,bullish,opinion,asset-manager CEO tokenization comparison
+11478,2,BTC,bullish,etf,strong opening ETF trading volume
+11480,1,macro,bullish,opinion,repeat rate-cut demand citing bank CEO agreement
+11483,0,macro,bullish,opinion,vague future tax-elimination remark
+11484,1,macro,bullish,opinion,repeat Powell insult
+11485,2,BTC,bearish,whale-flows,major holder acknowledges hypothetical forced-selling scenario
+11486,2,BTC,bullish,etf,strong daily ETF trading volume
+11487,2,crypto-broad,bullish,whale-flows,large single-day market-cap inflow
+11488,1,BTC,bullish,other,"price milestone, no new info"
+11489,2,crypto-broad,bullish,regulation,UK formally recognizes crypto as legal property
+11490,0,BTC,bullish,opinion,"rhetorical quote, no new info"
+11492,0,macro,neutral,opinion,"semantic tariff-tax opinion, no new info"
+11493,2,crypto-broad,bullish,regulation,prediction market rolls out US app
+11494,1,crypto-broad,bullish,opinion,asset manager links debt to crypto adoption
+11495,1,crypto-broad,bullish,opinion,influential skeptic reverses stance on crypto
+11496,2,crypto-broad,bullish,adoption,major brokerage confirms crypto trading launch plan
+11499,1,crypto-broad,bullish,opinion,"CEO notes bank pilots, no new info"
+11500,0,crypto-broad,bullish,opinion,"CEO opinion, no new info"
+11501,0,equities,neutral,opinion,unrelated AI-industry commentary
+11502,0,other,neutral,other,unrelated celebrity business launch
+11503,1,BTC,bullish,other,"price milestone, no new info"
+11505,1,BTC,bullish,whale-flows,moderate incremental corporate BTC buy
+11507,1,macro,ambiguous,geopolitics,China state banks reportedly buying dollars
+11509,2,crypto-broad,bullish,adoption,major Russian bank plans crypto trading launch
+11511,0,BTC,bullish,other,"pundit demonstration, novelty"
+11512,2,BTC,bullish,opinion,asset-manager CEO notes sovereign fund BTC buying
+11513,3,crypto-broad,bullish,regulation,CFTC approves first US-regulated spot crypto trading
+11514,1,crypto-broad,bullish,regulation,"regulator rhetoric on crypto leadership, no detail"
+11515,1,crypto-broad,bullish,adoption,wallet integrates prediction market
+11516,0,macro,bullish,opinion,vague optimistic 2026 rhetoric
+11518,0,crypto-broad,bullish,opinion,"CEO opinion, no new info"
+11519,0,BTC,bullish,opinion,"rhetorical quote, no new info"
+11520,1,crypto-broad,bearish,whale-flows,moderate long liquidation
+11521,2,macro,bullish,macro-policy,official signals likely rate cut next week
+11522,0,crypto-broad,neutral,other,novelty meeting between figures
+11523,1,crypto-broad,bullish,opinion,prominent analyst calls market bottom
+11524,0,other,neutral,regulation,unrelated EU fine on X
+11526,1,macro,bullish,macro-policy,official signals cautious cutting cycle starting
+11527,2,BTC,bearish,other,significant round-number level breached
+11528,1,crypto-broad,bearish,whale-flows,moderate liquidation cascade
+11529,0,other,neutral,other,unrelated AI-platform announcement
+11530,0,crypto-broad,bearish,opinion,pundit dismissive altcoin call
+11533,0,other,neutral,other,unrelated political sparring
+11535,1,crypto-broad,bullish,adoption,major French bank adds crypto trading for customers
+11536,0,BTC,neutral,other,historical trivia
+11537,0,other,neutral,other,unrelated platform moderation action
+11539,0,BTC,neutral,other,historical trivia
+11540,1,macro,bullish,macro-policy,official projects solid year-end GDP growth
+11541,0,other,neutral,other,unrelated platform download stat
+11543,0,macro,bearish,opinion,bank CEO critical remark on Europe
+11545,1,macro,ambiguous,geopolitics,China posts record trade surplus despite trade war
+11547,1,BTC,bullish,adoption,major holder courting institutional/sovereign interest
+11548,3,BTC,bullish,whale-flows,massive Strategy purchase ($962M)
+11550,1,macro,bullish,macro-policy,teased major positive economic announcement
+11552,2,crypto-broad,bullish,whale-flows,large corporate ETH treasury purchase ($435M)
+11554,1,crypto-broad,bullish,regulation,Argentina to allow bank crypto services in 2026
+11555,1,macro,neutral,macro-policy,clarifies delayed data release schedule
+11556,1,crypto-broad,bullish,regulation,bank CEOs to discuss market-structure bill with Senators
+11557,2,macro,bullish,macro-policy,major bank expects rate cut this week
+11559,2,equities,bullish,geopolitics,significant chip-export policy shift toward China
+11560,1,macro,bullish,geopolitics,president optimistic after call with China's leader
+11561,1,macro,bearish,geopolitics,president criticizes EU after fine on X
+11562,2,crypto-broad,bullish,regulation,CFTC launches tokenized-collateral pilot program
+11563,2,macro,ambiguous,geopolitics,unusual revenue-share arrangement on chip exports to China
+11564,0,equities,neutral,opinion,unrelated stock-holding advice
+11566,1,macro,bullish,macro-policy,central bank notes tariff resilience
+11567,2,macro,bullish,macro-policy,president sets rate-cut litmus test for next Fed chair
+11568,2,BTC,bullish,adoption,major US banks confirmed issuing credit against BTC
+11572,2,BTC,bullish,adoption,first major US bank to offer direct BTC trading
+11573,1,macro,bullish,macro-policy,official signals room for more cuts
+11574,1,macro,bullish,geopolitics,president open to reducing some tariffs
+11575,0,crypto-broad,bullish,opinion,"speculative supercycle claim, no new info"
+11576,1,BTC,bullish,other,"price milestone, no new info"
+11577,1,BTC,bullish,other,"price milestone, no new info"
+11578,1,macro,bullish,other,silver record high
+11580,1,crypto-broad,bullish,whale-flows,moderate short liquidation
+11581,1,crypto-broad,bullish,other,"price milestone, no new info"
+11583,1,BTC,bullish,other,"price milestone, no new info"
+11584,2,macro,bullish,macro-policy,near-certain odds of rate cut tomorrow
+11586,0,BTC,bullish,opinion,"exec buy-more rhetoric, no new info"
+11587,2,crypto-broad,bullish,regulation,national regulator confirms banks can be crypto intermediaries
+11588,1,other,bullish,company-news,unrelated but market-moving mega-IPO news
+11590,2,crypto-broad,bullish,whale-flows,large single-day market-cap inflow
+11591,0,macro,bullish,opinion,vague self-praise rhetoric
+11592,0,equities,neutral,company-news,unrelated foreign investment announcement
+11594,2,BTC,bullish,whale-flows,large planned capital raise for BTC purchases
+11596,1,BTC,bullish,whale-flows,moderate incremental corporate BTC buy
+11598,1,macro,bullish,opinion,bank issues bullish gold price target
+11600,1,crypto-broad,bullish,other,"price milestone, no new info"
+11601,3,macro,bullish,macro-policy,"actual FOMC rate-cut decision, 25bps"
+11602,2,macro,bullish,macro-policy,"Fed liquidity operation, treasury bill purchases"
+11603,1,macro,neutral,macro-policy,Fed chair keeps future path open-ended
+11604,1,macro,bearish,macro-policy,Fed notes job-gains data overstated
+11605,2,macro,ambiguous,macro-policy,"Fed chair reaffirms inflation target, blames tariffs"
+11606,0,macro,bullish,opinion,vague market-optimism rhetoric
+11608,1,other,bullish,company-news,unrelated but market-moving mega-IPO confirmation
+11610,1,crypto-broad,bullish,adoption,exchange enables permissionless token trading via DEX
+11611,1,crypto-broad,bullish,adoption,fintech partnership for zero-fee crypto purchases
+11612,0,equities,neutral,company-news,unrelated AI investment
+11614,2,macro,bullish,macro-policy,trade deficit falls to lowest level in years
+11615,0,other,neutral,regulation,unrelated gambling-tax proposal
+11617,1,crypto-broad,bullish,regulation,CFTC withdraws outdated crypto guidance
+11618,2,crypto-broad,bearish,regulation,major crypto fraud sentencing concludes
+11619,0,crypto-broad,bullish,opinion,"SEC chair rhetoric, no new action"
+11621,2,crypto-broad,bullish,regulation,SEC approves DTCC plan to tokenize traditional securities
+11622,0,macro,bullish,opinion,vague tariff-benefit rhetoric
+11623,1,crypto-broad,bullish,adoption,major platform enables stablecoin creator payouts
+11624,2,crypto-broad,ambiguous,whale-flows,"large options expiry, can drive volatility"
+11625,0,BTC,neutral,other,historical trivia
+11627,1,macro,bearish,macro-policy,Fed official attributes inflation mainly to tariffs
+11628,2,macro,bullish,macro-policy,Fed official projects above-median 2026 rate cuts
+11629,1,crypto-broad,bullish,adoption,major brokerage allows stablecoin account funding
+11632,1,macro,bullish,other,gold surpasses key level
+11633,1,crypto-broad,bearish,whale-flows,moderate liquidation cascade
+11634,3,crypto-broad,bullish,regulation,multiple major crypto firms approved as national trust banks
+11635,1,BTC,bearish,opinion,major asset manager dismisses BTC as speculative
+11637,0,other,neutral,other,unrelated visa-fee lawsuit
+11638,2,crypto-broad,bearish,regulation,market prices near-zero odds of near-term bill passage
+11640,0,crypto-broad,neutral,other,unrelated sports-club acquisition proposal
+11642,0,macro,bullish,opinion,vague rate-level demand
+11643,1,crypto-broad,bullish,regulation,SEC publishes retail crypto-custody educational guidance
+11644,0,BTC,bullish,opinion,"vague hint, no new info"
+11645,0,crypto-broad,bullish,opinion,"CEO opinion, no new info"
+11647,1,macro,bullish,geopolitics,president reaffirms good relationship with Xi
+11649,0,macro,bullish,opinion,vague inflation-neutralized rhetoric
+11650,1,crypto-broad,bearish,regulation,UK plans new crypto-market policing rules
+11651,2,crypto-broad,bullish,adoption,major bank launches first tokenized money-market fund on Ethereum
+11653,1,crypto-broad,bullish,adoption,major payments network launches stablecoin advisory practice
+11656,3,BTC,bullish,whale-flows,another massive Strategy purchase ($980M)
+11658,1,crypto-broad,bearish,whale-flows,moderate liquidation cascade
+11659,2,BTC,bearish,other,"further breakdown, significant level breached"
+11660,1,crypto-broad,bullish,opinion,bank predicts multi-year onchain migration
+11661,2,BTC,bearish,other,"further breakdown, significant level breached"
+11662,2,macro,bullish,macro-policy,market-implied frontrunner shifts for Fed chair
+11664,0,crypto-broad,bullish,opinion,"SEC chair rhetoric, no new action"
+11665,0,other,neutral,other,unrelated personal wealth milestone
+11666,1,equities,bullish,regulation,fintech applies for US bank charter
+11667,1,equities,bullish,other,exchange plans extended trading hours
+11668,0,macro,neutral,regulation,unrelated Congress trading-ban proposal
+11670,1,macro,bullish,geopolitics,official confirms China meeting trade commitments
+11671,3,macro,bearish,macro-policy,"significant labor-market deterioration, multi-year high"
+11672,0,macro,bullish,opinion,vague tax-refund rhetoric
+11673,1,macro,bullish,geopolitics,official denies US falling behind China
+11674,0,BTC,bullish,opinion,"rhetorical quantum-security claim, no new info"
+11676,2,macro,neutral,macro-policy,specific Fed-chair candidate interview confirmed
+11677,0,crypto-broad,bullish,opinion,"CEO opinion, no new info"
+11678,1,crypto-broad,bullish,adoption,BTC miner diversifies into AI data-center leasing
+11680,2,crypto-broad,bullish,regulation,Fed withdraws restriction on uninsured-bank crypto activity
+11681,2,crypto-broad,bullish,adoption,major exchange launches equities trading
+11682,0,macro,bullish,opinion,vague record-refunds rhetoric
+11683,0,macro,bullish,opinion,vague economic-boom rhetoric
+11684,1,macro,bullish,macro-policy,official supports immediate rate cut
+11685,3,macro,bullish,macro-policy,cooler-than-expected CPI print
+11686,1,crypto-broad,bullish,whale-flows,modest short liquidation
+11687,0,BTC,bullish,other,retrospective irony trivia
+11689,2,crypto-broad,bearish,whale-flows,large long-liquidation cascade
+11690,2,BTC,bearish,other,"further breakdown, significant level breached"
+11691,0,other,neutral,opinion,unrelated AI/robotics utopian claim
+11692,1,crypto-broad,bullish,regulation,administration touts near-term legislative progress
+11693,2,crypto-broad,bullish,regulation,pro-crypto official confirmed to head CFTC
+11694,2,crypto-broad,ambiguous,whale-flows,"large options expiry, can drive volatility"
+11695,2,macro,bullish,geopolitics,high odds of major tariff ruling against administration
+11697,0,equities,neutral,regulation,unrelated executive pay-package ruling
+11699,0,other,neutral,other,unrelated personal wealth milestone
+11700,1,crypto-broad,bullish,regulation,proposed small-transaction stablecoin tax exemption
+11701,0,BTC,bullish,opinion,"vague hint, no new info"
+11702,0,other,neutral,other,unrelated diplomatic AI meeting
+11703,1,macro,bullish,other,gold record high
+11705,1,macro,bullish,other,silver record high
+11707,1,macro,bullish,other,gold record high
+11709,1,BTC,bullish,other,"price milestone, no new info"
+11711,2,crypto-broad,bullish,adoption,major bank considers institutional crypto trading
+11712,1,BTC,bullish,opinion,asset manager touts BTC as top investment
+11714,2,macro,neutral,macro-policy,timeline set for new Fed chair announcement
+11716,1,BTC,bullish,whale-flows,moderate corporate BTC purchase
+11718,2,crypto-broad,bullish,regulation,regulator signals bill nearing presidential desk
+11719,0,equities,bearish,other,unrelated M&A-odds shift
+11721,0,equities,bullish,opinion,unrelated AI-growth commentary
+11723,0,other,neutral,other,unrelated defense-AI partnership
+11725,1,crypto-broad,bullish,regulation,pro-crypto CFTC chair formally installed
+11726,1,macro,bullish,other,gold record high
+11727,1,crypto-broad,bullish,regulation,Russia considers expanding retail crypto access
+11728,1,macro,bullish,other,silver record high
+11730,3,macro,bullish,macro-policy,strong Q3 GDP beat
+11731,0,macro,bullish,opinion,vague tariff-benefit rhetoric
+11732,1,crypto-broad,bullish,adoption,exchange enables SOL transfers via Base network
+11734,0,crypto-broad,bullish,opinion,vague optimistic rhetoric
+11735,0,macro,neutral,opinion,vague inflation rhetoric
+11736,1,macro,bearish,macro-policy,signals politicized Fed-chair selection criteria
+11737,1,macro,bullish,other,silver overtakes Apple by market cap
+11739,1,equities,bullish,other,"equities record close, first time above level"
+11741,1,macro,bullish,other,gold record high
+11743,1,equities,bullish,other,equities record close
+11745,0,BTC,bullish,opinion,"retrospective FUD-buying narrative, no new info"
+11747,1,macro,bullish,other,silver record high
+11749,0,macro,bearish,opinion,"pundit collapse prediction, no new info"
+11751,0,BTC,bullish,opinion,"rhetorical quote, no new info"
+11753,0,crypto-broad,bullish,other,promotional token giveaway
+11754,0,macro,bullish,opinion,vague tariff-benefit rhetoric
+11755,0,BTC,bullish,other,promotional token giveaway
+11757,0,BTC,bullish,opinion,"vague hint, no new info"
+11758,1,macro,bullish,other,silver record high
+11760,1,macro,bullish,other,silver overtakes Nvidia by market cap
+11762,1,BTC,bullish,other,"price milestone, no new info"
+11763,1,BTC,neutral,other,known scheduled halving countdown
+11764,1,BTC,bullish,whale-flows,routine incremental Strategy purchase
+11765,0,other,neutral,other,unrelated diplomatic AI call
+11767,0,macro,bearish,opinion,unrelated federal-fraud claim
+11769,1,macro,bullish,opinion,repeat Powell insult
+11771,0,crypto-broad,bullish,opinion,"vague reassurance, no new info"
+11773,2,BTC,bullish,whale-flows,large corporate BTC purchase ($375M)
+11775,2,macro,bearish,macro-policy,high odds Fed holds rates steady in January
+11777,0,equities,neutral,company-news,unrelated AI-firm acquisition talks
+11778,1,macro,bearish,geopolitics,Mexico raises tariffs on Chinese imports
+11780,1,macro,bearish,geopolitics,Mexico raises tariffs on Indian imports
+11782,0,other,neutral,other,unrelated platform creator-payout policy
+11787,0,BTC,bullish,opinion,"congressman rhetoric, no new info"
+11789,0,BTC,neutral,other,historical price trivia
+11790,1,equities,ambiguous,company-news,"iconic investor's leadership change, broad sentiment relevance"
+11792,1,equities,bullish,other,annual equity market-cap gain summary
+11793,2,BTC,bullish,whale-flows,large quarterly corporate BTC purchase ($779M)
+11795,2,crypto-broad,bearish,other,annual crypto market-cap decline summary
+11796,0,BTC,neutral,other,"calendar novelty, no info"
+11797,0,BTC,bullish,other,promotional token giveaway
+11799,0,other,neutral,opinion,unrelated personal tax anecdote
+11801,0,BTC,bullish,opinion,"vague all-in rhetoric, no new info"
+11803,1,crypto-broad,bearish,regulation,UK crackdown on crypto tax evasion begins
+11804,2,crypto-broad,bearish,geopolitics,sanctioned state reportedly using crypto for arms trade
+11806,1,crypto-broad,bullish,regulation,new country legalizes crypto mining and exchanges
+11807,0,macro,bullish,opinion,vague optimistic rhetoric
+11809,1,crypto-broad,ambiguous,whale-flows,"moderate options expiry, can drive volatility"
+11810,0,macro,bullish,opinion,vague tariff-benefit rhetoric
+11811,0,crypto-broad,bullish,regulation,"repeat senator rhetoric, no new info"
+11813,0,other,neutral,other,unrelated wealth-prediction market odds
+11815,1,crypto-broad,bullish,whale-flows,moderate short liquidation
+11816,1,macro,bullish,macro-policy,gas prices at multi-year low
+11817,1,crypto-broad,bullish,regulation,anti-crypto SEC commissioner departs
+11818,1,macro,bearish,macro-policy,"debt-level milestone, ongoing trend"
+11820,1,crypto-broad,bullish,other,"market-cap ranking milestone, no new info"
+11822,0,other,neutral,other,unrelated platform payout policy
+11824,0,BTC,neutral,other,historical anniversary trivia
+11826,2,macro,ambiguous,geopolitics,"major geopolitical capture event, oil-market implications"
+11828,2,macro,bearish,geopolitics,signals major shift in global oil supply after capture
+11829,1,macro,ambiguous,geopolitics,planned US oil investment in Venezuela
+11830,1,BTC,bullish,other,"price milestone, no new info"
+11831,0,crypto-broad,bullish,opinion,"generic opinion, no new info"
+11833,0,other,neutral,other,unrelated humanitarian internet gesture
+11836,0,BTC,bullish,opinion,"vague hint, no new info"
+11837,2,macro,bearish,geopolitics,oil prices react to major supply-side geopolitical event
+11838,1,BTC,bullish,other,"price milestone, no new info"
+11839,1,macro,bearish,geopolitics,reaffirms tariff threat tied to Russian oil purchases
+11841,1,macro,bearish,geopolitics,president demands broader access to Venezuelan resources
+11842,1,macro,bearish,geopolitics,confirms US companies extracting Venezuelan oil
+11843,1,BTC,bullish,other,"price milestone, no new info"
+11844,1,crypto-broad,bullish,other,"price milestone, no new info"
+11846,1,macro,bearish,geopolitics,foreign equities react to oil-access disruption fears
+11848,2,BTC,bullish,opinion,major bank confirms formal BTC allocation recommendation
+11850,1,crypto-broad,bullish,regulation,foreign finance official supports crypto integration
+11851,1,BTC,bullish,whale-flows,routine incremental Strategy purchase
+11852,1,macro,bullish,macro-policy,cumulative tariff-revenue total disclosed
+11853,1,crypto-broad,bullish,adoption,prediction market expands into real-estate markets
+11854,1,BTC,bullish,other,"price milestone, no new info"
+11856,2,macro,bullish,geopolitics,oil equities rally on Venezuela capture news
+11858,0,BTC,bullish,opinion,"exec self-promotion, no new info"
+11860,1,macro,neutral,geopolitics,planned meeting on Venezuelan energy sector
+11861,2,BTC,ambiguous,hack-exploit,potential large government seizure of sovereign crypto reserves
+11862,1,BTC,bullish,whale-flows,moderate short liquidation
+11863,0,macro,neutral,opinion,unrelated Congress trading-ban proposal
+11865,1,crypto-broad,bullish,other,"notable single-day altcoin rally, market-cap milestone"
+11866,2,crypto-broad,bullish,whale-flows,large cumulative market-cap inflow
+11867,0,macro,bullish,opinion,vague record-highs rhetoric
+11869,2,BTC,bullish,etf,major bank files for its own BTC ETF
+11871,1,crypto-broad,bullish,regulation,"official lobbying update, no new info"
+11872,1,crypto-broad,bearish,whale-flows,moderate long liquidation
+11873,1,crypto-broad,bullish,opinion,asset manager notes institutional warming to crypto
+11874,1,BTC,bearish,other,"price milestone, no new info"
+11875,1,macro,bullish,geopolitics,talks begin on Venezuelan oil exports to US
+11876,1,macro,bullish,macro-policy,gas prices fall to multi-year low
+11878,2,macro,bullish,geopolitics,high odds of imminent tariff ruling against administration
+11880,1,equities,bullish,other,equities record close
+11882,2,crypto-broad,bullish,regulation,index provider preserves crypto-treasury company inclusion
+11883,2,macro,bearish,geopolitics,large potential tariff-refund liability looms
+11885,1,BTC,bullish,other,"confirms index inclusion, follow-up to prior news"
+11887,0,crypto-broad,bullish,other,"media hype framing, no new info"
+11888,1,macro,bullish,other,gold surpasses key level
+11890,2,macro,bearish,geopolitics,confirms major oil-transfer terms after capture
+11891,2,crypto-broad,bullish,etf,major bank files for its own ETH ETF
+11893,1,BTC,bearish,other,"price milestone, no new info"
+11894,1,BTC,bullish,opinion,"media reinforcement of prior ETF filing, no new info"
+11895,2,crypto-broad,bullish,adoption,major financial media partnership for prediction platform
+11898,2,equities,bearish,geopolitics,"China orders halt on chip purchases, retaliatory move"
+11901,1,crypto-broad,bullish,regulation,repeat senator rhetoric on bill progress
+11902,1,crypto-broad,bullish,adoption,confirmation of first state-issued stablecoin launch
+11904,1,equities,bearish,regulation,proposed ban on institutional single-family home buying
+11905,2,equities,bearish,other,significant single-stock reaction to policy announcement
+11907,2,crypto-broad,ambiguous,regulation,political family's crypto firm applies for bank license
+11909,1,macro,neutral,regulation,House plans vote on Congress trading ban
+11910,2,BTC,bearish,other,"further breakdown, significant level breached"
+11911,1,crypto-broad,bearish,whale-flows,moderate long liquidation
+11912,1,macro,bullish,macro-policy,official calls for further rate cuts
+11913,2,macro,bullish,macro-policy,trade deficit falls to lowest level since 2009
+11914,1,equities,bearish,opinion,notable pundit turns cautious on equities broadly
+11915,2,macro,bearish,geopolitics,major foreign market selloff tied to tariff fears
+11917,0,equities,neutral,other,equities-only ranking milestone
+11919,1,crypto-broad,bullish,adoption,major bank plans crypto wallet launch this year
+11920,0,other,neutral,other,unrelated territorial/political proposal
+11922,0,macro,bullish,opinion,vague tax-refund rhetoric
+11923,2,macro,bullish,macro-policy,large targeted market intervention to lower mortgage rates
+11924,1,other,bearish,regulation,"unrelated platform-ban consideration, notable"

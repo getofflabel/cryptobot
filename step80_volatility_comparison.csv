@@ -1,0 +1,3 @@
+tf,everywhere_indicator,everywhere_tr_exp,everywhere_tr_n,everywhere_va_exp,everywhere_va_n,home_indicator,home_tr_exp,home_tr_n,home_va_exp,home_va_n
+1h,Bollinger breakout (context-free),4.2692,1256,-1.8498,407,"BB-inside-KC squeeze release (squeeze->expansion, home regime by construction)",5.1173,804,0.1924,263
+15m,Bollinger breakout (context-free),-1.9689,4858,-3.5299,1630,"BB-inside-KC squeeze release (squeeze->expansion, home regime by construction)",-2.6452,3074,-3.5299,1085

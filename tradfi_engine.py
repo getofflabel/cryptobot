@@ -6,14 +6,30 @@ multiple trades happening right now, not all crypto").
 
 WHAT THIS IS, PLAINLY: there is no venue on BloFin (or anywhere this bot
 has real API access) for practice orders on CL=F/SPY, so this book
-runs a fully self-contained PAPER ledger. It scores real market data
+runs a fully self-contained PAPER simulation. It scores real market data
 (yfinance) every 2h slot exactly like daily_pick.py's learning engine
-scores BTC/ETH/SOL, but every fill is simulated against the real price and
-booked only against its OWN virtual ledger
-(state["tradfi_engine"]["ledger_equity"], starts at $2,000). It NEVER
-touches BloFin, NEVER calls an order-placement endpoint, and NEVER reads
-or writes state["virtual_equity"] or any book_ledger.py-tracked key — this
-book's PnL is its own, isolated fiction, real prices in a fake account.
+scores BTC/ETH/SOL, but every fill is simulated against the real price —
+real prices, a fake fill. It NEVER touches BloFin and NEVER calls an
+order-placement endpoint.
+
+SHARED CAPITAL POOL (owner directive, 2026-07-24 — "the oil and the S&P
+are supposed to share the equity from the actual BloFin account, because
+we are trying to raise to three thousand"): this book no longer sizes
+against a private, self-seeded ledger. It sizes against the SAME pool as
+every other paper book in this program:
+    shared_equity_pool(state) = state["virtual_equity"] (the REAL BloFin
+    balance, synced by step5_paper_trade.sync_ledger_to_account) +
+    state["paper_pnl_total"] (everything every paper book — this one AND
+    spx_book.py — has realized so far, win or lose, accumulated in ONE
+    shared counter).
+This book still NEVER writes to state["virtual_equity"] (see the CRITICAL
+comment on _book_exit — that field is real-account money, corrupting it
+would be dangerous AND pointless since sync_ledger_to_account overwrites
+it right back) and NEVER touches any book_ledger.py-tracked key. Its own
+realized total (state["tradfi_engine"]["realized_pnl_total"]) is kept for
+this book's own daybook/record-keeping, but as of 2026-07-24 it is no
+longer the capital base a trade is sized against — see shared_equity_pool
+below.
 
 REUSE, NOT REINVENTION: the scorer (score_instrument), its tight-zone stop/
 target geometry (_stop_target_pct), the conviction floor (CONVICTION_FLOOR
@@ -74,10 +90,11 @@ daily_pick's own owner mandate. Tight-zone geometry is _stop_target_pct's
 stop. MAX_HOLD_H = 6h here (vs crypto's 4h) — a deliberately slightly
 longer leash for slower TradFi tapes, per the brief.
 
-SIZING: fixed-fractional RISK_PCT (2%) of the engine's OWN ledger_equity
-per trade, at leverage min(MAX_LEV, max(MIN_LEV, 85/stop_pct)) — SPY is
-additionally capped at SPY_MAX_LEV=4x (realistic; nobody trades an ETF at
-20x). Exactly like daily_pick's _build_entry_plan, leverage here is
+SIZING: fixed-fractional RISK_PCT (2%) of shared_equity_pool(state) (see
+SHARED CAPITAL POOL above — NOT a private ledger anymore) per trade, at
+leverage min(MAX_LEV, max(MIN_LEV, 85/stop_pct)) — SPY is additionally
+capped at SPY_MAX_LEV=4x (realistic; nobody trades an ETF at 20x).
+Exactly like daily_pick's _build_entry_plan, leverage here is
 informational/margin-realism only — it does not change the trade's
 notional, which fixed-fractional risk sizing already pins to
 RISK_PCT*equity/(stop_pct/100) regardless of leverage.
@@ -101,11 +118,13 @@ Telegram recap off yesterday's daybook: "TradFi engine yesterday: N
 trades, WW/LL, net $+/-X.XX (paper)".
 
 WHAT THIS MODULE NEVER DOES: place an order, touch a private/exchange
-client, read or write state["virtual_equity"] or any book_ledger.py key,
+client, WRITE state["virtual_equity"] (it now READS that field, read-only,
+as one half of shared_equity_pool — see above) or any book_ledger.py key,
 or import anything from daemon.py/hourly.py/spx_book.py/gold_book.py/
 newsdesk.py. It has NO private-client dependency at all — run_tradfi_engine
 takes only (state, dry). A module-source check in test_tradfi_engine.py
-asserts none of that ever creeps in.
+asserts none of that ever creeps in, plus a dedicated test asserting this
+module never assigns to state["virtual_equity"] anywhere.
 """
 
 from __future__ import annotations
@@ -140,8 +159,12 @@ FUTURES = {OIL}                # 2bp/leg fee tier; SPX (SPY) is 1bp/leg
 
 MAX_CONCURRENT = 2             # up to 2 concurrent paper positions, always
                                # different symbols (3-symbol universe)
-STARTING_EQUITY = 2000.0       # the engine's OWN virtual ledger, isolated
-                               # from every other book's money
+
+# LEGACY_SEED — the $2,000 this book (and spx_book) each privately started
+# their own ledger_equity/virtual_equity at, BEFORE the 2026-07-24 pool
+# merge. No longer capital (see shared_equity_pool below); referenced ONLY
+# by the one-time migration math in _migrated_paper_pnl_total.
+LEGACY_SEED = 2000.0
 
 # ---------------------------------------------------------------------------
 # sizing / geometry (tight-zone stop/target math is imported unchanged from
@@ -149,7 +172,8 @@ STARTING_EQUITY = 2000.0       # the engine's OWN virtual ledger, isolated
 # a slower TradFi tape live here)
 # ---------------------------------------------------------------------------
 
-RISK_PCT = 0.02                 # 2% of ledger_equity risked per trade, at stop
+RISK_PCT = 0.02                 # 2% of shared_equity_pool(state) risked per
+                               # trade, at stop (see SHARED CAPITAL POOL)
 MAX_LEV = 20.0
 MIN_LEV = 4.0
 SPY_MAX_LEV = 4.0               # realistic cap — nobody runs an ETF at 20x
@@ -306,17 +330,77 @@ def _score_symbol(symbol: str) -> dict | None:
 
 
 # ===========================================================================
+# THE SHARED CAPITAL POOL (owner directive, 2026-07-24) — see module
+# docstring. Duplicated VERBATIM (not imported) in spx_book.py: each paper
+# book keeps zero import-time coupling to the other by design (both
+# modules' own docstrings document that "lazy/local imports only" stance),
+# so this handful of lines is duplicated rather than adding a cross-book
+# import. If you ever change this formula, change BOTH copies.
+# ===========================================================================
+
+def shared_equity_pool(state: dict) -> float:
+    """The pool every paper book (this one AND spx_book) sizes its
+    positions against: the REAL BloFin ledger (state["virtual_equity"],
+    kept in sync with the actual account by
+    step5_paper_trade.sync_ledger_to_account) plus every paper book's
+    combined realized PnL so far (state["paper_pnl_total"]). Read-only —
+    this function never writes state. If the one-time migration (see
+    _ensure_paper_pool_migrated) hasn't physically run yet, this still
+    returns the right number by computing the migrated value on the fly,
+    WITHOUT persisting it, so a read never depends on write ordering."""
+    paper = (state["paper_pnl_total"] if "paper_pnl_total" in state
+             else _migrated_paper_pnl_total(state))
+    return state.get("virtual_equity", 0.0) + paper
+
+
+def _migrated_paper_pnl_total(state: dict) -> float:
+    """PURE (no writes): the one-time migration formula. Combines whatever
+    this engine's OLD ledger_equity and spx_book's OLD virtual_equity had
+    already earned/lost above their retired $2,000 LEGACY_SEED into a
+    single number — each book's contribution is 0.0 if that book was never
+    initialised (its state key/field simply absent). For the state this
+    pool merge shipped against (tradfi_engine ledger_equity=2058.39,
+    spx_book never initialised), this yields exactly +58.39 — the oil win,
+    and nothing else."""
+    tradfi_part = 0.0
+    eng = state.get("tradfi_engine")
+    if eng is not None and "ledger_equity" in eng:
+        tradfi_part = eng["ledger_equity"] - LEGACY_SEED
+    spx_part = 0.0
+    sb = state.get("spx_book")
+    if sb is not None and "virtual_equity" in sb:
+        spx_part = sb["virtual_equity"] - LEGACY_SEED
+    return round(tradfi_part + spx_part, 2)
+
+
+def _ensure_paper_pool_migrated(state: dict) -> None:
+    """One-time guarded WRITE: if state["paper_pnl_total"] is already
+    present, no-op (already migrated — this is the guard). Otherwise
+    compute it via _migrated_paper_pnl_total and persist it, logged once.
+    Callers MUST only invoke this from a live (non-dry) path — dry mode's
+    contract is zero state writes, full stop."""
+    if "paper_pnl_total" in state:
+        return
+    migrated = _migrated_paper_pnl_total(state)
+    state["paper_pnl_total"] = migrated
+    print(f"  [POOL MIGRATION] state['paper_pnl_total'] was absent — "
+          f"one-time seed from the retired per-book ledgers -> "
+          f"${migrated:+,.2f}")
+    log_event({"action": "paper_pool_migration", "paper_pnl_total": migrated})
+
+
+# ===========================================================================
 # state shape
 # ===========================================================================
 
 def _fresh_engine() -> dict:
-    return {"ledger_equity": STARTING_EQUITY, "last_slot_ts": None,
+    return {"realized_pnl_total": 0.0, "last_slot_ts": None,
             "open_trades": [], "daybook": [], "last_recap_date": None,
             "last_stopouts": {}, "picks": []}
 
 
 def _migrate_engine(eng: dict) -> None:
-    eng.setdefault("ledger_equity", STARTING_EQUITY)
+    eng.setdefault("realized_pnl_total", 0.0)
     eng.setdefault("last_slot_ts", None)
     eng.setdefault("open_trades", [])
     eng.setdefault("daybook", [])
@@ -357,17 +441,28 @@ _REASON_LABEL = {"stop": "SL hit", "target": "TP hit", "time": "time exit"}
 
 def _book_exit(state: dict, eng: dict, t: dict, exit_price: float,
               reason: str, now: datetime) -> float:
-    """Close ONE paper trade against the engine's OWN ledger_equity —
-    NEVER state['virtual_equity'], never a book_ledger.py key. Fee/PnL
-    shape mirrors daily_pick._book_exit: gross directional move on the
-    paper share count, minus both legs' fees."""
+    """Close ONE paper trade. Fee/PnL shape mirrors daily_pick._book_exit:
+    gross directional move on the paper share count, minus both legs'
+    fees.
+
+    CRITICAL — paper P&L accumulates into the SHARED
+    state["paper_pnl_total"] accumulator (shared with spx_book), NEVER
+    into state["virtual_equity"]. state["virtual_equity"] is the REAL
+    BloFin ledger balance, kept in sync with the actual exchange account
+    by step5_paper_trade.sync_ledger_to_account every cycle. If a paper
+    book ever wrote a realized amount into it, that write would (a)
+    corrupt real accounting the live BloFin books depend on, and (b) get
+    silently overwritten on the very next sync anyway — invisible in a
+    quick manual test (the number ticks up, looks like it's "working"),
+    dangerous the moment this runs against the real account. Never do it."""
     direction = t["direction"]
     shares = t["shares"]
     fee_bps = t.get("fee_bps", FEE_BPS_STANDARD)
     gross = direction * (exit_price - t["entry_price"]) * shares
     fees = (t["entry_price"] * fee_bps + exit_price * fee_bps) * shares / 10_000
     realized = round(gross - fees, 2)
-    eng["ledger_equity"] = round(eng.get("ledger_equity", STARTING_EQUITY) + realized, 2)
+    state["paper_pnl_total"] = round(state.get("paper_pnl_total", 0.0) + realized, 2)
+    eng["realized_pnl_total"] = round(eng.get("realized_pnl_total", 0.0) + realized, 2)
     eng["open_trades"] = [x for x in eng.get("open_trades", []) if x is not t]
 
     entry_dt = datetime.strptime(
@@ -392,19 +487,22 @@ def _book_exit(state: dict, eng: dict, t: dict, exit_price: float,
             "ts": now.isoformat(), "conviction": t.get("conviction") or 0.0}
 
     save_state(state)
-    eq = eng["ledger_equity"]
+    book_total = eng["realized_pnl_total"]
+    pool = shared_equity_pool(state)
     side = "LONG" if direction == 1 else "SHORT"
     label = _REASON_LABEL[reason]
     print(f"  [TRADFI] {t['symbol']} {label}: PnL ${realized:+,.2f} (paper) -> "
-          f"ledger ${eq:,.2f} (held {hold_min:.0f}m)")
+          f"book total ${book_total:+,.2f} | pool ${pool:,.2f} "
+          f"(held {hold_min:.0f}m)")
     log_event({"action": "tradfi_exit", "symbol": t["symbol"], "reason": label,
               "direction": direction, "exit_price": exit_price,
-              "realized_pnl": realized, "ledger_equity": eq,
+              "realized_pnl": realized, "realized_pnl_total": book_total,
+              "shared_equity_pool": pool,
               "conviction": t.get("conviction"), "hold_min": hold_min})
     nice = NICE_NAMES.get(t["symbol"], t["symbol"])
     notify(f"{'✅' if realized >= 0 else '\U0001f6d1'} TRADFI {label} (paper): "
           f"{side} {t['symbol']} ({nice})",
-          f"PnL ${realized:+,.2f} (paper) -> ledger ${eq:,.2f}")
+          f"PnL ${realized:+,.2f} (paper) -> pool ${pool:,.2f}")
     return realized
 
 
@@ -424,7 +522,8 @@ def _do_entry(state: dict, eng: dict, cand: dict, now: datetime) -> dict:
     direction = 1 if cand["direction"] == "long" else -1
     stop_pct, target_pct = _stop_target_pct(cand["atr_pct_1h"])
     lev = _leverage_for(symbol, stop_pct)
-    equity = eng.get("ledger_equity", STARTING_EQUITY)
+    equity = shared_equity_pool(state)      # THE SHARED POOL, not a private
+                                            # ledger — see module docstring
     notional = RISK_PCT * equity / (stop_pct / 100)
     price = cand["last_close"]
     shares = notional / price if price else 0.0
@@ -514,6 +613,8 @@ def run_tradfi_engine(state: dict, dry: bool = False) -> dict:
     "entry", "open_count"}."""
     eng = state.setdefault("tradfi_engine", _fresh_engine())
     _migrate_engine(eng)
+    if not dry:
+        _ensure_paper_pool_migrated(state)   # one-time guarded write, see above
 
     tag = " DRY" if dry else ""
     now = datetime.now(timezone.utc)

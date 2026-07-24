@@ -230,7 +230,15 @@ def expected_fees(entry_price: float, exit_price: float, shares: float) -> float
 
 
 def make_state() -> dict:
-    return {}
+    """THE SHARED POOL (2026-07-24): spx_book sizes against
+    shared_equity_pool(state) = state["virtual_equity"] +
+    state["paper_pnl_total"], not a private ledger anymore.
+    state["virtual_equity"] here stands in for the REAL BloFin balance;
+    no "paper_pnl_total" key -> the on-the-fly migration path contributes
+    0.0 (no tradfi_engine/spx_book legacy keys present), so
+    shared_equity_pool(state) == STARTING_EQUITY, keeping every existing
+    hand-verified number in this file unchanged."""
+    return {"virtual_equity": STARTING_EQUITY}
 
 
 def new_rig():
@@ -312,21 +320,31 @@ def test_c_entry_exit_ledger_math():
     fees = expected_fees(entry_price, exit_price, shares)
     exp_realized = round(gross - fees, 2)
     assert abs(r_exit["pnl"] - exp_realized) < 0.01, (r_exit["pnl"], exp_realized)
-    assert abs(sb["virtual_equity"] - round(STARTING_EQUITY + exp_realized, 2)) < 0.01
+    # THE SHARED POOL: the realized amount lands in state["paper_pnl_total"]
+    # (shared with tradfi_engine) AND in this book's own realized_pnl_total
+    # (record-keeping only) — state["virtual_equity"] (the REAL BloFin
+    # balance) must be completely untouched.
+    assert abs(state["paper_pnl_total"] - exp_realized) < 0.01, (
+        state["paper_pnl_total"], exp_realized)
+    assert abs(sb["realized_pnl_total"] - exp_realized) < 0.01, (
+        sb["realized_pnl_total"], exp_realized)
+    assert state["virtual_equity"] == STARTING_EQUITY, \
+        "spx_book must NEVER write state['virtual_equity']"
     assert sb["n"] == 1 and sb["wins"] == 1, "the bounce trade is a winner"
     assert sb["trades"][-1]["pnl"] == r_exit["pnl"]
     assert sb["trades"][-1]["reason"] == "sma5_reclaim"
 
-    # this book's ledger must be its OWN, isolated key — never touching the
-    # shared BloFin fields sync_ledger_to_account/book_ledger read
-    assert "virtual_equity" not in state or "open_trade" not in state, (
-        "spx_book must never write the SHARED top-level open_trade/"
-        "virtual_equity keys other books read")
+    # this book must never write the SHARED top-level "open_trade" key
+    # other (crypto) books read, and must never touch virtual_equity (see
+    # above) — those are the only two shared fields any book could collide
+    # on.
+    assert "open_trade" not in state, (
+        "spx_book must never write the SHARED top-level open_trade key")
 
     print(f"  [c] OK — entry {shares:.3f} sh @ ${entry_price:.2f} "
           f"(${exp_notional:,.0f} notional), exit @ ${exit_price:.2f}, "
-          f"fees ${fees:.4f}, pnl ${exp_realized:+.2f}, ledger "
-          f"${sb['virtual_equity']:,.2f}")
+          f"fees ${fees:.4f}, pnl ${exp_realized:+.2f}, pool "
+          f"${spx_book.shared_equity_pool(state):,.2f}")
 
 
 # ---------------------------------------------------------------------------
@@ -357,6 +375,8 @@ def test_d_never_orders_guard():
         def market_order(self, *a, **kw):
             raise AssertionError("should never be called")
 
+    import copy
+    before_state = copy.deepcopy(state)
     fetch = FakeFetch(full, 255)
     threw = False
     try:
@@ -366,7 +386,7 @@ def test_d_never_orders_guard():
         threw = True
         assert "simulation-only" in str(e) or "NEVER" in str(e), str(e)
     assert threw, "guard must raise when given an order-capable client"
-    assert state == {}, "guard must fire BEFORE any state mutation"
+    assert state == before_state, "guard must fire BEFORE any state mutation"
     assert len(notify_spy.calls) == 0
     assert len(log_spy.calls) == 0
     assert len(save_spy.calls) == 0
@@ -402,8 +422,9 @@ def test_e_dry_mode_zero_side_effects():
     notify_spy, log_spy, save_spy = Spy(), Spy(), Spy()
     s5.notify, s5.log_event, s5.save_state = notify_spy, log_spy, save_spy
 
-    # would-enter case (day 255)
-    state_a = {}
+    # would-enter case (day 255) — state_a carries the SHARED pool's
+    # real-account half (state["virtual_equity"]), same as make_state()
+    state_a = {"virtual_equity": STARTING_EQUITY}
     import copy
     before_a = copy.deepcopy(state_a)
     fetch_a = FakeFetch(full, 255)
@@ -414,15 +435,16 @@ def test_e_dry_mode_zero_side_effects():
     assert abs(r_a["shares"] - exp_shares) < 1e-6
 
     # would-hold case: pre-seed an open trade "by hand" (never via a live
-    # call) and confirm dry mode still writes nothing
-    state_b = {"spx_book": {"virtual_equity": STARTING_EQUITY,
-                            "peak_equity": STARTING_EQUITY,
-                            "open_trade": {"entry_date": "2015-01-01",
+    # call) and confirm dry mode still writes nothing. sb no longer carries
+    # its own virtual_equity/peak_equity (retired 2026-07-24) — paper_peak
+    # replaces peak_equity for the crash-abort ratchet.
+    state_b = {"virtual_equity": STARTING_EQUITY,
+              "spx_book": {"open_trade": {"entry_date": "2015-01-01",
                                           "entry_price": 100.0, "shares": 10.0,
                                           "notional": 1000.0},
-                            "last_bar_date": "2000-01-01", "trades": [],
-                            "realized_pnl_total": 0.0, "n": 0, "wins": 0,
-                            "crash_alerted": False}}
+                          "last_bar_date": "2000-01-01", "trades": [],
+                          "realized_pnl_total": 0.0, "n": 0, "wins": 0,
+                          "paper_peak": 0.0, "crash_alerted": False}}
     before_b = copy.deepcopy(state_b)
     fetch_b = FakeFetch(full, 254)     # exit_signal False on day 254
     r_b = spx_book.run_spx_book(None, state_b, dry=True, now=DUE_NOW, fetch=fetch_b)
@@ -443,17 +465,25 @@ def test_e_dry_mode_zero_side_effects():
 # ---------------------------------------------------------------------------
 
 def test_f_crash_abort():
+    """RE-EXPRESSED (2026-07-24) against the SHARED state["paper_pnl_total"]
+    accumulator — see spx_book._check_crash_abort's own docstring. dd is
+    now (paper_peak - paper_pnl_total) / shared_equity_pool(state), so
+    state["virtual_equity"] (a stand-in for the real, fixed BloFin balance
+    throughout this test) sets the denominator's scale while
+    paper_pnl_total/paper_peak drive the numerator."""
     notify_spy, log_spy, save_spy = Spy(), Spy(), Spy()
     s5.notify, s5.log_event, s5.save_state = notify_spy, log_spy, save_spy
 
     sb = spx_book._fresh_book()
-    state = {"spx_book": sb}
+    state = {"virtual_equity": 2000.0, "spx_book": sb}
 
-    # a big loser: 20 sh, entry 100 -> exit 70 (-30%), well past -10% of
-    # a $2000 ledger on its own
+    # a big loser: 20 sh, entry 100 -> exit 70. realized = 20*(70-100) -
+    # fees = -600.34. paper_peak stays at its starting 0.0 (the very first
+    # trade is already a loser, so it never ratchets up) -> dd = 600.34 /
+    # pool(1399.66) ~= 43%, well past the 10% threshold.
     t = {"entry_date": "2015-01-01", "entry_price": 100.0, "shares": 20.0}
     realized = spx_book._finish_exit(state, sb, t, 70.0, "2015-01-02", "rsi2_snapback")
-    assert realized < -200.0, realized       # well past 10% of 2000
+    assert realized < -200.0, realized
     assert sb["crash_alerted"] is True
     crash_notifies = [c for c in notify_spy.calls
                       if "crash" in c[0][0].lower() or "10%" in c[0][1]]
@@ -467,16 +497,20 @@ def test_f_crash_abort():
                        if "crash" in c[0][0].lower() or "10%" in c[0][1]]
     assert len(crash_notifies2) == 1, "must not re-alert while still in the same episode"
 
-    # recovery back within 5% of peak re-arms the alert
+    # recovery: a big enough winner pushes paper_pnl_total UP TO a fresh
+    # peak, i.e. dd snaps to exactly 0.0 -> well within CRASH_REARM_DD
     t3 = {"entry_date": "2015-01-05", "entry_price": 68.0, "shares": 5.0}
     spx_book._finish_exit(state, sb, t3, 500.0, "2015-01-06", "sma5_reclaim")
     assert sb["crash_alerted"] is False, "must re-arm after recovering near peak"
 
-    # a fresh breach after re-arming fires again
-    sb["peak_equity"] = 10_000.0
-    sb["virtual_equity"] = 10_000.0
-    t4 = {"entry_date": "2015-01-07", "entry_price": 100.0, "shares": 200.0}
-    spx_book._finish_exit(state, sb, t4, 40.0, "2015-01-08", "rsi2_snapback")
+    # a fresh breach after re-arming fires again — hand-set a new episode:
+    # paper_peak=500, paper_pnl_total=500 (pool = 2000+500 = 2500), then a
+    # loser that drags paper_pnl_total down to 229.90 (pool = 2229.90) ->
+    # dd = (500-229.90)/2229.90 ~= 12.1%, past the 10% threshold again.
+    sb["paper_peak"] = 500.0
+    state["paper_pnl_total"] = 500.0
+    t4 = {"entry_date": "2015-01-07", "entry_price": 100.0, "shares": 3.0}
+    spx_book._finish_exit(state, sb, t4, 10.0, "2015-01-08", "rsi2_snapback")
     assert sb["crash_alerted"] is True
     crash_notifies3 = [c for c in notify_spy.calls
                        if "crash" in c[0][0].lower() or "10%" in c[0][1]]
@@ -487,6 +521,151 @@ def test_f_crash_abort():
           f"on recovery, fired again on a fresh breach)")
 
 
+# ---------------------------------------------------------------------------
+# g) shared-pool sizing math, hand-verified — pool = virtual_equity +
+#    paper_pnl_total, NOT either field alone
+# ---------------------------------------------------------------------------
+
+def test_g_shared_pool_sizing_hand_verified():
+    state = {"virtual_equity": 1000.0, "paper_pnl_total": 500.0}
+    assert spx_book.shared_equity_pool(state) == 1500.0, \
+        spx_book.shared_equity_pool(state)
+    # sizing: ALLOC_FRAC(95%) x LEVERAGE(4x) of the POOL, not either half
+    shares = spx_book._size_shares(spx_book.shared_equity_pool(state), 100.0)
+    exp_notional = 1500.0 * 0.95 * 4.0     # 5700.0
+    assert abs(shares * 100.0 - exp_notional) < 1e-6, shares
+
+    # a pool built ONLY from virtual_equity (no paper_pnl_total key at all)
+    # must size differently — proves both terms are actually summed
+    state2 = {"virtual_equity": 1000.0}
+    assert spx_book.shared_equity_pool(state2) == 1000.0
+    shares2 = spx_book._size_shares(spx_book.shared_equity_pool(state2), 100.0)
+    assert abs(shares2 * 100.0 - 1000.0 * 0.95 * 4.0) < 1e-6, shares2
+
+    print(f"  [g] OK — shared_equity_pool sums virtual_equity + "
+          f"paper_pnl_total ({shares:.2f} sh at pool $1,500 vs "
+          f"{shares2:.2f} sh at pool $1,000)")
+
+
+# ---------------------------------------------------------------------------
+# h) paper_pnl_total accumulation on wins AND losses; virtual_equity never
+#    moves
+# ---------------------------------------------------------------------------
+
+def test_h_paper_pnl_total_accumulation():
+    s5.notify, s5.log_event, s5.save_state = _noop, _noop, _noop
+    sb = spx_book._fresh_book()
+    state = {"virtual_equity": 5000.0, "spx_book": sb}
+
+    win = {"entry_date": "2015-01-01", "entry_price": 100.0, "shares": 10.0}
+    r1 = spx_book._finish_exit(state, sb, win, 110.0, "2015-01-02", "sma5_reclaim")
+    assert r1 > 0, r1
+    assert state["paper_pnl_total"] == r1, state["paper_pnl_total"]
+    assert sb["realized_pnl_total"] == r1, sb["realized_pnl_total"]
+
+    loss = {"entry_date": "2015-01-03", "entry_price": 100.0, "shares": 5.0}
+    r2 = spx_book._finish_exit(state, sb, loss, 90.0, "2015-01-04", "rsi2_snapback")
+    assert r2 < 0, r2
+    assert abs(state["paper_pnl_total"] - round(r1 + r2, 2)) < 0.01, \
+        state["paper_pnl_total"]
+    assert abs(sb["realized_pnl_total"] - round(r1 + r2, 2)) < 0.01, \
+        sb["realized_pnl_total"]
+    assert state["virtual_equity"] == 5000.0, \
+        "spx_book must NEVER touch state['virtual_equity']"
+
+    print(f"  [h] OK — paper_pnl_total accumulates win ({r1:+.2f}) then "
+          f"loss ({r2:+.2f}) -> ${state['paper_pnl_total']:+.2f}; "
+          f"virtual_equity untouched at $5,000.00")
+
+
+# ---------------------------------------------------------------------------
+# i) migration — the current live state shape yields exactly +58.39
+# ---------------------------------------------------------------------------
+
+def test_i_migration_58_39():
+    # the CURRENT live shape this pool merge shipped against: tradfi_engine
+    # sits at ledger_equity=2058.39 (the oil win), spx_book has never been
+    # initialised (never traded).
+    state = {"virtual_equity": 1367.25,
+            "tradfi_engine": {"ledger_equity": 2058.39}}
+    assert spx_book._migrated_paper_pnl_total(state) == 58.39, \
+        spx_book._migrated_paper_pnl_total(state)
+    assert "paper_pnl_total" not in state, "must be a PURE computation"
+    pool = spx_book.shared_equity_pool(state)
+    assert abs(pool - 1425.64) < 1e-6, pool          # 1367.25 + 58.39
+
+    # the guarded WRITE actually persists it, exactly once, logged
+    s5.log_event = Spy()
+    spx_book._ensure_paper_pool_migrated(state)
+    assert state["paper_pnl_total"] == 58.39, state["paper_pnl_total"]
+    assert len(s5.log_event.calls) == 1, s5.log_event.calls
+    logged = s5.log_event.calls[0][0][0]
+    assert logged["action"] == "paper_pool_migration"
+    assert logged["paper_pnl_total"] == 58.39
+
+    # the guard: a second call is a pure no-op — proven by pre-poisoning
+    # the field, not by luck
+    state["paper_pnl_total"] = 999.0
+    spx_book._ensure_paper_pool_migrated(state)
+    assert state["paper_pnl_total"] == 999.0, "guard did not fire"
+    assert len(s5.log_event.calls) == 1, "must not re-log on an already-migrated state"
+
+    # if THIS book had ever been initialised too, its own historical delta
+    # must be folded in alongside tradfi_engine's
+    state2 = {"virtual_equity": 1000.0,
+             "tradfi_engine": {"ledger_equity": 2058.39},
+             "spx_book": {"virtual_equity": 2100.0}}
+    assert spx_book._migrated_paper_pnl_total(state2) == round(58.39 + 100.0, 2), \
+        spx_book._migrated_paper_pnl_total(state2)
+
+    print(f"  [i] OK — migration of the live state shape yields exactly "
+          f"+58.39 (the oil win alone); pool = $1,367.25 + $58.39 = "
+          f"${pool:,.2f}; guarded write fires once, logged")
+
+
+# ---------------------------------------------------------------------------
+# j) hard guard — NEITHER paper book ever writes state["virtual_equity"]
+# ---------------------------------------------------------------------------
+
+def test_j_never_writes_virtual_equity():
+    """state["virtual_equity"] is the REAL BloFin balance, synced by
+    step5_paper_trade.sync_ledger_to_account. A paper book writing to it
+    would corrupt real accounting and get silently overwritten on the next
+    sync — see the CRITICAL comments on spx_book._finish_exit and
+    tradfi_engine._book_exit. Source-scans BOTH owned files for the exact
+    assignment pattern (reads of the field are fine and expected — only an
+    ASSIGNMENT into it is forbidden), plus a runtime full entry+exit cycle
+    proving the value never moves."""
+    import re
+    assign_pattern = re.compile(
+        r'''state(?:2|3|_a|_b)?\s*\[\s*["\']virtual_equity["\']\s*\]\s*=(?!=)''')
+    for path in ("spx_book.py", "tradfi_engine.py"):
+        with open(path) as f:
+            src = f.read()
+        assert not assign_pattern.search(src), \
+            f"{path} appears to assign to state['virtual_equity'] — forbidden"
+        for bad in ('state["virtual_equity"] =', "state['virtual_equity'] ="):
+            assert bad not in src, f"{path} contains a direct write: {bad!r}"
+
+    # runtime belt-and-suspenders: a full live entry+exit cycle on THIS
+    # book must leave virtual_equity byte-identical
+    s5.notify, s5.log_event, s5.save_state = _noop, _noop, _noop
+    full = build_dipbuy_series()
+    state = {"virtual_equity": 77_000.0}
+    fetch = FakeFetch(full, 255)
+    r_enter = spx_book.run_spx_book(None, state, dry=False, now=DUE_NOW, fetch=fetch)
+    assert r_enter["action"] == "entered", r_enter
+    assert state["virtual_equity"] == 77_000.0
+    fetch.day_idx = 256
+    r_exit = spx_book.run_spx_book(None, state, dry=False, now=DUE_NOW, fetch=fetch)
+    assert r_exit["action"] == "exited", r_exit
+    assert state["virtual_equity"] == 77_000.0, \
+        "spx_book must NEVER touch state['virtual_equity']"
+
+    print("  [j] OK — source scan (both files) + a live entry+exit cycle "
+          "confirm virtual_equity is never assigned to")
+
+
 TESTS = [
     ("a) signal math — hand-verified RSI2/SMA cases", test_a_signal_math_hand_verified),
     ("b) idempotency — same bar twice = no-op, off-hours = not_due", test_b_idempotency),
@@ -494,6 +673,10 @@ TESTS = [
     ("d) never-orders guard (source scan + runtime)", test_d_never_orders_guard),
     ("e) dry mode — zero writes", test_e_dry_mode_zero_side_effects),
     ("f) crash-abort — fires at -10%, re-arms on recovery", test_f_crash_abort),
+    ("g) shared-pool sizing math, hand-verified", test_g_shared_pool_sizing_hand_verified),
+    ("h) paper_pnl_total accumulation on wins and losses", test_h_paper_pnl_total_accumulation),
+    ("i) migration — live state shape yields exactly +58.39", test_i_migration_58_39),
+    ("j) hard guard — never writes state['virtual_equity']", test_j_never_writes_virtual_equity),
 ]
 
 

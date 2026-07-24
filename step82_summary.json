@@ -1,0 +1,18 @@
+{
+  "n_indicators": 51,
+  "n_captured": 102,
+  "n_matrix_rows": 7140,
+  "n_survivors_eye_gated": 289,
+  "n_survivors_eth_transfer": 40,
+  "census_bars": {
+    "btc_1h": 55428,
+    "btc_15m": 221907,
+    "eth_1h": 46918,
+    "eth_15m": 187869
+  },
+  "populated_state_counts": {
+    "1h": 36,
+    "15m": 34
+  },
+  "runtime_sec": 1058.6
+}

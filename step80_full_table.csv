@@ -1,0 +1,75 @@
+approach,family,indicator,config,tf,asset,stop%,target%,max_hold_h,tr_n,tr_exp,tr_win%,tr_ret%,va_n,va_exp,va_win%,va_ret%,va_dd%,med_hold_h,verdict,K,confirm,regime,pct_bars_in_regime
+1-committee,committee,7-vote committee (context-gated),K>=1,1h,BTC,1.2145748436206971,2.4291496872413942,48.0,444,-1.1539,37.16,-5.12,176,-0.0422,37.5,-0.07,-28.14,6.5,FAIL,1.0,,,
+1-committee,committee,7-vote committee (context-gated),K>=2,1h,BTC,1.2145748436206971,2.4291496872413942,48.0,443,-2.8339,36.57,-12.55,175,-2.2485,36.57,-3.93,-30.65,6.0,FAIL,2.0,,,
+1-committee,committee,7-vote committee (context-gated),K>=3,1h,BTC,1.2145748436206971,2.4291496872413942,48.0,434,3.2945,38.48,14.3,172,1.612,38.37,2.77,-26.68,6.0,SURVIVOR,3.0,,,
+1-committee,committee,7-vote committee (context-gated),K>=4,1h,BTC,1.2145748436206971,2.4291496872413942,48.0,407,-9.225,34.4,-37.55,158,-14.0726,34.18,-22.23,-36.24,6.0,FAIL,4.0,,,
+1-committee,committee,7-vote committee (context-gated),K>=5,1h,BTC,1.2145748436206971,2.4291496872413942,48.0,297,-13.2482,32.32,-39.35,112,-7.4356,34.82,-8.33,-19.85,5.0,FAIL,5.0,,,
+1-committee,committee,7-vote committee (context-gated),K>=1,15m,BTC,0.5423185784161636,1.0846371568323272,48.0,451,-5.5849,35.03,-25.19,178,-3.6786,36.52,-6.55,-14.17,1.75,FAIL,1.0,,,
+1-committee,committee,7-vote committee (context-gated),K>=2,15m,BTC,0.5423185784161636,1.0846371568323272,48.0,451,-5.0149,35.48,-22.62,178,-7.9456,33.71,-14.14,-18.44,1.75,FAIL,2.0,,,
+1-committee,committee,7-vote committee (context-gated),K>=3,15m,BTC,0.5423185784161636,1.0846371568323272,48.0,448,-4.4165,35.94,-19.79,175,-6.2704,34.86,-10.97,-15.92,1.75,FAIL,3.0,,,
+1-committee,committee,7-vote committee (context-gated),K>=4,15m,BTC,0.5423185784161636,1.0846371568323272,48.0,439,-6.6734,34.17,-29.3,172,-5.3693,35.47,-9.24,-17.44,1.5,FAIL,4.0,,,
+1-committee,committee,7-vote committee (context-gated),K>=5,15m,BTC,0.5423185784161636,1.0846371568323272,48.0,378,-10.4058,30.95,-39.33,144,-13.584,29.86,-19.56,-22.31,1.25,FAIL,5.0,,,
+2-confirmation,confirmation,A-RSI3-dip-in-uptrend,RAW (no confirmation),1h,BTC,1.5,4.5,48.0,220,53.1339,37.73,116.89,76,26.9218,40.79,20.46,-12.79,14.5,SURVIVOR,,RAW (no confirmation),,
+2-confirmation,confirmation,A-RSI3-dip-in-uptrend,MACD-hist>0,1h,BTC,1.5,4.5,48.0,49,61.1095,40.82,29.94,12,-103.6312,16.67,-12.44,-13.98,14.0,FAIL,,MACD-hist>0,,
+2-confirmation,confirmation,A-RSI3-dip-in-uptrend,ADX>20,1h,BTC,1.5,4.5,48.0,185,8.6952,32.97,16.09,65,-20.0712,32.31,-13.05,-26.73,14.0,FAIL,,ADX>20,,
+2-confirmation,confirmation,A-RSI3-dip-in-uptrend,OBV-vs-MA20,1h,BTC,1.5,4.5,48.0,36,-4.351,30.56,-1.57,15,95.2161,60.0,14.28,-6.61,13.0,FAIL,,OBV-vs-MA20,,
+2-confirmation,confirmation,A-RSI3-dip-in-uptrend,Stoch-%K-direction,1h,BTC,1.5,4.5,48.0,133,6.1607,32.33,8.19,46,1.1004,34.78,0.51,-14.1,15.0,SURVIVOR,,Stoch-%K-direction,,
+2-confirmation,confirmation,A-RSI3-dip-in-uptrend,ALL-4-combined,1h,BTC,1.5,4.5,48.0,0,0.0,0.0,0.0,0,0.0,0.0,0.0,0.0,,FAIL,,ALL-4-combined,,
+2-confirmation,confirmation,B-donchian20-breakout,RAW (no confirmation),1h,BTC,1.2145748436206971,2.4291496872413942,240.0,121,-3.1724,35.54,-3.84,42,-56.1458,19.05,-23.58,-25.39,5.0,FAIL,,RAW (no confirmation),,
+2-confirmation,confirmation,B-donchian20-breakout,MACD-hist>0,1h,BTC,1.2145748436206971,2.4291496872413942,240.0,121,-3.1723,35.54,-3.84,42,-56.141,19.05,-23.58,-25.39,5.0,FAIL,,MACD-hist>0,,
+2-confirmation,confirmation,B-donchian20-breakout,ADX>20,1h,BTC,1.2145748436206971,2.4291496872413942,240.0,114,-28.461,27.19,-32.45,37,5.4426,37.84,2.01,-6.58,6.0,FAIL,,ADX>20,,
+2-confirmation,confirmation,B-donchian20-breakout,OBV-vs-MA20,1h,BTC,1.2145748436206971,2.4291496872413942,240.0,121,-3.1693,35.54,-3.83,42,-56.1288,19.05,-23.57,-25.39,5.0,FAIL,,OBV-vs-MA20,,
+2-confirmation,confirmation,B-donchian20-breakout,Stoch-%K-direction,1h,BTC,1.2145748436206971,2.4291496872413942,240.0,118,6.515,38.14,7.69,41,-26.0672,29.27,-10.69,-13.09,5.0,FAIL,,Stoch-%K-direction,,
+2-confirmation,confirmation,B-donchian20-breakout,ALL-4-combined,1h,BTC,1.2145748436206971,2.4291496872413942,240.0,110,-25.7611,28.18,-28.34,36,9.2498,38.89,3.33,-11.36,6.0,FAIL,,ALL-4-combined,,
+2-confirmation,confirmation,C-CHoCH-k8,RAW (no confirmation),1h,BTC,3.5840805056633354,7.168161011326671,240.0,115,-32.6351,32.17,-37.53,39,-56.9982,30.77,-22.23,-30.78,57.0,FAIL,,RAW (no confirmation),,
+2-confirmation,confirmation,C-CHoCH-k8,MACD-hist>0,1h,BTC,3.5840805056633354,7.168161011326671,240.0,115,-19.4711,33.91,-22.39,39,-56.9982,30.77,-22.23,-30.78,57.0,FAIL,,MACD-hist>0,,
+2-confirmation,confirmation,C-CHoCH-k8,ADX>20,1h,BTC,3.5840805056633354,7.168161011326671,240.0,106,-20.1234,35.85,-21.33,34,7.268,35.29,2.47,-27.46,52.5,FAIL,,ADX>20,,
+2-confirmation,confirmation,C-CHoCH-k8,OBV-vs-MA20,1h,BTC,3.5840805056633354,7.168161011326671,240.0,115,-37.9774,31.3,-43.67,39,0.5334,35.9,0.21,-26.71,59.5,FAIL,,OBV-vs-MA20,,
+2-confirmation,confirmation,C-CHoCH-k8,Stoch-%K-direction,1h,BTC,3.5840805056633354,7.168161011326671,240.0,113,-1.1612,38.94,-1.31,38,0.2544,34.21,0.1,-21.38,56.0,FAIL,,Stoch-%K-direction,,
+2-confirmation,confirmation,C-CHoCH-k8,ALL-4-combined,1h,BTC,3.5840805056633354,7.168161011326671,240.0,103,-7.6246,36.89,-7.85,33,99.2493,42.42,32.75,-19.37,48.0,FAIL,,ALL-4-combined,,
+2-confirmation,confirmation,A-RSI3-dip-in-uptrend,RAW (no confirmation),15m,BTC,1.5,4.5,48.0,285,-12.3707,29.82,-35.26,103,0.4799,36.89,0.49,-27.02,12.875,FAIL,,RAW (no confirmation),,
+2-confirmation,confirmation,A-RSI3-dip-in-uptrend,MACD-hist>0,15m,BTC,1.5,4.5,48.0,121,26.656,34.71,32.25,39,-44.1259,25.64,-17.21,-25.49,10.75,FAIL,,MACD-hist>0,,
+2-confirmation,confirmation,A-RSI3-dip-in-uptrend,ADX>20,15m,BTC,1.5,4.5,48.0,269,-0.5113,32.34,-1.38,92,-7.6416,35.87,-7.03,-25.54,13.0,FAIL,,ADX>20,,
+2-confirmation,confirmation,A-RSI3-dip-in-uptrend,OBV-vs-MA20,15m,BTC,1.5,4.5,48.0,116,-1.0975,32.76,-1.27,46,-21.9532,36.96,-10.1,-16.73,12.75,FAIL,,OBV-vs-MA20,,
+2-confirmation,confirmation,A-RSI3-dip-in-uptrend,Stoch-%K-direction,15m,BTC,1.5,4.5,48.0,241,13.4797,34.44,32.49,82,-27.653,29.27,-22.68,-25.38,12.25,FAIL,,Stoch-%K-direction,,
+2-confirmation,confirmation,A-RSI3-dip-in-uptrend,ALL-4-combined,15m,BTC,1.5,4.5,48.0,0,0.0,0.0,0.0,0,0.0,0.0,0.0,0.0,,FAIL,,ALL-4-combined,,
+2-confirmation,confirmation,B-donchian20-breakout,RAW (no confirmation),15m,BTC,0.5423185784161636,1.0846371568323272,240.0,134,-11.9464,31.34,-16.01,46,-13.6787,30.43,-6.29,-10.86,1.25,FAIL,,RAW (no confirmation),,
+2-confirmation,confirmation,B-donchian20-breakout,MACD-hist>0,15m,BTC,0.5423185784161636,1.0846371568323272,240.0,134,-9.7543,32.84,-13.07,46,-13.6538,30.43,-6.28,-10.85,1.25,FAIL,,MACD-hist>0,,
+2-confirmation,confirmation,B-donchian20-breakout,ADX>20,15m,BTC,0.5423185784161636,1.0846371568323272,240.0,132,-0.4342,38.64,-0.57,45,-22.9854,24.44,-10.34,-12.58,1.5,FAIL,,ADX>20,,
+2-confirmation,confirmation,B-donchian20-breakout,OBV-vs-MA20,15m,BTC,0.5423185784161636,1.0846371568323272,240.0,134,-12.968,30.6,-17.38,46,-17.0953,28.26,-7.86,-12.16,1.5,FAIL,,OBV-vs-MA20,,
+2-confirmation,confirmation,B-donchian20-breakout,Stoch-%K-direction,15m,BTC,0.5423185784161636,1.0846371568323272,240.0,133,-8.114,33.83,-10.79,45,-12.8582,31.11,-5.79,-9.07,1.625,FAIL,,Stoch-%K-direction,,
+2-confirmation,confirmation,B-donchian20-breakout,ALL-4-combined,15m,BTC,0.5423185784161636,1.0846371568323272,240.0,130,-7.0843,34.62,-9.21,43,-14.1624,30.23,-6.09,-8.63,1.5,FAIL,,ALL-4-combined,,
+2-confirmation,confirmation,C-CHoCH-k8,RAW (no confirmation),15m,BTC,1.5105485428711019,3.0210970857422037,240.0,132,-10.3583,33.33,-13.67,46,5.4953,36.96,2.53,-17.26,11.375,FAIL,,RAW (no confirmation),,
+2-confirmation,confirmation,C-CHoCH-k8,MACD-hist>0,15m,BTC,1.5105485428711019,3.0210970857422037,240.0,132,-20.27,31.06,-26.76,45,68.9431,48.89,31.02,-11.54,10.75,FAIL,,MACD-hist>0,,
+2-confirmation,confirmation,C-CHoCH-k8,ADX>20,15m,BTC,1.5105485428711019,3.0210970857422037,240.0,128,-28.2502,28.12,-36.16,43,6.8843,37.21,2.96,-11.56,12.0,FAIL,,ADX>20,,
+2-confirmation,confirmation,C-CHoCH-k8,OBV-vs-MA20,15m,BTC,1.5105485428711019,3.0210970857422037,240.0,132,-31.9754,26.52,-42.21,45,68.9316,48.89,31.02,-11.54,9.5,FAIL,,OBV-vs-MA20,,
+2-confirmation,confirmation,C-CHoCH-k8,Stoch-%K-direction,15m,BTC,1.5105485428711019,3.0210970857422037,240.0,130,-22.273,30.0,-28.95,45,-10.384,33.33,-4.67,-22.25,11.0,FAIL,,Stoch-%K-direction,,
+2-confirmation,confirmation,C-CHoCH-k8,ALL-4-combined,15m,BTC,1.5105485428711019,3.0210970857422037,240.0,124,-22.8093,29.84,-28.28,42,-22.0224,30.95,-9.25,-21.54,13.875,FAIL,,ALL-4-combined,,
+3-regime,momentum(home=ranging),RSI OB/OS,14/30-70,1h,BTC,,,,433,-11.6624,66.74,-50.5,111,-24.4572,61.26,-27.15,-31.02,2.0,FAIL,,,ranging,43.0
+3-regime,momentum(home=ranging),Stochastic extremes,14/3/3,1h,BTC,,,,1643,-4.6198,63.72,-75.9,463,0.5772,65.87,2.67,-18.62,1.5,FAIL,,,ranging,43.0
+3-regime,momentum(home=ranging),CCI extremes,20,1h,BTC,,,,1298,-5.5932,66.49,-72.6,319,-8.4876,62.38,-27.08,-34.55,3.0,FAIL,,,ranging,43.0
+3-regime,momentum(home=ranging),Williams %R extremes,14,1h,BTC,,,,1643,-4.6198,63.72,-75.9,463,0.5772,65.87,2.67,-18.62,1.5,FAIL,,,ranging,43.0
+3-regime,trend(home=trending),MACD histogram 0-cross,12/26/9,1h,BTC,,,,1556,0.2919,34.38,4.54,624,-5.9208,35.1,-36.95,-57.61,11.0,FAIL,,,trending,57.0
+3-regime,trend(home=trending),ADX/DMI DI cross,14,1h,BTC,,,,1560,8.7212,26.28,136.05,651,-7.9752,25.19,-51.92,-65.05,6.0,FAIL,,,trending,57.0
+3-regime,trend(home=trending),SuperTrend,ATR14xMult3,1h,BTC,,,,504,-16.3475,33.53,-82.39,212,-29.0215,32.55,-61.53,-69.19,34.0,FAIL,,,trending,57.0
+3-regime,trend(home=trending),Aroon oscillator 0-cross,14,1h,BTC,,,,1545,3.415,37.8,52.76,637,-5.4487,35.48,-34.71,-49.75,11.0,FAIL,,,trending,57.0
+3-regime,trend(home=trending),Vortex VI+/VI- cross,14,1h,BTC,,,,2388,3.5157,34.59,83.95,885,-2.6111,34.92,-23.11,-47.49,4.0,FAIL,,,trending,57.0
+3-regime,volume(home=elevated-volume),OBV trend (vs own MA),20,1h,BTC,,,,3312,9.0223,27.63,298.82,1045,2.4957,27.94,26.08,-26.67,4.0,SURVIVOR,,,volume-elevated,48.8
+3-regime,volume(home=elevated-volume),CMF 0-cross,20,1h,BTC,,,,2930,-1.1473,37.24,-33.62,999,-5.0853,34.53,-50.8,-65.97,4.0,FAIL,,,volume-elevated,48.8
+3-regime,volume(home=elevated-volume),MFI extremes,14/20-80,1h,BTC,,,,818,-8.8649,59.05,-72.51,298,-5.3795,59.4,-16.03,-30.42,2.0,FAIL,,,volume-elevated,48.8
+3-regime,momentum(home=ranging),RSI OB/OS,14/30-70,15m,BTC,,,,1320,-4.8183,67.8,-63.6,334,-5.6677,64.37,-18.93,-27.71,0.5,FAIL,,,ranging,43.0
+3-regime,momentum(home=ranging),Stochastic extremes,14/3/3,15m,BTC,,,,7553,-1.2297,59.84,-92.88,1841,-2.7684,61.11,-50.97,-52.49,0.5,FAIL,,,ranging,43.0
+3-regime,momentum(home=ranging),CCI extremes,20,15m,BTC,,,,5311,-1.705,61.89,-90.56,1292,-4.3693,61.22,-56.45,-59.72,0.75,FAIL,,,ranging,43.0
+3-regime,momentum(home=ranging),Williams %R extremes,14,15m,BTC,,,,7553,-1.2297,59.84,-92.88,1841,-2.7684,61.11,-50.97,-52.49,0.5,FAIL,,,ranging,43.0
+3-regime,trend(home=trending),MACD histogram 0-cross,12/26/9,15m,BTC,,,,6193,-1.5522,31.66,-96.13,2575,-3.098,31.92,-79.77,-80.06,2.5,FAIL,,,trending,57.0
+3-regime,trend(home=trending),ADX/DMI DI cross,14,15m,BTC,,,,6399,-1.4936,23.19,-95.57,2527,-2.7569,25.48,-69.67,-71.54,1.25,FAIL,,,trending,57.0
+3-regime,trend(home=trending),SuperTrend,ATR14xMult3,15m,BTC,,,,1901,-0.933,34.25,-17.74,729,-4.236,32.78,-30.88,-45.77,8.5,FAIL,,,trending,57.0
+3-regime,trend(home=trending),Aroon oscillator 0-cross,14,15m,BTC,,,,5960,-1.5638,34.65,-93.2,2438,-3.0322,34.25,-73.92,-74.43,3.0,FAIL,,,trending,57.0
+3-regime,trend(home=trending),Vortex VI+/VI- cross,14,15m,BTC,,,,8931,-1.0822,30.53,-96.65,3380,-2.064,32.22,-69.76,-71.13,1.25,FAIL,,,trending,57.0
+3-regime,volume(home=elevated-volume),OBV trend (vs own MA),20,15m,BTC,,,,13139,-0.7609,24.65,-99.97,4270,-2.0736,25.06,-88.54,-88.56,1.25,FAIL,,,volume-elevated,48.1
+3-regime,volume(home=elevated-volume),CMF 0-cross,20,15m,BTC,,,,12222,-0.8182,32.5,-100.0,3972,-2.368,31.62,-94.06,-94.14,1.0,FAIL,,,volume-elevated,48.1
+3-regime,volume(home=elevated-volume),MFI extremes,14/20-80,15m,BTC,,,,3427,-2.4571,60.78,-84.21,1099,-1.5819,60.78,-17.39,-23.63,0.5,FAIL,,,volume-elevated,48.1
+1-committee,committee,7-vote committee (context-gated),K>=3,1h,ETH,1.4662162668411391,2.9324325336822783,48.0,423,-11.0538,33.81,-46.76,139,-17.5543,33.09,-24.4,-33.68,6.0,FAIL,3.0,,,
+2-confirmation,confirmation,A-RSI3-dip-in-uptrend,RAW (no confirmation),1h,ETH,1.5,4.5,48.0,198,-30.0905,24.75,-59.58,60,-47.2499,21.67,-28.35,-29.74,8.0,FAIL,,RAW (no confirmation),,
+2-confirmation,confirmation,A-RSI3-dip-in-uptrend,Stoch-%K-direction,1h,ETH,1.5,4.5,48.0,128,-29.7154,25.78,-38.04,37,15.5498,32.43,5.75,-19.0,8.0,FAIL,,Stoch-%K-direction,,
+3-regime,volume(home=elevated-volume),OBV trend (vs own MA),20,1h,ETH,,,,2806,-1.1334,26.91,-31.8,920,-0.0845,27.61,-0.78,-55.09,4.0,FAIL,,,volume-elevated,49.2

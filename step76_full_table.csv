@@ -1,0 +1,484 @@
+family,indicator,mode,config,tf,asset,tr_n,tr_exp,tr_win%,tr_ret%,va_n,va_exp,va_win%,va_ret%,va_dd%,verdict,va_exp_delta_vs_base,tr_exp_delta_vs_base,va_sample_retention_vs_base,filter_is_noop
+base,(unfiltered) donchian-20/20 long,signal,entry20/exit20,1h,BTC,351,7.7352,34.47,27.15,119,0.4186,38.66,0.5,-28.55,SURVIVOR,,,,False
+trend,SMA cross,signal,10/30,1h,BTC,1334,29.6393,33.88,395.39,461,-7.5452,32.1,-34.78,-41.2,FAIL,,,,False
+trend,SMA cross,filter,10/30,1h,BTC,347,6.9722,34.58,24.19,118,11.6039,39.83,13.69,-26.83,SURVIVOR,11.1853,-0.7629999999999999,0.992,False
+trend,SMA cross,signal,20/50,1h,BTC,811,-0.6881,34.03,-5.58,265,-19.3368,35.85,-51.24,-63.62,FAIL,,,,False
+trend,SMA cross,filter,20/50,1h,BTC,324,16.0515,31.79,52.01,112,-5.1899,30.36,-5.81,-31.19,FAIL,-5.608499999999999,8.316300000000002,0.941,False
+trend,SMA cross,signal,50/200,1h,BTC,219,-11.6941,28.31,-25.61,77,11.2904,37.66,8.69,-45.82,FAIL,,,,False
+trend,SMA cross,filter,50/200,1h,BTC,222,15.8396,30.18,35.16,83,1.3782,38.55,1.14,-23.82,SURVIVOR,0.9596,8.104400000000002,0.697,False
+trend,SMA cross,signal,10/30,15m,BTC,5702,-1.7154,29.6,-97.81,1817,-2.4621,32.91,-44.74,-56.91,FAIL,,,,False
+trend,SMA cross,signal,20/50,15m,BTC,3313,-2.0386,31.78,-67.54,1020,-1.2213,34.12,-12.46,-42.63,FAIL,,,,False
+trend,SMA cross,signal,50/200,15m,BTC,851,12.1075,32.43,103.03,283,-0.5327,32.16,-1.51,-46.93,FAIL,,,,False
+trend,EMA cross,signal,10/30,1h,BTC,1182,4.6447,27.16,54.9,373,2.8346,29.22,10.57,-42.14,SURVIVOR,,,,False
+trend,EMA cross,filter,10/30,1h,BTC,340,14.2045,33.53,48.3,116,8.3342,38.79,9.67,-27.89,SURVIVOR,7.9155999999999995,6.4693,0.975,False
+trend,EMA cross,signal,12/26,1h,BTC,1192,4.8138,26.68,57.38,363,5.0012,29.75,18.15,-38.89,SURVIVOR,,,,False
+trend,EMA cross,filter,12/26,1h,BTC,341,11.8663,33.14,40.46,116,8.4711,38.79,9.83,-27.98,SURVIVOR,8.0525,4.131100000000001,0.975,False
+trend,EMA cross,signal,50/200,1h,BTC,195,-2.3636,24.1,-4.61,77,-20.8561,29.87,-16.06,-49.95,FAIL,,,,False
+trend,EMA cross,filter,50/200,1h,BTC,228,32.675,33.77,74.5,84,-2.0322,33.33,-1.71,-24.93,FAIL,-2.4508,24.939799999999998,0.706,False
+trend,EMA cross,signal,10/30,15m,BTC,5168,-1.7366,22.45,-89.75,1637,-1.9452,26.76,-31.84,-49.77,FAIL,,,,False
+trend,EMA cross,signal,12/26,15m,BTC,5080,-1.7948,23.27,-91.18,1593,-1.0314,27.62,-16.43,-46.87,FAIL,,,,False
+trend,EMA cross,signal,50/200,15m,BTC,799,5.2986,25.28,42.34,267,-8.1004,24.72,-21.63,-48.53,FAIL,,,,False
+trend,MACD line/signal cross,signal,12/26/9,1h,BTC,2509,1.0477,33.44,26.29,843,-3.8654,34.4,-32.59,-61.89,FAIL,,,,False
+trend,MACD line/signal cross,filter,12/26/9,1h,BTC,351,7.8162,34.47,27.43,119,0.4186,38.66,0.5,-28.55,SURVIVOR,0.0,0.0810000000000004,1.0,False
+trend,MACD line/signal cross,signal,5/13/6,1h,BTC,4915,-1.9731,31.23,-96.98,1595,-3.3531,33.04,-53.48,-63.98,FAIL,,,,False
+trend,MACD line/signal cross,filter,5/13/6,1h,BTC,351,7.7352,34.47,27.15,119,0.4186,38.66,0.5,-28.55,SURVIVOR,0.0,0.0,1.0,True
+trend,MACD line/signal cross,signal,19/39/9,1h,BTC,1868,20.7694,33.46,387.97,621,-1.064,36.88,-6.61,-46.53,FAIL,,,,False
+trend,MACD line/signal cross,filter,19/39/9,1h,BTC,350,8.0558,34.57,28.2,117,3.7535,38.46,4.39,-27.26,SURVIVOR,3.3348999999999998,0.3205999999999998,0.983,False
+trend,MACD line/signal cross,signal,12/26/9,15m,BTC,10445,-0.9512,30.9,-99.35,3627,-2.5227,31.24,-91.5,-91.61,FAIL,,,,False
+trend,MACD line/signal cross,signal,5/13/6,15m,BTC,20074,-0.4979,31.08,-99.94,6758,-1.4062,31.52,-95.03,-95.4,FAIL,,,,False
+trend,MACD line/signal cross,signal,19/39/9,15m,BTC,7997,-1.2397,30.36,-99.14,2709,-2.4984,31.01,-67.68,-70.96,FAIL,,,,False
+trend,MACD histogram 0-cross,signal,12/26/9,1h,BTC,2509,1.0477,33.44,26.29,843,-3.8654,34.4,-32.59,-61.89,FAIL,,,,False
+trend,MACD histogram 0-cross,filter,12/26/9,1h,BTC,351,7.8162,34.47,27.43,119,0.4186,38.66,0.5,-28.55,SURVIVOR,0.0,0.0810000000000004,1.0,False
+trend,MACD histogram 0-cross,signal,5/13/6,1h,BTC,4915,-1.9731,31.23,-96.98,1595,-3.3531,33.04,-53.48,-63.98,FAIL,,,,False
+trend,MACD histogram 0-cross,filter,5/13/6,1h,BTC,351,7.7352,34.47,27.15,119,0.4186,38.66,0.5,-28.55,SURVIVOR,0.0,0.0,1.0,True
+trend,MACD histogram 0-cross,signal,19/39/9,1h,BTC,1868,20.7694,33.46,387.97,621,-1.064,36.88,-6.61,-46.53,FAIL,,,,False
+trend,MACD histogram 0-cross,filter,19/39/9,1h,BTC,350,8.0558,34.57,28.2,117,3.7535,38.46,4.39,-27.26,SURVIVOR,3.3348999999999998,0.3205999999999998,0.983,False
+trend,MACD histogram 0-cross,signal,12/26/9,15m,BTC,10445,-0.9512,30.9,-99.35,3627,-2.5227,31.24,-91.5,-91.61,FAIL,,,,False
+trend,MACD histogram 0-cross,signal,5/13/6,15m,BTC,20074,-0.4979,31.08,-99.94,6758,-1.4062,31.52,-95.03,-95.4,FAIL,,,,False
+trend,MACD histogram 0-cross,signal,19/39/9,15m,BTC,7997,-1.2397,30.36,-99.14,2709,-2.4984,31.01,-67.68,-70.96,FAIL,,,,False
+trend,Aroon up/down cross,signal,14,1h,BTC,2561,-1.121,36.12,-28.71,852,-1.7828,37.21,-15.19,-49.97,FAIL,,,,False
+trend,Aroon up/down cross,filter,14,1h,BTC,351,7.4474,34.19,26.14,119,-0.7035,38.66,-0.84,-28.55,FAIL,-1.1221,-0.28779999999999983,1.0,False
+trend,Aroon up/down cross,signal,25,1h,BTC,1487,-4.9141,33.49,-73.07,495,-7.6554,34.95,-37.89,-45.76,FAIL,,,,False
+trend,Aroon up/down cross,filter,25,1h,BTC,350,0.9241,32.57,3.23,117,8.7957,36.75,10.29,-27.09,SURVIVOR,8.3771,-6.8111,0.983,False
+trend,Aroon up/down cross,signal,50,1h,BTC,773,-7.8395,33.64,-60.6,253,-20.1124,36.36,-50.88,-62.11,FAIL,,,,False
+trend,Aroon up/down cross,filter,50,1h,BTC,310,12.421,32.9,38.51,108,-7.9704,35.19,-8.61,-29.91,FAIL,-8.389,4.6857999999999995,0.908,False
+trend,Aroon up/down cross,signal,14,15m,BTC,10148,-0.9747,33.5,-98.92,3395,-2.5174,33.81,-85.47,-85.75,FAIL,,,,False
+trend,Aroon up/down cross,signal,25,15m,BTC,6224,-1.5981,31.92,-99.46,2007,-2.9349,34.33,-58.9,-66.22,FAIL,,,,False
+trend,Aroon up/down cross,signal,50,15m,BTC,3256,-1.8878,36.03,-61.47,1030,-1.7187,35.83,-17.7,-51.69,FAIL,,,,False
+trend,Aroon oscillator 0-cross,signal,14,1h,BTC,2561,-1.121,36.12,-28.71,852,-1.7828,37.21,-15.19,-49.97,FAIL,,,,False
+trend,Aroon oscillator 0-cross,filter,14,1h,BTC,351,7.4474,34.19,26.14,119,-0.7035,38.66,-0.84,-28.55,FAIL,-1.1221,-0.28779999999999983,1.0,False
+trend,Aroon oscillator 0-cross,signal,25,1h,BTC,1487,-4.9141,33.49,-73.07,495,-7.6554,34.95,-37.89,-45.76,FAIL,,,,False
+trend,Aroon oscillator 0-cross,filter,25,1h,BTC,350,0.9241,32.57,3.23,117,8.7957,36.75,10.29,-27.09,SURVIVOR,8.3771,-6.8111,0.983,False
+trend,Aroon oscillator 0-cross,signal,50,1h,BTC,773,-7.8395,33.64,-60.6,253,-20.1124,36.36,-50.88,-62.11,FAIL,,,,False
+trend,Aroon oscillator 0-cross,filter,50,1h,BTC,310,12.421,32.9,38.51,108,-7.9704,35.19,-8.61,-29.91,FAIL,-8.389,4.6857999999999995,0.908,False
+trend,Aroon oscillator 0-cross,signal,14,15m,BTC,10148,-0.9747,33.5,-98.92,3395,-2.5174,33.81,-85.47,-85.75,FAIL,,,,False
+trend,Aroon oscillator 0-cross,signal,25,15m,BTC,6224,-1.5981,31.92,-99.46,2007,-2.9349,34.33,-58.9,-66.22,FAIL,,,,False
+trend,Aroon oscillator 0-cross,signal,50,15m,BTC,3256,-1.8878,36.03,-61.47,1030,-1.7187,35.83,-17.7,-51.69,FAIL,,,,False
+trend,ADX/DMI DI cross,signal,14,1h,BTC,2537,5.002,24.71,126.9,840,-1.9009,26.9,-15.97,-62.81,FAIL,,,,False
+trend,ADX/DMI DI cross,filter,14,1h,BTC,346,9.4089,34.1,32.55,118,0.9408,38.14,1.11,-28.57,SURVIVOR,0.5222,1.6736999999999993,0.992,False
+trend,ADX/DMI DI cross,signal,25,1h,BTC,1761,6.1593,25.67,108.47,591,-2.8965,25.04,-17.12,-58.54,FAIL,,,,False
+trend,ADX/DMI DI cross,filter,25,1h,BTC,320,31.2878,35.0,100.12,111,5.5357,39.64,6.14,-24.79,SURVIVOR,5.117100000000001,23.5526,0.933,False
+trend,ADX/DMI DI cross,signal,50,1h,BTC,1189,8.7418,24.22,103.94,400,-4.2958,22.75,-17.18,-63.7,FAIL,,,,False
+trend,ADX/DMI DI cross,filter,50,1h,BTC,286,17.9994,34.27,51.48,97,11.962,41.24,11.6,-28.87,SURVIVOR,11.5434,10.264200000000002,0.815,False
+trend,ADX/DMI DI cross,signal,14,15m,BTC,10624,-0.934,22.04,-99.23,3541,-1.9647,24.71,-69.57,-71.11,FAIL,,,,False
+trend,ADX/DMI DI cross,signal,25,15m,BTC,7314,-1.2557,21.03,-91.84,2525,-1.3965,22.57,-35.26,-41.94,FAIL,,,,False
+trend,ADX/DMI DI cross,signal,50,15m,BTC,4888,-1.0017,19.82,-48.96,1701,-3.217,19.69,-54.72,-58.94,FAIL,,,,False
+trend,ADX/DMI DI-cross+ADX>thresh,signal,"n14,adx>20",1h,BTC,1636,1.3086,28.91,21.41,494,-1.9158,33.4,-9.46,-45.24,FAIL,,,,False
+trend,ADX/DMI DI-cross+ADX>thresh,filter,"n14,adx>20",1h,BTC,319,9.3361,32.29,29.78,102,18.8516,40.2,19.23,-32.71,SURVIVOR,18.433,1.6009000000000002,0.857,False
+trend,ADX/DMI DI-cross+ADX>thresh,signal,"n14,adx>25",1h,BTC,1133,3.1439,31.16,35.62,361,-8.495,30.47,-30.67,-47.96,FAIL,,,,False
+trend,ADX/DMI DI-cross+ADX>thresh,filter,"n14,adx>25",1h,BTC,270,14.0863,32.59,38.03,90,-7.0014,35.56,-6.3,-34.79,FAIL,-7.42,6.3511,0.756,False
+trend,ADX/DMI DI-cross+ADX>thresh,signal,"n25,adx>20",1h,BTC,741,0.4265,31.44,3.16,235,-10.7297,29.79,-25.21,-41.3,FAIL,,,,False
+trend,ADX/DMI DI-cross+ADX>thresh,filter,"n25,adx>20",1h,BTC,229,11.5977,29.26,26.56,76,-11.2131,32.89,-8.52,-37.71,FAIL,-11.6317,3.8625,0.639,False
+trend,ADX/DMI DI-cross+ADX>thresh,signal,"n14,adx>20",15m,BTC,6259,-1.481,26.11,-92.69,2072,-1.4556,29.2,-30.16,-39.21,FAIL,,,,False
+trend,ADX/DMI DI-cross+ADX>thresh,signal,"n14,adx>25",15m,BTC,4169,-1.6474,28.4,-68.68,1367,-0.19,32.48,-2.6,-25.43,FAIL,,,,False
+trend,ADX/DMI DI-cross+ADX>thresh,signal,"n25,adx>20",15m,BTC,2626,-1.4163,29.02,-37.19,803,-1.1235,32.13,-9.02,-30.86,FAIL,,,,False
+trend,SuperTrend,signal,ATR10xMult3,1h,BTC,729,-7.6876,34.57,-56.04,254,-19.6468,33.86,-49.9,-59.96,FAIL,,,,False
+trend,SuperTrend,filter,ATR10xMult3,1h,BTC,316,19.076,34.81,60.28,113,-5.1558,39.82,-5.83,-28.21,FAIL,-5.5744,11.340800000000002,0.95,False
+trend,SuperTrend,signal,ATR14xMult3,1h,BTC,723,-5.1378,34.85,-37.15,256,-21.2008,34.77,-54.27,-63.78,FAIL,,,,False
+trend,SuperTrend,filter,ATR14xMult3,1h,BTC,317,19.1989,34.38,60.86,112,-1.2246,40.18,-1.37,-26.87,FAIL,-1.6432,11.4637,0.941,False
+trend,SuperTrend,signal,ATR14xMult2,1h,BTC,1287,-0.4918,34.11,-6.33,436,-2.3981,36.24,-10.46,-44.76,FAIL,,,,False
+trend,SuperTrend,filter,ATR14xMult2,1h,BTC,345,9.1557,34.78,31.59,116,7.0786,39.66,8.21,-26.49,SURVIVOR,6.66,1.4204999999999997,0.975,False
+trend,SuperTrend,signal,ATR10xMult3,15m,BTC,3160,-0.9444,32.69,-29.84,986,-2.0747,32.96,-20.46,-53.08,FAIL,,,,False
+trend,SuperTrend,signal,ATR14xMult3,15m,BTC,3194,-0.1006,33.09,-3.21,980,-0.3735,33.88,-3.66,-46.43,FAIL,,,,False
+trend,SuperTrend,signal,ATR14xMult2,15m,BTC,6236,-1.562,31.22,-97.4,1895,-2.6308,34.83,-49.85,-52.91,FAIL,,,,False
+trend,Parabolic SAR,signal,0.02/0.2,1h,BTC,2512,-3.1938,36.82,-80.23,898,-3.9102,38.75,-35.11,-52.29,FAIL,,,,False
+trend,Parabolic SAR,filter,0.02/0.2,1h,BTC,351,7.4859,34.47,26.28,119,0.4186,38.66,0.5,-28.55,SURVIVOR,0.0,-0.24929999999999986,1.0,False
+trend,Parabolic SAR,signal,0.01/0.1,1h,BTC,1488,-1.1513,37.37,-17.13,546,-6.6102,37.36,-36.09,-61.29,FAIL,,,,False
+trend,Parabolic SAR,filter,0.01/0.1,1h,BTC,348,6.5381,34.2,22.75,118,1.403,38.98,1.66,-28.47,SURVIVOR,0.9843999999999999,-1.1970999999999998,0.992,False
+trend,Parabolic SAR,signal,0.03/0.3,1h,BTC,3426,-2.869,35.43,-98.29,1192,-2.6492,38.67,-31.58,-53.49,FAIL,,,,False
+trend,Parabolic SAR,filter,0.03/0.3,1h,BTC,351,7.9506,34.47,27.91,119,0.4186,38.66,0.5,-28.55,SURVIVOR,0.0,0.2153999999999998,1.0,False
+trend,Parabolic SAR,signal,0.02/0.2,15m,BTC,10110,-0.9746,35.64,-98.53,3815,-2.2284,35.91,-85.01,-87.12,FAIL,,,,False
+trend,Parabolic SAR,signal,0.01/0.1,15m,BTC,5920,-1.5982,35.39,-94.61,2221,-1.0679,37.6,-23.72,-43.09,FAIL,,,,False
+trend,Parabolic SAR,signal,0.03/0.3,15m,BTC,13688,-0.7292,35.91,-99.81,5029,-1.5979,36.75,-80.36,-85.97,FAIL,,,,False
+trend,Ichimoku tenkan/kijun cross,signal,9/26/52,4h,BTC,422,-14.2029,35.78,-59.94,129,91.5785,41.86,118.14,-23.05,FAIL,,,,False
+trend,Ichimoku tenkan/kijun cross,signal,7/22/44,4h,BTC,492,-12.2948,36.38,-60.49,153,27.3674,43.79,41.87,-31.73,FAIL,,,,False
+trend,Ichimoku price vs cloud,signal,9/26/52,4h,BTC,222,-22.6096,24.32,-50.19,69,-13.3902,28.99,-9.24,-48.32,FAIL,,,,False
+trend,Ichimoku price vs cloud,signal,7/22/44,4h,BTC,250,-14.3189,23.6,-35.8,79,-9.2572,31.65,-7.31,-54.61,FAIL,,,,False
+trend,TRIX 0-cross,signal,15,1h,BTC,815,-4.4524,31.04,-36.29,271,-5.0257,34.32,-13.62,-52.35,FAIL,,,,False
+trend,TRIX 0-cross,filter,15,1h,BTC,326,8.1433,33.44,26.55,113,-0.7967,38.94,-0.9,-31.67,FAIL,-1.2153,0.40810000000000013,0.95,False
+trend,TRIX 0-cross,signal,9,1h,BTC,1372,0.3275,30.1,4.49,455,4.0493,30.99,18.42,-33.74,SURVIVOR,,,,False
+trend,TRIX 0-cross,filter,9,1h,BTC,349,4.1233,33.81,14.39,118,8.2044,37.29,9.68,-24.5,SURVIVOR,7.7858,-3.6118999999999994,0.992,False
+trend,TRIX 0-cross,signal,30,1h,BTC,406,-5.1049,30.3,-20.73,121,65.2924,38.02,79.0,-35.18,FAIL,,,,False
+trend,TRIX 0-cross,filter,30,1h,BTC,270,25.3055,33.33,68.32,93,38.7193,36.56,36.01,-19.53,SURVIVOR,38.3007,17.5703,0.782,False
+trend,TRIX 0-cross,signal,15,15m,BTC,3444,-1.328,28.86,-45.74,1079,-2.5311,31.88,-27.31,-52.84,FAIL,,,,False
+trend,TRIX 0-cross,signal,9,15m,BTC,5966,-1.6442,27.19,-98.09,1905,-1.3292,30.81,-25.32,-40.72,FAIL,,,,False
+trend,TRIX 0-cross,signal,30,15m,BTC,1645,2.8352,30.82,46.64,539,0.2738,33.21,1.48,-36.59,SURVIVOR,,,,False
+trend,Vortex VI+/VI- cross,signal,14,1h,BTC,3963,1.562,32.12,61.9,1210,-0.9526,34.71,-11.53,-47.65,FAIL,,,,False
+trend,Vortex VI+/VI- cross,filter,14,1h,BTC,351,7.5689,34.19,26.57,119,0.4067,38.66,0.48,-28.56,SURVIVOR,-0.011900000000000022,-0.16629999999999967,1.0,False
+trend,Vortex VI+/VI- cross,signal,21,1h,BTC,3101,5.2498,32.8,162.8,995,0.1621,32.86,1.61,-36.99,SURVIVOR,,,,False
+trend,Vortex VI+/VI- cross,filter,21,1h,BTC,350,8.401,34.57,29.4,119,1.0916,38.66,1.3,-28.31,SURVIVOR,0.6729999999999998,0.6658,1.0,False
+trend,Vortex VI+/VI- cross,signal,34,1h,BTC,2527,-0.1558,31.54,-3.94,746,-6.945,32.04,-51.81,-57.07,FAIL,,,,False
+trend,Vortex VI+/VI- cross,filter,34,1h,BTC,346,6.2228,32.95,21.53,117,-5.1981,35.9,-6.08,-31.53,FAIL,-5.6167,-1.5123999999999995,0.983,False
+trend,Vortex VI+/VI- cross,signal,14,15m,BTC,15324,-0.6512,29.14,-99.79,4811,-1.7487,30.85,-84.13,-87.08,FAIL,,,,False
+trend,Vortex VI+/VI- cross,signal,21,15m,BTC,12734,-0.7847,28.03,-99.92,4015,-1.961,30.16,-78.73,-79.81,FAIL,,,,False
+trend,Vortex VI+/VI- cross,signal,34,15m,BTC,10421,-0.9536,27.91,-99.38,3118,-1.1021,29.7,-34.36,-65.34,FAIL,,,,False
+trend,KAMA cross,signal,10/2/30,1h,BTC,5070,-1.9414,18.97,-98.43,1562,-2.8861,21.83,-45.08,-61.6,FAIL,,,,False
+trend,KAMA cross,filter,10/2/30,1h,BTC,351,7.7352,34.47,27.15,119,0.4186,38.66,0.5,-28.55,SURVIVOR,0.0,0.0,1.0,True
+trend,KAMA cross,signal,5/2/20,1h,BTC,6934,-1.4212,23.23,-98.54,2186,-2.9861,25.98,-65.28,-80.06,FAIL,,,,False
+trend,KAMA cross,filter,5/2/20,1h,BTC,351,7.7352,34.47,27.15,119,0.4186,38.66,0.5,-28.55,SURVIVOR,0.0,0.0,1.0,True
+trend,KAMA cross,signal,10/2/30,15m,BTC,20454,-0.4889,18.39,-100.0,6531,-1.3929,21.11,-90.97,-91.39,FAIL,,,,False
+trend,KAMA cross,signal,5/2/20,15m,BTC,28197,-0.3546,22.4,-100.0,9322,-1.061,23.9,-98.91,-98.93,FAIL,,,,False
+trend,Hull MA cross,signal,9,1h,BTC,11243,-0.8562,37.13,-96.27,3892,-2.3956,34.58,-93.24,-93.36,FAIL,,,,False
+trend,Hull MA cross,filter,9,1h,BTC,351,7.7352,34.47,27.15,119,1.3351,38.66,1.59,-28.55,SURVIVOR,0.9164999999999999,0.0,1.0,False
+trend,Hull MA cross,signal,16,1h,BTC,8031,-1.2324,30.62,-98.98,2721,-3.2402,31.28,-88.17,-88.47,FAIL,,,,False
+trend,Hull MA cross,filter,16,1h,BTC,351,7.7352,34.47,27.15,119,0.4186,38.66,0.5,-28.55,SURVIVOR,0.0,0.0,1.0,True
+trend,Hull MA cross,signal,21,1h,BTC,6823,-1.4553,29.34,-99.29,2329,-3.2163,30.06,-74.91,-79.37,FAIL,,,,False
+trend,Hull MA cross,filter,21,1h,BTC,351,7.7352,34.47,27.15,119,0.4186,38.66,0.5,-28.55,SURVIVOR,0.0,0.0,1.0,True
+trend,Hull MA cross,signal,9,15m,BTC,46841,-0.2135,33.5,-100.0,15640,-0.6376,34.27,-99.72,-99.73,FAIL,,,,False
+trend,Hull MA cross,signal,16,15m,BTC,33257,-0.3007,29.55,-100.0,11108,-0.8929,30.28,-99.19,-99.22,FAIL,,,,False
+trend,Hull MA cross,signal,21,15m,BTC,28505,-0.3508,28.79,-100.0,9530,-1.0321,29.25,-98.36,-98.43,FAIL,,,,False
+trend,DEMA cross,signal,10/30,1h,BTC,1972,17.3215,32.91,341.58,649,-2.0284,36.21,-13.16,-52.74,FAIL,,,,False
+trend,DEMA cross,filter,10/30,1h,BTC,351,6.5463,34.47,22.98,117,3.6648,38.46,4.29,-27.26,SURVIVOR,3.2462,-1.1889000000000003,0.983,False
+trend,DEMA cross,signal,20/50,1h,BTC,1058,-1.4032,32.89,-14.85,353,-1.6746,34.28,-5.91,-36.76,FAIL,,,,False
+trend,DEMA cross,filter,20/50,1h,BTC,340,-2.1949,33.53,-7.46,112,17.9085,39.29,20.06,-23.27,FAIL,17.4899,-9.9301,0.941,False
+trend,DEMA cross,signal,10/30,15m,BTC,8334,-1.1919,30.0,-99.34,2815,-2.5422,30.62,-71.56,-73.5,FAIL,,,,False
+trend,DEMA cross,signal,20/50,15m,BTC,4560,-2.025,30.59,-92.34,1439,-1.2079,33.7,-17.38,-49.82,FAIL,,,,False
+trend,TEMA cross,signal,10/30,1h,BTC,2676,7.3592,35.28,196.93,895,3.7605,37.32,33.66,-57.98,SURVIVOR,,,,False
+trend,TEMA cross,filter,10/30,1h,BTC,351,7.7352,34.47,27.15,119,-1.0076,38.66,-1.2,-29.76,FAIL,-1.4262000000000001,0.0,1.0,False
+trend,TEMA cross,signal,20/50,1h,BTC,1434,48.3272,36.61,693.01,489,-5.9309,37.63,-29.0,-47.23,FAIL,,,,False
+trend,TEMA cross,filter,20/50,1h,BTC,348,4.3193,34.2,15.03,117,4.3941,38.46,5.14,-26.06,SURVIVOR,3.9755,-3.4158999999999997,0.983,False
+trend,TEMA cross,signal,10/30,15m,BTC,11120,-0.8912,32.93,-99.1,3883,-2.3835,32.86,-92.55,-92.78,FAIL,,,,False
+trend,TEMA cross,signal,20/50,15m,BTC,6000,-1.6367,32.82,-98.2,2041,-2.5495,34.25,-52.04,-55.36,FAIL,,,,False
+trend,Linreg slope sign,signal,20,1h,BTC,1837,3.1727,33.21,58.28,601,2.8028,34.61,16.84,-32.17,SURVIVOR,,,,False
+trend,Linreg slope sign,filter,20,1h,BTC,349,6.2299,34.1,21.74,118,5.2916,38.98,6.24,-24.93,SURVIVOR,4.873,-1.5053,0.992,False
+trend,Linreg slope sign,signal,50,1h,BTC,743,1.6007,33.11,11.89,241,-6.5619,35.27,-15.81,-55.34,FAIL,,,,False
+trend,Linreg slope sign,filter,50,1h,BTC,314,21.39,33.12,67.16,110,10.0948,34.55,11.1,-25.0,SURVIVOR,9.6762,13.654800000000002,0.924,False
+trend,Linreg slope sign,signal,100,1h,BTC,352,-14.1012,30.97,-49.64,110,100.746,38.18,110.82,-43.39,FAIL,,,,False
+trend,Linreg slope sign,filter,100,1h,BTC,252,10.5767,32.14,26.65,88,20.5785,39.77,18.11,-26.97,SURVIVOR,20.159899999999997,2.841500000000001,0.739,False
+trend,Linreg slope sign,signal,20,15m,BTC,7472,-1.3278,29.91,-99.21,2409,-2.647,31.09,-63.77,-66.42,FAIL,,,,False
+trend,Linreg slope sign,signal,50,15m,BTC,3015,-0.1236,32.01,-3.73,924,3.087,34.96,28.52,-33.16,FAIL,,,,False
+trend,Linreg slope sign,signal,100,15m,BTC,1477,12.2348,31.82,180.71,497,-7.8593,31.39,-39.06,-46.17,FAIL,,,,False
+momentum,RSI OB/OS,signal,14/30-70,1h,BTC,995,-7.4869,68.54,-74.49,335,-5.753,70.15,-19.27,-29.61,FAIL,,,,False
+momentum,RSI OB/OS,filter,14/30-70,1h,BTC,351,8.1653,34.47,28.66,119,-5.6913,37.82,-6.77,-28.81,FAIL,-6.1099,0.43010000000000037,1.0,False
+momentum,RSI OB/OS,signal,7/25-75,1h,BTC,1675,-4.9756,66.99,-83.34,566,-2.473,65.9,-14.0,-27.34,FAIL,,,,False
+momentum,RSI OB/OS,filter,7/25-75,1h,BTC,351,1.481,33.9,5.2,119,3.9695,36.97,4.72,-28.09,SURVIVOR,3.5509,-6.2542,1.0,False
+momentum,RSI OB/OS,signal,21/35-65,1h,BTC,1014,-7.3009,71.3,-74.03,346,-3.7776,71.39,-13.07,-22.0,FAIL,,,,False
+momentum,RSI OB/OS,filter,21/35-65,1h,BTC,351,8.981,34.47,31.52,119,-5.3758,37.82,-6.4,-29.29,FAIL,-5.7943999999999996,1.2458,1.0,False
+momentum,RSI OB/OS,signal,14/30-70,15m,BTC,3307,-2.628,67.13,-86.91,1081,-3.4485,65.31,-37.28,-41.12,FAIL,,,,False
+momentum,RSI OB/OS,signal,7/25-75,15m,BTC,5999,-1.4766,66.21,-88.58,2083,-1.4677,66.49,-30.57,-37.78,FAIL,,,,False
+momentum,RSI OB/OS,signal,21/35-65,15m,BTC,3453,-2.542,68.78,-87.77,1169,-2.8999,68.18,-33.9,-37.19,FAIL,,,,False
+momentum,RSI 50-cross,signal,14,1h,BTC,3876,-1.451,19.2,-56.24,1300,-4.1582,19.62,-54.06,-57.43,FAIL,,,,False
+momentum,RSI 50-cross,filter,14,1h,BTC,351,7.7352,34.47,27.15,119,0.4186,38.66,0.5,-28.55,SURVIVOR,0.0,0.0,1.0,True
+momentum,RSI 50-cross,signal,7,1h,BTC,5887,-1.5022,21.51,-88.43,1890,-3.1868,22.49,-60.23,-71.75,FAIL,,,,False
+momentum,RSI 50-cross,filter,7,1h,BTC,351,7.7352,34.47,27.15,119,0.4186,38.66,0.5,-28.55,SURVIVOR,0.0,0.0,1.0,True
+momentum,RSI 50-cross,signal,21,1h,BTC,3038,-0.1941,18.17,-5.9,959,-4.0703,19.08,-39.03,-53.12,FAIL,,,,False
+momentum,RSI 50-cross,filter,21,1h,BTC,347,12.4677,34.58,43.26,119,1.1914,39.5,1.42,-28.52,SURVIVOR,0.7727999999999999,4.732500000000001,1.0,False
+momentum,RSI 50-cross,signal,14,15m,BTC,16850,-0.593,17.22,-99.92,5551,-1.6214,18.63,-90.0,-90.45,FAIL,,,,False
+momentum,RSI 50-cross,signal,7,15m,BTC,24582,-0.4068,19.99,-100.0,7959,-1.2052,21.71,-95.92,-96.09,FAIL,,,,False
+momentum,RSI 50-cross,signal,21,15m,BTC,13548,-0.7364,15.67,-99.77,4371,-1.7569,17.57,-76.79,-78.04,FAIL,,,,False
+momentum,Stochastic %K/%D cross,signal,14/3/3,1h,BTC,13655,-0.7311,33.22,-99.83,4543,-2.09,33.24,-94.95,-95.45,FAIL,,,,False
+momentum,Stochastic %K/%D cross,filter,14/3/3,1h,BTC,351,8.367,34.19,29.37,118,3.7653,38.98,4.44,-30.13,SURVIVOR,3.3467,0.631800000000001,0.992,False
+momentum,Stochastic %K/%D cross,signal,5/3/3,1h,BTC,13954,-0.7111,36.08,-99.23,4707,-2.0382,35.05,-95.94,-96.09,FAIL,,,,False
+momentum,Stochastic %K/%D cross,filter,5/3/3,1h,BTC,351,9.042,34.19,31.74,118,2.2553,38.14,2.66,-29.07,SURVIVOR,1.8367,1.3068,0.992,False
+momentum,Stochastic %K/%D cross,signal,21/5/5,1h,BTC,10061,-0.9839,30.9,-98.99,3348,-2.5352,31.57,-84.88,-86.86,FAIL,,,,False
+momentum,Stochastic %K/%D cross,filter,21/5/5,1h,BTC,351,6.6851,34.47,23.46,118,1.7832,38.98,2.1,-29.74,SURVIVOR,1.3645999999999998,-1.0500999999999996,0.992,False
+momentum,Stochastic %K/%D cross,signal,14/3/3,15m,BTC,54753,-0.1826,31.22,-100.0,18181,-0.5498,32.3,-99.96,-99.96,FAIL,,,,False
+momentum,Stochastic %K/%D cross,signal,5/3/3,15m,BTC,57063,-0.1752,33.01,-100.0,19103,-0.5234,33.6,-99.98,-99.98,FAIL,,,,False
+momentum,Stochastic %K/%D cross,signal,21/5/5,15m,BTC,40565,-0.2465,29.5,-100.0,13543,-0.736,30.16,-99.67,-99.67,FAIL,,,,False
+momentum,Stochastic extremes,signal,14/3/3,1h,BTC,4020,-2.2536,65.7,-90.59,1520,0.7962,66.58,12.1,-20.83,FAIL,,,,False
+momentum,Stochastic extremes,filter,14/3/3,1h,BTC,351,-0.9444,31.05,-3.31,119,8.2305,34.45,9.79,-28.26,FAIL,7.8119,-8.6796,1.0,False
+momentum,Stochastic extremes,signal,5/3/3,1h,BTC,6212,-1.4841,61.51,-92.19,2238,-0.8422,59.65,-18.85,-38.73,FAIL,,,,False
+momentum,Stochastic extremes,filter,5/3/3,1h,BTC,351,-1.8192,32.48,-6.39,119,-0.7226,33.61,-0.86,-29.28,FAIL,-1.1412,-9.5544,1.0,False
+momentum,Stochastic extremes,signal,21/5/5,1h,BTC,3403,-2.725,67.38,-92.73,1266,-0.8523,66.35,-10.79,-25.26,FAIL,,,,False
+momentum,Stochastic extremes,filter,21/5/5,1h,BTC,351,3.1759,30.48,11.15,119,19.2925,35.29,22.96,-25.03,SURVIVOR,18.8739,-4.5593,1.0,False
+momentum,Stochastic extremes,signal,14/3/3,15m,BTC,18121,-0.5504,61.98,-99.75,6345,-1.3545,61.69,-85.94,-87.41,FAIL,,,,False
+momentum,Stochastic extremes,signal,5/3/3,15m,BTC,28435,-0.3516,56.31,-99.97,9731,-0.9613,56.64,-93.54,-94.29,FAIL,,,,False
+momentum,Stochastic extremes,signal,21/5/5,15m,BTC,14864,-0.6704,63.51,-99.65,5249,-1.6632,62.45,-87.3,-88.73,FAIL,,,,False
+momentum,Stochastic RSI extremes,signal,14,1h,BTC,5499,-1.7332,67.28,-95.31,1870,-2.1437,65.67,-40.09,-52.57,FAIL,,,,False
+momentum,Stochastic RSI extremes,filter,14,1h,BTC,350,3.9338,31.14,13.77,119,10.4722,32.77,12.46,-28.18,SURVIVOR,10.053600000000001,-3.8013999999999997,1.0,False
+momentum,Stochastic RSI extremes,signal,9,1h,BTC,7159,-1.2882,66.74,-92.22,2418,-1.7211,65.18,-41.62,-48.28,FAIL,,,,False
+momentum,Stochastic RSI extremes,filter,9,1h,BTC,351,-0.8147,31.34,-2.86,119,10.1184,34.45,12.04,-28.68,FAIL,9.6998,-8.5499,1.0,False
+momentum,Stochastic RSI extremes,signal,21,1h,BTC,4336,-2.2515,67.3,-97.63,1495,-2.3051,66.49,-34.46,-40.98,FAIL,,,,False
+momentum,Stochastic RSI extremes,filter,21,1h,BTC,350,7.4153,30.29,25.95,119,16.0495,32.77,19.1,-29.65,SURVIVOR,15.630899999999999,-0.31989999999999963,1.0,False
+momentum,Stochastic RSI extremes,signal,14,15m,BTC,22754,-0.4394,62.03,-99.99,7636,-1.2413,62.44,-94.79,-95.28,FAIL,,,,False
+momentum,Stochastic RSI extremes,signal,9,15m,BTC,29121,-0.3434,60.51,-100.0,9742,-1.0046,60.51,-97.87,-97.99,FAIL,,,,False
+momentum,Stochastic RSI extremes,signal,21,15m,BTC,18211,-0.5488,64.23,-99.94,6114,-1.4464,63.53,-88.44,-89.94,FAIL,,,,False
+momentum,CCI extremes,signal,20,1h,BTC,3021,-3.1054,65.71,-93.81,1053,-5.0046,65.15,-52.7,-55.56,FAIL,,,,False
+momentum,CCI extremes,filter,20,1h,BTC,351,5.0417,29.06,17.7,119,-9.1556,28.57,-10.9,-36.91,FAIL,-9.5742,-2.6935000000000002,1.0,False
+momentum,CCI extremes,signal,14,1h,BTC,3725,-2.3851,63.65,-88.85,1302,-3.4931,64.21,-45.48,-50.51,FAIL,,,,False
+momentum,CCI extremes,filter,14,1h,BTC,351,-1.9421,29.91,-6.82,119,-9.9577,31.09,-11.85,-37.21,FAIL,-10.3763,-9.677299999999999,1.0,False
+momentum,CCI extremes,signal,50,1h,BTC,1741,-5.4258,68.52,-94.46,600,-5.9951,67.33,-35.97,-50.71,FAIL,,,,False
+momentum,CCI extremes,filter,50,1h,BTC,349,7.3759,31.52,25.74,119,-6.2046,33.61,-7.38,-32.29,FAIL,-6.6232,-0.3593000000000002,1.0,False
+momentum,CCI extremes,signal,20,15m,BTC,12579,-0.7918,63.26,-99.6,4282,-1.8985,62.56,-81.29,-83.4,FAIL,,,,False
+momentum,CCI extremes,signal,14,15m,BTC,15638,-0.6379,61.54,-99.76,5225,-1.6498,59.77,-86.2,-87.55,FAIL,,,,False
+momentum,CCI extremes,signal,50,15m,BTC,7412,-1.3263,68.71,-98.3,2539,-2.9961,66.56,-76.07,-78.28,FAIL,,,,False
+momentum,Williams %R extremes,signal,14,1h,BTC,4020,-2.2536,65.7,-90.59,1520,0.7962,66.58,12.1,-20.83,FAIL,,,,False
+momentum,Williams %R extremes,filter,14,1h,BTC,351,-0.9444,31.05,-3.31,119,8.2305,34.45,9.79,-28.26,FAIL,7.8119,-8.6796,1.0,False
+momentum,Williams %R extremes,signal,9,1h,BTC,4802,-1.9022,64.22,-91.35,1777,-0.3827,63.93,-6.8,-32.53,FAIL,,,,False
+momentum,Williams %R extremes,filter,9,1h,BTC,351,-3.1291,31.34,-10.98,119,2.7024,34.45,3.22,-28.9,FAIL,2.2838,-10.8643,1.0,False
+momentum,Williams %R extremes,signal,28,1h,BTC,2947,-3.073,68.2,-90.56,1092,0.5698,67.4,6.22,-25.06,FAIL,,,,False
+momentum,Williams %R extremes,filter,28,1h,BTC,351,1.7998,31.05,6.32,119,5.5512,36.13,6.61,-27.71,SURVIVOR,5.1326,-5.9354,1.0,False
+momentum,Williams %R extremes,signal,14,15m,BTC,18121,-0.5504,61.98,-99.75,6345,-1.3545,61.69,-85.94,-87.41,FAIL,,,,False
+momentum,Williams %R extremes,signal,9,15m,BTC,22122,-0.4517,59.49,-99.92,7650,-1.2118,58.85,-92.7,-92.92,FAIL,,,,False
+momentum,Williams %R extremes,signal,28,15m,BTC,12777,-0.7799,65.49,-99.65,4539,-1.8292,63.93,-83.03,-84.5,FAIL,,,,False
+momentum,ROC 0-cross,signal,12,1h,BTC,5021,-1.5138,28.86,-76.01,1541,-1.8323,31.8,-28.24,-58.43,FAIL,,,,False
+momentum,ROC 0-cross,filter,12,1h,BTC,351,7.7352,34.47,27.15,119,0.4186,38.66,0.5,-28.55,SURVIVOR,0.0,0.0,1.0,True
+momentum,ROC 0-cross,signal,6,1h,BTC,7077,-1.3704,28.3,-96.98,2291,-2.9582,30.86,-67.77,-76.8,FAIL,,,,False
+momentum,ROC 0-cross,filter,6,1h,BTC,351,7.7352,34.47,27.15,119,0.4186,38.66,0.5,-28.55,SURVIVOR,0.0,0.0,1.0,True
+momentum,ROC 0-cross,signal,25,1h,BTC,3311,-2.8105,27.15,-93.05,1037,-6.8029,27.68,-70.55,-72.51,FAIL,,,,False
+momentum,ROC 0-cross,filter,25,1h,BTC,351,3.0571,32.48,10.73,119,-1.6743,36.97,-1.99,-29.65,FAIL,-2.0928999999999998,-4.6781,1.0,False
+momentum,ROC 0-cross,signal,12,15m,BTC,19878,-0.5029,26.97,-99.97,6429,-1.4509,27.34,-93.28,-93.35,FAIL,,,,False
+momentum,ROC 0-cross,signal,6,15m,BTC,27113,-0.3688,27.81,-100.0,8792,-1.1119,28.92,-97.76,-97.82,FAIL,,,,False
+momentum,ROC 0-cross,signal,25,15m,BTC,14396,-0.6941,24.94,-99.93,4485,-1.8934,26.11,-84.92,-85.98,FAIL,,,,False
+momentum,Momentum 0-cross,signal,10,1h,BTC,5666,-1.7032,28.12,-96.5,1742,-1.9412,30.71,-33.82,-57.13,FAIL,,,,False
+momentum,Momentum 0-cross,filter,10,1h,BTC,351,7.7352,34.47,27.15,119,0.4186,38.66,0.5,-28.55,SURVIVOR,0.0,0.0,1.0,True
+momentum,Momentum 0-cross,signal,5,1h,BTC,7778,-1.276,28.73,-99.25,2505,-3.1851,30.66,-79.79,-81.78,FAIL,,,,False
+momentum,Momentum 0-cross,filter,5,1h,BTC,351,7.7352,34.47,27.15,119,0.4186,38.66,0.5,-28.55,SURVIVOR,0.0,0.0,1.0,True
+momentum,Momentum 0-cross,signal,20,1h,BTC,3713,0.1842,29.6,6.84,1219,-4.36,29.12,-53.15,-59.39,FAIL,,,,False
+momentum,Momentum 0-cross,filter,20,1h,BTC,351,7.7352,34.47,27.15,119,0.4186,38.66,0.5,-28.55,SURVIVOR,0.0,0.0,1.0,True
+momentum,Momentum 0-cross,signal,10,15m,BTC,21302,-0.4693,27.04,-99.98,7003,-1.2889,28.27,-90.26,-90.58,FAIL,,,,False
+momentum,Momentum 0-cross,signal,5,15m,BTC,29633,-0.3375,27.86,-100.0,9660,-1.0182,28.85,-98.35,-98.38,FAIL,,,,False
+momentum,Momentum 0-cross,signal,20,15m,BTC,15702,-0.6367,25.47,-99.98,5031,-1.7491,28.15,-88.0,-88.54,FAIL,,,,False
+momentum,Ultimate Oscillator extremes,signal,7/14/28,1h,BTC,244,-6.8788,64.34,-16.78,82,9.1747,63.41,7.52,-5.53,FAIL,,,,False
+momentum,Ultimate Oscillator extremes,filter,7/14/28,1h,BTC,351,7.4951,34.76,26.31,119,0.5219,38.66,0.62,-27.59,SURVIVOR,0.1033,-0.24009999999999998,1.0,False
+momentum,Ultimate Oscillator extremes,signal,5/10/20,1h,BTC,709,-5.2812,60.65,-37.44,231,1.4948,60.17,3.45,-12.76,FAIL,,,,False
+momentum,Ultimate Oscillator extremes,filter,5/10/20,1h,BTC,351,4.6588,34.76,16.35,119,-2.1137,36.97,-2.52,-26.46,FAIL,-2.5323,-3.0763999999999996,1.0,False
+momentum,Ultimate Oscillator extremes,signal,7/14/28,15m,BTC,1510,2.7443,57.22,41.44,430,-5.4337,56.28,-23.37,-28.82,FAIL,,,,False
+momentum,Ultimate Oscillator extremes,signal,5/10/20,15m,BTC,4089,-0.7558,56.27,-30.9,1194,-2.9513,59.38,-35.24,-38.49,FAIL,,,,False
+momentum,Awesome Oscillator 0-cross,signal,5/34,1h,BTC,1551,-2.4564,28.69,-38.1,495,-4.5783,29.7,-22.66,-41.83,FAIL,,,,False
+momentum,Awesome Oscillator 0-cross,filter,5/34,1h,BTC,349,3.8824,32.95,13.55,116,11.1321,37.93,12.91,-25.84,SURVIVOR,10.7135,-3.8528,0.975,False
+momentum,Awesome Oscillator 0-cross,signal,3/21,1h,BTC,2481,2.0992,30.47,52.08,781,-1.8441,31.24,-14.4,-34.04,FAIL,,,,False
+momentum,Awesome Oscillator 0-cross,filter,3/21,1h,BTC,351,8.6499,33.9,30.36,119,-0.0316,36.97,-0.04,-26.97,FAIL,-0.45020000000000004,0.9147000000000007,1.0,False
+momentum,Awesome Oscillator 0-cross,signal,5/34,15m,BTC,6522,-1.4927,26.82,-97.35,2035,-1.6763,30.47,-34.11,-47.48,FAIL,,,,False
+momentum,Awesome Oscillator 0-cross,signal,3/21,15m,BTC,10192,-0.9729,27.84,-99.16,3297,-2.0253,29.15,-66.78,-70.49,FAIL,,,,False
+momentum,TSI 0-cross,signal,25/13,1h,BTC,1162,4.2496,26.94,49.38,361,3.4323,28.53,12.39,-42.12,SURVIVOR,,,,False
+momentum,TSI 0-cross,filter,25/13,1h,BTC,341,10.6409,33.14,36.29,116,7.567,39.66,8.78,-28.17,SURVIVOR,7.1484000000000005,2.9057000000000004,0.975,False
+momentum,TSI 0-cross,signal,13/7,1h,BTC,2226,-1.3308,26.06,-29.62,731,-5.1819,28.04,-37.88,-46.22,FAIL,,,,False
+momentum,TSI 0-cross,filter,13/7,1h,BTC,351,7.166,34.47,25.15,118,3.7735,38.98,4.45,-26.59,SURVIVOR,3.3548999999999998,-0.5691999999999995,0.992,False
+momentum,TSI 0-cross,signal,25/13,15m,BTC,4976,-1.8416,23.37,-91.64,1565,-1.7037,27.73,-26.66,-47.29,FAIL,,,,False
+momentum,TSI 0-cross,signal,13/7,15m,BTC,9462,-1.053,23.47,-99.63,3125,-2.6065,25.79,-81.45,-83.34,FAIL,,,,False
+momentum,Fisher Transform 0-cross,signal,10,1h,BTC,2439,1.6447,33.58,40.11,763,-3.1395,37.35,-23.95,-49.68,FAIL,,,,False
+momentum,Fisher Transform 0-cross,filter,10,1h,BTC,349,8.6625,34.1,30.23,118,-1.0704,38.98,-1.26,-27.06,FAIL,-1.489,0.9272999999999998,0.992,False
+momentum,Fisher Transform 0-cross,signal,5,1h,BTC,3630,-2.1257,30.91,-77.16,1106,-2.2878,36.26,-25.3,-49.85,FAIL,,,,False
+momentum,Fisher Transform 0-cross,filter,5,1h,BTC,348,9.4519,33.05,32.89,119,-2.987,36.97,-3.55,-28.83,FAIL,-3.4056,1.7167000000000003,1.0,False
+momentum,Fisher Transform 0-cross,signal,20,1h,BTC,1541,0.6089,32.51,9.38,513,-1.1785,35.48,-6.05,-33.18,FAIL,,,,False
+momentum,Fisher Transform 0-cross,filter,20,1h,BTC,348,4.9185,33.62,17.12,118,8.426,38.14,9.94,-25.06,SURVIVOR,8.0074,-2.8167,0.992,False
+momentum,Fisher Transform 0-cross,signal,10,15m,BTC,9860,-0.9844,31.57,-97.06,3187,-2.1129,32.7,-67.34,-70.93,FAIL,,,,False
+momentum,Fisher Transform 0-cross,signal,5,15m,BTC,13935,-0.7136,30.48,-99.44,4471,-1.7409,31.63,-77.83,-80.79,FAIL,,,,False
+momentum,Fisher Transform 0-cross,signal,20,15m,BTC,6490,-1.4837,30.48,-96.29,2061,-1.8657,32.7,-38.45,-44.81,FAIL,,,,False
+momentum,Connors RSI extremes,signal,3/2/100,1h,BTC,1215,-0.8001,57.94,-9.72,404,4.5607,59.41,18.43,-11.15,FAIL,,,,False
+momentum,Connors RSI extremes,filter,3/2/100,1h,BTC,350,7.2316,34.57,25.31,119,1.7245,36.97,2.05,-29.03,SURVIVOR,1.3058999999999998,-0.5035999999999996,1.0,False
+momentum,Connors RSI extremes,signal,3/2/50,1h,BTC,1251,-1.5336,57.95,-19.19,414,4.1521,58.45,17.19,-10.64,FAIL,,,,False
+momentum,Connors RSI extremes,filter,3/2/50,1h,BTC,351,5.0431,34.47,17.7,119,3.3971,37.82,4.04,-29.03,SURVIVOR,2.9785,-2.6921,1.0,False
+momentum,Connors RSI extremes,signal,3/2/100,15m,BTC,4297,-1.688,56.06,-72.53,1520,-2.0278,57.37,-30.82,-32.84,FAIL,,,,False
+momentum,Connors RSI extremes,signal,3/2/50,15m,BTC,4435,-1.8037,54.23,-79.99,1534,-2.1573,57.24,-33.09,-35.33,FAIL,,,,False
+volatility,Bollinger mean-revert,signal,20/2,1h,BTC,1256,-7.1797,64.73,-90.18,407,-8.2371,63.39,-33.52,-47.06,FAIL,,,,False
+volatility,Bollinger mean-revert,filter,20/2,1h,BTC,351,-1.4232,31.62,-5.0,119,2.5325,36.97,3.01,-31.48,FAIL,2.1139,-9.1584,1.0,False
+volatility,Bollinger mean-revert,signal,20/2.5,1h,BTC,819,-10.7008,59.83,-87.64,260,-11.8849,57.69,-30.9,-40.97,FAIL,,,,False
+volatility,Bollinger mean-revert,filter,20/2.5,1h,BTC,351,0.3929,32.76,1.38,119,-2.3376,36.13,-2.78,-30.68,FAIL,-2.7562,-7.3423,1.0,False
+volatility,Bollinger mean-revert,signal,10/2,1h,BTC,1679,-3.6933,65.52,-62.01,538,-7.3658,62.08,-39.63,-47.79,FAIL,,,,False
+volatility,Bollinger mean-revert,filter,10/2,1h,BTC,351,0.8252,33.05,2.9,119,2.5826,36.97,3.07,-28.42,SURVIVOR,2.1639999999999997,-6.91,1.0,False
+volatility,Bollinger mean-revert,signal,20/2,15m,BTC,4858,-1.6848,68.4,-81.85,1630,-2.9259,66.5,-47.69,-55.41,FAIL,,,,False
+volatility,Bollinger mean-revert,signal,20/2.5,15m,BTC,2963,-2.194,66.42,-65.01,947,-5.3627,64.31,-50.78,-59.99,FAIL,,,,False
+volatility,Bollinger mean-revert,signal,10/2,15m,BTC,6271,-1.2476,66.0,-78.23,1983,-2.3044,65.31,-45.7,-52.31,FAIL,,,,False
+volatility,Bollinger breakout,signal,20/2,1h,BTC,1256,4.2692,34.0,53.62,407,-1.8498,35.38,-7.53,-39.84,FAIL,,,,False
+volatility,Bollinger breakout,filter,20/2,1h,BTC,351,7.7352,34.47,27.15,119,0.4186,38.66,0.5,-28.55,SURVIVOR,0.0,0.0,1.0,True
+volatility,Bollinger breakout,signal,20/2.5,1h,BTC,819,14.7138,38.71,120.51,260,1.4788,40.0,3.84,-30.83,SURVIVOR,,,,False
+volatility,Bollinger breakout,filter,20/2.5,1h,BTC,351,7.7352,34.47,27.15,119,0.4186,38.66,0.5,-28.55,SURVIVOR,0.0,0.0,1.0,True
+volatility,Bollinger breakout,signal,10/2,1h,BTC,1679,-3.9414,32.58,-66.18,538,-1.3796,36.25,-7.42,-38.71,FAIL,,,,False
+volatility,Bollinger breakout,filter,10/2,1h,BTC,351,7.7352,34.47,27.15,119,0.4186,38.66,0.5,-28.55,SURVIVOR,0.0,0.0,1.0,True
+volatility,Bollinger breakout,signal,20/2,15m,BTC,4858,-1.9689,27.67,-95.65,1630,-3.5299,29.75,-57.54,-59.23,FAIL,,,,False
+volatility,Bollinger breakout,signal,20/2.5,15m,BTC,2963,-2.9261,30.48,-86.7,947,-1.8899,32.42,-17.9,-43.25,FAIL,,,,False
+volatility,Bollinger breakout,signal,10/2,15m,BTC,6269,-1.5715,28.76,-98.52,1983,-3.405,29.2,-67.52,-68.84,FAIL,,,,False
+volatility,Keltner mean-revert,signal,20/2,1h,BTC,662,-13.9046,61.03,-92.05,232,-2.4374,65.95,-5.65,-26.44,FAIL,,,,False
+volatility,Keltner mean-revert,filter,20/2,1h,BTC,351,2.6568,34.19,9.33,119,-8.8627,36.13,-10.55,-31.71,FAIL,-9.2813,-5.0784,1.0,False
+volatility,Keltner mean-revert,signal,10/1.5,1h,BTC,891,-9.4303,62.18,-84.02,297,-12.5721,59.93,-37.34,-42.28,FAIL,,,,False
+volatility,Keltner mean-revert,filter,10/1.5,1h,BTC,351,2.1177,33.62,7.43,119,8.0672,39.5,9.6,-27.65,SURVIVOR,7.6486,-5.6175,1.0,False
+volatility,Keltner mean-revert,signal,20/2,15m,BTC,2933,-2.6718,66.38,-78.36,897,-6.2725,64.1,-56.26,-61.76,FAIL,,,,False
+volatility,Keltner mean-revert,signal,10/1.5,15m,BTC,3927,-2.1244,65.5,-83.42,1152,-2.8581,65.36,-32.92,-43.89,FAIL,,,,False
+volatility,Keltner breakout,signal,20/2,1h,BTC,662,42.7334,37.16,282.9,232,-10.4117,33.19,-24.16,-40.97,FAIL,,,,False
+volatility,Keltner breakout,filter,20/2,1h,BTC,351,7.7352,34.47,27.15,119,0.4186,38.66,0.5,-28.55,SURVIVOR,0.0,0.0,1.0,True
+volatility,Keltner breakout,signal,10/1.5,1h,BTC,891,8.845,36.81,78.81,297,3.7,39.06,10.99,-30.55,SURVIVOR,,,,False
+volatility,Keltner breakout,filter,10/1.5,1h,BTC,351,7.7352,34.47,27.15,119,0.4186,38.66,0.5,-28.55,SURVIVOR,0.0,0.0,1.0,True
+volatility,Keltner breakout,signal,20/2,15m,BTC,2933,-2.7075,30.38,-79.41,897,-0.5442,32.78,-4.88,-34.97,FAIL,,,,False
+volatility,Keltner breakout,signal,10/1.5,15m,BTC,3927,-2.1937,29.74,-86.15,1152,-4.1543,29.69,-47.86,-50.42,FAIL,,,,False
+volatility,Chandelier exit,signal,22/3,1h,BTC,2742,-2.9346,33.84,-80.47,794,-4.3332,35.39,-34.41,-51.24,FAIL,,,,False
+volatility,Chandelier exit,filter,22/3,1h,BTC,349,6.8942,34.67,24.06,118,1.6335,38.98,1.93,-26.33,SURVIVOR,1.2148999999999999,-0.8410000000000002,0.992,False
+volatility,Chandelier exit,signal,14/2,1h,BTC,5708,-1.5953,34.15,-91.06,1570,-1.8956,35.67,-29.76,-61.55,FAIL,,,,False
+volatility,Chandelier exit,filter,14/2,1h,BTC,351,7.2894,34.47,25.59,119,0.4186,38.66,0.5,-28.55,SURVIVOR,0.0,-0.4458000000000002,1.0,False
+volatility,Chandelier exit,signal,22/2,1h,BTC,9226,-1.0382,36.0,-95.78,2605,-2.409,36.85,-62.76,-69.4,FAIL,,,,False
+volatility,Chandelier exit,filter,22/2,1h,BTC,351,7.0605,34.47,24.78,119,0.4508,38.66,0.54,-28.52,SURVIVOR,0.03219999999999995,-0.6746999999999996,1.0,False
+volatility,Chandelier exit,signal,22/3,15m,BTC,13953,-0.7165,29.99,-99.98,3092,-2.2514,32.6,-69.61,-72.43,FAIL,,,,False
+volatility,Chandelier exit,signal,14/2,15m,BTC,26921,-0.3715,30.37,-100.0,6743,-1.4219,31.07,-95.88,-96.02,FAIL,,,,False
+volatility,Chandelier exit,signal,22/2,15m,BTC,42834,-0.2335,32.22,-100.0,10940,-0.9075,32.08,-99.28,-99.31,FAIL,,,,False
+volatility,BB-inside-KC squeeze release,signal,BB20/2 KC20/1.5,1h,BTC,804,5.1173,30.97,41.14,263,0.1924,32.7,0.51,-31.15,SURVIVOR,,,,False
+volatility,BB-inside-KC squeeze release,filter,BB20/2 KC20/1.5,1h,BTC,232,15.7288,33.19,36.49,78,9.3481,38.46,7.29,-25.53,SURVIVOR,8.9295,7.9936,0.655,False
+volatility,BB-inside-KC squeeze release,signal,BB20/2 KC20/2,1h,BTC,894,4.3168,33.11,38.59,295,-4.3658,34.58,-12.88,-28.51,FAIL,,,,False
+volatility,BB-inside-KC squeeze release,filter,BB20/2 KC20/2,1h,BTC,276,29.9967,35.51,82.79,93,4.1938,39.78,3.9,-28.52,SURVIVOR,3.7752000000000003,22.2615,0.782,False
+volatility,BB-inside-KC squeeze release,signal,BB20/2 KC20/1.5,15m,BTC,3074,-2.6452,25.86,-81.31,1085,-3.5299,27.28,-38.3,-45.56,FAIL,,,,False
+volatility,BB-inside-KC squeeze release,signal,BB20/2 KC20/2,15m,BTC,3808,-2.2759,27.73,-86.66,1274,-3.7057,29.83,-47.21,-51.65,FAIL,,,,False
+volatility,Stdev channel mean-revert,signal,50/2,1h,BTC,612,-14.2831,56.37,-87.41,206,2.4265,60.68,5.0,-18.84,FAIL,,,,False
+volatility,Stdev channel mean-revert,filter,50/2,1h,BTC,351,5.2285,33.62,18.35,119,-3.7406,36.13,-4.45,-30.3,FAIL,-4.1592,-2.5066999999999995,1.0,False
+volatility,Stdev channel mean-revert,signal,100/2,1h,BTC,313,-25.929,56.55,-81.16,116,-14.2909,57.76,-16.58,-29.72,FAIL,,,,False
+volatility,Stdev channel mean-revert,filter,100/2,1h,BTC,350,7.6951,33.43,26.93,119,-4.3046,38.66,-5.12,-27.67,FAIL,-4.723199999999999,-0.0400999999999998,1.0,False
+volatility,Stdev channel mean-revert,signal,50/2,15m,BTC,2414,-3.5998,61.14,-86.9,791,-4.629,63.72,-36.62,-47.71,FAIL,,,,False
+volatility,Stdev channel mean-revert,signal,100/2,15m,BTC,1423,-6.0502,61.77,-86.09,469,-11.0424,59.7,-51.79,-54.98,FAIL,,,,False
+volume,OBV trend (vs own MA),signal,20,1h,BTC,4228,3.7068,25.71,156.72,1347,-0.4838,25.46,-6.52,-38.54,FAIL,,,,False
+volume,OBV trend (vs own MA),filter,20,1h,BTC,351,4.4082,34.47,15.47,118,3.5493,38.98,4.19,-27.06,SURVIVOR,3.1307,-3.327,0.992,False
+volume,OBV trend (vs own MA),signal,50,1h,BTC,2533,-0.8166,22.42,-20.69,776,-5.0765,22.55,-39.39,-48.56,FAIL,,,,False
+volume,OBV trend (vs own MA),filter,50,1h,BTC,329,6.8398,34.04,22.5,110,6.1066,39.09,6.72,-24.98,SURVIVOR,5.688000000000001,-0.8953999999999995,0.924,False
+volume,OBV trend (vs own MA),signal,20,15m,BTC,16704,-0.5986,23.56,-99.99,5590,-1.6689,23.99,-93.29,-93.3,FAIL,,,,False
+volume,OBV trend (vs own MA),signal,50,15m,BTC,9620,-1.0345,20.84,-99.52,3146,-1.4802,21.84,-46.57,-61.95,FAIL,,,,False
+volume,OBV divergence,signal,20,1h,BTC,354,-3.9774,59.04,-14.08,123,19.2585,56.1,23.69,-49.07,FAIL,,,,False
+volume,OBV divergence,filter,20,1h,BTC,204,43.5692,31.86,88.88,65,81.0775,33.85,52.7,-12.72,SURVIVOR,80.6589,35.834,0.546,False
+volume,OBV divergence,signal,50,1h,BTC,117,-77.1958,61.54,-90.32,45,78.4631,64.44,35.31,-51.6,FAIL,,,,False
+volume,OBV divergence,filter,50,1h,BTC,150,39.5032,34.0,59.25,48,21.3295,37.5,10.24,-18.39,SURVIVOR,20.910899999999998,31.768,0.403,False
+volume,OBV divergence,signal,20,15m,BTC,2225,-3.8905,56.58,-86.56,700,-3.549,55.0,-24.84,-49.41,FAIL,,,,False
+volume,OBV divergence,signal,50,15m,BTC,630,-14.8308,58.1,-93.43,201,-31.4254,52.74,-63.17,-72.86,FAIL,,,,False
+volume,CMF 0-cross,signal,20,1h,BTC,3764,-2.0755,36.58,-78.12,1261,-5.1749,35.29,-65.26,-73.81,FAIL,,,,False
+volume,CMF 0-cross,filter,20,1h,BTC,347,6.9686,34.01,24.18,118,-2.6607,38.98,-3.14,-29.99,FAIL,-3.0793,-0.7665999999999995,0.992,False
+volume,CMF 0-cross,signal,10,1h,BTC,5835,-1.6932,34.98,-98.8,1910,-3.6314,35.39,-69.36,-73.93,FAIL,,,,False
+volume,CMF 0-cross,filter,10,1h,BTC,348,9.2266,34.48,32.11,117,3.1258,39.32,3.66,-29.5,SURVIVOR,2.7072,1.4913999999999996,0.983,False
+volume,CMF 0-cross,signal,20,15m,BTC,15917,-0.6283,32.78,-100.0,5259,-1.8285,32.53,-96.16,-96.27,FAIL,,,,False
+volume,CMF 0-cross,signal,10,15m,BTC,22666,-0.4412,33.17,-100.0,7579,-1.3072,32.79,-99.07,-99.08,FAIL,,,,False
+volume,MFI extremes,signal,14/20-80,1h,BTC,1027,-7.2102,57.55,-74.05,376,-2.313,60.64,-8.7,-29.61,FAIL,,,,False
+volume,MFI extremes,filter,14/20-80,1h,BTC,351,5.8081,34.19,20.39,119,5.0715,39.5,6.04,-26.3,SURVIVOR,4.652900000000001,-1.9271000000000003,1.0,False
+volume,MFI extremes,signal,14/30-70,1h,BTC,2118,-4.5675,60.58,-96.74,762,-4.6047,58.92,-35.09,-41.21,FAIL,,,,False
+volume,MFI extremes,filter,14/30-70,1h,BTC,349,1.1459,32.66,4.0,119,-8.8243,34.45,-10.5,-34.25,FAIL,-9.242899999999999,-6.5893,1.0,False
+volume,MFI extremes,signal,14/20-80,15m,BTC,4167,-2.1002,59.25,-87.52,1373,-1.7086,59.94,-23.46,-29.06,FAIL,,,,False
+volume,MFI extremes,signal,14/30-70,15m,BTC,8836,-1.1135,58.67,-98.39,2971,-2.3329,57.09,-69.31,-70.89,FAIL,,,,False
+volume,VWAP session cross,signal,cross,1h,BTC,7028,-0.6439,24.46,-45.25,2319,-2.4628,25.74,-57.11,-68.25,FAIL,,,,False
+volume,VWAP session cross,filter,cross,1h,BTC,351,7.522,34.47,26.4,119,0.4186,38.66,0.5,-28.55,SURVIVOR,0.0,-0.2131999999999996,1.0,False
+volume,VWAP session cross,signal,cross,15m,BTC,15058,-0.6519,18.35,-98.16,4999,-1.5814,19.94,-79.05,-83.99,FAIL,,,,False
+volume,VWAP fade band,signal,k=1,1h,BTC,2463,-3.9607,63.91,-97.55,825,-6.6694,62.67,-55.02,-60.57,FAIL,,,,False
+volume,VWAP fade band,filter,k=1,1h,BTC,351,5.1478,31.05,18.07,119,4.609,34.45,5.48,-31.51,SURVIVOR,4.1904,-2.5873999999999997,1.0,False
+volume,VWAP fade band,signal,k=2,1h,BTC,999,-7.2388,61.36,-72.32,329,-11.476,59.27,-37.76,-42.05,FAIL,,,,False
+volume,VWAP fade band,filter,k=2,1h,BTC,351,6.2504,32.48,21.94,119,-0.8496,36.97,-1.01,-32.03,FAIL,-1.2682,-1.4848,1.0,False
+volume,VWAP fade band,signal,k=1,15m,BTC,6567,-1.5195,71.36,-99.78,2252,-3.5812,70.03,-80.65,-82.6,FAIL,,,,False
+volume,VWAP fade band,signal,k=2,15m,BTC,3460,-2.8204,68.47,-97.59,1160,-5.9,66.72,-68.44,-72.5,FAIL,,,,False
+volume,Volume oscillator confirm,signal,5/20,1h,BTC,8557,-1.1305,33.33,-96.73,2844,-3.1,33.97,-88.16,-89.19,FAIL,,,,False
+volume,Volume oscillator confirm,filter,5/20,1h,BTC,340,12.7797,33.53,43.45,117,-0.4335,35.9,-0.51,-27.17,FAIL,-0.8521000000000001,5.0445,0.983,False
+volume,Volume oscillator confirm,signal,10/50,1h,BTC,8303,-1.1819,32.31,-98.13,2767,-2.8113,34.12,-77.79,-80.37,FAIL,,,,False
+volume,Volume oscillator confirm,filter,10/50,1h,BTC,307,14.8381,34.53,45.55,108,-6.2053,38.89,-6.7,-30.74,FAIL,-6.6239,7.102900000000001,0.908,False
+volume,Volume oscillator confirm,signal,5/20,15m,BTC,32490,-0.3078,31.36,-100.0,10691,-0.9246,31.75,-98.85,-98.86,FAIL,,,,False
+volume,Volume oscillator confirm,signal,10/50,15m,BTC,30889,-0.3237,30.49,-100.0,10267,-0.9554,31.42,-98.09,-98.1,FAIL,,,,False
+volume,A/D line trend (vs own MA),signal,20,1h,BTC,4518,-2.179,29.79,-98.45,1483,-5.6096,30.14,-83.19,-84.78,FAIL,,,,False
+volume,A/D line trend (vs own MA),filter,20,1h,BTC,348,11.2677,35.06,39.21,118,1.5237,38.98,1.8,-27.76,SURVIVOR,1.1051,3.5324999999999998,0.992,False
+volume,A/D line trend (vs own MA),signal,50,1h,BTC,2526,-3.227,28.82,-81.51,849,-7.7794,28.86,-66.05,-66.66,FAIL,,,,False
+volume,A/D line trend (vs own MA),filter,50,1h,BTC,337,9.3195,34.42,31.41,113,9.0133,40.71,10.19,-27.11,SURVIVOR,8.5947,1.5842999999999998,0.95,False
+volume,A/D line trend (vs own MA),signal,20,15m,BTC,18287,-0.5468,28.25,-100.0,5899,-1.6717,27.6,-98.61,-98.62,FAIL,,,,False
+volume,A/D line trend (vs own MA),signal,50,15m,BTC,10901,-0.9173,27.26,-100.0,3559,-2.5483,25.18,-90.69,-91.11,FAIL,,,,False
+volume,Force Index 0-cross,signal,13,1h,BTC,3385,-1.3876,24.55,-46.97,1128,-4.1421,23.94,-46.72,-51.82,FAIL,,,,False
+volume,Force Index 0-cross,filter,13,1h,BTC,350,8.3545,34.57,29.24,119,0.5375,38.66,0.64,-28.45,SURVIVOR,0.11889999999999995,0.6193,1.0,False
+volume,Force Index 0-cross,signal,2,1h,BTC,12108,-0.8248,28.68,-99.86,4008,-2.2134,30.19,-88.71,-89.77,FAIL,,,,False
+volume,Force Index 0-cross,filter,2,1h,BTC,351,7.7352,34.47,27.15,119,0.4186,38.66,0.5,-28.55,SURVIVOR,0.0,0.0,1.0,True
+volume,Force Index 0-cross,signal,13,15m,BTC,14135,-0.7074,21.54,-99.99,4943,-1.7412,22.56,-86.07,-87.5,FAIL,,,,False
+volume,Force Index 0-cross,signal,2,15m,BTC,47892,-0.2088,27.69,-100.0,16243,-0.6151,28.85,-99.91,-99.91,FAIL,,,,False
+volume,Ease of Movement 0-cross,signal,14,1h,BTC,14727,-0.6756,36.82,-99.5,4857,-1.8073,37.99,-87.78,-88.71,FAIL,,,,False
+volume,Ease of Movement 0-cross,filter,14,1h,BTC,351,7.7529,34.47,27.21,119,0.4186,38.66,0.5,-28.55,SURVIVOR,0.0,0.017700000000000493,1.0,False
+volume,Ease of Movement 0-cross,signal,20,1h,BTC,14727,-0.6756,36.82,-99.5,4857,-1.8073,37.99,-87.78,-88.71,FAIL,,,,False
+volume,Ease of Movement 0-cross,filter,20,1h,BTC,351,7.7529,34.47,27.21,119,0.4186,38.66,0.5,-28.55,SURVIVOR,0.0,0.017700000000000493,1.0,False
+volume,Ease of Movement 0-cross,signal,14,15m,BTC,58265,-0.1716,32.78,-100.0,18607,-0.537,34.61,-99.92,-99.92,FAIL,,,,False
+volume,Ease of Movement 0-cross,signal,20,15m,BTC,58265,-0.1716,32.78,-100.0,18607,-0.537,34.61,-99.92,-99.92,FAIL,,,,False
+levels,Classic pivots (reversion),signal,S1/R1,1h,BTC,730,-10.9477,66.03,-79.92,253,-4.9002,62.06,-12.4,-53.16,FAIL,,,,False
+levels,Classic pivots (reversion),filter,S1/R1,1h,BTC,347,5.6683,32.28,19.67,119,-11.5392,33.61,-13.73,-38.24,FAIL,-11.957799999999999,-2.0668999999999995,1.0,False
+levels,Classic pivots (reversion),signal,S2/R2,1h,BTC,329,-21.9656,62.01,-72.27,117,-16.5833,62.39,-19.4,-42.89,FAIL,,,,False
+levels,Classic pivots (reversion),filter,S2/R2,1h,BTC,351,8.8579,34.47,31.09,119,-2.3006,38.66,-2.74,-28.98,FAIL,-2.7192000000000003,1.122700000000001,1.0,False
+levels,Classic pivots (reversion),signal,S1/R1,15m,BTC,831,-10.7385,64.14,-89.24,306,1.8498,66.99,5.66,-49.39,FAIL,,,,False
+levels,Classic pivots (reversion),signal,S2/R2,15m,BTC,375,-20.9353,62.13,-78.51,131,-22.6945,62.6,-29.73,-51.6,FAIL,,,,False
+levels,Camarilla pivots (reversion),signal,S3/R3,1h,BTC,1352,-6.4489,61.09,-87.19,464,-9.9824,58.84,-46.32,-54.84,FAIL,,,,False
+levels,Camarilla pivots (reversion),filter,S3/R3,1h,BTC,346,-0.5272,30.35,-1.82,119,-17.5486,31.09,-20.88,-37.42,FAIL,-17.967200000000002,-8.2624,1.0,False
+levels,Camarilla pivots (reversion),signal,S4/R4,1h,BTC,715,-12.6925,53.57,-90.75,260,-12.8398,54.23,-33.38,-52.78,FAIL,,,,False
+levels,Camarilla pivots (reversion),filter,S4/R4,1h,BTC,348,4.4237,32.76,15.39,119,-8.6815,36.13,-10.33,-38.89,FAIL,-9.1001,-3.3114999999999997,1.0,False
+levels,Camarilla pivots (reversion),signal,S3/R3,15m,BTC,1646,-5.3263,61.91,-87.67,585,-7.6385,62.39,-44.69,-53.97,FAIL,,,,False
+levels,Camarilla pivots (reversion),signal,S4/R4,15m,BTC,836,-11.1377,52.87,-93.11,307,-14.4654,54.07,-44.41,-59.53,FAIL,,,,False
+levels,Williams fractals,signal,k=2 (5-bar),1h,BTC,7274,-1.2769,41.42,-92.88,2456,-3.4216,41.04,-84.03,-86.35,FAIL,,,,False
+levels,Williams fractals,filter,k=2 (5-bar),1h,BTC,348,11.3601,33.91,39.53,118,-7.6339,34.75,-9.01,-27.25,FAIL,-8.0525,3.6248999999999993,0.992,False
+levels,Williams fractals,signal,k=3 (7-bar),1h,BTC,5298,-1.8304,42.05,-96.97,1763,-3.8515,41.97,-67.9,-73.3,FAIL,,,,False
+levels,Williams fractals,filter,k=3 (7-bar),1h,BTC,349,9.6672,32.38,33.74,116,-4.1821,34.48,-4.85,-26.96,FAIL,-4.6007,1.9319999999999995,0.975,False
+levels,Williams fractals,signal,k=2 (5-bar),15m,BTC,27526,-0.3633,39.17,-100.0,9617,-1.032,38.52,-99.25,-99.31,FAIL,,,,False
+levels,Williams fractals,signal,k=3 (7-bar),15m,BTC,20138,-0.4964,40.47,-99.97,7012,-1.3972,37.39,-97.97,-98.1,FAIL,,,,False
+momentum,Awesome Oscillator 0-cross,filter,5/34,1h,ETH,306,-6.6926,34.97,-20.48,110,-44.8776,30.0,-49.37,-58.08,FAIL,,,,False
+momentum,Connors RSI extremes,filter,3/2/100,1h,ETH,307,-10.2378,34.2,-31.43,112,-42.7096,28.57,-47.83,-55.14,FAIL,,,,False
+momentum,Connors RSI extremes,filter,3/2/50,1h,ETH,308,-11.2102,33.77,-34.53,112,-42.8006,28.57,-47.94,-55.23,FAIL,,,,False
+momentum,Fisher Transform 0-cross,filter,20,1h,ETH,308,-10.1381,34.74,-31.23,111,-39.4445,30.63,-43.78,-55.37,FAIL,,,,False
+momentum,Momentum 0-cross,filter,10,1h,ETH,308,-8.1736,34.74,-25.17,112,-43.2791,29.46,-48.47,-54.5,FAIL,,,,False
+momentum,Momentum 0-cross,filter,20,1h,ETH,308,-8.1736,34.74,-25.17,112,-43.2791,29.46,-48.47,-54.5,FAIL,,,,False
+momentum,Momentum 0-cross,filter,5,1h,ETH,308,-8.1736,34.74,-25.17,112,-43.2791,29.46,-48.47,-54.5,FAIL,,,,False
+momentum,ROC 0-cross,filter,12,1h,ETH,308,-8.1736,34.74,-25.17,112,-43.2791,29.46,-48.47,-54.5,FAIL,,,,False
+momentum,ROC 0-cross,filter,6,1h,ETH,308,-8.1736,34.74,-25.17,112,-43.2791,29.46,-48.47,-54.5,FAIL,,,,False
+momentum,RSI 50-cross,filter,14,1h,ETH,308,-8.1736,34.74,-25.17,112,-43.2791,29.46,-48.47,-54.5,FAIL,,,,False
+momentum,RSI 50-cross,filter,21,1h,ETH,306,-6.652,34.97,-20.35,112,-48.066,29.46,-53.83,-58.9,FAIL,,,,False
+momentum,RSI 50-cross,filter,7,1h,ETH,308,-8.1736,34.74,-25.17,112,-43.2791,29.46,-48.47,-54.5,FAIL,,,,False
+momentum,RSI OB/OS,filter,7/25-75,1h,ETH,308,-9.1019,33.77,-28.03,112,-39.3944,30.36,-44.12,-52.55,FAIL,,,,False
+momentum,Stochastic %K/%D cross,filter,14/3/3,1h,ETH,306,-5.6879,34.64,-17.4,112,-45.8348,27.68,-51.34,-56.9,FAIL,,,,False
+momentum,Stochastic %K/%D cross,filter,21/5/5,1h,ETH,308,-9.3991,34.74,-28.95,112,-42.7817,29.46,-47.92,-54.9,FAIL,,,,False
+momentum,Stochastic %K/%D cross,filter,5/3/3,1h,ETH,305,-6.1718,34.43,-18.82,112,-44.553,29.46,-49.9,-56.17,FAIL,,,,False
+momentum,Stochastic RSI extremes,filter,14,1h,ETH,307,4.2161,31.92,12.94,111,-39.0366,31.53,-43.33,-56.85,FAIL,,,,False
+momentum,Stochastic RSI extremes,filter,21,1h,ETH,306,1.893,31.05,5.79,112,-40.3622,29.46,-45.21,-58.05,FAIL,,,,False
+momentum,Stochastic extremes,filter,21/5/5,1h,ETH,308,-5.7351,31.17,-17.66,111,-43.8278,27.93,-48.65,-58.64,FAIL,,,,False
+momentum,TSI 0-cross,filter,13/7,1h,ETH,308,-7.9487,34.74,-24.48,112,-43.2791,29.46,-48.47,-54.5,FAIL,,,,False
+momentum,TSI 0-cross,filter,25/13,1h,ETH,303,-8.4559,34.98,-25.62,111,-47.4959,29.73,-52.72,-59.67,FAIL,,,,False
+momentum,TSI 0-cross,signal,25/13,1h,ETH,981,-3.153,27.32,-30.93,334,-1.779,28.74,-5.94,-60.86,FAIL,,,,False
+momentum,Ultimate Oscillator extremes,filter,7/14/28,1h,ETH,308,-9.9545,33.77,-30.66,112,-43.1773,29.46,-48.36,-54.5,FAIL,,,,False
+momentum,Williams %R extremes,filter,28,1h,ETH,308,-9.1196,32.14,-28.09,111,-38.7505,28.83,-43.01,-50.63,FAIL,,,,False
+trend,ADX/DMI DI cross,filter,14,1h,ETH,304,-6.3484,35.2,-19.3,110,-41.9843,28.18,-46.18,-52.24,FAIL,,,,False
+trend,ADX/DMI DI cross,filter,25,1h,ETH,282,18.4144,36.52,51.93,102,-44.6136,26.47,-45.51,-52.75,FAIL,,,,False
+trend,ADX/DMI DI cross,filter,50,1h,ETH,247,16.4583,36.03,40.65,92,-60.9611,21.74,-56.08,-62.13,FAIL,,,,False
+trend,ADX/DMI DI-cross+ADX>thresh,filter,"n14,adx>20",1h,ETH,279,0.0649,35.48,0.18,96,-45.4258,28.12,-43.61,-54.27,FAIL,,,,False
+trend,Aroon oscillator 0-cross,filter,25,1h,ETH,308,-6.836,34.74,-21.05,112,-47.4132,28.57,-53.1,-61.08,FAIL,,,,False
+trend,Aroon up/down cross,filter,25,1h,ETH,308,-6.836,34.74,-21.05,112,-47.4132,28.57,-53.1,-61.08,FAIL,,,,False
+trend,DEMA cross,filter,10/30,1h,ETH,306,-9.1146,33.99,-27.89,111,-42.501,29.73,-47.18,-55.18,FAIL,,,,False
+trend,EMA cross,filter,10/30,1h,ETH,302,-7.9684,35.1,-24.06,111,-48.0608,30.63,-53.35,-60.02,FAIL,,,,False
+trend,EMA cross,filter,12/26,1h,ETH,303,-8.4988,34.98,-25.75,111,-47.8123,28.83,-53.07,-59.92,FAIL,,,,False
+trend,EMA cross,signal,10/30,1h,ETH,1024,-5.2768,25.68,-54.03,346,-4.2205,28.03,-14.6,-67.07,FAIL,,,,False
+trend,EMA cross,signal,12/26,1h,ETH,986,-2.7423,27.38,-27.04,342,-3.4439,28.65,-11.78,-63.51,FAIL,,,,False
+trend,Hull MA cross,filter,16,1h,ETH,308,-8.1736,34.74,-25.17,112,-44.1228,29.46,-49.42,-55.33,FAIL,,,,False
+trend,Hull MA cross,filter,21,1h,ETH,308,-8.1736,34.74,-25.17,112,-43.7223,29.46,-48.97,-55.33,FAIL,,,,False
+trend,Hull MA cross,filter,9,1h,ETH,308,-8.0145,34.74,-24.68,112,-43.3792,29.46,-48.58,-54.4,FAIL,,,,False
+trend,KAMA cross,filter,10/2/30,1h,ETH,308,-8.1736,34.74,-25.17,112,-43.2791,29.46,-48.47,-54.5,FAIL,,,,False
+trend,KAMA cross,filter,5/2/20,1h,ETH,308,-8.1736,34.74,-25.17,112,-43.2791,29.46,-48.47,-54.5,FAIL,,,,False
+trend,Linreg slope sign,filter,100,1h,ETH,218,-2.5493,30.28,-5.56,82,-62.9614,19.51,-51.63,-60.22,FAIL,,,,False
+trend,Linreg slope sign,filter,20,1h,ETH,307,-9.817,34.2,-30.14,111,-41.8333,29.73,-46.43,-55.41,FAIL,,,,False
+trend,Linreg slope sign,filter,50,1h,ETH,274,6.2529,33.94,17.13,102,-52.3689,26.47,-53.42,-60.26,FAIL,,,,False
+trend,Linreg slope sign,signal,20,1h,ETH,1492,-1.6938,34.38,-25.27,500,7.2563,35.0,36.28,-35.37,FAIL,,,,False
+trend,MACD histogram 0-cross,filter,12/26/9,1h,ETH,308,-8.3224,34.74,-25.63,111,-41.7718,29.73,-46.37,-54.5,FAIL,,,,False
+trend,MACD histogram 0-cross,filter,19/39/9,1h,ETH,306,-9.2661,33.99,-28.35,111,-42.501,29.73,-47.18,-55.18,FAIL,,,,False
+trend,MACD histogram 0-cross,filter,5/13/6,1h,ETH,308,-8.1736,34.74,-25.17,112,-43.2791,29.46,-48.47,-54.5,FAIL,,,,False
+trend,MACD line/signal cross,filter,12/26/9,1h,ETH,308,-8.3224,34.74,-25.63,111,-41.7718,29.73,-46.37,-54.5,FAIL,,,,False
+trend,MACD line/signal cross,filter,19/39/9,1h,ETH,306,-9.2661,33.99,-28.35,111,-42.501,29.73,-47.18,-55.18,FAIL,,,,False
+trend,MACD line/signal cross,filter,5/13/6,1h,ETH,308,-8.1736,34.74,-25.17,112,-43.2791,29.46,-48.47,-54.5,FAIL,,,,False
+trend,Parabolic SAR,filter,0.01/0.1,1h,ETH,306,-8.3794,34.64,-25.64,111,-45.0737,30.63,-50.03,-55.92,FAIL,,,,False
+trend,Parabolic SAR,filter,0.02/0.2,1h,ETH,308,-8.2882,34.74,-25.53,112,-43.3802,29.46,-48.59,-54.6,FAIL,,,,False
+trend,Parabolic SAR,filter,0.03/0.3,1h,ETH,308,-8.1736,34.74,-25.17,112,-43.2791,29.46,-48.47,-54.5,FAIL,,,,False
+trend,SMA cross,filter,10/30,1h,ETH,307,-10.0495,34.2,-30.85,112,-46.3626,28.57,-51.93,-58.25,FAIL,,,,False
+trend,SMA cross,filter,50/200,1h,ETH,195,5.6786,32.31,11.07,61,-30.2195,26.23,-18.43,-32.69,FAIL,,,,False
+trend,SuperTrend,filter,ATR14xMult2,1h,ETH,307,-8.1776,34.85,-25.11,112,-44.3861,29.46,-49.71,-55.0,FAIL,,,,False
+trend,TEMA cross,filter,20/50,1h,ETH,302,-7.5287,35.1,-22.74,108,-40.6877,29.63,-43.94,-54.55,FAIL,,,,False
+trend,TEMA cross,signal,10/30,1h,ETH,2302,0.9712,37.32,22.36,799,5.9322,36.3,47.4,-62.41,SURVIVOR,,,,False
+trend,TRIX 0-cross,filter,30,1h,ETH,231,8.325,32.03,19.23,88,-53.049,27.27,-46.68,-58.76,FAIL,,,,False
+trend,TRIX 0-cross,filter,9,1h,ETH,308,-9.2632,34.42,-28.53,111,-44.7722,30.63,-49.7,-58.08,FAIL,,,,False
+trend,TRIX 0-cross,signal,30,15m,ETH,1354,-0.9968,32.05,-13.5,472,3.3471,32.2,15.8,-38.31,FAIL,,,,False
+trend,TRIX 0-cross,signal,9,1h,ETH,1156,-0.9434,31.23,-10.91,390,7.4837,33.59,29.19,-45.82,FAIL,,,,False
+trend,Vortex VI+/VI- cross,filter,14,1h,ETH,308,-8.5099,34.74,-26.21,111,-41.8188,29.73,-46.42,-54.65,FAIL,,,,False
+trend,Vortex VI+/VI- cross,filter,21,1h,ETH,308,-7.897,34.74,-24.32,112,-43.1918,29.46,-48.37,-54.84,FAIL,,,,False
+trend,Vortex VI+/VI- cross,signal,21,1h,ETH,2452,3.1414,32.67,77.03,834,-5.6471,31.77,-47.1,-62.25,FAIL,,,,False
+volatility,BB-inside-KC squeeze release,filter,BB20/2 KC20/1.5,1h,ETH,201,-19.7343,34.33,-39.67,81,-57.4224,24.69,-46.51,-60.58,FAIL,,,,False
+volatility,BB-inside-KC squeeze release,filter,BB20/2 KC20/2,1h,ETH,240,-2.7563,35.42,-6.62,78,-62.5988,28.21,-48.83,-57.03,FAIL,,,,False
+volatility,BB-inside-KC squeeze release,signal,BB20/2 KC20/1.5,1h,ETH,665,2.7028,33.23,17.97,248,-7.5467,33.06,-18.72,-43.21,FAIL,,,,False
+volatility,Bollinger breakout,filter,10/2,1h,ETH,308,-8.1736,34.74,-25.17,112,-43.2791,29.46,-48.47,-54.5,FAIL,,,,False
+volatility,Bollinger breakout,filter,20/2,1h,ETH,308,-8.1736,34.74,-25.17,112,-43.2791,29.46,-48.47,-54.5,FAIL,,,,False
+volatility,Bollinger breakout,filter,20/2.5,1h,ETH,308,-8.1736,34.74,-25.17,112,-43.2791,29.46,-48.47,-54.5,FAIL,,,,False
+volatility,Bollinger breakout,signal,20/2.5,1h,ETH,667,33.4345,38.38,223.01,210,17.3801,37.62,36.5,-26.03,SURVIVOR,,,,False
+volatility,Bollinger mean-revert,filter,10/2,1h,ETH,308,-8.9944,33.77,-27.7,111,-37.9928,29.73,-42.17,-54.67,FAIL,,,,False
+volatility,Chandelier exit,filter,14/2,1h,ETH,308,-7.6005,34.74,-23.41,112,-43.2791,29.46,-48.47,-54.5,FAIL,,,,False
+volatility,Chandelier exit,filter,22/2,1h,ETH,308,-7.5967,34.74,-23.4,112,-43.2791,29.46,-48.47,-54.5,FAIL,,,,False
+volatility,Chandelier exit,filter,22/3,1h,ETH,304,-6.1898,35.2,-18.82,112,-44.7203,29.46,-50.09,-55.44,FAIL,,,,False
+volatility,Keltner breakout,filter,10/1.5,1h,ETH,308,-8.1736,34.74,-25.17,112,-43.2791,29.46,-48.47,-54.5,FAIL,,,,False
+volatility,Keltner breakout,filter,20/2,1h,ETH,308,-8.1736,34.74,-25.17,112,-43.2791,29.46,-48.47,-54.5,FAIL,,,,False
+volatility,Keltner breakout,signal,10/1.5,1h,ETH,771,-5.2772,37.09,-40.69,242,8.9828,38.84,21.74,-40.05,FAIL,,,,False
+volatility,Keltner mean-revert,filter,10/1.5,1h,ETH,308,-10.237,34.42,-31.53,111,-40.1748,30.63,-44.59,-54.85,FAIL,,,,False
+volume,A/D line trend (vs own MA),filter,20,1h,ETH,303,-3.8598,35.31,-11.7,111,-42.1681,29.73,-46.81,-52.64,FAIL,,,,False
+volume,A/D line trend (vs own MA),filter,50,1h,ETH,296,-8.6914,34.8,-25.73,107,-45.7894,30.84,-48.99,-55.1,FAIL,,,,False
+volume,CMF 0-cross,filter,10,1h,ETH,305,-5.0464,34.75,-15.39,111,-42.3903,29.73,-47.05,-52.78,FAIL,,,,False
+volume,Ease of Movement 0-cross,filter,14,1h,ETH,308,-8.047,34.74,-24.78,112,-43.331,29.46,-48.53,-54.55,FAIL,,,,False
+volume,Ease of Movement 0-cross,filter,20,1h,ETH,308,-8.047,34.74,-24.78,112,-43.331,29.46,-48.53,-54.55,FAIL,,,,False
+volume,Force Index 0-cross,filter,13,1h,ETH,307,-6.4671,34.85,-19.85,112,-44.7366,29.46,-50.1,-55.0,FAIL,,,,False
+volume,Force Index 0-cross,filter,2,1h,ETH,308,-8.1736,34.74,-25.17,112,-43.2791,29.46,-48.47,-54.5,FAIL,,,,False
+volume,MFI extremes,filter,14/20-80,1h,ETH,308,-7.3849,34.09,-22.75,112,-39.5164,30.36,-44.26,-52.48,FAIL,,,,False
+volume,OBV divergence,filter,20,1h,ETH,176,51.7176,28.41,91.02,67,-50.3252,26.87,-33.72,-43.18,FAIL,,,,False
+volume,OBV divergence,filter,50,1h,ETH,100,-14.0303,36.0,-14.03,49,-37.0485,32.65,-18.15,-30.22,FAIL,,,,False
+volume,OBV trend (vs own MA),filter,20,1h,ETH,306,-8.1794,34.97,-25.03,112,-44.5515,28.57,-49.9,-55.4,FAIL,,,,False
+volume,OBV trend (vs own MA),filter,50,1h,ETH,289,-2.6801,34.26,-7.75,102,-40.2557,30.39,-41.06,-51.02,FAIL,,,,False
+volume,VWAP fade band,filter,k=1,1h,ETH,307,-6.9905,30.29,-21.46,111,-41.3763,31.53,-45.93,-58.79,FAIL,,,,False
+volume,VWAP session cross,filter,cross,1h,ETH,308,-8.1736,34.74,-25.17,112,-43.2791,29.46,-48.47,-54.5,FAIL,,,,False

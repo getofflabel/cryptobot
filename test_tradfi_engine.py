@@ -294,7 +294,10 @@ def test_c_scoring_reuse_ranked_pick():
     eng = state["tradfi_engine"]
     assert eng["last_slot_ts"] is None, eng
     assert eng["open_trades"] == [], eng
-    assert eng["ledger_equity"] == te.STARTING_EQUITY, eng
+    assert eng["realized_pnl_total"] == 0.0, eng
+    # dry mode's zero-write contract extends to the shared pool migration
+    # too — it must NOT have been persisted.
+    assert "paper_pnl_total" not in state, state
 
     print("[PASS] test_c_scoring_reuse_ranked_pick")
 
@@ -307,17 +310,24 @@ def test_d_paper_fill_exit_math():
     te.is_market_open = lambda symbol, now: True
     _reset_call_logs()
     eng = te._fresh_engine()
-    eng["ledger_equity"] = 2000.0
     cand = {"symbol": te.OIL, "direction": "long", "conviction": 60.0,
            "components": [{"name": "breakout", "long": 20.0, "short": 0.0}],
            "atr_pct_1h": 1.0, "last_close": 2000.0}
 
     entry_now = datetime(2026, 7, 27, 10, 0, tzinfo=timezone.utc)
     _now_box["t"] = entry_now
-    state = make_state()
+    # THE SHARED POOL (2026-07-24): sizing now reads
+    # shared_equity_pool(state) = state["virtual_equity"] +
+    # state["paper_pnl_total"]. No "paper_pnl_total" key yet here -> the
+    # migration-on-the-fly path contributes 0.0 (this eng is freshly built,
+    # no legacy ledger_equity key) -> pool == 2000.0, keeping this test's
+    # hand-verified numbers below IDENTICAL to the pre-pool-merge version.
+    state = {"virtual_equity": 2000.0}
+    assert te.shared_equity_pool(state) == 2000.0, te.shared_equity_pool(state)
     result = te._do_entry(state, eng, cand, entry_now)
 
-    # hand math: stop_pct = min(1.0*1.0, 1.0) = 1.0%; target_pct = 1.5%
+    # hand math: pool = shared_equity_pool(state) = 2000.0
+    # stop_pct = min(1.0*1.0, 1.0) = 1.0%; target_pct = 1.5%
     # lev = min(20, max(4, 85/1.0)) = 20 (GOLD, no SPY cap)
     # notional = 0.02*2000 / (1.0/100) = 40 / 0.01 = 4000.0
     # shares = 4000.0 / 2000.0 = 2.0
@@ -354,7 +364,14 @@ def test_d_paper_fill_exit_math():
     # fees = (2000*2.0 + 2030*2.0) * 2.0 / 10000 = 8060*2/10000 = 1.612
     # realized = 60.0 - 1.612 = 58.388 -> round 58.39
     assert realized == 58.39, realized
-    assert eng["ledger_equity"] == round(2000.0 + 58.39, 2), eng["ledger_equity"]
+    # THE SHARED POOL: the realized amount lands in state["paper_pnl_total"]
+    # (the accumulator this engine SHARES with spx_book) AND in this book's
+    # own realized_pnl_total (record-keeping only) — and state["virtual_equity"]
+    # (the REAL BloFin balance) must be completely untouched.
+    assert state["paper_pnl_total"] == 58.39, state["paper_pnl_total"]
+    assert eng["realized_pnl_total"] == 58.39, eng["realized_pnl_total"]
+    assert state["virtual_equity"] == 2000.0, \
+        "tradfi_engine must NEVER write state['virtual_equity']"
     assert eng["open_trades"] == [], eng["open_trades"]
     assert len(eng["daybook"]) == 1, eng["daybook"]
     rec = eng["daybook"][0]
@@ -363,17 +380,23 @@ def test_d_paper_fill_exit_math():
     assert rec["hold_min"] == 120.0, rec
 
     # -- a losing exit stamps the stop-out cooldown -------------------------
+    # fresh engine AND a fresh state (own $2000 virtual_equity, no prior
+    # paper_pnl_total) so this trade's sizing math is hand-verifiable in
+    # isolation from the win booked above.
     eng2 = te._fresh_engine()
-    eng2["ledger_equity"] = 2000.0
+    state2 = {"virtual_equity": 2000.0}
     _now_box["t"] = entry_now
-    t2 = te._do_entry(state, eng2, cand, entry_now)
+    t2 = te._do_entry(state2, eng2, cand, entry_now)
     trade2 = eng2["open_trades"][0]
-    loss_realized = te._book_exit(state, eng2, trade2, trade2["stop_price"],
+    loss_realized = te._book_exit(state2, eng2, trade2, trade2["stop_price"],
                                   "stop", entry_now + timedelta(hours=1))
     assert loss_realized < 0, loss_realized
     key = f"{te.OIL}:long"
     assert key in eng2["last_stopouts"], eng2["last_stopouts"]
     assert eng2["last_stopouts"][key]["conviction"] == 60.0
+    assert state2["paper_pnl_total"] == loss_realized, state2["paper_pnl_total"]
+    assert state2["virtual_equity"] == 2000.0, \
+        "tradfi_engine must NEVER write state['virtual_equity']"
 
     print("[PASS] test_d_paper_fill_exit_math")
 
@@ -426,10 +449,17 @@ def test_e_ledger_isolation():
 
     after_snapshot = {k: copy.deepcopy(state[k]) for k in _SHARED_KEYS}
     assert after_snapshot == before_snapshot, \
-        "a shared book's state key was mutated by the tradfi engine"
+        "a shared book's state key was mutated by the tradfi engine " \
+        "(this includes 'virtual_equity' — the REAL BloFin balance must " \
+        "never move as a side effect of a paper trade)"
     assert "tradfi_engine" in state
-    assert state["tradfi_engine"]["ledger_equity"] != te.STARTING_EQUITY, \
-        "the engine's own ledger should have moved from its starting value"
+    assert state["tradfi_engine"]["realized_pnl_total"] != 0.0, \
+        "the engine's own realized total should have moved off zero"
+    # THE SHARED POOL: paper_pnl_total is EXPECTED to change (it is not in
+    # _SHARED_KEYS/before_snapshot on purpose — that's the one field this
+    # engine is supposed to write).
+    assert state.get("paper_pnl_total", 0.0) != 0.0, \
+        "state['paper_pnl_total'] should have moved — that's the whole point"
 
     print("[PASS] test_e_ledger_isolation")
 
@@ -568,6 +598,170 @@ def test_h_no_order_capability_in_module():
 
 
 # ===========================================================================
+# (i) shared-pool sizing math, hand-verified — pool = virtual_equity +
+# paper_pnl_total, NOT either field alone
+# ===========================================================================
+
+def test_i_shared_pool_sizing_hand_verified():
+    te.is_market_open = lambda symbol, now: True
+    eng = te._fresh_engine()
+    cand = {"symbol": te.OIL, "direction": "long", "conviction": 60.0,
+           "components": [], "atr_pct_1h": 1.0, "last_close": 1000.0}
+    entry_now = datetime(2026, 7, 27, 10, 0, tzinfo=timezone.utc)
+    _now_box["t"] = entry_now
+
+    state = {"virtual_equity": 1000.0, "paper_pnl_total": 500.0}
+    assert te.shared_equity_pool(state) == 1500.0, te.shared_equity_pool(state)
+
+    te._do_entry(state, eng, cand, entry_now)
+    trade = eng["open_trades"][0]
+    # stop_pct = min(1.0*1.0, 1.0) = 1.0% (ATR cap)
+    # notional = RISK_PCT * pool / (stop_pct/100) = 0.02*1500/0.01 = 3000.0
+    assert abs(trade["notional"] - 3000.0) < 1e-9, trade
+    assert abs(trade["shares"] - 3.0) < 1e-9, trade   # 3000/1000
+
+    # a pool built ONLY from virtual_equity (no paper_pnl_total yet) must
+    # size differently from one with an equal-magnitude paper contribution
+    # — proves both terms are actually summed, not one silently ignored.
+    eng2 = te._fresh_engine()
+    state2 = {"virtual_equity": 1000.0}    # no paper_pnl_total key at all
+    assert te.shared_equity_pool(state2) == 1000.0, te.shared_equity_pool(state2)
+    te._do_entry(state2, eng2, cand, entry_now)
+    trade2 = eng2["open_trades"][0]
+    assert abs(trade2["notional"] - 2000.0) < 1e-9, trade2   # 0.02*1000/0.01
+
+    print("[PASS] test_i_shared_pool_sizing_hand_verified")
+
+
+# ===========================================================================
+# (j) paper_pnl_total accumulation on wins AND losses; virtual_equity never
+# moves
+# ===========================================================================
+
+def test_j_paper_pnl_total_accumulation():
+    te.is_market_open = lambda symbol, now: True
+    eng = te._fresh_engine()
+    state = {"virtual_equity": 5000.0}
+    now0 = datetime(2026, 7, 27, 10, 0, tzinfo=timezone.utc)
+
+    win_trade = {"symbol": te.OIL, "direction": 1, "entry_price": 100.0,
+                "shares": 10.0, "fee_bps": 0.0,
+                "entry_time": f"{now0:%Y-%m-%d %H:%M:%S} UTC",
+                "conviction": 50.0, "components": []}
+    r1 = te._book_exit(state, eng, win_trade, 110.0, "target",
+                       now0 + timedelta(hours=1))
+    assert r1 == 100.0, r1                          # 10*(110-100), zero fees
+    assert state["paper_pnl_total"] == 100.0, state["paper_pnl_total"]
+    assert eng["realized_pnl_total"] == 100.0, eng["realized_pnl_total"]
+
+    loss_trade = {"symbol": te.SPX, "direction": 1, "entry_price": 100.0,
+                 "shares": 5.0, "fee_bps": 0.0,
+                 "entry_time": f"{now0:%Y-%m-%d %H:%M:%S} UTC",
+                 "conviction": 50.0, "components": []}
+    r2 = te._book_exit(state, eng, loss_trade, 90.0, "stop",
+                       now0 + timedelta(hours=2))
+    assert r2 == -50.0, r2                          # 5*(90-100)
+    assert state["paper_pnl_total"] == 50.0, state["paper_pnl_total"]     # 100-50
+    assert eng["realized_pnl_total"] == 50.0, eng["realized_pnl_total"]
+    assert state["virtual_equity"] == 5000.0, \
+        "tradfi_engine must NEVER touch state['virtual_equity']"
+
+    print("[PASS] test_j_paper_pnl_total_accumulation")
+
+
+# ===========================================================================
+# (k) migration — the current live state shape yields exactly +58.39
+# ===========================================================================
+
+def test_k_migration_58_39():
+    # the CURRENT live shape this pool merge shipped against: tradfi_engine
+    # sits at ledger_equity=2058.39 (the oil win, +58.39 off its old $2,000
+    # seed), spx_book has never been initialised (never traded).
+    state = {"virtual_equity": 1367.25,
+            "tradfi_engine": {"ledger_equity": 2058.39, "open_trades": []}}
+    assert te._migrated_paper_pnl_total(state) == 58.39, \
+        te._migrated_paper_pnl_total(state)
+    assert "paper_pnl_total" not in state, "must be a PURE computation"
+    pool = te.shared_equity_pool(state)
+    assert abs(pool - 1425.64) < 1e-6, pool          # 1367.25 + 58.39
+
+    # the guarded WRITE actually persists it, exactly once, logged
+    te.log_event = _fake_log_event
+    _reset_call_logs()
+    te._ensure_paper_pool_migrated(state)
+    assert state["paper_pnl_total"] == 58.39, state["paper_pnl_total"]
+    assert len(log_event_calls) == 1, log_event_calls
+    assert log_event_calls[0]["action"] == "paper_pool_migration"
+    assert log_event_calls[0]["paper_pnl_total"] == 58.39
+
+    # the guard: a second call is a pure no-op — proven by pre-poisoning
+    # the field, not by luck
+    state["paper_pnl_total"] = 999.0
+    te._ensure_paper_pool_migrated(state)
+    assert state["paper_pnl_total"] == 999.0, "guard did not fire"
+    assert len(log_event_calls) == 1, "must not re-log on an already-migrated state"
+
+    # if spx_book HAD ever been initialised, its own historical delta must
+    # be folded in too
+    state2 = {"virtual_equity": 1000.0,
+             "tradfi_engine": {"ledger_equity": 2058.39},
+             "spx_book": {"virtual_equity": 2100.0}}
+    assert te._migrated_paper_pnl_total(state2) == round(58.39 + 100.0, 2), \
+        te._migrated_paper_pnl_total(state2)
+
+    # neither book ever having existed -> a clean 0.0, not a crash
+    state3 = {"virtual_equity": 500.0}
+    assert te._migrated_paper_pnl_total(state3) == 0.0
+
+    print("[PASS] test_k_migration_58_39")
+
+
+# ===========================================================================
+# (l) hard guard — NEITHER paper book ever writes state["virtual_equity"]
+# ===========================================================================
+
+def test_l_never_writes_virtual_equity():
+    """state["virtual_equity"] is the REAL BloFin balance, synced by
+    step5_paper_trade.sync_ledger_to_account. A paper book writing to it
+    would corrupt real accounting and get silently overwritten on the next
+    sync — see the CRITICAL comments on tradfi_engine._book_exit and
+    spx_book._finish_exit. Source-scans BOTH owned+adjacent files for the
+    exact assignment pattern (reads of the field, e.g.
+    state.get("virtual_equity") or state["virtual_equity"] on the RHS of
+    an expression, are fine and expected — only an ASSIGNMENT into it is
+    forbidden)."""
+    import re
+    assign_pattern = re.compile(
+        r'''state(?:2|3)?\s*\[\s*["\']virtual_equity["\']\s*\]\s*=(?!=)''')
+    for path in ("tradfi_engine.py", "spx_book.py"):
+        with open(path) as f:
+            src = f.read()
+        assert not assign_pattern.search(src), \
+            f"{path} appears to assign to state['virtual_equity'] — forbidden"
+        for bad in ('state["virtual_equity"] =', "state['virtual_equity'] ="):
+            assert bad not in src, f"{path} contains a direct write: {bad!r}"
+
+    # runtime belt-and-suspenders: a full entry+exit cycle must leave
+    # virtual_equity byte-identical (mirrors test_j, re-asserted here under
+    # this test's own name so it stands alone as "the hard test")
+    te.is_market_open = lambda symbol, now: True
+    eng = te._fresh_engine()
+    state = {"virtual_equity": 42_000.0}
+    now0 = datetime(2026, 7, 27, 10, 0, tzinfo=timezone.utc)
+    _now_box["t"] = now0
+    cand = {"symbol": te.OIL, "direction": "long", "conviction": 60.0,
+           "components": [], "atr_pct_1h": 1.0, "last_close": 100.0}
+    te._do_entry(state, eng, cand, now0)
+    trade = eng["open_trades"][0]
+    te._book_exit(state, eng, trade, trade["target_price"], "target",
+                  now0 + timedelta(hours=1))
+    assert state["virtual_equity"] == 42_000.0, \
+        "tradfi_engine must NEVER touch state['virtual_equity']"
+
+    print("[PASS] test_l_never_writes_virtual_equity")
+
+
+# ===========================================================================
 # harness
 # ===========================================================================
 
@@ -575,7 +769,10 @@ if __name__ == "__main__":
     tests = [test_a_market_hours_gate, test_b_slot_idempotency,
             test_c_scoring_reuse_ranked_pick, test_d_paper_fill_exit_math,
             test_e_ledger_isolation, test_f_calm_gate_a_only,
-            test_g_dry_mode_zero_writes, test_h_no_order_capability_in_module]
+            test_g_dry_mode_zero_writes, test_h_no_order_capability_in_module,
+            test_i_shared_pool_sizing_hand_verified,
+            test_j_paper_pnl_total_accumulation, test_k_migration_58_39,
+            test_l_never_writes_virtual_equity]
     results = []
     for t in tests:
         try:

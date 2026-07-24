@@ -711,3 +711,50 @@ Also omitted across R76: MACD crossovers never gated on structural
 confirmation; breakout survivors never volume-gated; pivot/range
 reversion tested with no regime gate. 8 precise testable proposals
 produced -> R86.
+
+## ROUND 83 — does the eye improve the strategies we already own? (2026-07-24)
+
+Question: now that the machine can read a chart, does that read make our
+EXISTING live strategies better? Tested as a veto — take each strategy's
+real backtested trade list, partition it by what the eye saw at each
+trade's own entry bar, and compare against 200 random skips of the same
+size (the "dumb control"). 6 strategies x 2 assets x 3 veto rules.
+Sealed test never touched. Full write-up: step83_results.md.
+
+**One clear win, and it is now LIVE.** daily_pick's washout dip-buy is the
+only trigger in the whole book that reads a bare oscillator with no
+structural context of its own. Skipping the washouts that fire while the
+eye reads "messy" beat the random control at the **98th percentile on
+BOTH BTC and ETH**:
+
+| Asset | washout before | after messy-veto |
+|---|---|---|
+| BTC | **-$6.42/trade** (47) | **+$24.87/trade** (20 kept) |
+| ETH | $9.78/trade (47) | **+$54.26/trade** (15 kept) |
+
+The skipped trades were net losers on both assets (-$799 BTC, -$354 ETH),
+which is the whole point: the eye found the losers, not just fewer trades.
+
+**Five strategies REJECTED the eye, three of them actively harmful.** News
+momentum, hidden divergence, CHoCH+confluence and the vol-gated trend
+champion all already encode trend/structure/volatility in their own entry
+rules, so the eye's read is redundant — and worse, "messy" often fires on
+the compression right BEFORE a breakout's biggest winners. D-BTC
+tradeable-veto (8th pctile), E-BTC messy-veto (6.5th) and F-ETH routed
+(8.5th) are all worse than random. The rule that came out of this:
+**add the eye where the strategy doesn't already have eyes of its own.**
+
+Live anecdote (n=9, corroboration only): the messy-veto would have caught
+three of the book's four worst July losers, at the cost of its single best
+winner (oil +$58.39). Retained set improves -$7.14 -> -$5.29/trade.
+
+Open lead: donchian-20 (C) clears 90% via a DIFFERENT veto variant on each
+asset — needs a round proving ONE fixed rule holds out-of-sample.
+
+SHIPPED: `daily_pick.score_instrument` calls `chart_reader.read_chart` and
+drops the washout vote on "messy" — washout only, fails OPEN if the reader
+errors (a broken eye must never silently kill a live trigger).
+`test_q_eye_vetoes_messy_washout` pins all four behaviours, including that
+no other trigger got gated. chart_reader's matplotlib import was moved
+inside the renderer: it is a local-only dev dependency and a module-scope
+import on the live path would have taken the worker down on deploy.

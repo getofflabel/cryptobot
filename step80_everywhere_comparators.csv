@@ -1,0 +1,25 @@
+indicator,config,tf,tr_n,tr_exp,va_n,va_exp
+RSI OB/OS,14/30-70,1h,995,-7.4869,335,-5.753
+RSI OB/OS,14/30-70,15m,3307,-2.628,1081,-3.4485
+Stochastic extremes,14/3/3,1h,4020,-2.2536,1520,0.7962
+Stochastic extremes,14/3/3,15m,18121,-0.5504,6345,-1.3545
+CCI extremes,20,1h,3021,-3.1054,1053,-5.0046
+CCI extremes,20,15m,12579,-0.7918,4282,-1.8985
+Williams %R extremes,14,1h,4020,-2.2536,1520,0.7962
+Williams %R extremes,14,15m,18121,-0.5504,6345,-1.3545
+MACD histogram 0-cross,12/26/9,1h,2509,1.0477,843,-3.8654
+MACD histogram 0-cross,12/26/9,15m,10445,-0.9512,3627,-2.5227
+ADX/DMI DI cross,14,1h,2537,5.002,840,-1.9009
+ADX/DMI DI cross,14,15m,10624,-0.934,3541,-1.9647
+SuperTrend,ATR14xMult3,1h,723,-5.1378,256,-21.2008
+SuperTrend,ATR14xMult3,15m,3194,-0.1006,980,-0.3735
+Aroon oscillator 0-cross,14,1h,2561,-1.121,852,-1.7828
+Aroon oscillator 0-cross,14,15m,10148,-0.9747,3395,-2.5174
+Vortex VI+/VI- cross,14,1h,3963,1.562,1210,-0.9526
+Vortex VI+/VI- cross,14,15m,15324,-0.6512,4811,-1.7487
+OBV trend (vs own MA),20,1h,4228,3.7068,1347,-0.4838
+OBV trend (vs own MA),20,15m,16704,-0.5986,5590,-1.6689
+CMF 0-cross,20,1h,3764,-2.0755,1261,-5.1749
+CMF 0-cross,20,15m,15917,-0.6283,5259,-1.8285
+MFI extremes,14/20-80,1h,1027,-7.2102,376,-2.313
+MFI extremes,14/20-80,15m,4167,-2.1002,1373,-1.7086

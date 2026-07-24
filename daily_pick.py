@@ -162,6 +162,7 @@ from datetime import datetime, timedelta, timezone
 
 import pandas as pd
 
+import chart_reader
 from book_ledger import recorded_book_positions
 from step5_paper_trade import (current_funding_bps, execute_market_clips,
                                log_event, notify, now_utc,
@@ -367,6 +368,29 @@ def score_instrument(c1h: pd.DataFrame, c1d: pd.DataFrame,
             w_long = 20.0
         if r3 > 90 and trend_1d == "down" and turn_down:
             w_short = 20.0
+    # THE EYE'S ONE SANCTIONED VETO (round 83). Washout is the only trigger
+    # in this book with no structural context of its own — it reads a bare
+    # oscillator threshold — so it is the one place the chart read adds
+    # information rather than repeating a gate the entry logic already has.
+    # Measured on BTC and ETH, train+val, sealed test untouched: skipping
+    # the washouts that fire while the eye reads "messy" beat 200 random
+    # skips of the same size at the 98th percentile on BOTH assets, taking
+    # BTC from -$6.42/trade to +$24.87 and ETH from $9.78 to $54.26.
+    # Round 83 also tested this veto on the five other live strategies and
+    # it did NOT survive there (harmful on three) — hence washout only.
+    if w_long or w_short:
+        eye_q, eye_err = None, None
+        try:
+            eye_q = chart_reader.read_chart(c1h).get("quality")
+        except Exception as exc:          # the eye must never block a book
+            eye_err = str(exc)[:120]
+        if eye_q == "messy":
+            comps.append({"name": "washout_vetoed_messy", "long": 0.0,
+                          "short": 0.0, "eye_quality": eye_q})
+            w_long = w_short = 0.0
+        elif eye_err:
+            comps.append({"name": "washout_eye_unavailable", "long": 0.0,
+                          "short": 0.0, "error": eye_err})
     if w_long or w_short:
         add("washout", long_add=w_long, short_add=w_short)
 

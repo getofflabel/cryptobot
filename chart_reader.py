@@ -41,6 +41,15 @@ HARD SAFETY
   validation round proves these reads actually improve outcomes. This
   module only perceives; store_read() exists to build that evidence.
 
+  ONE EXCEPTION, EARNED (round 83, 2026-07-24): daily_pick's washout
+  trigger calls read_chart() live and drops the vote when quality reads
+  "messy". That single use is exempt because the evidence exists — the
+  veto beat 200 random skips of equal size at the 98th percentile on BOTH
+  BTC and ETH. Round 83 tested the same veto on five other live
+  strategies and it failed on all five (actively harmful on three), so
+  the exemption is deliberately one trigger wide. Any further live use
+  needs its own round.
+
 This file is self-contained on purpose (no import from chart_eyes.py, its
 sibling) except for ONE deliberate reuse: swing/pivot detection uses the
 repo's existing confirmed_swings() helper (step41_shorts.py) rather than
@@ -51,12 +60,6 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from pathlib import Path
-
-import matplotlib
-matplotlib.use("Agg")          # headless — never try to open a display
-import matplotlib.pyplot as plt
-from matplotlib.lines import Line2D
-from matplotlib.patches import Rectangle
 
 import numpy as np
 import pandas as pd
@@ -741,6 +744,17 @@ def _render_png(df: pd.DataFrame, out_path, *, n_closed: int, title: str) -> Pat
     the picture either."""
     if df is None or len(df) == 0:
         raise ValueError("chart_reader: cannot render an empty candle frame")
+
+    # matplotlib is imported HERE, not at module scope, and deliberately:
+    # since round 83 daily_pick imports this module on the live path, and
+    # matplotlib is a local-only dev dependency (not in requirements.txt).
+    # A module-scope import would take the whole live worker down on
+    # deploy. read_chart() is pure pandas/numpy and needs no plotting.
+    import matplotlib
+    matplotlib.use("Agg")      # headless — never try to open a display
+    import matplotlib.pyplot as plt
+    from matplotlib.lines import Line2D
+    from matplotlib.patches import Rectangle
 
     df = df.reset_index(drop=True)
     n = len(df)
