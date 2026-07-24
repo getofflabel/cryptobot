@@ -156,6 +156,12 @@
     font-size: 12px;
     color: var(--text-2);
   }
+  .equity-composition {
+    margin-top: 4px;
+    font-size: 11px;
+    color: var(--text-3);
+  }
+  .equity-composition .k { color: var(--text-2); }
 
   .pnl-card-body {
     display: flex;
@@ -309,6 +315,22 @@
   @keyframes chip-pulse {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.55; }
+  }
+
+  /* small, unobtrusive "paper" tag — never a separate section, never a
+     disclaimer wall, just enough that an internal-ledger dollar is never
+     mistaken for a real BloFin dollar */
+  .tag-paper {
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--card-border);
+    border-radius: 4px;
+    padding: 1px 5px;
+    vertical-align: middle;
   }
 
   .card-pnl {
@@ -910,6 +932,7 @@
       <div class="stat-value neutral tabular" id="equity-value">—</div>
       <div class="goal-bar-track"><div class="goal-bar-fill" id="goal-bar-fill"></div></div>
       <div class="goal-text tabular" id="goal-text">—</div>
+      <div class="equity-composition tabular" id="equity-composition"></div>
     </div>
     <div class="stat-card">
       <div class="stat-label" id="window-pnl-label">Net PnL · 30D</div>
@@ -984,6 +1007,27 @@
     { symbol: 'TSLA-USDT', name: 'Tesla', glyph: '\u{1F697}' }
   ];
 
+  // "start treating the entire paper trading, demo trading, the oil and
+  // the S&P, like LIVE. Just put them inside of the updated statistics."
+  // (owner, 2026-07-24) — CL=F/SPY are NOT BloFin instruments (no real
+  // venue exists for them, see live_read.py), so they're kept as their
+  // OWN market cards rather than folded into the existing WTIOIL-USDT
+  // "Oil" card above (that's a different, real BloFin crypto-perp
+  // instrument — merging their PnL into one number would be the exact
+  // kind of internal-ledger-dollar-mistaken-for-a-BloFin-dollar mix the
+  // no-fake-affordance rule forbids). `paper: true` drives the small
+  // "paper" tag on the card — see .tag-paper / buildCard.
+  // NOTE: named PAPER_MARKET_DEFS, not PAPER_MARKETS — the paper-desk
+  // section below (further down this file) already declares its OWN
+  // `var PAPER_MARKETS = ['Oil', 'S&P 500']` (plain market-NAME strings,
+  // for its tab bar) — reusing that name here would silently clobber it
+  // (both are `var`, same function scope) and break both features at
+  // once. Keep these two arrays namespaced apart.
+  var PAPER_MARKET_DEFS = [
+    { symbol: 'CL=F', name: 'Oil (paper)', glyph: '\u{1F6E2}', paper: true },
+    { symbol: 'SPY', name: 'S&P 500 (paper)', glyph: '\u{1F4C8}', paper: true }
+  ];
+
   var BOOKS = [
     { key: 'ride', name: 'The Ride', symbol: 'BTC-USDT' },
     { key: 'strikes', name: 'The Strikes', symbol: 'BTC-USDT' },
@@ -994,6 +1038,12 @@
     { key: 'eth', name: 'ETH Amplifier', symbol: 'ETH-USDT' }
   ];
 
+  // the 3 paper-book names that ever appear in a MERGED trade's `book`
+  // field (see paperClosedTradesNormalized/paperOpenTradesNormalized) —
+  // every trade under one of these names is unconditionally paper-sourced
+  // (no real venue trades CL=F or SPY), used to tag By-strategy cards.
+  var PAPER_BOOK_NAMES = ['TradFi Engine · Oil', 'TradFi Engine · S&P 500', 'S&P Dip-Buy'];
+
   var BOOK_GLYPHS = {
     'The Ride': '\u{1F40E}',
     'The Strikes': '⚡',
@@ -1001,7 +1051,10 @@
     'The Newsdesk': '\u{1F4F0}',
     'The Gold Book': '\u{1F947}',
     'Daily Pick': '\u{1F3AF}',
-    'ETH Amplifier': 'Ξ'
+    'ETH Amplifier': 'Ξ',
+    'TradFi Engine · Oil': '\u{1F6E2}',
+    'TradFi Engine · S&P 500': '\u{1F4C8}',
+    'S&P Dip-Buy': '\u{1F4C8}'
   };
 
   var WINDOWS = [
@@ -1194,6 +1247,110 @@
     return result;
   }
 
+  // ---------------- paper trades -> the SAME combined trade record ----------------
+  // "start treating the entire paper trading, demo trading, the oil and the
+  // S&P, like LIVE. Just put them inside of the updated statistics." The
+  // dashboard's headline EQUITY/NET PNL/win-rate/window views and the
+  // markets/by-strategy grids all read off ONE array (state.trades /
+  // state.openTrades) built by buildTrades()+crossCheckOpen() from the
+  // cryptobot_pnl_sheet RPC — which is BloFin-only (its SQL whitelists 14
+  // BloFin action names; tradfi_engine.py's/spx_book.py's tradfi_exit/
+  // spx_book_exit events never reach it — verified directly against the
+  // live RPC, 2026-07-24). That RPC isn't something this file owns or can
+  // edit, so the merge happens HERE, client-side: state.paper (already
+  // published by live_read.py, fetched via cryptobot_live_read) is
+  // normalized into the exact same trade shape buildTrades() produces,
+  // tagged source:'paper', and concatenated in. Every downstream function
+  // (closedInWindow, statsFor, gatherMarketItems, gatherBookItems,
+  // drawSparkline, the drawer) reads state.trades/state.openTrades — none
+  // of them needed to change for a paper trade to count exactly like a
+  // BloFin trade in every statistic.
+
+  function paperClosedTradesNormalized() {
+    var out = [];
+    (state.paper.books || []).forEach(function (b) {
+      (b.trades || []).forEach(function (t) {
+        // closed_at is a REAL timestamp when live_read.py's local event
+        // log still has it (best-effort, see live_read.py's
+        // _tradfi_log_exits/_spx_log_exits) — closed_date is always
+        // present but date-ONLY (the daybook/trades-log record a date,
+        // not a time), so it falls back to noon UTC on that date. Either
+        // way this trade needs SOME timestamp to land in a 1D/7D/30D/etc
+        // window at all; skip the (should-never-happen) case where
+        // neither is present rather than fabricate one.
+        var exitIso = t.closed_at || (t.closed_date ? (t.closed_date + 'T12:00:00Z') : null);
+        if (!exitIso) return;
+        out.push({
+          book: b.name,
+          symbol: b.symbol,
+          entryTime: null,
+          entryPrice: (t.entry != null) ? t.entry : null,
+          contracts: null,
+          trigger: t.reason || t.setup || null,
+          headline: null,
+          exitTime: exitIso,
+          exitPrice: (t.exit != null) ? t.exit : null,
+          pnl: t.pnl,
+          status: 'closed',
+          side: t.side || 'LONG',
+          source: 'paper'
+        });
+      });
+    });
+    return out;
+  }
+
+  function paperOpenTradesNormalized() {
+    var out = [];
+    (state.paper.books || []).forEach(function (b) {
+      var t = b.open;
+      if (!t) return;
+      out.push({
+        book: b.name,
+        symbol: b.symbol,
+        entryTime: t.opened_at || null,
+        entryPrice: (t.entry != null) ? t.entry : null,
+        contracts: (t.contracts_or_notional != null) ? t.contracts_or_notional : null,
+        trigger: null,
+        headline: null,
+        exitTime: null, exitPrice: null, pnl: null,
+        status: 'open',
+        side: t.side || 'LONG',
+        source: 'paper'
+      });
+    });
+    return out;
+  }
+
+  // every unique paper LEDGER's equity, summed once each — TradFi-Oil and
+  // TradFi-S&P trade out of the SAME shared ledger (see live_read.py's
+  // ledger_group), so naively summing every BOOK's ledger_equity would
+  // double-count that one account as two. Falls back to a name-prefix
+  // heuristic when ledger_group hasn't reached this deploy yet (matches
+  // TODAY's already-published shape, forward-compatible with the tagged
+  // one) so this is correct before AND after live_read.py's next publish.
+  function paperTotalEquity() {
+    var seen = {}, total = 0;
+    (state.paper.books || []).forEach(function (b) {
+      var group = b.ledger_group || (b.name.indexOf('TradFi Engine') === 0 ? 'tradfi_engine' : b.name);
+      if (seen[group]) return;
+      seen[group] = true;
+      total += (b.ledger_equity || 0);
+    });
+    return total;
+  }
+
+  // Rebuild the ONE combined trade record from whichever of the two
+  // sources (BloFin's cryptobot_pnl_sheet, paper's cryptobot_live_read)
+  // has data so far — called after EITHER fetch resolves, since they poll
+  // independently and land in whatever order the network gives them.
+  function rebuildCombinedTrades() {
+    if (!state.raw) return;   // BloFin fetch hasn't landed at all yet
+    var paired = buildTrades(state.raw.events || []);
+    state.trades = paired.closed.concat(paperClosedTradesNormalized());
+    state.openTrades = crossCheckOpen(state.raw.open, paired.open).concat(paperOpenTradesNormalized());
+  }
+
   // ---------------- window / stats ----------------
 
   function windowDef() {
@@ -1221,20 +1378,21 @@
   }
 
   function gatherMarketItems(closedWin) {
+    var allDefs = MARKETS.concat(PAPER_MARKET_DEFS);
     var known = {};
-    MARKETS.forEach(function (m) { known[m.symbol] = true; });
+    allDefs.forEach(function (m) { known[m.symbol] = true; });
     var extra = {};
     state.trades.concat(state.openTrades).forEach(function (t) {
       if (t.symbol && !known[t.symbol]) extra[t.symbol] = true;
     });
-    var list = MARKETS.slice();
+    var list = allDefs.slice();
     Object.keys(extra).sort().forEach(function (sym) {
       list.push({ symbol: sym, name: prettifySymbol(sym), glyph: '◆' });
     });
     return list.map(function (m) {
       var closed = closedWin.filter(function (t) { return t.symbol === m.symbol; });
       var open = state.openTrades.filter(function (t) { return t.symbol === m.symbol; });
-      return { type: 'market', id: m.symbol, title: m.name, sub: m.symbol, glyph: m.glyph, closed: closed, open: open, stats: statsFor(closed) };
+      return { type: 'market', id: m.symbol, title: m.name, sub: m.symbol, glyph: m.glyph, closed: closed, open: open, stats: statsFor(closed), paper: !!m.paper };
     });
   }
 
@@ -1251,7 +1409,8 @@
       var meta = bookMetaByName(name);
       var symbols = uniq(closed.concat(open).map(function (t) { return t.symbol; }));
       var sub = (meta && meta.symbol) ? meta.symbol : (symbols.length ? symbols.join(' / ') : 'not yet traded');
-      return { type: 'book', id: name, title: name, sub: sub, glyph: BOOK_GLYPHS[name] || '\u{1F4D8}', closed: closed, open: open, stats: statsFor(closed) };
+      var isPaper = PAPER_BOOK_NAMES.indexOf(name) !== -1;
+      return { type: 'book', id: name, title: name, sub: sub, glyph: BOOK_GLYPHS[name] || '\u{1F4D8}', closed: closed, open: open, stats: statsFor(closed), paper: isPaper };
     });
   }
 
@@ -1266,11 +1425,21 @@
   function renderHeaderStats() {
     var raw = state.raw;
     if (!raw) return;
-    els.equity.textContent = fmtMoneyPlain(raw.equity);
+    // TOTAL EQUITY = BloFin ledger + every unique paper ledger (owner,
+    // 2026-07-24: "treat the entire paper trading... like LIVE. Just put
+    // them inside of the updated statistics.") — the composition line
+    // underneath keeps it honest about which dollars sit at a real venue
+    // vs an internal ledger (see paperTotalEquity's dedup-by-ledger note).
+    var blofinEq = raw.equity || 0;
+    var paperEq = paperTotalEquity();
+    var totalEq = blofinEq + paperEq;
+    els.equity.textContent = fmtMoneyPlain(totalEq);
     var goal = raw.goal || 0;
-    var pct = goal > 0 ? Math.max(0, Math.min(100, (raw.equity / goal) * 100)) : 0;
+    var pct = goal > 0 ? Math.max(0, Math.min(100, (totalEq / goal) * 100)) : 0;
     els.goalBarFill.style.width = pct.toFixed(1) + '%';
-    els.goalText.textContent = fmtMoneyPlain(raw.equity) + ' of ' + fmtMoneyPlain(goal) + ' goal, ' + pct.toFixed(0) + '%';
+    els.goalText.textContent = fmtMoneyPlain(totalEq) + ' of ' + fmtMoneyPlain(goal) + ' goal, ' + pct.toFixed(0) + '%';
+    els.equityComposition.innerHTML = 'BloFin <span class="k">' + fmtMoneyPlain(blofinEq) +
+      '</span> · paper <span class="k">' + fmtMoneyPlain(paperEq) + '</span>';
 
     els.windowPnlLabel.textContent = 'Net PnL · ' + windowDef().label;
 
@@ -1385,7 +1554,8 @@
       '<div class="card-top">' +
         '<div class="card-icon">' + item.glyph + '</div>' +
         '<div class="card-heading">' +
-          '<div class="card-title">' + escapeHtml(item.title) + '</div>' +
+          '<div class="card-title">' + escapeHtml(item.title) +
+            (item.paper ? ' <span class="tag-paper">paper</span>' : '') + '</div>' +
           '<div class="card-sub">' + escapeHtml(item.sub) + '</div>' +
         '</div>' +
         (hasOpen ? '<span class="chip chip-open">OPEN</span>' : '') +
@@ -1445,7 +1615,8 @@
     var html = '<div class="trow' + (isOpen ? ' trow-open' : '') + '">' +
       '<div class="trow-top">' +
         '<span class="trow-side ' + sideCls + '">' + t.side + '</span>' +
-        '<span class="trow-book">' + escapeHtml(t.book) + '</span>' +
+        '<span class="trow-book">' + escapeHtml(t.book) +
+          (t.source === 'paper' ? ' <span class="tag-paper">paper</span>' : '') + '</span>' +
         '<span class="trow-time">' + timeLabel + '</span>' +
       '</div>' +
       '<div class="trow-prices">' +
@@ -1508,9 +1679,7 @@
       return r.json();
     }).then(function (data) {
       state.raw = data;
-      var paired = buildTrades(data.events || []);
-      state.trades = paired.closed;
-      state.openTrades = crossCheckOpen(data.open, paired.open);
+      rebuildCombinedTrades();
       state.lastFetch = Date.now();
       state.fetchFailed = false;
       setLiveStatus(true);
@@ -1573,6 +1742,10 @@
     }).then(function (data) {
       state.paper = (data && data.paper) || { books: [], candles: {} };
       state.paperFetchFailed = false;
+      // paper trades now feed the COMBINED headline/grid stats too (not
+      // just the Paper desk section below) — rebuild + re-render both.
+      rebuildCombinedTrades();
+      render();
       renderPaper();
     }).catch(function (e) {
       state.paperFetchFailed = true;
@@ -2027,6 +2200,7 @@
     els.equity = $('#equity-value');
     els.goalBarFill = $('#goal-bar-fill');
     els.goalText = $('#goal-text');
+    els.equityComposition = $('#equity-composition');
     els.windowPnlLabel = $('#window-pnl-label');
     els.windowPnl = $('#window-pnl');
     els.windowPnlSub = $('#window-pnl-sub');

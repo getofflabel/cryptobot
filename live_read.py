@@ -205,8 +205,49 @@ def _tradfi_log_exits(symbol, limit=PAPER_TRADE_LOG_CAP):
                         "entry": entry_ev.get("entry") if entry_ev else None,
                         "exit": ev.get("exit_price"),
                         "reason": ev.get("reason"),
+                        # log_event() stamps EVERY event with this at write
+                        # time (step5_paper_trade.py's log_event) — the one
+                        # real close TIMESTAMP available for a paper trade
+                        # (closed_date on the daybook row is date-only).
+                        # v5 (2026-07-24, "treat paper trades like LIVE"):
+                        # threaded into the published trade so the
+                        # dashboard can place a paper trade correctly in
+                        # its 1D/7D/30D/etc window, same as a BloFin trade.
+                        "closed_at": ev.get("logged_at"),
                     })
         return exits[-limit:]
+    except Exception:
+        return []
+
+
+def _spx_log_exits(limit=PAPER_TRADE_LOG_CAP):
+    """Same best-effort LOCAL-log lookup as _tradfi_log_exits, for
+    spx_book.py's 'spx_book_exit' events — which carry no 'symbol' key of
+    their own (spx_book only ever trades SPY), so this doesn't filter by
+    symbol. Returns just the close timestamp (spx_book's own state
+    already carries entry/exit price/reason — see _spx_book_entry — this
+    only fills the ONE thing state doesn't: a real close timestamp,
+    exit_date being date-only). Same ephemeral-file caveat, same
+    never-authoritative contract, wrapped in try/except."""
+    try:
+        from step5_paper_trade import LOG_FILE
+        import os
+        if not os.path.exists(LOG_FILE):
+            return []
+        out = []
+        with open(LOG_FILE) as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    ev = json.loads(line)
+                except Exception:
+                    continue
+                if ev.get("action") != "spx_book_exit":
+                    continue
+                out.append(ev.get("logged_at"))
+        return out[-limit:]
     except Exception:
         return []
 
@@ -447,6 +488,12 @@ def _tradfi_book_entry(eng, symbol, market, name, market_data=None):
             "pnl": r.get("outcome_pnl"), "reason": log_row.get("reason"),
             "closed_date": r.get("date"), "hold_min": r.get("hold_min"),
             "setup": r.get("setup"),
+            # real close timestamp when the local log still has it (see
+            # _tradfi_log_exits) — None degrades gracefully; the dashboard
+            # falls back to closed_date + a fixed time-of-day for window
+            # placement. Lets a paper trade be merged into the SAME
+            # combined trade record/stats as a real BloFin trade.
+            "closed_at": log_row.get("closed_at"),
         })
 
     fee_bps = (t.get("fee_bps") if t else None) or \
@@ -454,6 +501,11 @@ def _tradfi_book_entry(eng, symbol, market, name, market_data=None):
     book = {
         "name": name, "market": market, "symbol": symbol,
         "ledger_equity": ledger_equity,
+        # TradFi-Oil and TradFi-S&P trade OUT OF THE SAME shared ledger
+        # (eng['ledger_equity']) — tagged so a client summing "every
+        # paper ledger" for a combined equity headline can dedupe by this
+        # key instead of double-counting one account as two.
+        "ledger_group": "tradfi_engine",
         "open": _tradfi_open_dict(t, symbol),
         "record": {"w": wins, "l": losses},
         "today_pnl": today_pnl, "all_time_pnl": all_time_pnl,
@@ -491,13 +543,21 @@ def _spx_book_entry(sb, market_data=None):
     today_pnl = round(sum(t.get("pnl") or 0 for t in trades_log
                           if t.get("exit_date") == today_str), 2)
     all_time_pnl = round(float(sb.get("realized_pnl_total", 0.0) or 0), 2)
-    trades = [{"side": "LONG", "entry": t.get("entry_price"),
-              "exit": t.get("exit_price"), "pnl": t.get("pnl"),
-              "closed_date": t.get("exit_date"), "reason": t.get("reason")}
-             for t in _paper_recent(trades_log)]
+    recent_trades = _paper_recent(trades_log)             # newest-first
+    exit_ts_desc = list(reversed(_spx_log_exits()))        # newest-first
+    trades = []
+    for i, t in enumerate(recent_trades):
+        closed_at = exit_ts_desc[i] if i < len(exit_ts_desc) else None
+        trades.append({"side": "LONG", "entry": t.get("entry_price"),
+                       "exit": t.get("exit_price"), "pnl": t.get("pnl"),
+                       "closed_date": t.get("exit_date"),
+                       "reason": t.get("reason"), "closed_at": closed_at})
     book = {
         "name": "S&P Dip-Buy", "market": "S&P 500", "symbol": "SPY",
         "ledger_equity": ledger_equity,
+        # spx_book's own dedicated ledger — never shared with tradfi_engine
+        # (see _tradfi_book_entry's ledger_group comment).
+        "ledger_group": "spx_book",
         "open": _spx_open_dict(sb.get("open_trade")),
         "record": {"w": wins, "l": losses},
         "today_pnl": today_pnl, "all_time_pnl": all_time_pnl,

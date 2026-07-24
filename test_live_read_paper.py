@@ -563,6 +563,73 @@ def test_n_candles_deduped_by_symbol_not_per_book():
 
 
 # ---------------------------------------------------------------------------
+# o) ledger_group tagging + closed_at threading (v5, "treat paper trades
+#    like LIVE" — the dashboard needs both to merge paper trades into the
+#    combined equity/trade-record with BloFin's)
+# ---------------------------------------------------------------------------
+
+def test_o_ledger_group_and_closed_at():
+    state = {"tradfi_engine": _tradfi_state(oil_open=True, spy_open=True),
+             "spx_book": _spx_state(open_trade=True)}
+    paper = lr._build_paper(state)
+    by_name = {b["name"]: b for b in paper["books"]}
+    # TradFi-Oil and TradFi-S&P share ONE ledger -> same group
+    assert by_name["TradFi Engine · Oil"]["ledger_group"] == "tradfi_engine"
+    assert by_name["TradFi Engine · S&P 500"]["ledger_group"] == "tradfi_engine"
+    # S&P Dip-Buy has its OWN, separate ledger -> different group
+    assert by_name["S&P Dip-Buy"]["ledger_group"] == "spx_book"
+
+    # every trade row carries a closed_at KEY (None is fine without a log
+    # file — the dashboard's fallback handles that; the key must exist)
+    for b in paper["books"]:
+        for t in b["trades"]:
+            assert "closed_at" in t
+
+    # end-to-end against a REAL local log file, mirroring exactly the
+    # production shape log_event() writes (logged_at auto-stamped) —
+    # values modeled on the owner's real first oil trade (entry 89.01,
+    # exit 90.345, closed 20:43 UTC) and a real spx_book_exit.
+    import json as _json, os as _os, tempfile
+    import step5_paper_trade as _s5
+    fd, tmp_path = tempfile.mkstemp()
+    _os.close(fd)
+    orig_log_file = _s5.LOG_FILE
+    try:
+        with open(tmp_path, "w") as f:
+            f.write(_json.dumps({"action": "tradfi_enter", "symbol": "CL=F",
+                                 "entry": 89.01,
+                                 "logged_at": "2026-07-24T18:28:00+00:00"}) + "\n")
+            f.write(_json.dumps({"action": "tradfi_exit", "symbol": "CL=F",
+                                 "exit_price": 90.345, "reason": "target",
+                                 "logged_at": "2026-07-24T20:43:00+00:00"}) + "\n")
+            f.write(_json.dumps({"action": "spx_book_exit",
+                                 "entry_price": 700.0, "exit_price": 705.0,
+                                 "pnl": 12.5, "reason": "sma5_reclaim",
+                                 "logged_at": "2026-07-21T14:00:00+00:00"}) + "\n")
+        _s5.LOG_FILE = tmp_path
+
+        tradfi_exits = lr._tradfi_log_exits("CL=F")
+        assert tradfi_exits[-1]["closed_at"] == "2026-07-24T20:43:00+00:00"
+        assert tradfi_exits[-1]["entry"] == 89.01
+        assert tradfi_exits[-1]["exit"] == 90.345
+
+        spx_exits = lr._spx_log_exits()
+        assert spx_exits[-1] == "2026-07-21T14:00:00+00:00"
+
+        # threaded all the way into a real book entry (plumbing doesn't
+        # raise; the direct-function assertions above already proved the
+        # values are correct when a matching daybook row exists)
+        state2 = {"tradfi_engine": _tradfi_state(oil_open=False, spy_open=False)}
+        book = lr._tradfi_book_entry(state2["tradfi_engine"], "CL=F", "Oil",
+                                     "TradFi Engine · Oil")
+        for t in book["trades"]:
+            assert "closed_at" in t
+    finally:
+        _s5.LOG_FILE = orig_log_file
+        _os.unlink(tmp_path)
+
+
+# ---------------------------------------------------------------------------
 # Runner
 # ---------------------------------------------------------------------------
 
@@ -582,6 +649,7 @@ def main():
         test_l_position_math_hand_verified,
         test_m_empty_flat_degradation,
         test_n_candles_deduped_by_symbol_not_per_book,
+        test_o_ledger_group_and_closed_at,
     ]
     results = []
     for fn in tests:
