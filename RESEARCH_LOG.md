@@ -361,3 +361,23 @@ the FIRST-BAR-MOVE direction (follow price's own first reaction) is what
 carries; the KEYWORD classifier direction does NOT survive out-of-sample —
 consistent with keeping the live book direction-agnostic (follow the move,
 don't trust the word-reading).
+
+## ROUND 47 — the news edge tested on TradFi (2026-07-24)
+Does the WatcherGuru edge port to gold/oil/QQQ/SPY? 1h yfinance bars over
+the 13mo news span, session-aware alignment, honest gap-adjusted stops.
+EVENT-STUDY (ratio vs baseline; BTC reference 1.31x): pooled numbers LOOKED
+bigger (GLD 1.40, QQQ 1.39) but that is overnight-gap contamination —
+SESSION-ONLY (market actually live): GLD 1.02, USO 0.93, QQQ 1.03, SPY 1.03
+= NO measurable live reaction to WatcherGuru posts in TradFi sessions.
+BTC's 1.31x is genuine because crypto has no off-hours to hide gaps in.
+CONCLUSION: the 24/7-ness IS the edge carrier; our news edge's home arena
+is crypto. (Honest limit: WatcherGuru is crypto-centric news — this does
+NOT prove "news can't move gold", only that OUR feed's edge doesn't port.)
+STRATEGY GRID: 336 configs. ETFs: 0 survivors. GC=F (gold futures): one
+gap-adjusted survivor — session-only news momentum stop0.8/tgt2.4/24h,
+train +$9.28/t x157, val +$10.48/t (gap-adj) x54. SEALED LOOK DEFERRED:
+no execution path (futures broker) exists yet; looks are spent when a
+candidate is deployable. KEY PORTING LESSON with numbers: ETF overnight
+gaps destroy tight stops (GLD near-miss: 44/45 val trades gapped THROUGH
+the 0.5% stop; -$0.19/t raw -> -$37.81/t honest). The crypto tight-stop
+playbook does not port to session markets unmodified.
