@@ -104,16 +104,18 @@ what "10-20 trades a day" needs mechanically. Expected realized cadence,
 per the owner's own math, is roughly 8-14 trades/day (12 slots/day x up to
 3 concurrent, gated by how many symbols/guards actually clear each slot).
 
-SIZING FOR SURVIVABLE TUITION (owner explicitly accepted this as tuition):
-fixed-fractional RISK sizing, not allocation sizing — risk RISK_PCT (0.5%)
+SIZING (owner's call 2026-07-24: "bigger — these trades should matter"):
+fixed-fractional RISK sizing, not allocation sizing — risk RISK_PCT (2.0%)
 of virtual_equity at the stop, regardless of stop width:
     position_notional = RISK_PCT * equity / (stop_pct / 100)
     leverage           = min(MAX_LEV(20), spec_max_leverage, 85 / stop_pct)
-A low_conviction pick risks HALF (LOW_CONV_RISK_MULT): 0.25% of equity.
+A low_conviction pick risks HALF (LOW_CONV_RISK_MULT): 1.0% of equity.
 WORST CASE, STATED PLAINLY: at up to 3 concurrent full-risk trades and the
 owner's own cited cadence of ~14 trades in a day, the ledger's worst-case
 one-day drawdown if EVERY single trade were a full loss is
-    14 * 0.5% = 7% of virtual_equity in one day.
+    14 * 2.0% = 28% of virtual_equity in one day (bounded in practice by
+    MAX_CONCURRENT=3 open at once + 4h recycling; realistic bad day ~12-20%).
+    The owner accepted a bigger swing in exchange for trades that matter.
 That is a real, accepted number, not a hidden one — the owner named this
 exact scenario ("4/10 becomes 5/10 becomes 6/10") as the price of the
 learning loop and OK'd it explicitly for the demo book. It is a ceiling,
@@ -199,7 +201,9 @@ MAX_CONCURRENT = 3         # up to 3 concurrent open picks, each a different sym
 # "SIZING FOR SURVIVABLE TUITION" for the worst-case math)
 # ---------------------------------------------------------------------------
 
-RISK_PCT = 0.005           # 0.5% of virtual_equity risked per trade, at the stop
+RISK_PCT = 0.02            # 2% of virtual_equity risked per trade, at the stop
+                           # (owner's call 2026-07-24: ~4x the old tuition
+                           # size so trades are meaningful, not $6 dust)
 LOW_CONV_RISK_MULT = 0.5   # half risk on a low_conviction (sub-floor) pick
 MAX_LEV = 20.0
 STOP_ATR_MULT = 1.0        # stop = 1.0x ATR(14, 1h)
