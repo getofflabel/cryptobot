@@ -214,6 +214,10 @@ STOP_FLOOR_PCT = 0.05      # numerical safety only (never a strategy choice) —
 TARGET_STOP_MULT = 1.5     # target = 1.5x stop (tight-zone geometry)
 MAX_HOLD_H = 4.0           # reduce-only time exit — short holds so slots recycle
 CONVICTION_FLOOR = 40.0
+STOPOUT_COOLDOWN_H = 6.0   # after a losing stop, don't re-take the same
+                           # (symbol, direction) for this many hours unless
+                           # conviction is genuinely higher (+5 or more) —
+                           # the first rule the daybook EARNED (2026-07-24)
 LOT_EPS = 1e-6             # "is there a position at all" threshold
 
 CANDLE_1H_BARS = 150       # >=100 for MA100, >=49 for the vol-shock median
@@ -610,6 +614,26 @@ def select_pick(analysis: list[dict], private, demo_feed, state: dict):
             print(f"  [PICK] {cand['symbol']} (conv {cand['conviction']:.0f}) "
                   f"GUARD FAIL: {info}")
             continue
+        # stop-out cooldown: don't re-take a setup that just stopped us out
+        # unless the signal has ACTUALLY gotten stronger (see the daybook
+        # stamp above for the lesson this rule was earned from)
+        key = f"{cand['symbol']}:{cand['direction']}"
+        stamp = state.get("daily_pick", {}).get("last_stopouts", {}).get(key)
+        if stamp:
+            try:
+                age_h = (datetime.now(timezone.utc)
+                         - datetime.fromisoformat(stamp["ts"])
+                         ).total_seconds() / 3600
+            except Exception:
+                age_h = 999
+            if (age_h < STOPOUT_COOLDOWN_H
+                    and cand["conviction"] <= stamp["conviction"] + 5):
+                msg = (f"stopped out of this exact setup {age_h:.1f}h ago at "
+                       f"conv {stamp['conviction']:.0f} — signal no stronger, "
+                       f"cooling down")
+                skips.append((cand["symbol"], msg))
+                print(f"  [PICK] {cand['symbol']} COOLDOWN SKIP: {msg}")
+                continue
         # correlation guard: reject a cluster pick that fights existing lean
         cand_dir = 1 if cand["direction"] == "long" else -1
         if (cand["symbol"] in CORRELATED_CLUSTER and cluster_dir != 0
@@ -919,6 +943,19 @@ def _book_exit(state, dp, t, exit_price, exit_fee_bps, reason):
         "low_conviction": t.get("low_conviction", False),
     })
     del daybook[:-500]
+
+    # STOP-OUT COOLDOWN STAMP (the learning loop's first EARNED rule,
+    # 2026-07-24: the engine stopped out of an ETH long at conv 15, then
+    # re-entered the IDENTICAL setup 2h later at conv 15 and lost the same
+    # money again — emotionless revenge-trading. A losing stop now stamps
+    # (symbol, direction) with its conviction; select_pick refuses the same
+    # trade for STOPOUT_COOLDOWN_H hours UNLESS conviction has genuinely
+    # improved — the 14:00 re-entry at conv 35 vs 15 would rightly pass.)
+    if realized < 0:
+        dp.setdefault("last_stopouts", {})[
+            f"{sym}:{'long' if t['direction'] > 0 else 'short'}"] = {
+            "ts": exit_dt.isoformat(),
+            "conviction": t.get("conviction") or 0.0}
 
     save_state(state)
     eq = state["virtual_equity"]
