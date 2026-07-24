@@ -1,0 +1,121 @@
+asset,family,config,gate,direction,n_winners,frac_touched,frac_touched_beyond_2bps
+BTCUSDT,S1-range-edge-fade,W24 K2.5 S0.3 hold2h,calm-gated,long,3,1.0,0.3333333333333333
+BTCUSDT,S1-range-edge-fade,W24 K2.5 S0.3 hold2h,calm-gated,short,4,1.0,1.0
+BTCUSDT,S1-range-edge-fade,W24 K2.5 S0.3 hold2h,ungated,long,5,1.0,0.6
+BTCUSDT,S1-range-edge-fade,W24 K2.5 S0.3 hold2h,ungated,short,7,1.0,1.0
+BTCUSDT,S1-range-edge-fade,W24 K2.5 S0.3 hold4h,calm-gated,long,4,1.0,0.25
+BTCUSDT,S1-range-edge-fade,W24 K2.5 S0.3 hold4h,calm-gated,short,4,1.0,1.0
+BTCUSDT,S1-range-edge-fade,W24 K2.5 S0.3 hold4h,ungated,long,7,1.0,0.5714285714285714
+BTCUSDT,S1-range-edge-fade,W24 K2.5 S0.3 hold4h,ungated,short,7,1.0,1.0
+BTCUSDT,S1-range-edge-fade,W24 K2.5 S0.5 hold2h,calm-gated,long,3,1.0,0.3333333333333333
+BTCUSDT,S1-range-edge-fade,W24 K2.5 S0.5 hold2h,calm-gated,short,4,1.0,1.0
+BTCUSDT,S1-range-edge-fade,W24 K2.5 S0.5 hold2h,ungated,long,5,1.0,0.6
+BTCUSDT,S1-range-edge-fade,W24 K2.5 S0.5 hold2h,ungated,short,7,1.0,1.0
+BTCUSDT,S1-range-edge-fade,W24 K2.5 S0.5 hold4h,calm-gated,long,4,1.0,0.25
+BTCUSDT,S1-range-edge-fade,W24 K2.5 S0.5 hold4h,calm-gated,short,4,1.0,1.0
+BTCUSDT,S1-range-edge-fade,W24 K2.5 S0.5 hold4h,ungated,long,7,1.0,0.5714285714285714
+BTCUSDT,S1-range-edge-fade,W24 K2.5 S0.5 hold4h,ungated,short,7,1.0,1.0
+BTCUSDT,S2-micro-meanrev,win48 Z2.0,calm-gated,long,243,1.0,0.7695473251028807
+BTCUSDT,S2-micro-meanrev,win48 Z2.0,calm-gated,short,282,1.0,0.7553191489361702
+BTCUSDT,S2-micro-meanrev,win48 Z2.0,ungated,long,746,1.0,0.82171581769437
+BTCUSDT,S2-micro-meanrev,win48 Z2.0,ungated,short,801,1.0,0.7802746566791511
+BTCUSDT,S2-micro-meanrev,win48 Z2.5,calm-gated,long,130,1.0,0.7846153846153846
+BTCUSDT,S2-micro-meanrev,win48 Z2.5,calm-gated,short,178,1.0,0.8426966292134831
+BTCUSDT,S2-micro-meanrev,win48 Z2.5,ungated,long,432,1.0,0.8587962962962963
+BTCUSDT,S2-micro-meanrev,win48 Z2.5,ungated,short,448,1.0,0.84375
+BTCUSDT,S2-micro-meanrev,win96 Z2.0,calm-gated,long,162,1.0,0.7777777777777778
+BTCUSDT,S2-micro-meanrev,win96 Z2.0,calm-gated,short,217,1.0,0.8018433179723502
+BTCUSDT,S2-micro-meanrev,win96 Z2.0,ungated,long,583,1.0,0.8164665523156089
+BTCUSDT,S2-micro-meanrev,win96 Z2.0,ungated,short,642,1.0,0.8006230529595015
+BTCUSDT,S2-micro-meanrev,win96 Z2.5,calm-gated,long,105,1.0,0.8095238095238095
+BTCUSDT,S2-micro-meanrev,win96 Z2.5,calm-gated,short,130,1.0,0.823076923076923
+BTCUSDT,S2-micro-meanrev,win96 Z2.5,ungated,long,299,1.0,0.842809364548495
+BTCUSDT,S2-micro-meanrev,win96 Z2.5,ungated,short,325,1.0,0.84
+BTCUSDT,S3-vwap-magnet,band1.5 allweek,calm-gated,long,437,1.0,0.7254004576659039
+BTCUSDT,S3-vwap-magnet,band1.5 allweek,calm-gated,short,475,1.0,0.7263157894736842
+BTCUSDT,S3-vwap-magnet,band1.5 allweek,ungated,long,1499,1.0,0.7518345563709139
+BTCUSDT,S3-vwap-magnet,band1.5 allweek,ungated,short,1556,1.0,0.737146529562982
+BTCUSDT,S3-vwap-magnet,band1.5 weekend,calm-gated,long,240,1.0,0.6916666666666667
+BTCUSDT,S3-vwap-magnet,band1.5 weekend,calm-gated,short,255,1.0,0.7137254901960784
+BTCUSDT,S3-vwap-magnet,band1.5 weekend,ungated,long,430,1.0,0.686046511627907
+BTCUSDT,S3-vwap-magnet,band1.5 weekend,ungated,short,488,1.0,0.6926229508196722
+BTCUSDT,S3-vwap-magnet,band2.0 allweek,calm-gated,long,298,1.0,0.7449664429530202
+BTCUSDT,S3-vwap-magnet,band2.0 allweek,calm-gated,short,372,1.0,0.7204301075268817
+BTCUSDT,S3-vwap-magnet,band2.0 allweek,ungated,long,1036,1.0,0.7722007722007722
+BTCUSDT,S3-vwap-magnet,band2.0 allweek,ungated,short,1166,1.0,0.7487135506003431
+BTCUSDT,S3-vwap-magnet,band2.0 weekend,calm-gated,long,159,1.0,0.7610062893081762
+BTCUSDT,S3-vwap-magnet,band2.0 weekend,calm-gated,short,204,1.0,0.7009803921568627
+BTCUSDT,S3-vwap-magnet,band2.0 weekend,ungated,long,297,1.0,0.7441077441077442
+BTCUSDT,S3-vwap-magnet,band2.0 weekend,ungated,short,375,1.0,0.7093333333333334
+BTCUSDT,S4-compression-edge,S0.3 hold2h,calm-gated,long,102,1.0,0.803921568627451
+BTCUSDT,S4-compression-edge,S0.3 hold2h,calm-gated,short,130,1.0,0.7692307692307693
+BTCUSDT,S4-compression-edge,S0.3 hold2h,ungated,long,186,1.0,0.8118279569892473
+BTCUSDT,S4-compression-edge,S0.3 hold2h,ungated,short,208,1.0,0.7836538461538461
+BTCUSDT,S4-compression-edge,S0.3 hold4h,calm-gated,long,121,1.0,0.8347107438016529
+BTCUSDT,S4-compression-edge,S0.3 hold4h,calm-gated,short,134,1.0,0.753731343283582
+BTCUSDT,S4-compression-edge,S0.3 hold4h,ungated,long,206,1.0,0.8252427184466019
+BTCUSDT,S4-compression-edge,S0.3 hold4h,ungated,short,197,1.0,0.7766497461928934
+BTCUSDT,S4-compression-edge,S0.5 hold2h,calm-gated,long,104,1.0,0.8076923076923077
+BTCUSDT,S4-compression-edge,S0.5 hold2h,calm-gated,short,135,1.0,0.7777777777777778
+BTCUSDT,S4-compression-edge,S0.5 hold2h,ungated,long,190,1.0,0.8157894736842105
+BTCUSDT,S4-compression-edge,S0.5 hold2h,ungated,short,216,1.0,0.7916666666666666
+BTCUSDT,S4-compression-edge,S0.5 hold4h,calm-gated,long,127,1.0,0.8346456692913385
+BTCUSDT,S4-compression-edge,S0.5 hold4h,calm-gated,short,142,1.0,0.7676056338028169
+BTCUSDT,S4-compression-edge,S0.5 hold4h,ungated,long,226,1.0,0.8362831858407079
+BTCUSDT,S4-compression-edge,S0.5 hold4h,ungated,short,214,1.0,0.780373831775701
+ETHUSDT,S1-range-edge-fade,W24 K2.5 S0.3 hold2h,ungated,long,2,1.0,1.0
+ETHUSDT,S1-range-edge-fade,W24 K2.5 S0.3 hold2h,ungated,short,6,1.0,0.8333333333333334
+ETHUSDT,S1-range-edge-fade,W24 K2.5 S0.3 hold4h,ungated,long,2,1.0,1.0
+ETHUSDT,S1-range-edge-fade,W24 K2.5 S0.3 hold4h,ungated,short,5,1.0,0.8
+ETHUSDT,S1-range-edge-fade,W24 K2.5 S0.5 hold2h,ungated,long,2,1.0,1.0
+ETHUSDT,S1-range-edge-fade,W24 K2.5 S0.5 hold2h,ungated,short,6,1.0,0.8333333333333334
+ETHUSDT,S1-range-edge-fade,W24 K2.5 S0.5 hold4h,ungated,long,2,1.0,1.0
+ETHUSDT,S1-range-edge-fade,W24 K2.5 S0.5 hold4h,ungated,short,5,1.0,0.8
+ETHUSDT,S2-micro-meanrev,win48 Z2.0,calm-gated,long,217,1.0,0.880184331797235
+ETHUSDT,S2-micro-meanrev,win48 Z2.0,calm-gated,short,253,1.0,0.8932806324110671
+ETHUSDT,S2-micro-meanrev,win48 Z2.0,ungated,long,709,1.0,0.8702397743300423
+ETHUSDT,S2-micro-meanrev,win48 Z2.0,ungated,short,745,1.0,0.8966442953020134
+ETHUSDT,S2-micro-meanrev,win48 Z2.5,calm-gated,long,134,1.0,0.9104477611940298
+ETHUSDT,S2-micro-meanrev,win48 Z2.5,calm-gated,short,151,1.0,0.9337748344370861
+ETHUSDT,S2-micro-meanrev,win48 Z2.5,ungated,long,421,1.0,0.9073634204275535
+ETHUSDT,S2-micro-meanrev,win48 Z2.5,ungated,short,432,1.0,0.9212962962962963
+ETHUSDT,S2-micro-meanrev,win96 Z2.0,calm-gated,long,165,1.0,0.8727272727272727
+ETHUSDT,S2-micro-meanrev,win96 Z2.0,calm-gated,short,191,1.0,0.8691099476439791
+ETHUSDT,S2-micro-meanrev,win96 Z2.0,ungated,long,583,1.0,0.8730703259005146
+ETHUSDT,S2-micro-meanrev,win96 Z2.0,ungated,short,614,1.0,0.8697068403908795
+ETHUSDT,S2-micro-meanrev,win96 Z2.5,calm-gated,long,100,1.0,0.83
+ETHUSDT,S2-micro-meanrev,win96 Z2.5,calm-gated,short,101,1.0,0.9207920792079208
+ETHUSDT,S2-micro-meanrev,win96 Z2.5,ungated,long,321,1.0,0.8660436137071651
+ETHUSDT,S2-micro-meanrev,win96 Z2.5,ungated,short,296,1.0,0.9087837837837838
+ETHUSDT,S3-vwap-magnet,band1.5 allweek,calm-gated,long,380,1.0,0.8105263157894737
+ETHUSDT,S3-vwap-magnet,band1.5 allweek,calm-gated,short,407,1.0,0.8034398034398035
+ETHUSDT,S3-vwap-magnet,band1.5 allweek,ungated,long,1318,1.0,0.8103186646433991
+ETHUSDT,S3-vwap-magnet,band1.5 allweek,ungated,short,1370,1.0,0.8167883211678832
+ETHUSDT,S3-vwap-magnet,band1.5 weekend,calm-gated,long,212,1.0,0.8066037735849056
+ETHUSDT,S3-vwap-magnet,band1.5 weekend,calm-gated,short,232,1.0,0.7887931034482759
+ETHUSDT,S3-vwap-magnet,band1.5 weekend,ungated,long,412,1.0,0.7864077669902912
+ETHUSDT,S3-vwap-magnet,band1.5 weekend,ungated,short,454,1.0,0.7973568281938326
+ETHUSDT,S3-vwap-magnet,band2.0 allweek,calm-gated,long,272,1.0,0.8051470588235294
+ETHUSDT,S3-vwap-magnet,band2.0 allweek,calm-gated,short,276,1.0,0.8333333333333334
+ETHUSDT,S3-vwap-magnet,band2.0 allweek,ungated,long,905,1.0,0.8154696132596685
+ETHUSDT,S3-vwap-magnet,band2.0 allweek,ungated,short,954,1.0,0.8522012578616353
+ETHUSDT,S3-vwap-magnet,band2.0 weekend,calm-gated,long,152,1.0,0.8026315789473685
+ETHUSDT,S3-vwap-magnet,band2.0 weekend,calm-gated,short,156,1.0,0.8141025641025641
+ETHUSDT,S3-vwap-magnet,band2.0 weekend,ungated,long,287,1.0,0.7839721254355401
+ETHUSDT,S3-vwap-magnet,band2.0 weekend,ungated,short,303,1.0,0.8250825082508251
+ETHUSDT,S4-compression-edge,S0.3 hold2h,calm-gated,long,103,1.0,0.8446601941747572
+ETHUSDT,S4-compression-edge,S0.3 hold2h,calm-gated,short,120,1.0,0.8666666666666667
+ETHUSDT,S4-compression-edge,S0.3 hold2h,ungated,long,180,1.0,0.8555555555555555
+ETHUSDT,S4-compression-edge,S0.3 hold2h,ungated,short,190,1.0,0.8578947368421053
+ETHUSDT,S4-compression-edge,S0.3 hold4h,calm-gated,long,83,1.0,0.8313253012048193
+ETHUSDT,S4-compression-edge,S0.3 hold4h,calm-gated,short,103,1.0,0.8543689320388349
+ETHUSDT,S4-compression-edge,S0.3 hold4h,ungated,long,155,1.0,0.864516129032258
+ETHUSDT,S4-compression-edge,S0.3 hold4h,ungated,short,157,1.0,0.8407643312101911
+ETHUSDT,S4-compression-edge,S0.5 hold2h,calm-gated,long,105,1.0,0.8476190476190476
+ETHUSDT,S4-compression-edge,S0.5 hold2h,calm-gated,short,125,1.0,0.864
+ETHUSDT,S4-compression-edge,S0.5 hold2h,ungated,long,185,1.0,0.8594594594594595
+ETHUSDT,S4-compression-edge,S0.5 hold2h,ungated,short,200,1.0,0.86
+ETHUSDT,S4-compression-edge,S0.5 hold4h,calm-gated,long,90,1.0,0.8444444444444444
+ETHUSDT,S4-compression-edge,S0.5 hold4h,calm-gated,short,113,1.0,0.8584070796460177
+ETHUSDT,S4-compression-edge,S0.5 hold4h,ungated,long,170,1.0,0.8764705882352941
+ETHUSDT,S4-compression-edge,S0.5 hold4h,ungated,short,178,1.0,0.848314606741573

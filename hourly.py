@@ -315,6 +315,18 @@ def main(storm=None):
         except Exception as e:
             print(f"daily pick error (non-fatal): {str(e)[:100]}")
 
+    # 3g. MORNING READ backstop (daemon owns it when alive; read-only, no
+    #     orders — see morning_read.py's module docstring). Same daemon
+    #     handoff pattern as 3f: its own once-daily due-check makes this
+    #     safe to call every cycle regardless.
+    if not daemon_alive:
+        try:
+            from morning_read import run_morning_read
+            from step5_paper_trade import load_state as _lsm
+            run_morning_read(live_feed, _lsm())
+        except Exception as e:
+            print(f"morning read error (non-fatal): {str(e)[:100]}")
+
 
 if __name__ == "__main__":
     import time as _t

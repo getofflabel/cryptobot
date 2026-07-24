@@ -136,6 +136,18 @@ def full_cycle(private, live_feed, demo_feed, symbol, reason):
 
     _run_book("The Diver", _diver)
 
+    # THE MORNING READ (once-daily market-context store + its Telegram-note
+    # byproduct; read-only, no orders — see morning_read.py's module
+    # docstring). Safe to call on every full_cycle: its own state-gated
+    # due-check makes every call a no-op except the first one at/after
+    # 12:00 UTC each day.
+    try:
+        from morning_read import run_morning_read
+        from step5_paper_trade import load_state
+        run_morning_read(live_feed, load_state())
+    except Exception as e:
+        print(f"  morning read error: {str(e)[:120]}")
+
 
 def main():
     env = load_env()

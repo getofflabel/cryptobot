@@ -557,3 +557,15 @@ removed); SESSION dilutes routing despite big single cells; TREND/NEWS
 negligible marginal router value. NO looks spent (cells n=8-15 = too
 thin for sealed verdicts — quarantined until they fatten). NEXT: R68
 router v2 (intersection/single-best-cell construction).
+
+## ROUND 67 — calm-tape scalping (2026-07-24)
+SIXTH BURIAL of fast trading on costs: 0/112 taker configs positive
+train+val (S2 micro-MR, S3 VWAP magnet, S4 compression — hundreds-to-
+thousands of trades each = well-powered no); maker escape evaporates
+under chase-aware fills (best case +$0.43 fantasy -> -$1.25 honest);
+CALM-GATE NOT CONFIRMED (gating made S2/S3/S4 WORSE). Frequency was
+never the problem (1.4-6+ trades/calm-day — all losers after costs).
+S1 range-edge-fade: real ~28bps gross edge but the range-width filter
+was mis-scaled (no sqrt-N) -> 7-9 fires/6y = noise; ONE honest re-
+attempt permitted with a corrected filter before the family is closed.
+Quiet tape stays "A-setups only."
