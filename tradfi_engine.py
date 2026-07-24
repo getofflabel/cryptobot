@@ -5,7 +5,7 @@ the market, like you're looking at the candle charts; there should be
 multiple trades happening right now, not all crypto").
 
 WHAT THIS IS, PLAINLY: there is no venue on BloFin (or anywhere this bot
-has real API access) for practice orders on GC=F/CL=F/SPY, so this book
+has real API access) for practice orders on CL=F/SPY, so this book
 runs a fully self-contained PAPER ledger. It scores real market data
 (yfinance) every 2h slot exactly like daily_pick.py's learning engine
 scores BTC/ETH/SOL, but every fill is simulated against the real price and
@@ -28,7 +28,6 @@ UNIVERSE + DATA (yfinance only, imported INSIDE each fetch function — never
 at module import time, so this module has zero network/import cost until a
 cycle actually runs, and tests can monkeypatch the fetch functions with no
 yfinance install required):
-  GOLD  = "GC=F"   (COMEX gold futures)
   OIL   = "CL=F"   (WTI crude futures — same ticker morning_read.py already
                     uses for oil)
   SPX   = "SPY"    (S&P 500 ETF — the only S&P proxy yfinance serves
@@ -83,7 +82,7 @@ informational/margin-realism only — it does not change the trade's
 notional, which fixed-fractional risk sizing already pins to
 RISK_PCT*equity/(stop_pct/100) regardless of leverage.
 
-FEES: 1bp/leg standard (SPY), 2bp/leg for the futures (GC=F, CL=F) —
+FEES: 1bp/leg standard (SPY), 2bp/leg for the futures (CL=F) —
 booked on both the entry and exit leg, same formula shape as daily_pick's
 _book_exit (gross directional PnL minus entry_price*fee_bps +
 exit_price*fee_bps, scaled by the paper position's share count).
@@ -125,11 +124,12 @@ from strategy import atr as _atr
 # universe
 # ===========================================================================
 
-GOLD = "GC=F"
 OIL = "CL=F"
 SPX = "SPY"
-UNIVERSE = [GOLD, OIL, SPX]
-NICE_NAMES = {GOLD: "gold", OIL: "oil", SPX: "the S&P 500"}
+# gold trades REAL demo orders on XAUT-USDT via the crypto engine (owner,
+# 2026-07-24) — it left this paper universe the same day it briefly joined.
+UNIVERSE = [OIL, SPX]
+NICE_NAMES = {OIL: "oil", SPX: "the S&P 500"}
 FUTURES = {GOLD, OIL}          # 2bp/leg fee tier; SPX (SPY) is 1bp/leg
 
 # ---------------------------------------------------------------------------

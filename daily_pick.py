@@ -180,9 +180,15 @@ from strategy import rsi as _rsi
 # rejected mid-fill, leaving a naked unbracketed -30ct short that no book
 # owned; (2) two books trading one symbol is exactly the tangle we banned for
 # BTC. TSLA-USDT 404s on the demo /instruments probe (never tradeable here).
-# The engine now trades only the LIQUID demo majors, where clips actually
-# fill and brackets actually land. Gold trades ONLY through gold_book.
-UNIVERSE = ["BTC-USDT", "ETH-USDT", "SOL-USDT"]
+# 2026-07-24 (owner: "the gold vehicle should literally be XAUT-USDT — you
+# can use BloFin demo"): XAUT RESTORED. The jam that benched it was the
+# rate-limiter bug (73 rapid clips), root-caused and fixed with atomic
+# one-shot orders, then proven with a clean 361ct fill. The gold-book
+# collision is handled by mutual guards: this engine skips XAUT whenever
+# ANY position exists on it (existing exchange-position guard), and
+# gold_book stands down from entering when an unowned XAUT position exists
+# (see its entry paths). TSLA stays out (demo spec-dead).
+UNIVERSE = ["BTC-USDT", "ETH-USDT", "SOL-USDT", "XAUT-USDT"]
 
 NICE_NAMES = {
     "BTC-USDT": "bitcoin", "ETH-USDT": "ether", "SOL-USDT": "solana",

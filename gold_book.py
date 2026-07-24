@@ -803,6 +803,17 @@ def intraday_check(private, live_feed, state, price: float):
         print(f"  [GOLD] intraday trigger armed at ${lvl:,.1f}")
     if price < lvl:
         return False
+    # OWNERSHIP HANDSHAKE (2026-07-24): the learning engine may hold XAUT
+    # reps (atomic orders fixed the old jam). If an unowned position exists,
+    # stand down this cycle — the breakout persists; we enter when clear.
+    try:
+        _net_now = private.net_position_contracts(SYMBOL)
+        if abs(_net_now) >= 1:
+            print(f"  [GOLD] breakout touched but another book holds "
+                  f"{_net_now:+.0f}ct XAUT — standing down this cycle")
+            return False
+    except Exception:
+        pass
     # TOUCHED — enter now, matching the validated sim (fill ~= the level)
     from step5_paper_trade import notify, log_event, now_utc, save_state
     spec = _instrument_spec(live_feed)

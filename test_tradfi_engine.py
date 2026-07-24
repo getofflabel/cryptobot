@@ -192,7 +192,7 @@ def test_a_market_hours_gate():
 
     # -- GOLD / OIL (futures): ~23h Sun 22:00 UTC -> Fri 21:00 UTC, daily
     #    21:00-22:00 UTC maintenance break Mon-Thu, closed Saturday --------
-    for sym in (te.GOLD, te.OIL):
+    for sym in (te.OIL,):
         assert te.is_market_open(sym, sat) is False, sym
         sun_before_open = datetime(2026, 8, 2, 21, 0, tzinfo=UTC)
         sun_after_open = datetime(2026, 8, 2, 22, 30, tzinfo=UTC)
@@ -258,12 +258,12 @@ def test_c_scoring_reuse_ranked_pick():
     assert expected["conviction"] == 25.0 and expected["direction"] == "long", expected
 
     fake_1h, fake_1d = _fetch_stub(
-        {te.GOLD: c1h}, {te.GOLD: c1d})
+        {te.OIL: c1h}, {te.OIL: c1d})
     te._fetch_1h = fake_1h
     te._fetch_1d = fake_1d
-    te.is_market_open = lambda symbol, now: symbol == te.GOLD   # only GOLD "open"
+    te.is_market_open = lambda symbol, now: symbol == te.OIL   # only GOLD "open"
 
-    rec = te._score_symbol(te.GOLD)
+    rec = te._score_symbol(te.OIL)
     assert rec is not None
     assert rec["conviction"] == expected["conviction"], rec
     assert rec["direction"] == expected["direction"], rec
@@ -285,7 +285,7 @@ def test_c_scoring_reuse_ranked_pick():
         r = te.run_tradfi_engine(state, dry=True)
     finally:
         _unfreeze()
-    assert r["entry"] == {"action": "would_enter", "symbol": te.GOLD,
+    assert r["entry"] == {"action": "would_enter", "symbol": te.OIL,
                           "direction": "long", "conviction": 25.0}, r["entry"]
     # dry mode may lazily materialize the engine's OWN fresh/empty state
     # shell (state.setdefault(...) — same contract as
@@ -309,7 +309,7 @@ def test_d_paper_fill_exit_math():
     _reset_call_logs()
     eng = te._fresh_engine()
     eng["ledger_equity"] = 2000.0
-    cand = {"symbol": te.GOLD, "direction": "long", "conviction": 60.0,
+    cand = {"symbol": te.OIL, "direction": "long", "conviction": 60.0,
            "components": [{"name": "breakout", "long": 20.0, "short": 0.0}],
            "atr_pct_1h": 1.0, "last_close": 2000.0}
 
@@ -331,7 +331,7 @@ def test_d_paper_fill_exit_math():
     assert abs(trade["stop_price"] - 1980.0) < 1e-6, trade
     assert abs(trade["target_price"] - 2030.0) < 1e-6, trade
     assert trade["fee_bps"] == te.FEE_BPS_FUTURES == 2.0, trade
-    assert result["action"] == "entered" and result["symbol"] == te.GOLD
+    assert result["action"] == "entered" and result["symbol"] == te.OIL
 
     # -- stop-first-on-tie: one bar's range spans BOTH stop and target ----
     tie_bar = (2050.0, 1970.0, 2010.0)   # high, low, close
@@ -359,7 +359,7 @@ def test_d_paper_fill_exit_math():
     assert eng["open_trades"] == [], eng["open_trades"]
     assert len(eng["daybook"]) == 1, eng["daybook"]
     rec = eng["daybook"][0]
-    assert rec["symbol"] == te.GOLD and rec["dir"] == "long"
+    assert rec["symbol"] == te.OIL and rec["dir"] == "long"
     assert rec["outcome_pnl"] == 58.39, rec
     assert rec["hold_min"] == 120.0, rec
 
@@ -372,7 +372,7 @@ def test_d_paper_fill_exit_math():
     loss_realized = te._book_exit(state, eng2, trade2, trade2["stop_price"],
                                   "stop", entry_now + timedelta(hours=1))
     assert loss_realized < 0, loss_realized
-    key = f"{te.GOLD}:long"
+    key = f"{te.OIL}:long"
     assert key in eng2["last_stopouts"], eng2["last_stopouts"]
     assert eng2["last_stopouts"][key]["conviction"] == 60.0
 
@@ -389,13 +389,13 @@ def test_e_ledger_isolation():
     state = make_state()
 
     # force GOLD to be picked every due slot; nothing else ever scores
-    strong_cand = {"symbol": te.GOLD, "conviction": 70.0, "direction": "long",
+    strong_cand = {"symbol": te.OIL, "conviction": 70.0, "direction": "long",
                   "long_score": 70.0, "short_score": 0.0,
                   "components": [{"name": "breakout", "long": 20.0, "short": 0.0}],
                   "last_close": 2000.0, "atr_pct_1h": 1.0, "regime": "normal"}
 
     def fake_score(symbol):
-        return strong_cand if symbol == te.GOLD else None
+        return strong_cand if symbol == te.OIL else None
 
     te._score_symbol = fake_score
     te.is_market_open = lambda symbol, now: True
@@ -408,14 +408,14 @@ def test_e_ledger_isolation():
         _freeze("2026-07-27 10:15:00")
         r1 = te.run_tradfi_engine(state, dry=False)
         assert r1["entry"]["action"] == "entered", r1
-        assert r1["entry"]["symbol"] == te.GOLD, r1
+        assert r1["entry"]["symbol"] == te.OIL, r1
 
         # force a time exit: jump the frozen clock 7h ahead (past
         # MAX_HOLD_H=6) and hand it a flat bar that never touches
         # stop/target, so the ONLY exit trigger available is the clock.
         trade = state["tradfi_engine"]["open_trades"][0]
         flat_bar = _mk([trade["entry_price"]], freq="1h")
-        te._fetch_1h = lambda symbol: flat_bar if symbol == te.GOLD else None
+        te._fetch_1h = lambda symbol: flat_bar if symbol == te.OIL else None
         te._score_symbol = lambda symbol: None   # nothing re-enters after the exit
         _freeze("2026-07-27 17:20:00")
         r2 = te.run_tradfi_engine(state, dry=False)
@@ -445,13 +445,13 @@ def test_f_calm_gate_a_only():
     te.log_event = _fake_log_event
     te.save_state = _fake_save_state
 
-    calm_low = {"symbol": te.GOLD, "conviction": 30.0, "direction": "long",
+    calm_low = {"symbol": te.OIL, "conviction": 30.0, "direction": "long",
                "components": [], "last_close": 2000.0, "atr_pct_1h": 0.3,
                "regime": "calm"}
     assert 30.0 < CONVICTION_FLOOR
 
     # -- calm regime, below floor: must be SKIPPED (no_pick) ---------------
-    te._score_symbol = lambda symbol: calm_low if symbol == te.GOLD else None
+    te._score_symbol = lambda symbol: calm_low if symbol == te.OIL else None
     _reset_call_logs()
     state = make_state()
     try:
@@ -463,7 +463,7 @@ def test_f_calm_gate_a_only():
 
     # -- calm regime, AT the floor: must be TAKEN ----------------------------
     calm_at_floor = dict(calm_low, conviction=CONVICTION_FLOOR)
-    te._score_symbol = lambda symbol: calm_at_floor if symbol == te.GOLD else None
+    te._score_symbol = lambda symbol: calm_at_floor if symbol == te.OIL else None
     state2 = make_state()
     try:
         _freeze("2026-07-27 10:15:00")
@@ -507,7 +507,7 @@ def test_g_dry_mode_zero_writes():
 
     # an existing open GOLD trade that WOULD stop out this cycle
     entry_time_str = "2026-07-27 08:00:00 UTC"
-    existing = {"symbol": te.GOLD, "direction": 1, "entry_price": 2000.0,
+    existing = {"symbol": te.OIL, "direction": 1, "entry_price": 2000.0,
                "shares": 2.0, "notional": 4000.0, "leverage": 20.0,
                "stop_pct": 1.0, "target_pct": 1.5, "stop_price": 1980.0,
                "target_price": 2030.0, "fee_bps": 2.0,
@@ -522,7 +522,7 @@ def test_g_dry_mode_zero_writes():
     stop_bar = _mk([1980.0], highs=[1985.0], lows=[1975.0], freq="1h")
 
     def fake_1h(symbol):
-        return stop_bar if symbol == te.GOLD else None
+        return stop_bar if symbol == te.OIL else None
     te._fetch_1h = fake_1h
     te._fetch_1d = lambda symbol: None
 
