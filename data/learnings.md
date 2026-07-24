@@ -1,12 +1,22 @@
 # LEARNINGS — the bot's own diary (plain English)
 
-Ledger: $1,468.58 / goal $3,000
+Ledger: $1,463.21 / goal $3,000
 
+
+## Scorecard by strategy (live trades)
+
+- **daily_pick**: 1 trades, 0W/1L, expectancy $-5.37/trade
+- **pick_trend**: 1 trades, 0W/1L, expectancy $-5.37/trade
 
 ## AI news judges (on probation)
 
 - **opus**: 10/23 graded calls (43% right)
 - **sonnet**: 14/29 graded calls (48% right)
 
-_No completed trades yet — reviews appear here as the bot trades. A quiet market means no forced trades._
+## Trade reviews (newest first)
+
+### 2026-07-24 08:00:08 UTC — daily_pick
+- long $76 -> SL hit $76, lost $5.37
+- conditions: market heat 0.6% (barely above the gate); crowd lean +2.7bp (near euphoria)
+- **lesson:** lost in thin conditions — the fixable kind; these cluster, and the memory is counting them
 
