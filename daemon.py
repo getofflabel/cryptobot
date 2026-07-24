@@ -150,6 +150,17 @@ def full_cycle(private, live_feed, demo_feed, symbol, reason):
 
     _run_book("The Diver", _diver)
 
+    def _tradfi():
+        # THE TRADFI ENGINE (paper): the crypto learning engine's twin for
+        # gold/oil/S&P — every-2h candle-scored slots on real yfinance
+        # prices, its own isolated paper ledger, never touches BloFin
+        # accounting. Safe every cycle: own slot idempotency inside.
+        from tradfi_engine import run_tradfi_engine
+        from step5_paper_trade import load_state
+        run_tradfi_engine(load_state())
+
+    _run_book("TradFi Engine", _tradfi)
+
     # THE MORNING READ (once-daily market-context store + its Telegram-note
     # byproduct; read-only, no orders — see morning_read.py's module
     # docstring). Safe to call on every full_cycle: its own state-gated

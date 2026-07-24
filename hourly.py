@@ -350,6 +350,16 @@ def main(storm=None):
             print(f"morning read error (non-fatal): {str(e)[:100]}")
 
 
+    # 3g2. THE TRADFI ENGINE backstop (paper gold/oil/S&P slots) — only
+    #      when the daemon is down; same pattern as the other backstops.
+    if not daemon_alive:
+        try:
+            from tradfi_engine import run_tradfi_engine
+            from step5_paper_trade import load_state as _lst
+            run_tradfi_engine(_lst())
+        except Exception as e:
+            print(f"tradfi engine backstop error: {str(e)[:100]}")
+
 if __name__ == "__main__":
     import time as _t
     storm = {"on": False}
