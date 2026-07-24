@@ -261,7 +261,7 @@ def test_c_scoring_reuse_ranked_pick():
         {te.OIL: c1h}, {te.OIL: c1d})
     te._fetch_1h = fake_1h
     te._fetch_1d = fake_1d
-    te.is_market_open = lambda symbol, now: symbol == te.OIL   # only GOLD "open"
+    te.is_market_open = lambda symbol, now: symbol == te.OIL   # only OIL "open"
 
     rec = te._score_symbol(te.OIL)
     assert rec is not None
@@ -269,9 +269,8 @@ def test_c_scoring_reuse_ranked_pick():
     assert rec["direction"] == expected["direction"], rec
     assert rec["components"] == expected["components"], rec
 
-    # OIL/SPX have no fixture installed -> _fetch_1h/_1d return None for
-    # them -> _score_symbol degrades to None -> excluded from ranking.
-    assert te._score_symbol(te.OIL) is None
+    # SPX has no fixture installed -> _fetch_1h/_1d return None for it ->
+    # _score_symbol degrades to None -> excluded from ranking.
     assert te._score_symbol(te.SPX) is None
 
     # full cycle, dry preview: the only scored/open symbol should be picked
