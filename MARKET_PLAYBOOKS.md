@@ -15,7 +15,9 @@ no vibes.
   in uptrends (needs 48h room — same-day exits kill it, R43), news
   momentum (first-hour direction, sealed PASS), sparse volume-shock
   continuation (R50 two-window, sealed look pending).
-- What dies here: ALL always-on shorts (5x confirmed), dense 15m anything
+- What dies here: order blocks (0/64), pin bars/engulfing/inside-bars
+  (0/112 — and adding "context" made them WORSE), NR patterns, regular
+  reversal divergences (1/96), ALL always-on shorts (5x confirmed), dense 15m anything
   (~9bps cost floor vs thin per-bar edge), fixed-parameter ports of any
   kind, same-day dip exits, momentum bursts/session breakouts in grinds.
 - Dials: 1h stops ~1.2-1.7% work; funding matters (8h cadence, extremes

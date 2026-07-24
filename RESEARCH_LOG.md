@@ -446,3 +446,16 @@ the lone narrow win). MTF ladder: monotonic improvement (val $4.59 ->
 $5.47 -> $56.42 stacking bias+trigger) but full-alignment n=12 val =
 floor-thin -> WATCH LIST, no look spent. 15m cost floor reconfirmed
 structural (8.5-9.5bps realized vs ~9-10 floor).
+
+## ROUND 57 — price-action patterns (2026-07-24)
+296 configs. THE CLASSIC PATTERN CANON DIES ON BTC AFTER COSTS:
+order blocks 0/64 (base+breaker, broad clean negative), pin bars/
+engulfing/inside-bars 0/112 (and CONTEXT FILTERS MADE PINS WORSE:
+-8.9 bare -> -43.1 with SMA50 context), NR-squeeze 0/32. Sole life:
+statistical vol-compression (BB-width squeeze + range-compression
+breakouts, 10/88; best 4h BB-squeeze val $80.02/t x26 BUT val=7x train
+= regime-flatter signature; runner-up range-compression gated has the
+grid's tightest DDs). NO looks spent — family to WATCH LIST pending
+neighbor-cluster scrutiny (the val>>train shape has failed sealed 2x
+historically). FVG/order-block overlap only ~1.1x chance = tools are
+distinct, not redundant.
