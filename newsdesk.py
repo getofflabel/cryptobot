@@ -694,6 +694,39 @@ def run_newsdesk(private: BlofinDemoPrivate, live_feed, demo_feed,
                         * LOT)
         side = "buy" if direction > 0 else "sell"
 
+        # ONE-THESIS GUARD (2026-07-24, owner: "BTC short + SOL short + ETH
+        # long — crypto is correlated, at least one is wrong. Not how a
+        # human mind thinks."): the account holds ONE directional crypto
+        # thesis at a time. A news signal that OPPOSES existing cluster
+        # exposure stands down — loudly, so we can count how often a
+        # rotation rule (close-and-flip) would have mattered.
+        try:
+            from book_ledger import cluster_state
+            lean, mixed = cluster_state(private)
+            if (lean != 0 and lean != direction) or mixed:
+                why = ("book is mixed" if mixed else
+                       f"account is {'long' if lean > 0 else 'short'} crypto")
+                print(f"  [NEWS{tag}] ONE-THESIS STAND-DOWN: signal "
+                      f"{'long' if direction > 0 else 'short'} but {why} — "
+                      f"not stacking a contradiction")
+                log_event({"action": "news_thesis_standdown",
+                           "signal_dir": direction, "lean": lean,
+                           "mixed": mixed,
+                           "headline": pending.get("headline", "")[:120]})
+                if not dry:
+                    notify("⚖️ News signal stood down (demo)",
+                           f"A {'long' if direction > 0 else 'short'} news "
+                           f"signal fired, but the account already has the "
+                           f"opposite crypto exposure — one thesis at a "
+                           f"time, so it passed.")
+                nd["pending"] = None
+                if not dry:
+                    save_state(state)
+                return {"action": "thesis_standdown", "direction": direction}
+        except Exception as e:
+            print(f"  [NEWS{tag}] thesis check failed open ({str(e)[:50]}) — "
+                  f"proceeding")
+
         if dry:
             sl_est = round(_entry_bar_extreme_stop(direction, bar_high, bar_low), 1)
             print(f"  [NEWS DRY] {'LONG' if direction > 0 else 'SHORT'} "

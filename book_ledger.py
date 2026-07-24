@@ -127,3 +127,36 @@ def unexplained_position(net: float, state: dict) -> float:
     (or a bug placed an order outside all the book paths)."""
     recorded = recorded_book_positions(state)
     return net - sum(recorded.values())
+
+
+# ONE-THESIS RULE (Wallace, 2026-07-24: "BTC short, SOL short, ETH long —
+# crypto is correlated, at least one of these is wrong. That's not how a
+# human mind would think."): the crypto majors are ONE correlated animal;
+# the ACCOUNT holds one directional thesis on them at a time — long it,
+# short it, or flat. Every book checks this before adding cluster risk.
+CRYPTO_CLUSTER = ("BTC-USDT", "ETH-USDT", "SOL-USDT")
+
+
+def cluster_state(private) -> tuple[int, bool]:
+    """Whole-account read of the crypto cluster: returns (lean, mixed).
+    lean: +1 net-long thesis, -1 net-short thesis, 0 none. mixed: True when
+    BOTH directions are simultaneously open (an incoherent book — the state
+    the 2026-07-24 triple-contradiction screen exposed). Uses the
+    exchange's own positions so it sees every book."""
+    longs = shorts = 0
+    for sym in CRYPTO_CLUSTER:
+        try:
+            net = private.net_position_contracts(sym)
+        except Exception:
+            continue
+        if net > 0:
+            longs += 1
+        elif net < 0:
+            shorts += 1
+    if longs and shorts:
+        return 0, True
+    if longs:
+        return 1, False
+    if shorts:
+        return -1, False
+    return 0, False

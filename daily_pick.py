@@ -640,7 +640,8 @@ def select_pick(analysis: list[dict], private, demo_feed, state: dict):
     ((cand, spec) | None, is_low_conviction, skip_log)."""
     ranked = sorted([a for a in analysis if a["ok"] and not a["stale"]],
                     key=lambda a: a["conviction"], reverse=True)
-    cluster_dir = _cluster_direction(private)   # read once, reused per cand
+    from book_ledger import cluster_state
+    cluster_dir, cluster_mixed = cluster_state(private)   # read once per slot
     guarded = []
     skips = []
     for cand in ranked:
@@ -681,7 +682,16 @@ def select_pick(analysis: list[dict], private, demo_feed, state: dict):
                 skips.append((cand["symbol"], msg))
                 print(f"  [PICK] {cand['symbol']} COOLDOWN SKIP: {msg}")
                 continue
-        # correlation guard: reject a cluster pick that fights existing lean
+        # ONE-THESIS GUARD (2026-07-24 upgrade: a MIXED book — both
+        # directions open across the majors — now blocks ALL new cluster
+        # entries until coherence returns; the old rule treated "mixed" as
+        # "no lean" and let a third contradictory position walk in)
+        if cand["symbol"] in CORRELATED_CLUSTER and cluster_mixed:
+            msg = "crypto book is MIXED (both directions open) — no new cluster risk until coherent"
+            skips.append((cand["symbol"], msg))
+            print(f"  [PICK] {cand['symbol']} ONE-THESIS SKIP: {msg}")
+            continue
+        # clean lean: reject a cluster pick that fights it
         cand_dir = 1 if cand["direction"] == "long" else -1
         if (cand["symbol"] in CORRELATED_CLUSTER and cluster_dir != 0
                 and cand_dir != cluster_dir):
