@@ -505,3 +505,18 @@ ones flagged. News-heat axis structurally untestable (13mo news vs old
 train window). NEXT: these conditional rules feed the scenario router +
 Learning Engine components — deployment only via train/val+sealed per
 rule, never straight from a rehab cell.
+
+## ROUND 64 — the flip (2026-07-24)
+Owner's live challenge ("clearly a short opportunity") tested: on
+identical live-shape long entries, P0 ride-bracket vs P1 flip-and-reverse
+vs P2 cut-only (34 configs, BTC+ETH, 15m breakdown triggers ±confirm).
+VERDICT: BASELINE WINS. Flip reliably worst; cut-only marginally
+least-bad but no edge; reversal short leg DONATES on BTC (-$17 to -$65/t
+all 8 configs both windows), noise on ETH. FAKE-OUT RATE 62-89%: most
+15m waterfalls close back above the broken level within 8 bars — they
+are sweep-and-reclaims, not trend starts. Today's ETH dump autopsied:
+flip enters 1871, wicks +1.31%, bounce eats it by 15:00 ≈ flat, while
+the "wrong" long survived to green. SIXTH burial of breakdown-chasing
+(first in conditional-flip form). Rule stands: honor the stop, never
+reverse into a waterfall. The pattern's real value is the OTHER side —
+sweep-fade longs, already a confluence vote in the sealed CHoCH edge.
