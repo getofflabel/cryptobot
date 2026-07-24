@@ -472,3 +472,17 @@ confluence VOTES. "ANY-tool" pooling never survived (dilution) =
 owner's "different weapons" framing confirmed over "everything always".
 15m floor never cleared (FVG turned out DENSE ~1/2h, not sparse).
 Caveat on 4h BOS/fib: wild train/val sign flips = overfit terrain.
+
+## ROUND 60 — the S&P system (2026-07-24)
+186 configs, 91 two-window survivors. ★ FIFTH VALIDATED EDGE (knowledge-
+banked, no demo venue): RSI2<5 dip-buy above SMA200, exit close>SMA5 or
+RSI2>65, no target — TWO sealed looks (erosion ~+21), BOTH PASS:
+SPY +$75.36/t x33, +24.9%, DD -8.8% (6.7y); ES +$124.07/t x29, +36.0%,
+DD -4.6% (5.2y). The index's mean-reversion personality is real, robust
+(12/12 config variants), gap-honest. Regime finding: MR dominates BOTH
+calm AND crash regimes; naive momentum failed 24/24 — the S&P mean-
+reverts, period. Graveyard: gap-fill 0/16, overnight drift real (t=4.4)
+but under costs, golden cross too slow, first-hour shorts dead. Trend =
+DD-reduction-not-outperformance (matches gold). Turn-of-month t=2.43
+flagged for a dedicated round. Venue: SPY-USDT prod tracks real S&P
+(0.08% basis) but absent on demo + thin — deploy when venue exists.

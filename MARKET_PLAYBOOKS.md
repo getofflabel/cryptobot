@@ -53,13 +53,43 @@ no vibes.
   served on the demo host (ticker empty) and is THIN (~$650k/24h).
   **SPX-USDT is the SPX6900 MEMECOIN — one letter, wrong instrument,
   never confuse them.** Paper venue: none yet; research banks knowledge.
-- Personality: session-bound (9:30-16:00 ET), overnight gaps carry the
-  drift, WatcherGuru news does NOT move it in-session (1.03x — R47);
-  the world's most mean-reverting major index historically.
-- Findings so far: trend ports mostly INSUFFICIENT-SAMPLE on daily
-  (too slow), dip/news families nothing yet. Needs its own system.
-- OPEN: R60 (index-native families: gap plays, first-hour range,
-  index dip-buying, EMA regimes) launching 2026-07-24.
+- Personality: session-bound (9:30-16:00 ET) with a REAL 17.5h dark
+  overnight window on the ETF (SPY gaps >0.3% on 46.6% of days vs ES=F's
+  6.8% — near-continuous futures sessions structurally don't have this).
+  Long-biased: shorts and gap-up-fades lose to their long-side mirrors
+  everywhere tested. WatcherGuru news does NOT move it in-session (R47,
+  1.03x). The world's most famous dip-buy folklore market — and it's real.
+- What works (validated, R60): RSI2<5 dip-buy (price>SMA200, exit
+  close>SMA5 or RSI2>65, NO fixed target) — 12/12 configs SURVIVOR on
+  BOTH SPY and ES=F, gap-honesty-clean, the round's cleanest edge.
+  SMA100/200 regime membership (long while price>SMA, ~3-6 trades/yr) —
+  4/4 SURVIVOR cross-instrument, but does NOT beat buy-and-hold on raw
+  return (case is drawdown cut only: -15/-30% vs B&H's -20/-57%, exactly
+  gold's R48 frame). Mean-reversion dip-buying generalizes across BOTH
+  calm and crash/high-vol regimes (R60 family 4) — broader than the
+  textbook "MR only in calm uptrends" claim.
+- What dies: gap-fill (chase the fill after a gap, 0/16, confirmed dead
+  both directions both instruments); naive N-day momentum continuation
+  (0/24 across every regime cell tested, INCLUDING crash regimes where
+  trend-following should theoretically win — refutes "momentum for
+  crashes" for this shape specifically); golden cross (too slow to ever
+  clear 30 trades on daily bars alone); first-hour range-break shorts and
+  "both-directions" combos (long-only survives thin, everything else
+  dies); overnight drift (real, t=4.4 on SPY, but the ~0.033%/night gross
+  edge doesn't clear a single ETF round-trip cost — only reachable by a
+  position already held overnight for other reasons, not a standalone
+  day-trade); tight (1.0xATR) protective stops on the looser dip-buy
+  shapes (rsi2<10/15, 5-day-low, downstreak) — give the dip room.
+- Dials: daily median ATR% SPY 1.32% / ES=F 1.36% (recompute per-market,
+  never port BTC/gold thresholds); ETF costs 4bps round trip, futures
+  2bps; turn-of-month (R60 family 5) is the strongest seasonality signal
+  found anywhere in this program, t=2.43, ~3x the rest-of-month mean —
+  flagged for a dedicated round, not yet built into a strategy.
+- OPEN: dedicated turn-of-month round; momentum-shape iteration (breakout/
+  vol-scaled, since naive N-day continuation is dead); crash+below MR
+  cell needs a wider look before trusting it (one config flips under
+  gap-honesty); if SPY-USDT ever lands on the demo host, RSI2<5 dip-buy
+  is the first candidate to deploy. Full detail: step60_results.md.
 
 ## ETH / SOL / TSLA (satellites)
 - ETH: amplifier (BTC panic-dip trigger at ETH geometry) validated;
