@@ -569,3 +569,16 @@ S1 range-edge-fade: real ~28bps gross edge but the range-width filter
 was mis-scaled (no sqrt-N) -> 7-9 fires/6y = noise; ONE honest re-
 attempt permitted with a corrected filter before the family is closed.
 Quiet tape stays "A-setups only."
+
+## ROUND 69 — banking the chart target (2026-07-24, late)
+Owner's design (TP at the structural level once seen) tested vs the live
+trailing config on identical news entries. NO CHALLENGER BEAT B0 on both
+windows (bank-half +$5.19/+$2.05; bank-quarter +$7.37/+$4.73; full
+target +$4.71/-$12.11; owner's literal TP+SL-no-trail -$0.51/-$6.95 vs
+B0 +$9.57/+$4.34). WHY: ~70% of trades never reach the target (the
+tight entry-bar stop resolves them first); the ~31% that tag it are the
+runners — trailing banks MORE on exactly those ($198-204 vs $157-185
+matched). The +$276 clip: caused by the TIGHT INITIAL STOP, not absent
+banking — no variant rescued it. NEXT LEVER: the entry-bar-extreme stop
+geometry itself (R70 candidate). No looks spent. Harness reproduced
+R65's numbers bit-for-bit before testing.
