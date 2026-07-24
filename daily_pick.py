@@ -172,7 +172,15 @@ from strategy import rsi as _rsi
 # universe (see module docstring: small on purpose — a DEMO-host limitation)
 # ---------------------------------------------------------------------------
 
-UNIVERSE = ["BTC-USDT", "ETH-USDT", "SOL-USDT", "XAUT-USDT", "TSLA-USDT"]
+# 2026-07-24: XAUT-USDT and TSLA-USDT REMOVED. XAUT is the Gold Book's
+# exclusive turf — letting the Learning Engine also short it caused two live
+# failures at once: (1) XAUT's demo book is THIN, so market clips got
+# rejected mid-fill, leaving a naked unbracketed -30ct short that no book
+# owned; (2) two books trading one symbol is exactly the tangle we banned for
+# BTC. TSLA-USDT 404s on the demo /instruments probe (never tradeable here).
+# The engine now trades only the LIQUID demo majors, where clips actually
+# fill and brackets actually land. Gold trades ONLY through gold_book.
+UNIVERSE = ["BTC-USDT", "ETH-USDT", "SOL-USDT"]
 
 NICE_NAMES = {
     "BTC-USDT": "bitcoin", "ETH-USDT": "ether", "SOL-USDT": "solana",
@@ -556,6 +564,31 @@ def _guard_check(cand: dict, private, demo_feed, state: dict):
     return True, spec
 
 
+# The crypto majors move together — betting LONG one while SHORT another is
+# a near-self-cancelling position (Wallace, 2026-07-24: "you have Bitcoin
+# long and Solana short, which is crazy — they're correlated"). The engine
+# treats them as ONE correlated cluster: it will not open a position that
+# opposes net exposure already on the book (from ANY book) in this cluster.
+CORRELATED_CLUSTER = {"BTC-USDT", "ETH-USDT", "SOL-USDT"}
+
+
+def _cluster_direction(private) -> int:
+    """Net directional lean of the correlated crypto cluster across the whole
+    account: +1 if net long, -1 if net short, 0 if flat/mixed-to-zero. Uses
+    the exchange's own positions so it sees every book, not just our own."""
+    lean = 0
+    for s in CORRELATED_CLUSTER:
+        try:
+            net = private.net_position_contracts(s)
+        except Exception:
+            continue
+        if net > 0:
+            lean += 1
+        elif net < 0:
+            lean -= 1
+    return (lean > 0) - (lean < 0)
+
+
 def select_pick(analysis: list[dict], private, demo_feed, state: dict):
     """Rank by conviction, walk down applying every guard, return the
     BEST guard-clearing candidate — no conviction-floor skip (owner's
@@ -563,16 +596,27 @@ def select_pick(analysis: list[dict], private, demo_feed, state: dict):
     ((cand, spec) | None, is_low_conviction, skip_log)."""
     ranked = sorted([a for a in analysis if a["ok"] and not a["stale"]],
                     key=lambda a: a["conviction"], reverse=True)
+    cluster_dir = _cluster_direction(private)   # read once, reused per cand
     guarded = []
     skips = []
     for cand in ranked:
         ok, info = _guard_check(cand, private, demo_feed, state)
-        if ok:
-            guarded.append((cand, info))
-        else:
+        if not ok:
             skips.append((cand["symbol"], info))
             print(f"  [PICK] {cand['symbol']} (conv {cand['conviction']:.0f}) "
                   f"GUARD FAIL: {info}")
+            continue
+        # correlation guard: reject a cluster pick that fights existing lean
+        cand_dir = 1 if cand["direction"] == "long" else -1
+        if (cand["symbol"] in CORRELATED_CLUSTER and cluster_dir != 0
+                and cand_dir != cluster_dir):
+            msg = (f"opposes correlated crypto exposure "
+                   f"(cluster is {'long' if cluster_dir>0 else 'short'})")
+            skips.append((cand["symbol"], msg))
+            print(f"  [PICK] {cand['symbol']} (conv {cand['conviction']:.0f}) "
+                  f"CORRELATION SKIP: {msg}")
+            continue
+        guarded.append((cand, info))
     if not guarded:
         return None, False, skips
     best_cand, best_spec = guarded[0]     # guarded preserves the descending
@@ -944,11 +988,29 @@ def _do_entry(private, demo_feed, state, dp, cand, spec, low_conviction,
             plan["ref_price"])
     except Exception as e:
         print(f"  [PICK] ENTRY FAILED: {str(e)[:100]}")
-        notify("⚠️ daily pick ENTRY FAILED (demo)",
-              f"{sym} {direction} entry rejected: {str(e)[:80]}. No "
-              f"position opened — check BloFin.")
+        # PARTIAL-FILL ROLLBACK (2026-07-24): a rejected clip can still leave
+        # a partial position on the book (this is exactly how the naked -30ct
+        # XAUT orphan happened). Before bailing, read the exchange's own net
+        # and flatten anything that filled, so a failed entry NEVER leaves an
+        # unbracketed, unattributed position behind.
+        stray = 0.0
+        try:
+            stray = private.net_position_contracts(sym)
+            if abs(stray) >= spec["min_size"]:
+                for br in private.pending_tpsl(sym):
+                    try: private.cancel_tpsl(sym, br.get("tpslId"))
+                    except Exception: pass
+                flat_side = "sell" if stray > 0 else "buy"
+                private.market_order(sym, flat_side, abs(stray), reduce_only=True)
+                print(f"  [PICK] rolled back partial fill: flattened "
+                      f"{stray:+.4g}ct on {sym}")
+        except Exception as e2:
+            print(f"  [PICK] ROLLBACK FAILED: {str(e2)[:80]}")
+        notify("⚠️ daily pick entry rejected (demo)",
+              f"{sym} {direction} entry hit a book error and was rolled back "
+              f"(no position left open). Skipping {sym} this slot.")
         return {"action": "entry_failed", "symbol": sym,
-                "error": str(e)[:120]}
+                "error": str(e)[:120], "rolled_back": round(stray, 4)}
 
     if direction == "long":
         sl = entry * (1 - plan["stop_pct"] / 100)
