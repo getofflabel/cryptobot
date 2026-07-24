@@ -109,6 +109,13 @@
     margin-bottom: 18px;
   }
 
+  /* two separate scoreboards — BloFin (real venue) and the paper engine
+     (oil + S&P) — never merged into one number again (owner, 2026-07-24:
+     "separate them on the panel"). Reuses .paper-title/.paper-title-sub
+     for the headers, just spacing wrappers, no new visual language. */
+  .scoreboard { margin-bottom: 22px; }
+  .scoreboard-head { margin-bottom: 10px; }
+
   .stat-card {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
@@ -175,7 +182,7 @@
     font-size: 12px;
     color: var(--text-2);
   }
-  #sparkline {
+  #sparkline-blofin, #sparkline-paper {
     width: 130px;
     height: 52px;
     flex: none;
@@ -893,7 +900,7 @@
     .app { padding: 18px 16px 48px; }
     .stats-row { grid-template-columns: 1fr; }
     .pnl-card-body { flex-direction: row; }
-    #sparkline { width: 96px; }
+    #sparkline-blofin, #sparkline-paper { width: 96px; }
     .stat-value { font-size: 26px; }
     .controls-row { flex-direction: column; align-items: stretch; }
     .tabs, .view-toggle { justify-content: space-between; }
@@ -926,22 +933,63 @@
     </div>
   </div>
 
-  <div class="stats-row">
+  <!-- Combined equity is the headline — BloFin virtual_equity + the
+       paper engine's accumulated contribution (paper_pnl_total). THIS is
+       what the $3,000 goal bar tracks (owner, 2026-07-24 pm: "that is the
+       raise he's actually running"), because the paper books now trade
+       off the SAME shared BloFin pool instead of their own seed ledgers. -->
+  <div class="scoreboard">
     <div class="stat-card">
-      <div class="stat-label">Equity</div>
-      <div class="stat-value neutral tabular" id="equity-value">—</div>
+      <div class="stat-label">Combined Equity</div>
+      <div class="stat-value neutral tabular" id="combined-equity-value">—</div>
       <div class="goal-bar-track"><div class="goal-bar-fill" id="goal-bar-fill"></div></div>
       <div class="goal-text tabular" id="goal-text">—</div>
       <div class="equity-composition tabular" id="equity-composition"></div>
     </div>
-    <div class="stat-card">
-      <div class="stat-label" id="window-pnl-label">Net PnL · 30D</div>
-      <div class="pnl-card-body">
-        <div class="pnl-card-left">
-          <div class="stat-value neutral tabular" id="window-pnl">—</div>
-          <div class="pnl-sub" id="window-pnl-sub">Loading…</div>
+  </div>
+
+  <div class="scoreboard">
+    <div class="scoreboard-head">
+      <div class="paper-title">BloFin</div>
+      <div class="paper-title-sub">real venue · BTC / ETH / SOL / gold XAUT</div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Equity</div>
+        <div class="stat-value neutral tabular" id="blofin-equity-value">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label" id="blofin-pnl-label">Net PnL · 30D</div>
+        <div class="pnl-card-body">
+          <div class="pnl-card-left">
+            <div class="stat-value neutral tabular" id="blofin-pnl">—</div>
+            <div class="pnl-sub" id="blofin-pnl-sub">Loading…</div>
+          </div>
+          <canvas id="sparkline-blofin" width="130" height="52"></canvas>
         </div>
-        <canvas id="sparkline" width="130" height="52"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="scoreboard">
+    <div class="scoreboard-head">
+      <div class="paper-title">Paper engine</div>
+      <div class="paper-title-sub">internal paper books · oil &amp; S&amp;P — trade off the shared BloFin pool, no seed ledger of their own</div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Contribution</div>
+        <div class="stat-value neutral tabular" id="paper-contribution-value">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label" id="paper-pnl-label">Net PnL · 30D</div>
+        <div class="pnl-card-body">
+          <div class="pnl-card-left">
+            <div class="stat-value neutral tabular" id="paper-pnl">—</div>
+            <div class="pnl-sub" id="paper-pnl-sub">Loading…</div>
+          </div>
+          <canvas id="sparkline-paper" width="130" height="52"></canvas>
+        </div>
       </div>
     </div>
   </div>
@@ -1184,7 +1232,8 @@
           exitPrice: ev.price,
           pnl: ev.pnl,
           status: 'closed',
-          side: inferSide(entry ? entry.price : null, ev.price, ev.pnl, ev.book, entry ? entry.trigger : ev.trigger)
+          side: inferSide(entry ? entry.price : null, ev.price, ev.pnl, ev.book, entry ? entry.trigger : ev.trigger),
+          source: 'blofin'
         });
       }
     }
@@ -1203,7 +1252,8 @@
           exitPrice: null,
           pnl: null,
           status: 'open',
-          side: inferSide(null, null, null, entry.book, entry.trigger)
+          side: inferSide(null, null, null, entry.book, entry.trigger),
+          source: 'blofin'
         });
       });
     });
@@ -1241,7 +1291,8 @@
         headline: raw.headline || null,
         exitTime: null, exitPrice: null, pnl: null,
         status: 'open',
-        side: direction < 0 ? 'SHORT' : 'LONG'
+        side: direction < 0 ? 'SHORT' : 'LONG',
+        source: 'blofin'
       });
     });
     return result;
@@ -1250,9 +1301,10 @@
   // ---------------- paper trades -> the SAME combined trade record ----------------
   // "start treating the entire paper trading, demo trading, the oil and the
   // S&P, like LIVE. Just put them inside of the updated statistics." The
-  // dashboard's headline EQUITY/NET PNL/win-rate/window views and the
-  // markets/by-strategy grids all read off ONE array (state.trades /
-  // state.openTrades) built by buildTrades()+crossCheckOpen() from the
+  // markets/by-strategy grids (and, per-source, the two header scoreboards
+  // — see renderHeaderStats' source:'blofin'/'paper' filtering) all read
+  // off ONE array (state.trades / state.openTrades) built by
+  // buildTrades()+crossCheckOpen() from the
   // cryptobot_pnl_sheet RPC — which is BloFin-only (its SQL whitelists 14
   // BloFin action names; tradfi_engine.py's/spx_book.py's tradfi_exit/
   // spx_book_exit events never reach it — verified directly against the
@@ -1322,22 +1374,39 @@
     return out;
   }
 
-  // every unique paper LEDGER's equity, summed once each — TradFi-Oil and
-  // TradFi-S&P trade out of the SAME shared ledger (see live_read.py's
-  // ledger_group), so naively summing every BOOK's ledger_equity would
-  // double-count that one account as two. Falls back to a name-prefix
-  // heuristic when ledger_group hasn't reached this deploy yet (matches
-  // TODAY's already-published shape, forward-compatible with the tagged
-  // one) so this is correct before AND after live_read.py's next publish.
-  function paperTotalEquity() {
-    var seen = {}, total = 0;
+  // MODEL CHANGE (owner, 2026-07-24 pm, supersedes the earlier seeded-
+  // ledger design): the paper books no longer carry their own $2,000 seed
+  // — they now size off the SAME shared BloFin pool, "because we are
+  // trying to raise to three thousand [and] having a different one
+  // compromises that." Their realized P&L accumulates separately into
+  // `paper_pnl_total` (a concurrent book-side change; published on the
+  // `paper` block once it lands — NEVER folded into raw.equity/
+  // virtual_equity, which mirrors the real BloFin balance 1:1). Combined
+  // equity = raw.equity + this contribution, and that combined number is
+  // what the $3,000 goal bar tracks now — see renderHeaderStats.
+  //
+  // Falls back to deriving the same number client-side — summing every
+  // paper book's own all-time realized total (book.all_time_pnl, NOT the
+  // 20-trade-capped book.trades log, see live_read.py's
+  // PAPER_TRADE_LOG_CAP) plus any open unrealized — when `paper_pnl_total`
+  // hasn't reached this snapshot yet. `derived` on the return value says
+  // which path was used.
+  function paperContribution() {
+    if (state.paper && typeof state.paper.paper_pnl_total === 'number') {
+      return { total: state.paper.paper_pnl_total, derived: false };
+    }
+    if (state.raw && typeof state.raw.paper_pnl_total === 'number') {
+      return { total: state.raw.paper_pnl_total, derived: false };
+    }
+    var realized = 0, unrealized = 0;
     (state.paper.books || []).forEach(function (b) {
-      var group = b.ledger_group || (b.name.indexOf('TradFi Engine') === 0 ? 'tradfi_engine' : b.name);
-      if (seen[group]) return;
-      seen[group] = true;
-      total += (b.ledger_equity || 0);
+      realized += (b.all_time_pnl || 0);
+      if (b.open) {
+        var pnl = positionPnl(b);
+        if (pnl && pnl.dollars != null) unrealized += pnl.dollars;
+      }
     });
-    return total;
+    return { total: realized + unrealized, derived: true };
   }
 
   // Rebuild the ONE combined trade record from whichever of the two
@@ -1422,40 +1491,64 @@
     renderDrawer();
   }
 
+  // Headline (Combined Equity + goal bar) plus two separate scoreboards
+  // below it — BloFin and the paper engine — never merged into one
+  // number with no explanation again. Each scoreboard reads its OWN slice
+  // of state.trades/state.openTrades via the source:'blofin'/'paper' tag
+  // (see buildTrades/crossCheckOpen/paperClosedTradesNormalized), so a
+  // trade only ever counts toward the scoreboard it actually happened on.
   function renderHeaderStats() {
     var raw = state.raw;
     if (!raw) return;
-    // TOTAL EQUITY = BloFin ledger + every unique paper ledger (owner,
-    // 2026-07-24: "treat the entire paper trading... like LIVE. Just put
-    // them inside of the updated statistics.") — the composition line
-    // underneath keeps it honest about which dollars sit at a real venue
-    // vs an internal ledger (see paperTotalEquity's dedup-by-ledger note).
-    var blofinEq = raw.equity || 0;
-    var paperEq = paperTotalEquity();
-    var totalEq = blofinEq + paperEq;
-    els.equity.textContent = fmtMoneyPlain(totalEq);
-    var goal = raw.goal || 0;
-    var pct = goal > 0 ? Math.max(0, Math.min(100, (totalEq / goal) * 100)) : 0;
-    els.goalBarFill.style.width = pct.toFixed(1) + '%';
-    els.goalText.textContent = fmtMoneyPlain(totalEq) + ' of ' + fmtMoneyPlain(goal) + ' goal, ' + pct.toFixed(0) + '%';
-    els.equityComposition.innerHTML = 'BloFin <span class="k">' + fmtMoneyPlain(blofinEq) +
-      '</span> · paper <span class="k">' + fmtMoneyPlain(paperEq) + '</span>';
-
-    els.windowPnlLabel.textContent = 'Net PnL · ' + windowDef().label;
-
     var cw = closedInWindow();
-    var s = statsFor(cw);
-    els.windowPnl.textContent = s.count ? fmtMoney(s.net) : '—';
-    els.windowPnl.className = 'stat-value tabular ' + (s.count ? pnlClass(s.net) : 'neutral');
-    els.windowPnlSub.textContent = s.count
-      ? (s.count + ' trade' + (s.count === 1 ? '' : 's') + ' · ' + fmtPct(s.winRate) + ' win rate')
-      : 'No closed trades in this window';
 
-    drawSparkline(cw);
+    // ---- Combined Equity (the headline) — BloFin's real venue balance
+    // plus the paper engine's accumulated contribution. This drives the
+    // $3,000 goal bar (owner, 2026-07-24 pm: "that is the raise he's
+    // actually running") because the paper books trade off the SAME
+    // shared BloFin pool now, not a separate seed ledger.
+    var blofinEq = raw.equity || 0;
+    var contribution = paperContribution();
+    var combinedEq = blofinEq + contribution.total;
+    els.combinedEquity.textContent = fmtMoneyPlain(combinedEq);
+    var goal = raw.goal || 0;
+    var goalPct = goal > 0 ? Math.max(0, Math.min(100, (combinedEq / goal) * 100)) : 0;
+    els.goalBarFill.style.width = goalPct.toFixed(1) + '%';
+    els.goalText.textContent = fmtMoneyPlain(combinedEq) + ' of ' + fmtMoneyPlain(goal) + ' goal, ' + goalPct.toFixed(0) + '%';
+    els.equityComposition.innerHTML = 'BloFin <span class="k">' + fmtMoneyPlain(blofinEq) +
+      '</span> · paper <span class="k">' + fmtMoney(contribution.total) + '</span>';
+
+    // ---- BloFin scoreboard: real venue, own equity, own PnL/trades/win
+    // rate (BTC/ETH/SOL/gold).
+    els.blofinEquity.textContent = fmtMoneyPlain(blofinEq);
+    els.blofinPnlLabel.textContent = 'Net PnL · ' + windowDef().label;
+    var blofinClosed = cw.filter(function (t) { return t.source !== 'paper'; });
+    var bs = statsFor(blofinClosed);
+    els.blofinPnl.textContent = bs.count ? fmtMoney(bs.net) : '—';
+    els.blofinPnl.className = 'stat-value tabular ' + (bs.count ? pnlClass(bs.net) : 'neutral');
+    els.blofinPnlSub.textContent = bs.count
+      ? (bs.count + ' trade' + (bs.count === 1 ? '' : 's') + ' · ' + fmtPct(bs.winRate) + ' win rate')
+      : 'No closed trades in this window';
+    drawSparkline(blofinClosed, els.sparklineBlofin);
+
+    // ---- Paper engine scoreboard: no seed ledger of its own anymore —
+    // its "equity" line is simply its contribution to the shared pool
+    // (can be negative), plus its own PnL/trades/win rate for oil + S&P.
+    els.paperContribution.textContent = fmtMoney(contribution.total);
+    els.paperContribution.className = 'stat-value tabular ' + pnlClass(contribution.total);
+
+    els.paperPnlLabel.textContent = 'Net PnL · ' + windowDef().label;
+    var paperClosed = cw.filter(function (t) { return t.source === 'paper'; });
+    var ps = statsFor(paperClosed);
+    els.paperPnl.textContent = ps.count ? fmtMoney(ps.net) : '—';
+    els.paperPnl.className = 'stat-value tabular ' + (ps.count ? pnlClass(ps.net) : 'neutral');
+    els.paperPnlSub.textContent = ps.count
+      ? (ps.count + ' trade' + (ps.count === 1 ? '' : 's') + ' · ' + fmtPct(ps.winRate) + ' win rate')
+      : 'No closed trades in this window';
+    drawSparkline(paperClosed, els.sparklinePaper);
   }
 
-  function drawSparkline(trades) {
-    var canvas = els.sparkline;
+  function drawSparkline(trades, canvas) {
     var dpr = window.devicePixelRatio || 1;
     var w = canvas.clientWidth || 130, h = canvas.clientHeight || 52;
     canvas.width = Math.round(w * dpr);
@@ -2197,14 +2290,20 @@
   // ---------------- init ----------------
 
   function cacheEls() {
-    els.equity = $('#equity-value');
+    els.combinedEquity = $('#combined-equity-value');
     els.goalBarFill = $('#goal-bar-fill');
     els.goalText = $('#goal-text');
     els.equityComposition = $('#equity-composition');
-    els.windowPnlLabel = $('#window-pnl-label');
-    els.windowPnl = $('#window-pnl');
-    els.windowPnlSub = $('#window-pnl-sub');
-    els.sparkline = $('#sparkline');
+    els.blofinEquity = $('#blofin-equity-value');
+    els.blofinPnlLabel = $('#blofin-pnl-label');
+    els.blofinPnl = $('#blofin-pnl');
+    els.blofinPnlSub = $('#blofin-pnl-sub');
+    els.sparklineBlofin = $('#sparkline-blofin');
+    els.paperContribution = $('#paper-contribution-value');
+    els.paperPnlLabel = $('#paper-pnl-label');
+    els.paperPnl = $('#paper-pnl');
+    els.paperPnlSub = $('#paper-pnl-sub');
+    els.sparklinePaper = $('#sparkline-paper');
     els.updatedAgo = $('#updated-ago');
     els.liveDot = $('#live-dot');
     els.windowTabs = $('#window-tabs');
@@ -2232,7 +2331,10 @@
       if (e.key === 'Escape') closeDrawer();
     });
     window.addEventListener('resize', function () {
-      if (state.raw) drawSparkline(closedInWindow());
+      if (!state.raw) return;
+      var cw = closedInWindow();
+      drawSparkline(cw.filter(function (t) { return t.source !== 'paper'; }), els.sparklineBlofin);
+      drawSparkline(cw.filter(function (t) { return t.source === 'paper'; }), els.sparklinePaper);
     });
 
     fetchData();
