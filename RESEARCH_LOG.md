@@ -758,3 +758,62 @@ errors (a broken eye must never silently kill a live trigger).
 no other trigger got gated. chart_reader's matplotlib import was moved
 inside the renderer: it is a local-only dev dependency and a module-scope
 import on the live path would have taken the worker down on deploy.
+
+## ROUND 84 — the blind chart drill (2026-07-24)
+
+Wallace's own training method, mechanized: render a chart up to a decision
+bar, decide the trade BEFORE the future exists, then reveal and score.
+Harness `step84_blind_drill.py` (generate / record / reveal /
+causality_test). Discipline was real: all 40 before-images rendered first,
+after-images did not exist on disk until every call was locked. Causality
+proven, not asserted — the same decision bar renders BYTE-IDENTICAL with
+and without ~50,000 future bars available.
+
+40 drills, BTC 1h/15m + ETH 1h, stratified across market states.
+
+**Headline: a chart read alone is not an edge.** Overall **-0.056R**,
+12W/20L/8 no-trade. Broken down, one leak dominates:
+
+| | n | avg R | record |
+|---|---|---|---|
+| Longs | 19 | **+0.255R** | 8W/9L |
+| Shorts | 13 | **-0.544R** | **1W/11L** |
+
+Shorts stopped out 62% of the time vs 42% for longs. The specific error,
+visible across d002/d017/d040: a candle breaking a nearby level after a
+sharp move was read as "momentum confirming down" when it was the
+shakeout at the extreme. The tell that separated the ONE winning short
+(d018) from the eleven losers: d018 broke to a genuine new multi-DAY
+extreme, the losers only cleared a multi-HOUR local level inside a bigger
+range. **Local-level breaks are noise; structural-level breaks are not.**
+This is a concrete, testable feature the eye does not currently compute.
+
+**Worst reliable state: `transition`** (n=12) at **-0.320R**, 2 wins in 9
+trades. Exactly where structure is mid-change and direction is honestly
+undetermined. Trending states were ~breakeven (-0.04R, n=24).
+
+**Second lesson (d007/d024 won, d037 lost on the SAME surface pattern):**
+consolidation at highs is only a flag if the move that produced it is
+FRESH. d037's had already run 2930->3670 before consolidating and it
+topped exactly there. Distance-from-start-of-leg is a feature I was
+eyeballing and not weighing.
+
+**THE TENSION WITH ROUND 83, stated loudly rather than buried.** In this
+sample "clean" setups did WORSE (-0.394R, 10/16 stopped) than "messy"
+ones (+0.251R, 6/16), and the 14 trades where I AGREED with
+chart_reader's tradeable flag averaged -0.200R versus +0.032R on the 18
+where I overrode its "stand aside." That is the opposite sign to R83,
+which is why the shipped veto stays for now: the two rounds measure
+different populations (R83 = one mechanical oversold dip-buy strategy,
+n=94 trades, 200-draw random control, 98th pctile on BOTH assets; R84 =
+discretionary calls at 40 stratified arbitrary bars, four buckets of
+n=14/18/2/6). "Messy is bad for oversold dip-buying" and "messy bars are
+fine to trade in general" can both be true. But this is now a live
+question, queued below, and the answer decides whether the veto stays.
+
+Working hypothesis for why obvious setups underperformed: a setup that
+looks tradeable to a simple rule-based eye looks obvious to everyone
+watching the same chart, and crowded obvious trades get faded.
+
+Files: step84_blind_drill.py, step84_drills.csv, step84_results.md,
+step84_drill_images/ (80 PNGs).

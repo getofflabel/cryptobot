@@ -61,3 +61,24 @@ not what the owner is paying for.
   first 15m direction, out within hours (needs the news table's history);
   (2) funding-settlement scalps around the 8h marks; (3) liquidation-
   cascade continuation once flow-data era matures (~Aug 20).
+
+## OPENED BY ROUND 84 (2026-07-24) — highest priority, one of these is wrong
+- **Resolve the R83/R84 clean-vs-messy contradiction.** R83 shipped a veto
+  that skips washout dip-buys on "messy" tape (98th pctile vs random on
+  BOTH assets). R84's blind drills found messy bars traded BETTER than
+  clean ones (+0.251R vs -0.394R) and that agreeing with chart_reader's
+  tradeable flag did WORSE than overriding it. Different populations, so
+  not yet a refutation — but run the R83 partition-and-random-control
+  method on a NON-oversold population (arbitrary stratified bars, the R84
+  sample shape) at n>=200. If messy beats clean there too, the honest
+  reading is "the eye's quality label is strategy-specific, not a general
+  filter", and every future use must be earned per strategy.
+- **Structural vs local level breaks.** R84's single winning short broke a
+  multi-DAY extreme; all 11 losing shorts only cleared a multi-HOUR level
+  inside a larger range. chart_reader does not currently distinguish
+  these. Add the feature, then re-run the short population.
+- **Distance-from-start-of-leg** as an explicit feature: consolidation at
+  highs worked on fresh moves (d007/d024), failed on an extended one
+  (d037). Same shape, opposite outcome, and the eye can't tell them apart.
+- **Stand aside in `transition`.** -0.320R on n=12, the worst reliable
+  bucket. Test a hard no-trade rule there against the random control.
