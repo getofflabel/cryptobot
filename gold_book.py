@@ -137,7 +137,13 @@ from step48_tradfi_trend import donchian_ema_exit
 
 SYMBOL = "XAUT-USDT"          # see module docstring: the demo-tradeable
                                # gold proxy — NOT XAU-USDT (unlisted on demo)
-ENTRY_N = 55                  # donchian breakout lookback, in daily bars
+# 2026-07-24: 55 -> 20 after Wallace's dormancy audit. donchian55 needed a
+# +17.7% rally to fire (median ~113 days away); donchian20 is the SAME shape,
+# was a round-48 two-window survivor on BOTH GLD and GC=F, and PASSED ITS OWN
+# SEALED TESTS on both (GLD +$156.63/t, +40.7%, DD -13.9%, 4.4y; GC=F
+# +$83.72/t, +24.3%, 5.2y). ~5.4 trades/yr vs 3.0, and fires on a +3.3% move
+# instead of a +17.7% one. Faster trigger, same discipline, sealed-validated.
+ENTRY_N = 20                  # donchian breakout lookback, in daily bars
 EMA_N = 20                    # EMA exit span, in daily bars
 CANDLE_BARS = 400             # requested history depth (warmup margin)
 
