@@ -124,6 +124,20 @@ def full_cycle(private, live_feed, demo_feed, symbol, reason):
     _run_book("The Gold Book", _gold)
     _run_book("Daily Pick", _pick)
 
+    def _spx():
+        # THE S&P PAPER BOOK (round 60 sealed RSI2 dip-buy edge, deployed
+        # verbatim on an internal virtual ledger — see spx_book.py's module
+        # docstring for why this book never places a real order: BloFin has
+        # no honest S&P instrument on demo). Safe to call on EVERY
+        # full_cycle: its own internal due-check (weekdays only,
+        # at/after 21:30 UTC) plus state["spx_book"]["last_bar_date"]
+        # idempotency make every other call a clean no-op.
+        from spx_book import run_spx_book
+        from step5_paper_trade import load_state
+        run_spx_book(None, load_state())
+
+    _run_book("The S&P Book", _spx)
+
     def _diver():
         # THE DIVER (round 58, 4h hidden RSI divergence continuation, see
         # diver.py's module docstring). Safe to call on EVERY full_cycle:

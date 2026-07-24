@@ -306,6 +306,28 @@ def main(storm=None):
         log_event({"action": "error", "book": "diver",
                    "error": str(e)[:300]})
 
+    # 3e2. THE S&P PAPER BOOK (round 60 sealed RSI2 dip-buy edge, run on its
+    #      own internal virtual ledger — see spx_book.py's module docstring
+    #      for why this book never places a real order). Same daemon
+    #      handoff pattern as gold/diver as a backstop; it is also
+    #      idempotent per daily bar (state["spx_book"]["last_bar_date"]) AND
+    #      internally due-gated (weekdays only, at/after 21:30 UTC), so
+    #      running it here even right after the daemon's own hourly call is
+    #      always safe and never double-books a trade.
+    try:
+        from step5_paper_trade import load_state
+        from spx_book import run_spx_book
+        state = state_holder.get("s") or load_state()
+        if not daemon_alive:
+            run_spx_book(None, state)
+        else:
+            print("  S&P paper book skipped — daemon owns trading")
+    except Exception as e:
+        print(f"S&P PAPER BOOK cycle error: {str(e)[:150]}")
+        from step5_paper_trade import log_event
+        log_event({"action": "error", "book": "spx_book",
+                   "error": str(e)[:300]})
+
     # 3f. DAILY PICK backstop (daemon owns it when alive)
     if not daemon_alive:
         try:
