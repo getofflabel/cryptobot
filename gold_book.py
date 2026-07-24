@@ -550,7 +550,21 @@ def intraday_check(private, live_feed, state, price: float):
     remaining = contracts
     while remaining > spec["lot_size"] / 2:
         step = min(50.0, remaining)
-        private.market_order(SYMBOL, "buy", step)
+        # THIN-BOOK PROTECTION (2026-07-24): XAUT's demo book is thin — the
+        # Learning Engine's first live day proved a market clip can be
+        # REJECTED MID-SEQUENCE (30ct filled, rest refused, exception thrown).
+        # If a clip fails here, we must NOT let the exception escape: that
+        # would leave the partial fill unbooked AND unbracketed, and the next
+        # 15s fast-watch call (open_trade still None, price still >= level)
+        # would enter AGAIN on top of it. Instead: stop clipping, fall
+        # through, and BOOK + BRACKET whatever actually filled — a smaller
+        # position with a stop beats a bigger one that's naked.
+        try:
+            private.market_order(SYMBOL, "buy", step)
+        except Exception as e:
+            print(f"  [GOLD] clip rejected mid-entry ({str(e)[:60]}) — "
+                  f"booking what filled")
+            break
         remaining = round(remaining - step, 2)
     import time as _t; _t.sleep(1.5)
     net = private.net_position_contracts(SYMBOL)
