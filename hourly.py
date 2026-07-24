@@ -263,18 +263,20 @@ def main(storm=None):
         log_event({"action": "error", "book": "newsdesk",
                    "error": str(e)[:300]})
 
-    # 3d. THE GOLD BOOK (round 48, GLD donchian55/EMA20) — broker-free, its
-    #     own separate paper ledger, zero exchange orders. Same daemon
-    #     handoff as tactical/shorts_lab/newsdesk as a backstop; it is also
-    #     idempotent per daily bar (state["gold_book"]["last_bar_date"]), so
-    #     running it here even right after the daemon's own hourly call is
-    #     always safe and never double-trades.
+    # 3d. THE GOLD BOOK (round 48 donchian55/EMA20 edge; round-51 REWIRE: now
+    #     REAL demo orders on XAUT-USDT, see gold_book.py's module
+    #     docstring). Same daemon handoff as tactical/shorts_lab/newsdesk as
+    #     a backstop; it is also idempotent per daily bar
+    #     (state["gold_book"]["last_bar_date"]) AND reconciles against the
+    #     exchange's own position every call, so running it here even right
+    #     after the daemon's own hourly call is always safe and never
+    #     double-trades.
     try:
         from step5_paper_trade import load_state
         from gold_book import run_gold_book
         state = state_holder.get("s") or load_state()
         if not daemon_alive:
-            run_gold_book(state)
+            run_gold_book(private, live_feed, state)
         else:
             print("  gold book skipped — daemon owns trading")
     except Exception as e:

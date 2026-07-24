@@ -101,16 +101,16 @@ def full_cycle(private, live_feed, demo_feed, symbol, reason):
         run_newsdesk(private, live_feed, demo_feed, load_state())
 
     def _gold():
-        # THE GOLD BOOK (round 48, GLD donchian55/EMA20): broker-free, its
-        # own separate paper ledger, zero exchange orders — safe to call on
-        # EVERY full_cycle. run_gold_book's own internal last_bar_date
-        # guard makes every call a no-op except the first one after a NEW
-        # daily GLD bar closes; its own FETCH_THROTTLE_S (30 min) caps how
-        # often it will even hit yfinance, independent of how often this
-        # daemon cycles.
+        # THE GOLD BOOK (round 48 donchian55/EMA20 edge; round-51 REWIRE:
+        # now REAL demo orders on XAUT-USDT — see gold_book.py's module
+        # docstring for the symbol-substitution note and the leverage/
+        # sizing reasoning. Safe to call on EVERY full_cycle: its own
+        # internal last_bar_date guard makes every call a no-op except the
+        # first one after a NEW daily bar closes, and it reconciles against
+        # the exchange's own position every time before deciding anything.
         from gold_book import run_gold_book
         from step5_paper_trade import load_state
-        run_gold_book(load_state())
+        run_gold_book(private, live_feed, load_state())
 
     _run_book("The Ride", _ride)
     _run_book("The Strikes", _strikes)

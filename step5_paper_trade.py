@@ -126,12 +126,22 @@ def sync_ledger_to_account(private, symbol, state) -> None:
     number. When the bot is FLAT, set the ledger to the live account
     balance — so a manual balance change (like resetting to $1,500) or any
     realized PnL flows straight into the scoreboard automatically. Skipped
-    mid-trade so an open position's math is never disturbed."""
+    mid-trade so an open position's math is never disturbed.
+
+    ROUND-51 EXTENSION: the gold book (gold_book.py) now places REAL demo
+    orders on XAUT-USDT — a different symbol, but the SAME shared demo
+    account balance. Before this line existed, this guard only checked
+    BTC-USDT books; a live gold position's unrealized PnL would have been
+    silently folded into virtual_equity mid-trade the moment every BTC book
+    happened to be flat. gold_book.open_trade is now checked exactly like
+    every other book's — this is the one line this rewire is allowed to
+    touch here."""
     has_trade = (state.get("open_trade")
                  or state.get("tactical", {}).get("open_trade")
                  or state.get("tactical_eth", {}).get("open_trade")
                  or state.get("shorts_lab", {}).get("open_trade")
-                 or state.get("newsdesk", {}).get("open_trade"))
+                 or state.get("newsdesk", {}).get("open_trade")
+                 or state.get("gold_book", {}).get("open_trade"))
     if has_trade:
         return
     try:

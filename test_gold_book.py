@@ -1,9 +1,21 @@
 """
-test_gold_book.py — offline tests for gold_book.py's donchian55/EMA20 paper
-book: entry on the breakout bar, holding through noise, exit on the first
-EMA20 breakdown, idempotency (same bar processed twice = one trade), and
-correct cost-adjusted equity math. NO NETWORK — the data loader and every
-Telegram/log/state side effect are monkeypatched offline.
+test_gold_book.py — offline tests for gold_book.py's REAL-ORDER
+donchian55/EMA20 book (round-51 rewire). NO NETWORK: a fake private client
+and a fake candle/ticker/instrument feed stand in for BloFin; every
+Telegram/log/state side effect on step5_paper_trade is monkeypatched to a
+no-op, exactly like the pre-rewire test did.
+
+Seven intents:
+  a) breakout entry — correct market order + leverage + crash-insurance SL
+  b) holds through noise (no new orders, position untouched)
+  c) EMA20 exit — reduce-only close, tpsl cancelled, correct PnL sign
+  d) idempotent — same bar processed twice = one trade, no duplicate orders
+  e) ledger math — sizing formula (25% alloc x 2x lev / contract math) and
+     realized_pnl_total bookkeeping match a hand computation
+  f) dry mode — zero orders, zero state writes
+  g) reconcile — exchange shows the position gone (crash SL fired) while
+     the book still thinks it's open -> books the exit from the fill,
+     notifies, never places a redundant order
 
 Run with:  python3 test_gold_book.py
 """
@@ -12,6 +24,7 @@ from __future__ import annotations
 
 import sys
 import traceback
+from types import SimpleNamespace
 
 import pandas as pd
 
@@ -24,45 +37,126 @@ def _noop(*a, **kw):
     pass
 
 
+# ---------------------------------------------------------------------------
+# Fakes
+# ---------------------------------------------------------------------------
+
+
+class FakeLiveFeed:
+    """Stands in for config.make_exchange("live") — public market data
+    only. `day_idx` controls how many bars are "available" (simulates the
+    bot watching a growing daily series one bar at a time)."""
+
+    CONTRACT_VALUE = 0.001
+    MIN_SIZE = 1.0
+    LOT_SIZE = 1.0
+    TICK_SIZE = 0.1
+
+    def __init__(self, full_df: pd.DataFrame):
+        self.full = full_df
+        self.day_idx = len(full_df) - 1
+
+    def get_candles(self, symbol, timeframe, limit):
+        assert symbol == gold_book.SYMBOL
+        return self.full.iloc[:self.day_idx + 1].reset_index(drop=True)
+
+    def get_ticker(self, symbol):
+        assert symbol == gold_book.SYMBOL
+        px = float(self.full["close"].iloc[self.day_idx])
+        return SimpleNamespace(last=px)
+
+    def get_instrument(self, symbol):
+        assert symbol == gold_book.SYMBOL
+        return {"contractValue": str(self.CONTRACT_VALUE),
+                "minSize": str(self.MIN_SIZE), "lotSize": str(self.LOT_SIZE),
+                "tickSize": str(self.TICK_SIZE)}
+
+
+class FakePrivate:
+    """Stands in for blofin_private.BlofinDemoPrivate. `mark_price` is the
+    price the harness sets each cycle (mirrors what the real exchange would
+    currently be quoting) — market_order() fills against it."""
+
+    def __init__(self):
+        self.mark_price = 0.0
+        self.position = 0.0        # signed contracts, long-only in practice
+        self.leverage_calls = []
+        self.orders = []           # list of dicts
+        self.tpsl_calls = []       # list of dicts
+        self.cancelled_tpsl = []
+        self._next_oid = 1
+        self._last_fill_price = None
+        self.fail_market_order = False
+        self.fail_net_read = False
+
+    def net_position_contracts(self, symbol):
+        if self.fail_net_read:
+            raise RuntimeError("simulated read failure")
+        return self.position
+
+    def ensure_leverage(self, symbol, leverage, margin_mode="cross"):
+        self.leverage_calls.append((symbol, leverage, margin_mode))
+        return True
+
+    def market_order(self, symbol, side, contracts, reduce_only=False,
+                     margin_mode="cross"):
+        if self.fail_market_order:
+            raise RuntimeError("simulated order rejection")
+        oid = str(self._next_oid)
+        self._next_oid += 1
+        self.orders.append({"symbol": symbol, "side": side,
+                            "contracts": contracts,
+                            "reduce_only": reduce_only, "order_id": oid})
+        sign = 1 if side == "buy" else -1
+        self.position += sign * contracts
+        self._last_fill_price = self.mark_price
+        return oid
+
+    def place_tpsl(self, symbol, position_side_close, contracts, tp_price,
+                   sl_price, margin_mode="cross"):
+        tid = f"tpsl{len(self.tpsl_calls) + 1}"
+        self.tpsl_calls.append({"symbol": symbol,
+                                "position_side_close": position_side_close,
+                                "contracts": contracts, "tp_price": tp_price,
+                                "sl_price": sl_price, "id": tid})
+        return tid
+
+    def cancel_tpsl(self, symbol, tpsl_id):
+        self.cancelled_tpsl.append(tpsl_id)
+
+    def fills(self, symbol, order_id=None):
+        if self._last_fill_price is None:
+            return []
+        return [{"fillPrice": self._last_fill_price,
+                 "orderId": order_id or "x"}]
+
+
+# ---------------------------------------------------------------------------
+# Synthetic data — same shape as the pre-rewire test: warmup, breakout,
+# noise, crash. The imported donchian_ema_exit is the oracle for which bars
+# are entry/exit, never hand-guessed.
+# ---------------------------------------------------------------------------
+
+
 def make_synthetic() -> pd.DataFrame:
-    """A daily OHLC series with a clean, unambiguous donchian55 breakout
-    followed by an EMA20 breakdown:
-      bars   0..59  : flat noise around $100 (warmup — donchian55 needs 55
-                       prior bars, EMA20 needs to settle near $100 too)
-      bar    60      : jumps to $130 — breaks the ~$100 55-day high
-      bars   61..70  : eases back slightly (125 -> 116) but stays well
-                       above a still-catching-up EMA20 — holds the position
-                       through ordinary noise
-      bars   71..80  : crashes to $70 and stays there — EMA20 is breached
-                       hard on bar 71, forcing an exit
-    open == high == low == close on every bar: donchian_ema_exit only reads
-    'high' and 'close', and this keeps the breakout/exit levels unambiguous
-    (no intrabar wicks to reason about).
-    """
     import numpy as np
     rng = np.random.default_rng(7)
-    closes = list(100.0 + rng.normal(0, 0.4, 60))   # bars 0..59, flat noise
-    closes.append(130.0)                             # bar 60: breakout
-    # bars 61..70: ease down from 125 to 116, still far above EMA20
-    closes += list(np.linspace(125.0, 116.0, 10))
-    # bars 71..80: crash and stay down, well below EMA20
-    closes += [70.0] * 10
+    closes = list(4000.0 + rng.normal(0, 4.0, 60))    # bars 0..59, warmup
+    closes.append(4300.0)                              # bar 60: breakout
+    closes += list(np.linspace(4230.0, 4150.0, 10))     # 61..70: ease down
+    closes += [3600.0] * 10                             # 71..80: crash
 
-    dates = pd.date_range("2020-01-01", periods=len(closes), freq="B",
-                           tz="UTC")
-    df = pd.DataFrame({
+    dates = pd.date_range("2025-01-01", periods=len(closes), freq="D",
+                          tz="UTC")
+    return pd.DataFrame({
         "timestamp": dates,
         "open": closes, "high": closes, "low": closes, "close": closes,
-        "volume": [5_000_000.0] * len(closes),
+        "volume": [500.0] * len(closes),
     })
-    return df
 
 
 FULL = make_synthetic()
 
-# Let the imported, validated function itself be the oracle for WHICH bars
-# are the entry/exit bars — never hand-guessed — so the test can never
-# silently drift from the real rule.
 _oracle_sig = s48.donchian_ema_exit(FULL, gold_book.ENTRY_N,
                                     ema_n=gold_book.EMA_N)
 ENTRY_DAY = int(_oracle_sig[_oracle_sig > 0].index[0])
@@ -71,10 +165,10 @@ EXIT_DAY = int(_oracle_sig.iloc[ENTRY_DAY:][_oracle_sig.iloc[ENTRY_DAY:] == 0]
 assert ENTRY_DAY == 60, f"synthetic data should break out on bar 60, got {ENTRY_DAY}"
 assert EXIT_DAY > ENTRY_DAY, "exit must come after entry"
 
+STARTING_EQUITY = 2000.0
 
-def install_offline(state):
-    """Neutralize every network/Telegram/state side effect so the test can
-    run with zero network and never touch the real bot_state.json."""
+
+def install_offline():
     s5.notify = _noop
     s5.log_event = _noop
     s5.save_state = _noop
@@ -82,190 +176,304 @@ def install_offline(state):
 
 
 def make_state():
-    return {}
+    return {"virtual_equity": STARTING_EQUITY}
 
 
-def run_day(state, day_idx, dry=False):
-    """Monkeypatch the loader to return only bars [0..day_idx] — exactly
-    what a real daily bot would see on that day — then run one cycle."""
-    gold_book._load_gld_daily = lambda: FULL.iloc[:day_idx + 1].reset_index(drop=True)
-    return gold_book.run_gold_book(state, dry=dry)
+def expected_contracts(ref_price: float) -> float:
+    notional = STARTING_EQUITY * gold_book.GOLD_ALLOC * gold_book.GOLD_LEV
+    raw = notional / (FakeLiveFeed.CONTRACT_VALUE * ref_price)
+    return gold_book._round_lot(raw, FakeLiveFeed.LOT_SIZE,
+                                FakeLiveFeed.MIN_SIZE)
 
 
-def test_a_enters_on_breakout_bar_at_its_close():
+def run_day(live, private, state, day_idx, dry=False):
+    live.day_idx = day_idx
+    private.mark_price = float(live.full["close"].iloc[day_idx])
+    return gold_book.run_gold_book(private, live, state, dry=dry)
+
+
+def new_rig():
+    install_offline()
+    live = FakeLiveFeed(FULL)
+    private = FakePrivate()
     state = make_state()
-    install_offline(state)
+    return live, private, state
 
-    result = run_day(state, ENTRY_DAY)
+
+# ---------------------------------------------------------------------------
+# a) breakout entry
+# ---------------------------------------------------------------------------
+
+
+def test_a_enters_on_breakout_with_order_and_sl():
+    live, private, state = new_rig()
+    result = run_day(live, private, state, ENTRY_DAY)
     assert result["action"] == "entered", f"expected entry, got {result['action']}"
 
     gb = state["gold_book"]
     t = gb["open_trade"]
     assert t is not None, "should have an open trade after the breakout"
-    breakout_close = float(FULL["close"].iloc[ENTRY_DAY])
     breakout_date = str(FULL["timestamp"].iloc[ENTRY_DAY].date())
-    assert t["entry_date"] == breakout_date, (
-        f"entry should be dated the breakout bar {breakout_date}, "
-        f"got {t['entry_date']}")
+    assert t["entry_date"] == breakout_date
 
-    costs = s48.costs_for("GLD")
-    expected_entry_price = costs.fill_price(breakout_close, +1)
-    assert abs(t["entry_price"] - expected_entry_price) < 1e-6, (
-        f"entry fill should be the breakout bar's close, cost-adjusted: "
-        f"expected {expected_entry_price}, got {t['entry_price']}")
-    print(f"  [a] OK — entered {breakout_date} @ {t['entry_price']:.4f} "
-          f"(breakout close {breakout_close:.2f})")
-    return state
+    # exactly one market order, a BUY, not reduce-only
+    assert len(private.orders) == 1, private.orders
+    order = private.orders[0]
+    assert order["side"] == "buy" and not order["reduce_only"]
+    assert order["symbol"] == gold_book.SYMBOL
+
+    # leverage was set to GOLD_LEV before the order
+    assert private.leverage_calls == [(gold_book.SYMBOL, gold_book.GOLD_LEV, "cross")]
+
+    # sizing matches the 25%-alloc / 2x-lev formula, whole-contract lot
+    ref_price = float(FULL["close"].iloc[ENTRY_DAY])
+    exp_contracts = expected_contracts(ref_price)
+    assert order["contracts"] == exp_contracts, (order["contracts"], exp_contracts)
+    assert t["contracts"] == exp_contracts
+    assert float(t["contracts"]).is_integer(), "lotSize=1 -> whole contracts only"
+
+    # crash-insurance SL placed: no TP, sl = entry * (1 - 18%)
+    assert len(private.tpsl_calls) == 1, private.tpsl_calls
+    tp = private.tpsl_calls[0]
+    assert tp["position_side_close"] == "sell"
+    assert tp["tp_price"] is None, "no take-profit — winners must run"
+    expected_sl = round(t["entry_price"] * (1 - gold_book.CRASH_SL_PCT), 1)
+    assert abs(tp["sl_price"] - expected_sl) < 1e-6, (tp["sl_price"], expected_sl)
+    assert t["sl_price"] == expected_sl
+
+    print(f"  [a] OK — entered {breakout_date} @ {t['entry_price']:.2f}, "
+          f"{t['contracts']:.0f} ct, lev={gold_book.GOLD_LEV:.0f}x, "
+          f"SL {t['sl_price']:.2f} (no TP)")
+    return live, private, state
+
+
+# ---------------------------------------------------------------------------
+# b) holds through noise
+# ---------------------------------------------------------------------------
 
 
 def test_b_holds_through_noise():
-    state = test_a_enters_on_breakout_bar_at_its_close()
+    live, private, state = test_a_enters_on_breakout_with_order_and_sl()
     open_trade_at_entry = dict(state["gold_book"]["open_trade"])
+    orders_at_entry = len(private.orders)
 
-    # step through several noisy bars between entry and the eventual exit —
-    # the position must NOT be touched (no re-entry, no premature exit).
     for day_idx in range(ENTRY_DAY + 1, EXIT_DAY):
-        result = run_day(state, day_idx)
+        result = run_day(live, private, state, day_idx)
         assert result["action"] == "hold", (
-            f"day {day_idx}: expected hold (still in, signal still in), "
-            f"got {result['action']}")
+            f"day {day_idx}: expected hold, got {result['action']}")
         assert state["gold_book"]["open_trade"] == open_trade_at_entry, (
             f"day {day_idx}: open trade must be untouched through noise")
-        assert state["gold_book"]["trades"] == [], (
-            "no trade should be booked while still holding")
+        assert len(private.orders) == orders_at_entry, (
+            "no new orders should be placed while holding")
+        assert state["gold_book"]["trades"] == []
+
     print(f"  [b] OK — held unchanged through bars "
-          f"{ENTRY_DAY + 1}..{EXIT_DAY - 1} ({EXIT_DAY - ENTRY_DAY - 1} bars "
-          f"of noise)")
-    return state
+          f"{ENTRY_DAY + 1}..{EXIT_DAY - 1}, zero new orders")
+    return live, private, state
 
 
-def test_c_exits_on_first_close_below_ema20_with_correct_pnl_sign():
-    state = test_b_holds_through_noise()
+# ---------------------------------------------------------------------------
+# c) EMA20 exit
+# ---------------------------------------------------------------------------
+
+
+def test_c_exits_on_ema20_break_reduce_only_correct_pnl():
+    live, private, state = test_b_holds_through_noise()
     t_before = dict(state["gold_book"]["open_trade"])
+    orders_before = len(private.orders)
 
-    result = run_day(state, EXIT_DAY)
+    result = run_day(live, private, state, EXIT_DAY)
     assert result["action"] == "exited", f"expected exit, got {result['action']}"
 
     gb = state["gold_book"]
-    assert gb["open_trade"] is None, "position should be flat after the exit"
-    assert len(gb["trades"]) == 1, "exactly one trade should be booked"
+    assert gb["open_trade"] is None, "should be flat after the exit"
+    assert len(gb["trades"]) == 1
     trade = gb["trades"][0]
+
+    # exactly one NEW order: reduce-only sell for the exact recorded size
+    assert len(private.orders) == orders_before + 1
+    exit_order = private.orders[-1]
+    assert exit_order["side"] == "sell" and exit_order["reduce_only"]
+    assert exit_order["contracts"] == t_before["contracts"]
+
+    # the crash-insurance bracket was cancelled on the way out
+    assert private.cancelled_tpsl == [t_before["tpsl_id"]]
 
     exit_close = float(FULL["close"].iloc[EXIT_DAY])
     assert exit_close < t_before["entry_price"], (
-        "synthetic data should be a clear loser — exit close crashed well "
-        "below the entry price")
-    assert trade["pnl"] < 0, (
-        f"a crash-exit below a breakout entry must be a LOSS, got "
-        f"pnl={trade['pnl']}")
-    print(f"  [c] OK — exited {trade['exit_date']} @ {trade['exit_price']:.4f}, "
-          f"pnl ${trade['pnl']:+,.2f} (correctly negative)")
-    return state
+        "synthetic data should be a clear loser")
+    assert trade["pnl"] < 0, f"crash-exit below breakout entry must lose, got {trade['pnl']}"
+
+    # hand-check the PnL math
+    size_units = t_before["contracts"] * t_before["contract_value"]
+    gross = size_units * (exit_close - t_before["entry_price"])
+    fees = (t_before["entry_price"] * gold_book.ENTRY_FEE_BPS
+            + exit_close * gold_book.EXIT_FEE_BPS) * size_units / 10_000
+    expected_pnl = round(gross - fees, 2)
+    assert trade["pnl"] == expected_pnl, (trade["pnl"], expected_pnl)
+    assert gb["realized_pnl_total"] == expected_pnl
+
+    print(f"  [c] OK — exited {trade['exit_date']} @ {trade['exit_price']:.2f}, "
+          f"pnl ${trade['pnl']:+,.2f} (correctly negative), reduce-only "
+          f"order placed, SL bracket cancelled")
+    return live, private, state
+
+
+# ---------------------------------------------------------------------------
+# d) idempotency
+# ---------------------------------------------------------------------------
 
 
 def test_d_idempotent_same_bar_twice_is_one_trade():
-    state = test_c_exits_on_first_close_below_ema20_with_correct_pnl_sign()
+    live, private, state = test_c_exits_on_ema20_break_reduce_only_correct_pnl()
     trades_before = list(state["gold_book"]["trades"])
-    equity_before = state["gold_book"]["equity"]
+    orders_before = len(private.orders)
 
-    # re-run the SAME day (EXIT_DAY) again — must be a pure no-op
-    result = run_day(state, EXIT_DAY)
-    assert result["action"] == "noop_already_processed", (
-        f"reprocessing the same bar must no-op, got {result['action']}")
-    assert state["gold_book"]["trades"] == trades_before, (
-        "reprocessing the same bar must NOT add a second trade")
-    assert state["gold_book"]["equity"] == equity_before, (
-        "reprocessing the same bar must NOT move equity again")
+    result = run_day(live, private, state, EXIT_DAY)
+    assert result["action"] == "noop_already_processed", result["action"]
+    assert state["gold_book"]["trades"] == trades_before
+    assert len(private.orders) == orders_before, "must not place a duplicate order"
 
-    # also re-run the ENTRY day again from a fresh state — must not double-enter
-    state2 = make_state()
-    install_offline(state2)
-    run_day(state2, ENTRY_DAY)
+    live2, private2, state2 = new_rig()
+    run_day(live2, private2, state2, ENTRY_DAY)
     trade_after_first = dict(state2["gold_book"]["open_trade"])
-    result2 = run_day(state2, ENTRY_DAY)
+    orders_after_first = len(private2.orders)
+    result2 = run_day(live2, private2, state2, ENTRY_DAY)
     assert result2["action"] == "noop_already_processed"
-    assert state2["gold_book"]["open_trade"] == trade_after_first, (
-        "reprocessing the entry bar must not re-enter or resize")
+    assert state2["gold_book"]["open_trade"] == trade_after_first
+    assert len(private2.orders) == orders_after_first, "must not double-enter"
+
     print("  [d] OK — same bar processed twice produced exactly one trade "
-          "(and one entry), both times")
-    return state
+          "(and one entry), no duplicate orders either time")
+    return live, private, state
 
 
-def test_e_equity_updates_correctly_with_costs():
-    state = make_state()
-    install_offline(state)
-    costs = s48.costs_for("GLD")
+# ---------------------------------------------------------------------------
+# e) ledger math
+# ---------------------------------------------------------------------------
 
-    run_day(state, ENTRY_DAY)
+
+def test_e_ledger_math():
+    live, private, state = new_rig()
+    ref_price = float(FULL["close"].iloc[ENTRY_DAY])
+    exp_contracts = expected_contracts(ref_price)
+    exp_notional = round(exp_contracts * FakeLiveFeed.CONTRACT_VALUE * ref_price, 2)
+
+    # hand-check the formula itself: 25% alloc x 2x lev == 0.5x equity notional
+    raw_notional = STARTING_EQUITY * gold_book.GOLD_ALLOC * gold_book.GOLD_LEV
+    assert abs(raw_notional - STARTING_EQUITY * 0.5) < 1e-9, (
+        "25% alloc x 2x leverage must equal 0.5x equity notional")
+
+    run_day(live, private, state, ENTRY_DAY)
     t = state["gold_book"]["open_trade"]
-    entry_price = t["entry_price"]
-    shares = t["shares"]
-    notional = t["notional"]
-    expected_entry_fee = costs.fee(shares * entry_price)
-    expected_equity_after_entry = round(
-        gold_book.START_EQUITY - expected_entry_fee, 2)
-    assert notional == gold_book.START_EQUITY, (
-        "full-notional sizing should deploy the ENTIRE paper equity")
-    assert abs(shares * entry_price - notional) < 1e-6, (
-        "shares * entry_price must reconstruct the notional exactly "
-        "(full-notional sizing)")
-    assert state["gold_book"]["equity"] == expected_equity_after_entry, (
-        f"equity after entry should be START_EQUITY minus the entry fee: "
-        f"expected {expected_equity_after_entry}, "
-        f"got {state['gold_book']['equity']}")
+    assert t["contracts"] == exp_contracts
+    assert abs(t["notional"] - exp_notional) <= exp_contracts * FakeLiveFeed.CONTRACT_VALUE, (
+        "notional should reconstruct from contracts*contract_value*entry_price")
 
     for day_idx in range(ENTRY_DAY + 1, EXIT_DAY):
-        run_day(state, day_idx)
-    run_day(state, EXIT_DAY)
-
-    exit_close = float(FULL["close"].iloc[EXIT_DAY])
-    expected_exit_price = costs.fill_price(exit_close, -1)
-    expected_gross = shares * (expected_exit_price - entry_price)
-    expected_exit_fee = costs.fee(shares * expected_exit_price)
-    expected_realized = round(expected_gross - expected_exit_fee, 2)
-    expected_final_equity = round(
-        expected_equity_after_entry + expected_realized, 2)
+        run_day(live, private, state, day_idx)
+    run_day(live, private, state, EXIT_DAY)
 
     trade = state["gold_book"]["trades"][0]
-    assert trade["pnl"] == expected_realized, (
-        f"realized pnl should match manual cost-adjusted calc: expected "
-        f"{expected_realized}, got {trade['pnl']}")
-    assert state["gold_book"]["equity"] == expected_final_equity, (
-        f"final equity should be entry-fee-adjusted equity plus realized "
-        f"pnl: expected {expected_final_equity}, got "
-        f"{state['gold_book']['equity']}")
-    print(f"  [e] OK — equity ${gold_book.START_EQUITY:,.2f} -> "
-          f"${expected_equity_after_entry:,.2f} (entry fee "
-          f"${expected_entry_fee:.2f}) -> ${state['gold_book']['equity']:,.2f} "
-          f"(realized ${expected_realized:+,.2f}), all cost-adjusted math "
-          f"matches exactly")
+    assert state["gold_book"]["realized_pnl_total"] == trade["pnl"], (
+        "realized_pnl_total should equal the sum of booked trades "
+        "(one trade here)")
+
+    # second round trip accumulates rather than overwrites
+    live3, private3, state3 = new_rig()
+    state3["gold_book"] = dict(state["gold_book"])
+    state3["gold_book"]["trades"] = list(state["gold_book"]["trades"])
+    prior_total = state3["gold_book"]["realized_pnl_total"]
+    run_day(live3, private3, state3, ENTRY_DAY)
+    for day_idx in range(ENTRY_DAY + 1, EXIT_DAY):
+        run_day(live3, private3, state3, day_idx)
+    run_day(live3, private3, state3, EXIT_DAY)
+    assert len(state3["gold_book"]["trades"]) == 2
+    second_pnl = state3["gold_book"]["trades"][1]["pnl"]
+    assert state3["gold_book"]["realized_pnl_total"] == round(
+        prior_total + second_pnl, 2), "realized_pnl_total must ACCUMULATE"
+
+    print(f"  [e] OK — sizing formula (25% x 2x = 0.5x equity notional) "
+          f"and realized_pnl_total accumulation both match hand-computed "
+          f"values")
 
 
-def test_f_dry_mode_makes_no_side_effects():
-    state = make_state()
-    install_offline(state)
-    # dry mode against a state with NO gold_book key yet
-    result = run_day(state, ENTRY_DAY, dry=True)
+# ---------------------------------------------------------------------------
+# f) dry mode
+# ---------------------------------------------------------------------------
+
+
+def test_f_dry_mode_zero_side_effects():
+    live, private, state = new_rig()
+    result = run_day(live, private, state, ENTRY_DAY, dry=True)
     assert "gold_book" not in state, (
-        "dry mode must never create/write state — even the setdefault "
-        "book key must stay absent")
+        "dry mode must never create/write state")
     assert result["action"] == "would_enter"
-    print("  [f] OK — dry mode computed a full decision with zero state "
-          "writes")
+    assert private.orders == [], "dry mode must place zero orders"
+    assert private.tpsl_calls == [], "dry mode must place zero SL brackets"
+    assert private.leverage_calls == [], "dry mode must never touch leverage"
+    print("  [f] OK — dry mode computed a full decision "
+          f"({result['contracts']:.0f} ct would-enter) with zero orders "
+          "and zero state writes")
+
+
+# ---------------------------------------------------------------------------
+# g) reconcile: crash SL fired between cycles
+# ---------------------------------------------------------------------------
+
+
+def test_g_reconcile_books_sl_fired_exit():
+    live, private, state = test_a_enters_on_breakout_with_order_and_sl()
+    t = dict(state["gold_book"]["open_trade"])
+    orders_before = len(private.orders)
+
+    # simulate the crash-insurance SL firing on the exchange: the position
+    # is just gone, and the exchange's own fill was at the SL price.
+    private.position = 0.0
+    private.mark_price = t["sl_price"]
+    private._last_fill_price = t["sl_price"]
+
+    result = run_day(live, private, state, ENTRY_DAY + 1)
+    assert result["action"] == "reconciled_sl_exit", result["action"]
+    assert state["gold_book"]["open_trade"] is None
+    assert len(state["gold_book"]["trades"]) == 1
+    trade = state["gold_book"]["trades"][0]
+    assert trade["reason"] == "sl_fired"
+    assert trade["exit_price"] == t["sl_price"]
+
+    # crucially: NO new order was placed to "chase" a position that's
+    # already gone — reconcile only ever books the ledger line
+    assert len(private.orders) == orders_before, (
+        "reconcile must never place an order — the exchange already did "
+        "the closing")
+
+    size_units = t["contracts"] * t["contract_value"]
+    gross = size_units * (t["sl_price"] - t["entry_price"])
+    fees = (t["entry_price"] * gold_book.ENTRY_FEE_BPS
+            + t["sl_price"] * gold_book.EXIT_FEE_BPS) * size_units / 10_000
+    expected_pnl = round(gross - fees, 2)
+    assert trade["pnl"] == expected_pnl
+    assert trade["pnl"] < 0, "an 18% crash SL must be a clear loss"
+
+    print(f"  [g] OK — reconcile detected the exchange net gone, booked "
+          f"the SL-fired exit @ {trade['exit_price']:.2f} (pnl "
+          f"${trade['pnl']:+,.2f}) from the fill, placed ZERO new orders")
 
 
 TESTS = [
-    ("a) enters on breakout bar at its close",
-     test_a_enters_on_breakout_bar_at_its_close),
+    ("a) breakout entry — order + leverage + crash SL",
+     test_a_enters_on_breakout_with_order_and_sl),
     ("b) holds through noise", test_b_holds_through_noise),
-    ("c) exits on first close<EMA20, correct PnL sign",
-     test_c_exits_on_first_close_below_ema20_with_correct_pnl_sign),
-    ("d) idempotent — same bar twice = one trade",
+    ("c) EMA20 exit — reduce-only + correct PnL",
+     test_c_exits_on_ema20_break_reduce_only_correct_pnl),
+    ("d) idempotent — same bar twice = one trade, no dup orders",
      test_d_idempotent_same_bar_twice_is_one_trade),
-    ("e) equity updates correctly with costs",
-     test_e_equity_updates_correctly_with_costs),
-    ("f) dry mode has zero side effects",
-     test_f_dry_mode_makes_no_side_effects),
+    ("e) ledger math — sizing formula + realized_pnl_total",
+     test_e_ledger_math),
+    ("f) dry mode — zero orders, zero state writes",
+     test_f_dry_mode_zero_side_effects),
+    ("g) reconcile — books an SL-fired exit, no chase order",
+     test_g_reconcile_books_sl_fired_exit),
 ]
 
 
@@ -273,7 +481,7 @@ def main():
     print("=" * 78)
     print(f"test_gold_book.py — synthetic breakout at bar {ENTRY_DAY}, "
           f"EMA20 breakdown at bar {EXIT_DAY} (oracle: the real, imported "
-          f"donchian_ema_exit)")
+          f"donchian_ema_exit) — REAL-ORDER architecture (round 51)")
     print("=" * 78)
     failed = 0
     for name, fn in TESTS:
