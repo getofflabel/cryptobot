@@ -817,3 +817,64 @@ watching the same chart, and crowded obvious trades get faded.
 
 Files: step84_blind_drill.py, step84_drills.csv, step84_results.md,
 step84_drill_images/ (80 PNGs).
+
+## ROUND 86 — the properly-specified retests (2026-07-24)
+
+R85 showed several of our "this doesn't work" verdicts had measured tests
+missing conditions practitioners treat as mandatory. This round re-ran all
+8 corrected specifications ALONGSIDE their under-specified predecessors,
+same data, same costs, only the gate changing. ETH transfer MANDATORY on
+every BTC survivor. Sealed test never touched.
+
+| Family | Before survivors | After survivors | ETH transfers |
+|---|---|---|---|
+| A1 divergence, level-gated | 2 | 8 | **0** |
+| A2 divergence, CONFIRMATION-gated | 2 | 11 | **3** |
+| A3 divergence, trend-extreme | 2 | **0** | n/a |
+| A4 all three combined | 2 | 7 | **0** |
+| B MACD + structural confirm | 0 | **0** | n/a |
+| C breakout, VOLUME-gated | 2 | 3 | **3** |
+| D sweep->MSS->displacement | 0 | 0 (sample-starved) | n/a |
+| E stricter ORB | 1 | 7 | **0** |
+
+**Does properly-specified regular divergence survive? YES, via exactly one
+gate: the confirmation candle.** Do not enter on the divergence bar. Wait
+(up to 30 bars) for price to close back through the swing sitting BETWEEN
+the two divergent points; that close is the entry. MACD-histogram on 4h,
+3 configs clear BTC and transfer to ETH ($45-72/trade ETH val). This is
+the single condition the literature called the #1 failure mode when
+skipped, and it is the only Family-A gate carrying non-BTC-only signal.
+Level-gating was nearly a no-op (0 transfers). Trend-extreme restriction,
+as operationalized here (ATR-distance from SMA100), killed the family
+outright. Stacking all three added NOTHING beyond confirmation alone.
+
+**STRONGEST CANDIDATE — volume-gated breakout, and it is the first thing
+we have ever found that matches the owner's frequency demand:**
+
+| Config | BTC train/val | ETH train/val | trades/yr |
+|---|---|---|---|
+| Bollinger 20/2.5 bare (R76) | $14.71 / $1.48 | $33.43 / $17.38 | 213 |
+| **Bollinger 20/2.5 + vol>=1.2x** | **$14.87 / $5.21** | **$39.59 / $26.01** | **203** |
+| Bollinger 20/2.5 + vol>=1.5x | $9.39 / $7.17 | $61.26 / $18.15 | 191 |
+| BB-in-KC squeeze bare | $5.12 / $0.19 | $2.70 / **-$7.55 FAIL** | 211 |
+| **BB-in-KC squeeze + vol>=1.2x** | $17.73 / $9.87 | $9.37 / **+$4.04 PASS** | 114 |
+
+The cleanest before/after in the round: requiring the breakout bar's own
+volume to beat 1.2x its 20-bar average turned BB-in-KC squeeze release
+from an ETH-transfer FAILURE into a PASS. Volume separating real breakouts
+from false ones, demonstrated as an actual flip rather than a wash. At the
+tighter 1.5x threshold it cut the sample enough to flip BB-in-KC to FAIL,
+the "no-op or hurts" possibility R85 flagged, realized on 1 of 4 configs.
+
+**The discipline this round exists to enforce, working: only 7 of 41 BTC
+survivors (17%) transferred to ETH.** Stricter ORB looked like a big BTC
+win (1 -> 7 survivors) and ALL 8 ETH replays failed. Family D is honestly
+sample-starved (median 3 train trades/config), not disproven.
+
+Sample quality: breakout survivors carry 150-260 trades per split; the
+divergence-confirm survivors carry 13-24 (real direction, uncertain
+magnitude — read those big per-trade figures with that caveat).
+
+NEXT: one sealed look on Bollinger 20/2.5 + vol>=1.2x, BTC and ETH.
+GATED on the owner (profitability-affecting work, standing rule
+2026-07-22) — flagged, holding.
