@@ -582,3 +582,18 @@ matched). The +$276 clip: caused by the TIGHT INITIAL STOP, not absent
 banking — no variant rescued it. NEXT LEVER: the entry-bar-extreme stop
 geometry itself (R70 candidate). No looks spent. Harness reproduced
 R65's numbers bit-for-bit before testing.
+
+## ROUND 70 — the walk-forward replay exam (2026-07-24)
+The full frozen brain replayed blind through ~a decade, 3 markets,
+$250/trade at 10-20x, 15m fill fidelity (0 ambiguous fills at our stop
+widths; resolver stress-verified): BTC $33,421.52 all-years / $2,036.41
+HONEST (clean+sealed, 149t, DD $3,056); OIL $4,706.62 all-years / $0
+certifiable (pure transfer book); SPX $5,685.97 / $435.34 honest ($174
+at realistic 4x lev). VERDICT on the owner's thesis: forward
+profitability SUPPORTED at a modest blind baseline (~$13.7/trade on
+$250 margin, BTC); the all-years ceiling is in-sample-flattered.
+Discrepancy caught: live strikes trigger is RSI3<10 (code) vs <15
+(docs) — ported as-code. Caveats: thin correlated data; every donchian
+transfer rests on gold's validation. NEXT: the replay TOURNAMENT
+(thousands of runs on this harness) + blind-slice as the standing
+benchmark all future brain versions must beat.
