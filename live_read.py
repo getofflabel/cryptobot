@@ -98,7 +98,11 @@ def _open_position(state):
              ("ETH Amplifier", state.get("tactical_eth", {}).get("open_trade"),
               CONTRACT_SIZE["ETH Amplifier"]),
              ("Shorts Lab", state.get("shorts_lab", {}).get("open_trade"),
-              CONTRACT_SIZE["Shorts Lab"])]
+              CONTRACT_SIZE["Shorts Lab"]),
+             ("The Newsdesk", state.get("newsdesk", {}).get("open_trade"),
+              0.001),
+             ("Daily Pick", state.get("daily_pick", {}).get("open_trade"),
+              0.001)]
     for name, t, csize in books:
         if not t:
             continue
