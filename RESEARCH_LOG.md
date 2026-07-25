@@ -1677,3 +1677,70 @@ the single most valuable gate we run, because it separates "this signal
 picks good moments" from "this exit rides a market that went up." Two
 rounds tonight have been killed by it (gold's big-dollar survivors, and
 this) and both looked like winners without it.
+
+## ROUND 301 — we tested a different method than TJR's, four ways (2026-07-25)
+
+Wallace: *"if you are not using his strategies and teaching because you
+think they don't work through your backtesting, you have simply done the
+wrong back testing."* He was right. Four specific, checkable errors, all in
+OUR code, not in his teaching.
+
+Rounds 72/73/75 also read the wrong source: a single 59-minute strategy
+video. He has a 13-part structured course ("Path to Profitability") where
+he defines one concept per episode with formal precision. This round pulled
+30 videos, 237k words. **84 rules extracted: 61 mechanical, 12
+discretionary, 4 gaps he never specifies, 5 places he contradicts himself.
+73% mechanical** — far more codifiable than R72 concluded.
+
+**1. Our stop floor excluded every stop he actually uses.** `step72_tjr.py`
+line 152 sets `STOP_FLOOR_PCT = 0.15`. His real stops are 16 to 35 ticks on
+ES = 0.067% to 0.146% of price. **Our minimum allowed stop was wider than
+his widest real stop.** The test could not have placed a stop where he
+places one even by accident. It also used ONE constant train-median stop
+while his varies per trade by 2x, because he reads it off structure — and
+it computed `target = stop_pct x rmult` when his target is a price LEVEL
+and the reward-to-risk ratio is an OUTPUT of where that level sits.
+
+**2. Our swing points are a different object.** His swing high is a
+2-candle pattern (up candle, down candle, take the wick), confirmed 1 bar
+later. We used `confirmed_swings(k=3)`: a centered 7-bar fractal confirmed
+3 bars late. Different level set, three times the latency, and the latency
+itself re-inflates the stop.
+
+**3. Our cross-index filter was backwards.** R72's `partner_alignment`
+required ES and NQ to AGREE. At the sweep his rule requires them to
+DISAGREE — that is what the divergence IS — and he trades the index that
+FAILED to sweep. Our filter deleted his highest-conviction setup by
+construction. R72 found ES survivors only with that filter switched off,
+which fits exactly.
+
+**4. The 1h timeframe deleted the setup.** His manipulation window is 20
+minutes and his entry window is 20 minutes, inside a 60-minute stand-down.
+That is all one 1h bar. The entire time structure was invisible.
+
+**The headline is the stop, and it confirms what Wallace has said twice:**
+we swept percentages where he places a structural level. The level he uses
+is the retrace swing the entry broke away from, because that is the price
+that proves the idea wrong. He states it in three separate videos. The stop
+and the entry trigger are the SAME object — which is why taking the earlier
+entry halves the stop and turns his own worked example from 1:0.45 into
+1:1.3.
+
+**Runnable by a bot today, no judgment needed:** the session clock, all
+level types, 2-candle swings, break of structure (body close past the most
+recent swing with the wick rejected), fair-value gaps and their inversions,
+equilibrium, the cross-index divergence and leading-index selection, the
+full 4-step state machine, the structural stop, time gates, fixed-contract
+sizing. That is the whole primary setup.
+
+**Needs a number he never gives (must be labelled OURS, not his):** minimum
+gap size, equal-highs tolerance, which target is "the" one, cluster size,
+the take-profit split.
+
+**Needs Wallace:** the timeframe drop-down call, choosing the earlier vs
+later entry, closing a winner early, conviction sizing, the news call.
+
+**Blocker: intraday index futures data.** Not a research problem, a
+purchase decision.
+
+Files: step301_tjr_rules.md, step301_tjr_rules.csv.
