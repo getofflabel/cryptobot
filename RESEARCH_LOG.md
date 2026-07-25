@@ -1620,3 +1620,60 @@ expect it. A red suite on live-bot code is how a real regression hides, so
 these want rewriting into stand-down guards (the way `test_q` was rewritten
 into a regression guard in R88). Left untouched here — the nightly researcher
 does not edit live-book code or its tests.
+
+## ROUND 117 — the oil breakout: plain no, and my eyeball was the error (2026-07-25)
+
+Wallace: "looks like you missed an oil trade" — oil ran +29.8% in three
+weeks while the book caught one 135-minute trade. I diagnosed it as a
+wrong-tool problem (a 2h crypto scorer cannot hold a three-week move, which
+is true) and showed him donchian-10 and donchian-20 with an EMA20 exit
+sitting on +14.3% and +8.3% open profits as evidence a breakout book would
+have caught it.
+
+**That evidence was worthless and the round proves it.**
+
+77 cells (11 lookbacks 5-55 x 7 exits) on CL=F daily and 1h, train-only
+selection, val read once, sealed 20% never loaded — and the sealed slice
+happens to contain the actual +29.8% move, correctly untouched.
+
+**1. The exit I eyeballed is negative expectancy on TRAIN at EVERY single
+lookback from 5 to 55, no exceptions, on daily data.** The two green open
+trades I showed him are individual live outcomes inside a system that loses
+money on average across CL=F's full 2000-2016 train window. Showing an open
+winner as proof of an edge is precisely the error this desk exists to catch,
+and I made it.
+
+**2. The best config's edge is mostly not the entry.** donchian(20) +
+chandelier(2.5x ATR): train n=152 +$23.19/t, val n=48 +$21.02/t, and it is
+a genuine PLATEAU (lookbacks 15/25 and chandelier 3.0 all clear too, so
+R88's lone-spike failure mode does not apply). It still rejects on two
+counts: thickness 3.85x fees-only / 2.56x full CostModel, under the 5x bar
+— and, the kill shot, **a random-entry baseline using the IDENTICAL
+trailing exit earns +$56.30/trade, more than double the real signal.** The
+apparent edge is the chandelier riding a generally-rising commodity, not
+donchian timing anything. 9.64 trades/year.
+
+**3. Intraday is worse:** only chandelier3.0 shows life at 15-35h; the
+winner trains +$42.77/t and val flips to **-$35.00/t**, with 3 of 4
+neighbours failing. Clean FAIL, and at 156 trades/year it is the opposite
+problem from the one we set out to fix.
+
+**4. Neither near-miss transfers to BZ=F.** Daily goes negative on Brent
+val (-$10.93/t); the 1h config is already negative on Brent train.
+WTIOIL-USDT was unusable as a transfer venue — 58 daily bars.
+
+**VERDICT: no oil breakout book. Oil has nothing that clears our bar at any
+lookback or exit we have tested.**
+
+**One correction to the round's own recommendation:** it proposes the EIA
+inventory report as "the highest-value untested lever, round 111 never ran
+it." That is wrong — R111 DID run it (mean |move| 0.570% at the release
+hour, 1.75x baseline, 2.2x a randomized-timing control) and R114 built it
+into a costed strategy where it FAILED train+val in both the continuation
+and reversal directions. EIA is tested and closed.
+
+**What this round is really worth:** the random-entry baseline. It is now
+the single most valuable gate we run, because it separates "this signal
+picks good moments" from "this exit rides a market that went up." Two
+rounds tonight have been killed by it (gold's big-dollar survivors, and
+this) and both looked like winners without it.
