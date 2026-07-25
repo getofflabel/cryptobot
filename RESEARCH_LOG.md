@@ -878,3 +878,66 @@ magnitude — read those big per-trade figures with that caveat).
 NEXT: one sealed look on Bollinger 20/2.5 + vol>=1.2x, BTC and ETH.
 GATED on the owner (profitability-affecting work, standing rule
 2026-07-22) — flagged, holding.
+
+## ROUND 87 — THE SEALED EXAM: volume-gated Bollinger breakout (2026-07-24)
+
+One-shot irreversible look, config frozen by R86 on TRAIN only. Sealed
+look spent (erosion counter +1). Signal/gate code IMPORTED from
+step86_specified.py, not retyped.
+
+**Reproduction check passed to the penny before the sealed slice was
+touched** — BTC train $14.87 / val $5.21, ETH train $39.59 / val $26.01,
+all four reproduced exactly, so the split and signal had not drifted.
+
+### RESULT: PASS on both assets. Our first sealed graduate that trades often.
+
+| Asset | Train | Val | **SEALED** | n (sealed) | trades/yr | win rate | max DD |
+|---|---|---|---|---|---|---|---|
+| BTC | $14.87 | $5.21 | **+$6.97** | 242 | 191 | 36.4% | -23.3% |
+| ETH | $39.59 | $26.01 | **+$9.68** | 226 | 211 | 37.6% | -35.0% |
+| Pooled | | | **+$8.28** | 468 | ~400 | 37.0% | |
+
+Pooled sealed PnL +$3,876 over ~15 months.
+
+**BTC is the durable leg.** The big drop happened at train->val, which is
+exactly where selection is supposed to punish overfitting; val->test then
+held flat ($5.21 -> $6.97) on 242 trades. Two independent out-of-sample
+windows agreeing in the same $5-7 band is the shape you want.
+
+**ETH is fragile and is labeled that way, not averaged into the good
+news.** $39.59 -> $26.01 -> $9.68 is two consecutive halvings with no
+plateau. Still positive, still passes, but the trend points at zero. Size
+BTC heavier than ETH; do not plan around $9.68.
+
+### RISK PROFILE measured for deployment (adverse excursion, sealed trades)
+
+Computed per trade as the worst move against the position while it was
+open, since this strategy has NO fixed stop (exit is the band midline):
+
+| | BTC | ETH |
+|---|---|---|
+| 90% of trades never went worse than | -2.19% | -3.48% |
+| 99% never went worse than | -3.78% | -6.61% |
+| WORST single trade | **-3.93%** | **-7.19%** |
+| hold time median / p95 / max | 15h / 38h / 65h | 14h / 40h / 81h |
+
+This gives a disaster stop that is provably NON-BINDING on the sealed
+sample: **BTC 6%, ETH 11%** (roughly 1.5x the worst observed excursion).
+Neither would have triggered on a single one of the 468 sealed trades, so
+they do not alter the tested strategy — they exist only to survive a
+worker outage or an exchange gap, satisfying the standing "stops always
+live on the exchange" rule without changing what was validated.
+
+### TWO HONEST DEPLOYMENT PROBLEMS, both unsolved as of this entry
+
+1. **Book collision.** daily_pick already trades BTC-USDT and ETH-USDT on
+   the same netted BloFin account. A second book on the same symbols is
+   the exact failure mode that produced the gold false-alarm loop. Needs
+   real attribution through book_ledger plus a contradiction rule, not a
+   hope that they never disagree.
+2. **Hold time vs the owner's stated identity.** Median hold is ~15h,
+   max 81h (3.4 days). Wallace: "I heavily fancy fifteen minutes and
+   below... I don't like four hours whatsoever," because 4h meant
+   multi-day holds. This validated edge is a multi-hour-to-multi-day
+   system. That tension is real and is his call, not mine to quietly
+   average away.
