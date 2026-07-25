@@ -1441,3 +1441,70 @@ repo) rather than guessed at.
 oil-trader caught and hand-corrected them. A verdict function that
 silently over-promotes is exactly how a fitted result reaches a live book
 — fix before any other round reuses that harness.
+
+## ROUNDS 130-135 — the S&P has REAL, TRANSFERRING edges (2026-07-25)
+
+**First, a correction to my own brief.** I told spx-trader the index had
+had 1 round and ~6 families. It found two prior rounds I had missed —
+`step48_tradfi_trend.py` (donchian, already validated on SPY/QQQ) and
+`step77_spx_playbook.py` (16 more families). True starting point was **~23
+families across 3 rounds**, not 6. It added 19 more tonight, verified
+against both prior rounds to avoid duplication: **~42 documented S&P
+families**, which is now the deepest map on the desk after BTC. My
+briefing error, caught by the specialist, exactly as intended.
+
+**THE HEADLINE — turn-of-month, and it TRANSFERS.** The textbook
+Xu-McConnell window (last day of month + first 3) FAILS on SPY val
+(-1.6x thickness) despite passing on ES=F and QQQ. But R77 had already
+found a **wider** window (3 days before month-end through 3 into the new
+month) survives on SPY, and had never transfer-tested it. Replayed
+unchanged:
+
+| instrument | result |
+|---|---|
+| SPY | survives |
+| ES=F | survives |
+| QQQ | survives |
+| thickness | **6.6x to 42x** round-trip cost, all three, both windows |
+| sample | comfortably above the 30/8 floor |
+
+Adding a real `exits.py` chart-structure stop on top (R77 used flat
+percentages) it STILL survives on all three, though SPY's val thins to
+3.95x — just under the 5x bar. **This is the strongest deployable
+candidate on the desk, second only to RSI2<5.**
+
+**RSI(3) dip-buy extends R60's RSI(2) plateau**, cross-instrument
+confirmed at 7-28x thickness. That answers the "plateau or lucky spike"
+question we have been asking all night with the good answer: **plateau.**
+And the RSI2<5 edge proved robust to exit-method choice — chandelier,
+structure-trailing and breakeven-after-1R all survive. An edge that
+survives changing its exit is a real edge.
+
+**A "give it room" result that generalizes:** adding a structural early-out
+to the SMA200 regime backbone HURTS (SPY flips negative). The lesson
+already known for stops applies to regime rules too.
+
+**Gap magnitude (not direction) predicts ~1.3-1.5x wider intraday range** —
+a genuinely useful stop-sizing input, not a strategy.
+
+**13 families died tonight**, honestly: gap-day continuation and reversal,
+gap-conditioned first-hour breakout, first-hour fade, turn-of-month-gated
+dip overlay, ES=F donchian transfer, RSI divergence, volume-gated
+breakout, options-expiry week, order blocks, candle patterns.
+
+**A recurring transfer failure with a mechanism:** several families looked
+thick (5x-40x) on ES=F ALONE and failed to transfer to SPY **every time**.
+Likely cause, already flagged by R60 for overnight drift: ES=F's "gap" is
+dominated by its ~1h maintenance-break print, while SPY's is a real 17.5h
+information window. They are not the same event, so an edge fitted to one
+is not an edge on the other. **ES=F-only results should be treated as
+suspect by default.**
+
+### THE UNCOMFORTABLE PART
+
+The two best edges on the entire desk right now — turn-of-month and the
+RSI2/RSI3 dip-buy family — are both in the ONE market we have no venue
+for. BloFin serves no honest S&P instrument on demo (SPY-USDT exists on
+prod, is the real tracker at 0.08% basis, but is thin at ~$650k/24h and is
+not on the demo host). Finding a venue is now a higher-value action than
+another research round.
