@@ -305,8 +305,45 @@ def test_s_bot_pnl_falls_back_when_account_balance_fails():
         f"never crash the report: got {r['equity_now']}")
 
 
+def test_cloud_env_prefixes_include_every_live_service():
+    """A credential prefix missing from load_env's list is invisible in the
+    cloud — silently. No error, just a None where a key should be and a bot
+    that starts up and does nothing.
+
+    That nearly shipped on 2026-07-25: ALPACA_ was absent while the build
+    was being pointed at Alpaca, so correctly-set keys would have read back
+    as missing on Monday morning and looked like the strategy standing down.
+
+    This runs the cloud path exactly: no .env file, keys only in os.environ.
+    """
+    import os
+    import blofin_private
+
+    marks = {
+        "ALPACA_API_KEY": "sentinel-alpaca-key",
+        "ALPACA_API_SECRET": "sentinel-alpaca-secret",
+        "TELEGRAM_BOT_TOKEN": "sentinel-telegram",
+        "CRYPTOBOT_STATE_SECRET": "sentinel-state",
+    }
+    saved = {k: os.environ.get(k) for k in marks}
+    try:
+        os.environ.update(marks)
+        env = blofin_private.load_env(path="/nonexistent/.env")
+        for key, want in marks.items():
+            assert env.get(key) == want, (
+                f"{key} is INVISIBLE in the cloud — add its prefix to "
+                f"load_env's ENV_PREFIXES")
+    finally:
+        for k, v in saved.items():
+            if v is None:
+                os.environ.pop(k, None)
+            else:
+                os.environ[k] = v
+
+
 def main():
     tests = [
+        test_cloud_env_prefixes_include_every_live_service,
         test_a_client_order_id_shape,
         test_b_client_order_id_rejects_bad_tags,
         test_c_client_order_id_unique_even_same_millisecond,

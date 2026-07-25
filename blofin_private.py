@@ -58,8 +58,27 @@ def load_env(path: str = ".env") -> dict:
                     continue
                 key, _, val = line.partition("=")
                 env[key.strip()] = val.strip().strip("'\"")
+    # WHICH KEYS GET PICKED UP FROM THE ENVIRONMENT — read before editing.
+    #
+    # This prefix list is the ONLY route credentials take in the cloud. A
+    # prefix missing from it means the variable is invisible to the whole
+    # program, silently: no error, no warning, just a None where a key
+    # should be, and a bot that starts up and does nothing.
+    #
+    # That nearly happened on 2026-07-25. ALPACA_ was absent while the new
+    # build was being pointed at Alpaca. The keys were correctly set on
+    # Render and would have read back as missing on Monday morning, which
+    # would have looked exactly like the strategy deciding not to trade.
+    #
+    # Add the prefix HERE whenever a new service is introduced.
+    ENV_PREFIXES = (
+        "BLOFIN_",      # retired 2026-07-25, kept so old tools still parse
+        "CRYPTOBOT_",   # state store
+        "ALPACA_",      # the venue the new build trades
+        "TELEGRAM_",    # alerts — a silent alerter is worse than none
+    )
     for key, val in os.environ.items():
-        if key.startswith(("BLOFIN_", "CRYPTOBOT_")):
+        if key.startswith(ENV_PREFIXES):
             env[key] = val
     return env
 
