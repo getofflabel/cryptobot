@@ -77,20 +77,21 @@ class FakePrivate:
         self.leverage_calls.append((symbol, leverage))
         return True
 
-    def post_only_order(self, symbol, side, contracts, price, reduce_only=False):
+    def post_only_order(self, symbol, side, contracts, price, reduce_only=False,
+                        client_order_id=None):
         oid = f"post{len(self.orders) + 1}"
         self.orders.append({"kind": "post_only", "symbol": symbol,
                             "side": side, "contracts": contracts,
                             "price": price, "reduce_only": reduce_only,
-                            "id": oid})
+                            "client_order_id": client_order_id, "id": oid})
         return oid
 
     def market_order(self, symbol, side, contracts, reduce_only=False,
-                     margin_mode="cross"):
+                     margin_mode="cross", client_order_id=None):
         oid = f"mkt{len(self.orders) + 1}"
         self.orders.append({"kind": "market", "symbol": symbol, "side": side,
                             "contracts": contracts, "reduce_only": reduce_only,
-                            "id": oid})
+                            "client_order_id": client_order_id, "id": oid})
         return oid
 
     def pending_orders(self, symbol):
@@ -100,12 +101,12 @@ class FakePrivate:
         self.cancels.append(("order", symbol, order_id))
 
     def place_tpsl(self, symbol, close_side, contracts, tp, sl,
-                   margin_mode="cross"):
+                   margin_mode="cross", client_order_id=None):
         self._tpsl_counter += 1
         tid = f"tpsl{self._tpsl_counter}"
         self.tpsl_calls.append({"symbol": symbol, "close_side": close_side,
                                 "contracts": contracts, "tp": tp, "sl": sl,
-                                "id": tid})
+                                "client_order_id": client_order_id, "id": tid})
         return tid
 
     def pending_tpsl(self, symbol):

@@ -255,8 +255,11 @@ def main():
                     st = load_state()
                     st["daemon_heartbeat"] = _now().isoformat()
                     # publishes the on-screen HUD's snapshot AND saves state
-                    # (heartbeat included) in one write
-                    write_live_read(live_feed, st)
+                    # (heartbeat included) in one write. private= overlays
+                    # BloFin's own liquidation price / margin ratio / PnL%
+                    # of margin onto the position card (step98_api_audit.md
+                    # finding #6 — this was never displayed anywhere before).
+                    write_live_read(live_feed, st, private=private)
                 except Exception:
                     pass
             # GOLD FAST WATCH (sealed-validated intraday touch entry):

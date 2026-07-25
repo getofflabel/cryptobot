@@ -127,7 +127,7 @@ class FakePrivate:
         return True
 
     def market_order(self, symbol, side, contracts, reduce_only=False,
-                     margin_mode="cross"):
+                     margin_mode="cross", client_order_id=None):
         if self.fail_market_order:
             raise RuntimeError("simulated order rejection")
         oid = str(self._next_oid)
@@ -141,7 +141,7 @@ class FakePrivate:
         return oid
 
     def place_tpsl(self, symbol, position_side_close, contracts, tp_price,
-                   sl_price, margin_mode="cross"):
+                   sl_price, margin_mode="cross", client_order_id=None):
         if self.fail_place_tpsl:
             raise RuntimeError("simulated bracket rejection")
         tid = f"tpsl{self._next_tpsl}"

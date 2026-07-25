@@ -89,20 +89,21 @@ class FakePrivate:
         return True
 
     # -- orders ---------------------------------------------------------
-    def post_only_order(self, symbol, side, contracts, price, reduce_only=False):
+    def post_only_order(self, symbol, side, contracts, price, reduce_only=False,
+                        client_order_id=None):
         oid = f"post{len(self.orders) + 1}"
         self.orders.append({"kind": "post_only", "symbol": symbol,
                             "side": side, "contracts": contracts,
                             "price": price, "reduce_only": reduce_only,
-                            "id": oid})
+                            "client_order_id": client_order_id, "id": oid})
         return oid
 
     def market_order(self, symbol, side, contracts, reduce_only=False,
-                     margin_mode="cross"):
+                     margin_mode="cross", client_order_id=None):
         oid = f"mkt{len(self.orders) + 1}"
         self.orders.append({"kind": "market", "symbol": symbol, "side": side,
                             "contracts": contracts, "reduce_only": reduce_only,
-                            "id": oid})
+                            "client_order_id": client_order_id, "id": oid})
         return oid
 
     def pending_orders(self, symbol):
@@ -113,12 +114,13 @@ class FakePrivate:
 
     # -- brackets -------------------------------------------------------
     def place_tpsl(self, symbol, position_side_close, contracts, tp_price,
-                   sl_price, margin_mode="cross"):
+                   sl_price, margin_mode="cross", client_order_id=None):
         self._tpsl_counter += 1
         tid = f"tpsl{self._tpsl_counter}"
         self.tpsl_placed.append({"symbol": symbol, "side": position_side_close,
                                  "contracts": contracts, "tp": tp_price,
-                                 "sl": sl_price, "id": tid})
+                                 "sl": sl_price, "client_order_id": client_order_id,
+                                 "id": tid})
         return tid
 
     def pending_tpsl(self, symbol):
@@ -159,6 +161,16 @@ class FakeLiveFeed:
 
     def _get(self, path, params=None):
         return [{"fundingRate": "0.0"}]
+
+    def get_instrument(self, symbol="BTC-USDT"):
+        # BLOFIN_API_REFERENCE.md verified values — this fake stands in for
+        # both live_feed and demo_feed across these tests, so contract_value()
+        # (step5_paper_trade.py) can resolve real sizing math instead of
+        # skipping every entry with "instrument spec unavailable."
+        specs = {"BTC-USDT": "0.001", "ETH-USDT": "0.01"}
+        return {"instId": symbol, "contractValue": specs.get(symbol, "0.001"),
+               "minSize": "0.1", "lotSize": "0.1", "tickSize": "0.1",
+               "maxLeverage": "125"}
 
 
 def make_state(**books) -> dict:

@@ -101,6 +101,12 @@ class FakeFeed:
             ask = self.last_close
         return _T()
 
+    def get_instrument(self, symbol="BTC-USDT"):
+        # BLOFIN_API_REFERENCE.md verified value — lets contract_value()
+        # (step5_paper_trade.py) resolve real sizing instead of skipping.
+        return {"instId": symbol, "contractValue": "0.001", "minSize": "0.1",
+               "lotSize": "0.1", "tickSize": "0.1", "maxLeverage": "125"}
+
 
 def make_state(open_trade=None, last_bar_ts=None, **extra_books) -> dict:
     state = {"virtual_equity": 1000.0, "goal": 2000.0, "open_trade": None,

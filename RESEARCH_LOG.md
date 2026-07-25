@@ -1508,3 +1508,115 @@ for. BloFin serves no honest S&P instrument on demo (SPY-USDT exists on
 prod, is the real tracker at 0.08% basis, but is thin at ~$650k/24h and is
 not on the demo host). Finding a venue is now a higher-value action than
 another research round.
+
+## ROUND 194 — the GARCH storm-veto is ACTIVELY HARMFUL. Buried. (2026-07-25)
+
+Nightly researcher. Queue item: the "GARCH era" docket's second
+pre-specified entry — *"GARCH storm-veto for strikes: skip entries when
+forecast > trailing p90"* — the item Round 31's own log entry named as
+"next in queue" and which had never been run. Script:
+`step194_garch_storm_veto.py`.
+
+**Queue hygiene first.** RESEARCH_QUEUE.md's numbered list 1-6 was stale:
+the 2026-07-23 credit-sprint batch closed items #2 (OI-flag-touch), #3
+(post-settle long) and #4 (OI-breakout) — all FAIL train — the 15m
+forensic autopsy closed #5, and Round 26 closed #6. The log had already
+recorded this reconciliation; the file had not. Items 1-6 are BURNED and
+the file is now corrected. The quarterly re-audits are dated 2026-10 and
+are not due. That made the GARCH docket the top live section.
+
+**Config (frozen from the queue, no tuning):** BTCUSDT 1h. Filter = 4h
+champion bull state (vol_gated_ma 20/100, ATR gate 1.5%, funding<=1bp)
+mapped onto 1h with no lookahead. Trigger = RSI(3)<15. Veto = skip when
+the walk-forward GARCH(1,1) daily-vol forecast is at or above its
+TRAILING EXPANDING p90 (min 180d baseline, no lookahead), same
+construction Round 31 used on 4h. Bracket = the live one, stop 1.5% /
+target 4.5% / hold 48h — flat percentages are FAITHFUL here because
+tactical.py literally places a fixed ±% TP/SL bracket; Round 150's
+structure-stop retest asked a different question. Execution = **taker**,
+which is what the live book actually pays (execute_market_clips places
+market orders). Real funding. Common window 2022-02-03 -> 2026-07-24
+(39,183 bars, 4.5 yrs) so veto and baseline score identical bars.
+
+**Declared before running (Round 88's rule):** exactly ONE cell decides —
+p90, taker. ~0.1 cells expected to clear a 90th-percentile chance bar by
+luck. The maker frame and the p80/p95 neighbourhood were reported as
+robustness only and barred from qualifying anything.
+
+### RESULT — fails three of four gates
+
+| config (taker) | train n | train $/t | thickness | val n | val $/t | thickness |
+|---|---|---|---|---|---|---|
+| baseline, no veto | 139 | **+$9.64** | 0.54x | 43 | **+$35.20** | 1.96x |
+| STORM-VETO p90 | 134 | **+$5.12** | 0.28x | 43 | +$35.20 | 1.96x |
+
+- positive train AND val — PASS
+- sample >=30 / >=8 — PASS (134 / 43)
+- **beats the un-vetoed baseline — FAIL.** It nearly HALVES train
+  expectancy and changes val by exactly nothing.
+- **beats chance — FAIL.** 400 random draws dropping the same number of
+  trades at random: the veto's train lands at the **18.5th percentile**
+  and its val at the **28.7th**. Dropping trades with a coin would have
+  done better than dropping them with the GARCH forecast.
+
+### The two things that make this a real finding, not just a null
+
+**1. A dose-response in the WRONG direction.** The neighbourhood is
+monotone: the MORE the veto fires, the worse the book gets.
+
+| threshold | signals killed | train $/t |
+|---|---|---|
+| p80 | most | **-$0.98** (negative) |
+| p90 | 27 (2.7%) | +$5.12 |
+| p95 | fewest | +$8.56 |
+
+Extrapolate the line and it lands on the baseline's +$9.64 at "veto
+nothing." That is not a lone spike and it is not noise around zero — it
+is a clean monotone gradient saying the veto is *actively harmful*, and
+harmfulness scales with how often it fires. Round 88 taught us to ask
+"plateau or spike"; this one answers with a third and more damning shape.
+
+**2. The veto is nearly inert, which is itself the mechanism.** The p90
+storm filter kills only **27 of 983** panic-dip signals (2.7%) and
+**zero** val signals. GARCH forecast-vol storms and 1h RSI(3) washouts
+inside a 4h bull state barely co-occur — the champion's own 1.5% ATR gate
+has already spent the volatility budget, so by the time a dip fires, "is
+today forecast to be violent" carries almost no marginal information. A
+filter that cannot fire cannot rescue anything. This is the same lesson
+as Round 31 from the other side: **the GARCH forecast keeps failing
+against instantaneous ATR because the ATR gate is already doing the work,
+on both the slow book and the fast one.**
+
+**VERDICT: FAIL. The GARCH storm-veto family is CLOSED. The stood-down
+strikes stay stood down — this was their pre-specified rescue attempt and
+it made them worse.** Sealed test window NOT opened. **Looks consumed
+this round: 0.**
+
+### An honest side-observation that must NOT be misread as a reprieve
+
+On this window and with the LIVE flat bracket, the un-vetoed strikes score
+**+$9.64/t train and +$35.20/t val at taker** — not the -$70.09 / -$69.54
+Round 150 reported. Before anyone reads that as "R150 was wrong": the two
+runs are not the same test. R150 replaced the flat bracket with real
+`exits.py` chart-structure stops and used the full history; this round
+reproduces the live fixed ±% bracket on the shorter GARCH common window
+(2022-02+). R150's own conclusion was that these edges "died on the STOP,
+not the fee" — this result is *consistent with* that, and isolates the
+exit as the whole story. It is emphatically **not** grounds to restart the
+book: thickness is 0.54x round-trip cost on train (an edge roughly half
+the size of its own trading cost), it is train/val only, and it is one
+window. Queued below as its own properly-controlled round, because
+"which exit is right for the panic-dip" is now a well-posed question with
+two contradicting measurements pointing at it.
+
+**HOUSEKEEPING FLAGGED BY THIS ROUND (not research — live-bot hygiene).**
+`python3 -m pytest` on the working tree is **13 failed / 181 passed**. Every
+failure is a STALE ASSERTION left behind by the Round 150 stand-downs, not a
+regression: test_breakout_book (6), test_diver (2), test_newsdesk_exit (2),
+test_newsdesk_timing (1) all still assert `action == "entered"` on books whose
+committed gate now correctly returns `stood_down`, plus 2 in test_state_save.
+The stand-down behaviour itself is right; the tests were never updated to
+expect it. A red suite on live-bot code is how a real regression hides, so
+these want rewriting into stand-down guards (the way `test_q` was rewritten
+into a regression guard in R88). Left untouched here — the nightly researcher
+does not edit live-book code or its tests.
