@@ -554,19 +554,6 @@ def run_diver(private: BlofinDemoPrivate, live_feed, demo_feed,
                 "contracts": contracts, "entry_ref": ref_price,
                 "est_tp": tp_est, "est_sl": sl_est, **dec}
 
-    # STAND-DOWN GATE (2026-07-25, rounds 150+170) — see NEW_ENTRIES_ENABLED
-    # above. Placed HERE, after every exit/reconcile path has already run and
-    # after the signal is fully computed, so the book still closes what it
-    # holds and still LOGS what it would have taken. Only the order is
-    # withheld.
-    if not NEW_ENTRIES_ENABLED:
-        print("  [DIVER] signal fired but the book is STOOD DOWN "
-              "(taker+structure retest: val -$9.30/trade; 0/5 on ETH)")
-        log_event({"action": "diver_stood_down", "direction": direction,
-                   "contracts": contracts, "entry_ref": ref_price})
-        dv["last_bar_ts"] = dec["bar_ts"]
-        save_state(state)
-        return {"action": "stood_down", "direction": direction, **dec}
 
     # -- idempotency: this exact 4h bar was already decided on ------------
     if dv.get("last_bar_ts") == dec["bar_ts"]:
@@ -611,6 +598,27 @@ def run_diver(private: BlofinDemoPrivate, live_feed, demo_feed,
     notional = float(state.get("virtual_equity", 0.0)) * DIVER_ALLOC * DIVER_LEV
     contracts = max(LOT, round(notional / ref_price / cv / LOT) * LOT)
     side = "buy" if direction > 0 else "sell"
+
+    # STAND-DOWN GATE (2026-07-25, rounds 150+170) — see NEW_ENTRIES_ENABLED
+    # at the top of this file. Placed HERE, on the LIVE path after every
+    # exit/reconcile branch has run and after direction/contracts are bound,
+    # so the book still closes what it holds and still logs what it WOULD
+    # have taken. Only the order is withheld.
+    #
+    # It first lived just below the `if dry:` block, which crashed the live
+    # book every cycle with "cannot access local variable 'direction'" —
+    # those names are bound INSIDE the dry branch. Do not move it back up.
+    if not NEW_ENTRIES_ENABLED:
+        print(f"  [DIVER] {'LONG' if direction > 0 else 'SHORT'} signal "
+              f"fired but the book is STOOD DOWN (taker+structure retest: "
+              f"val -$9.30/trade; 0/5 transfer on ETH)")
+        log_event({"action": "diver_stood_down", "direction": direction,
+                   "contracts": contracts, "entry_ref": ref_price,
+                   "bar_ts": dec["bar_ts"]})
+        dv["last_bar_ts"] = dec["bar_ts"]
+        save_state(state)
+        return {"action": "stood_down", "reason": "book_stood_down",
+                "direction": direction, **dec}
 
     print(f"  [DIVER] {'LONG' if direction > 0 else 'SHORT'} SIGNAL "
           f"(hidden_divergence) — {side} {contracts:.1f} ct "

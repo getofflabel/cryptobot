@@ -468,6 +468,20 @@ def amplifier_cycle(private: BlofinDemoPrivate, live_feed, demo_feed,
     contracts = max(cfg["lot"],
                     round(notional / last_close / cv / cfg["lot"])
                     * cfg["lot"])
+    # STAND-DOWN GATE (2026-07-25, round 150) — the amplifier fires off the
+    # SAME BTC panic-dip (RSI3) trigger that round 150 found dies at taker
+    # execution with a real structure stop: train -$70.09/trade, val
+    # -$69.54, WORSE THAN CHANCE twice. Round 190 independently found it an
+    # anti-signal on SOL (1st percentile). Gating the BTC slot but leaving
+    # this one open would have left the same dead trigger trading.
+    # Exits above are deliberately NOT gated — an open slot still closes.
+    if not NEW_ENTRIES_ENABLED:
+        print(f"  [AMP ] ETH entry signal fired but the book is STOOD DOWN "
+              f"(taker+structure retest: worse than chance twice)")
+        log_event({"action": "amp_stood_down", "symbol": sym,
+                   "contracts": contracts})
+        return
+
     print(f"  [AMP ] entering {contracts:.1f} ct ETH "
           f"(~${notional:,.0f} notional at {cfg['lev']:.0f}x slot leverage)")
     private.ensure_leverage(sym, cfg["lev"])    # per-trade leverage
