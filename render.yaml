@@ -1,9 +1,27 @@
+# Render service definition.
+#
+# 2026-07-25 — THE BLOFIN CREDENTIALS ARE GONE FROM THIS SERVICE.
+#
+# Wallace was demo trading on BloFin himself and the bot closed his trade.
+# That account is his now. Removing the three BloFin variables here means the
+# worker cannot reach it even if some old code path tried — there are simply
+# no keys in the environment to authenticate with. That is a stronger
+# guarantee than a flag in the source, because it survives a bad deploy, a
+# rollback, or a forgotten import.
+#
+# The new build trades ALPACA PAPER (see step435_venue_decision.md). Its two
+# keys are marked `sync: false`, which means Render asks for the value in the
+# dashboard instead of reading it from this file — secrets never belong in a
+# repo.
+
 services:
   - type: worker
     name: cryptobot-daemon
     runtime: python
     plan: starter
     buildCommand: pip install -r requirements.txt
+    # daemon.py currently idles on purpose — it is the retired BloFin loop.
+    # This flips to the new Alpaca runner the moment tjr_bot.py is finished.
     startCommand: python -u daemon.py
     envVars:
       - key: CRYPTOBOT_SUPABASE_URL
@@ -12,12 +30,20 @@ services:
         sync: false
       - key: CRYPTOBOT_STATE_SECRET
         sync: false
-      - key: BLOFIN_DEMO_API_KEY
+
+      # The new venue. Paper account, no funded account behind these keys.
+      - key: ALPACA_API_KEY
         sync: false
-      - key: BLOFIN_DEMO_API_SECRET
+      - key: ALPACA_API_SECRET
         sync: false
-      - key: BLOFIN_DEMO_PASSPHRASE
-        sync: false
+
+      # DELIBERATELY ABSENT — do not re-add:
+      #   BLOFIN_DEMO_API_KEY
+      #   BLOFIN_DEMO_API_SECRET
+      #   BLOFIN_DEMO_PASSPHRASE
+      # The BloFin demo account belongs to Wallace and nothing automated may
+      # reach it. Removing the keys is what makes that true rather than
+      # merely intended.
 
   - type: web
     name: cryptobot-pnl
