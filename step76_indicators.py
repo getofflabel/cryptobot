@@ -71,7 +71,30 @@ order of magnitude.
 import warnings
 import numpy as np
 import pandas as pd
-import ta
+
+# `ta` is a RESEARCH-ONLY dependency and is deliberately NOT in
+# requirements.txt, so it does not exist on the live Render worker. It must
+# therefore never be a hard import: breakout_book.py (live) imports
+# step86_specified, which imports THIS module for bb_bands/kc_bands — and
+# both of those are pure pandas and touch `ta` not at all. A hard
+# `import ta` here took the live Breakout Book down on its first night
+# ("No module named 'ta'", every cycle) while every local test passed.
+# The ~36 `ta.`-using functions below are all research-only; if one is ever
+# called without the library installed, the stub raises a message that says
+# exactly what to do instead of a bare AttributeError on None.
+try:
+    import ta
+except ImportError:                                    # live worker
+    class _MissingTa:
+        def __getattr__(self, name):
+            raise ImportError(
+                f"step76_indicators: `ta` is not installed, so ta.{name} is "
+                f"unavailable. It is a research-only dependency, kept out of "
+                f"requirements.txt on purpose so the live worker stays slim. "
+                f"Install it locally (pip install ta) for research, or use a "
+                f"pure-pandas equivalent if this is needed on the live path."
+            )
+    ta = _MissingTa()
 
 from backtest import run_backtest
 from step7_deep_search import fetch_bybit_deep
