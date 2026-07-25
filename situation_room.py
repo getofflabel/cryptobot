@@ -95,7 +95,11 @@ def run_situation_room(live_feed, symbol, state):
             m = sr["models"].get(model, {"n": 0, "hits": 0})
             notify(f"🧠 {model} reads RISK-OFF",
                    f"{why} (no authority yet — record {m['hits']}/{m['n']})")
-    del sr["calls"][:-200]
+    # 60, not 200 (2026-07-25): this list was 68KB of the 170KB state blob
+    # and every save has to push the whole thing to Supabase in one write.
+    # Judgment history is nice to have; the position books are not. 60 keeps
+    # several days of calls, which is all the grading ladder actually reads.
+    del sr["calls"][:-60]
     save_state(state)
 
 

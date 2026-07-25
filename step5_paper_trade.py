@@ -200,6 +200,37 @@ def save_state(state: dict):
             except Exception as e:
                 last = e
                 time.sleep(1.5)
+
+        # BOOKS-ONLY FALLBACK (2026-07-25). Wallace was getting repeated
+        # "book-keeping save FAILED" alerts. The cause was NOT the books:
+        # the position records are ~100 bytes, but they were riding inside a
+        # 170KB blob that is ~80% DISPLAY data (live_read's paper-desk candle
+        # arrays, situation_room's judgment history). One slow Supabase write
+        # of that blob and the POSITIONS failed to save with it — the exact
+        # books-vs-reality fork that manufactured a phantom BTC short.
+        #
+        # So if the full save will not go, drop the two derived keys and try
+        # again with just the books. Both are regenerated from scratch on the
+        # next cycle (live_read recomputes from live candles, situation_room
+        # re-grades), so losing them costs a stale panel for one cycle and
+        # nothing else. Positions, ledgers and equity ALWAYS get written.
+        DERIVED_DISPLAY_KEYS = ("live_read", "situation_room")
+        if any(k in state for k in DERIVED_DISPLAY_KEYS):
+            books_only = {k: v for k, v in state.items()
+                          if k not in DERIVED_DISPLAY_KEYS}
+            try:
+                _sb_rpc("cryptobot_set_state",
+                        {"secret": _SB_SECRET, "payload": books_only})
+                print("  cloud save: full blob failed, BOOKS-ONLY save "
+                      "succeeded (panel data will refresh next cycle)")
+                log_event({"action": "state_save_degraded",
+                           "note": "full save failed, books saved without "
+                                   "display data",
+                           "error": str(last)[:200]})
+                return
+            except Exception as e:
+                last = e
+
         print(f"  CLOUD STATE SAVE FAILED 3x: {str(last)[:80]}")
         try:
             notify("🚨 book-keeping save FAILED (demo)",

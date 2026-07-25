@@ -368,10 +368,16 @@ def test_h_fmt_candles_compact():
         "Low": [x - 1 for x in range(200)], "Close": range(200),
     }, index=idx)
     out = lr._fmt_candles_compact(df)
-    assert len(out) == lr.PAPER_CANDLE_CAP == 150
+    # Derive from the constant, never hardcode it. This assertion said
+    # "== 150" and broke the suite when PAPER_CANDLE_CAP was cut to 60 on
+    # 2026-07-25 to stop the state blob timing out its cloud save. The cap
+    # is a tuning dial; what this test actually guards is that the function
+    # HONOURS the cap and emits the right row shape.
+    cap = lr.PAPER_CANDLE_CAP
+    assert len(out) == cap
     # each row is a bare [t, o, h, l, c] ARRAY, not a {t,o,h,l,c} object
     assert isinstance(out[0], list) and len(out[0]) == 5
-    assert out[0][1] == 50.0   # tail(150) of 0..199 starts at 50
+    assert out[0][1] == float(200 - cap)   # tail(cap) of 0..199
     assert out[-1][4] == 199.0
     assert isinstance(out[0][0], int)   # epoch seconds, not an ISO string
     assert out[0][0] > 1_700_000_000    # sane 2023+ epoch value

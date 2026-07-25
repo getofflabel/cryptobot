@@ -120,7 +120,14 @@ PAPER_TIMEFRAMES = [
     ("4h", None, None),
     ("1d", "1d", "2y"),
 ]
-PAPER_CANDLE_CAP = 150   # per timeframe, per market
+PAPER_CANDLE_CAP = 60    # per timeframe, per market. WAS 150, cut on
+                         # 2026-07-25 because it was the single biggest
+                         # cause of "book-keeping save FAILED" alerts:
+                         # 150 bars x 5 timeframes x 2 markets = 67KB of
+                         # the 170KB state blob, and the whole blob has to
+                         # clear Supabase in one write. Display data was
+                         # making the POSITION BOOKS fail to save. 60 bars
+                         # still draws every chart in the paper desk fine.
 
 MAINT_MARGIN_RATE_ASSUMED = 0.005   # 0.5% — OUR assumption, used for the
                                      # est. liq price / margin ratio math
