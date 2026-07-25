@@ -1133,3 +1133,42 @@ loose enough not to fire leaves ~30% of position value unprotected. XRP
 size. The honest frequency for this family is **~191 trades/year on BTC**,
 ~400 with ETH — NOT 927. BTC's sealed pass is untouched by this round; what
 died is the expansion story, not the edge.
+
+## ROUND 93 — the pro's pattern on fast timeframes: 0 survivors (2026-07-24)
+
+R91 found the analyst's setup fires only 2-5 times in 15 years on the
+daily. R93 ran the identical imported state machine on 4h, 1h, 15m and 5m,
+where sample finally exists. 24 BTC cells (4 timeframes x N in {2,3,4} x
+closed-vs-wick basis). **0 SURVIVORS**, against 0.60 expected by an
+empirical randomized-timing control computed per timeframe (not an assumed
+coin flip) — the chance-baseline discipline is now standard in every round.
+
+**4h: FAILS ON COSTS, and this is the interesting one.** N=2 wick-basis
+was gross-positive on BOTH train (+$15.17/trade) and val (+$7.04/trade) —
+a genuine survivor at zero cost. Real costs (12bps round trip plus
+funding, 10.6bps measured drag) flipped val to **-$2.42 net**. The pattern
+needed more than 10.6bps of edge per trade and did not clear it. The edge
+is REAL and too SMALL, which is a materially different finding from "the
+idea is wrong."
+
+**1h, 15m, 5m: FAIL outright** — no gross edge to lose in the first place.
+Not a cost problem at those speeds; the pattern simply does not
+generalize down there in the cells tested.
+
+**Closed-basis vs wick-basis, finally with real sample:** the sign flips
+inconsistently across N and timeframe (4h N=2 closed beats wick by +$840;
+4h N=3 wick beats closed by +$1,175; 5m mixed). **No durable evidence
+either basis is worth money.** Worth stating carefully: this does not make
+the analyst wrong. Demanding a close is a discipline that reduces
+false signals for a discretionary trader managing risk in real time; our
+test only shows it does not by itself produce a mechanical edge.
+
+This is the fourth independent confirmation of the project's oldest
+finding: **dense intraday rules die on the ~9-12bps cost floor.** Every
+future fast-timeframe candidate must be judged gross AND net from the
+start, with the break-even bps stated up front.
+
+Design note recorded honestly by the round: R91's MAX_HOLD_DAYS=45 /
+SEARCH_WINDOW=25 were carried over as literal BAR counts rather than
+recalibrated per timeframe, so holds scale with the timeframe (5m -> 3.75h
+cap, 4h -> 7.5 days). Defensible and stated, not hidden.
