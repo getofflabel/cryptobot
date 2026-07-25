@@ -1744,3 +1744,76 @@ later entry, closing a winner early, conviction sizing, the news call.
 purchase decision.
 
 Files: step301_tjr_rules.md, step301_tjr_rules.csv.
+
+## ROUND 310 — three of the four dead Bitcoin edges stay dead (2026-07-25)
+
+Wallace's point was that our testing, not the methods, might be wrong. R301
+proved that for TJR. This round applied the same question to our OWN four
+dead Bitcoin edges: add the single most load-bearing condition practitioners
+require, and re-run.
+
+**The honest frame first.** 14 configurations tried. If the sign of the
+average profit per trade in each window were a coin flip, luck alone gives
+3.5 configurations positive in both windows. **We got 3** — and all 3 are
+the same edge at three settings of one dial. **This round produced fewer
+both-windows-positive results than pure chance would.** Round 86 was a real,
+specific correction, not a general-purpose rescue button. That boundary is
+worth as much as any verdict here.
+
+Every re-run reproduced its R150 baseline to the penny first, so any
+difference is the added condition and nothing else. Market orders both
+ways, stops at real chart structure, size = dollars risked / stop distance,
+leverage an output, final untouched slice never loaded.
+
+**1h structure flip + 2 agreeing tools — DEAD.** Our code bought the break
+bar; practitioners buy the RETURN to the broken level. Moving entry to the
+first later bar that trades back to the level and closes back above it takes
+the first-60% loss from -$42.92 to -$30.75 per trade and it stays deeply
+negative at every wait length. Long-only does not rescue it (longs -$22.05,
+shorts -$64.95 in the first window) and in the middle window the shorts are
+the BETTER side. A sign that flips between windows is noise.
+
+**4h hidden RSI divergence — NOT ENOUGH TRADES TO SAY.** R86 proved the
+confirmation close on the REGULAR flavour and nobody ever applied it to the
+HIDDEN flavour, because at the time hidden divergence was a working live
+edge. Applying it: win rate 44% -> 57-70%, and the middle window flips from
+-$9.30 to positive at four of five settings. But only one setting clears the
+trade floors (32 and 10 trades, clearing by two), and its first-window edge
+has shrunk to +$2.89 per trade. **Ten trades and a three-dollar edge is a
+direction, not a result.** This is R74's selectivity trap: the condition
+that makes the setup good is the condition that makes it almost never
+happen. Next step is a different coin or longer history, NOT a look at the
+final slice.
+
+**1h RSI(3) dip-buy — DEAD, now in two independent spellings.** Waiting for
+the turn (close back above the signal bar's high, and separately the
+oscillator crossing back up through 25) halves the loss from -$70 to
+-$23/-$56 per trade and it is still a loss. The tell: **win rate goes DOWN**,
+41% -> 33-36%. Waiting costs entry price while the stop stays anchored at
+the same swing low, so the stop widens and the target moves further away.
+Stop-outs rise 56% -> 58-61%; targets reached fall 26% -> 13-18%.
+
+**News momentum — DEAD, and R150 had measured the flattering version.**
+R150 substituted a generic swing trailing stop for the live one, flagged it
+as a confound in its own write-up, and reported the verdict anyway.
+Restoring the ACTUAL live stop (just beyond the reaction candle's far side)
+makes it WORSE: -$19.97/-$42.82 at a 0.1% cushion. Tighter floor, more
+clipping, win rate down to 21-26%. This closes the question honestly — the
+original validation charged the cheaper resting-limit-order fee on every
+entry and modelled no spread or slippage at all.
+
+### THE RULE WORTH BANKING
+
+**The confirmation close is setup-specific, not universal.** It helps a
+CONTINUATION pattern (hidden divergence) and STRICTLY HURTS a MEAN-REVERSION
+pattern (the dip-buy), and the mechanism is concrete: in a mean-reversion
+trade the discount IS the edge, so waiting destroys the thing you came for.
+That is more useful than any of the four verdicts.
+
+### A SPECIFICATION PROBLEM ACROSS THE TOOLKIT
+
+Two of these edges never had a working exit. Hidden divergence ends 64-90%
+of its trades on the clock and only 3-10% ever reach the target. **A fixed
+multiple of a structure stop, under a 12-bar hold cap, is decoration rather
+than a target.** That is a problem with how we specify exits generally, not
+a property of any one signal, and it deserves its own round.
