@@ -8,6 +8,11 @@ Ledger: $1,343.67 / goal $3,000
 - **daily_pick**: 2 trades, 1W/1L, expectancy $+1.60/trade
 - **pick_trend**: 2 trades, 1W/1L, expectancy $+1.60/trade
 
+## AI news judges (on probation)
+
+- **opus**: 1/1 graded calls (100% right)
+- **sonnet**: 1/1 graded calls (100% right)
+
 ## Trade reviews (newest first)
 
 ### 2026-07-24 22:00:08 UTC — daily_pick
