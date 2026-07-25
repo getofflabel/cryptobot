@@ -82,3 +82,23 @@ not what the owner is paying for.
   (d037). Same shape, opposite outcome, and the eye can't tell them apart.
 - **Stand aside in `transition`.** -0.320R on n=12, the worst reliable
   bucket. Test a hard no-trade rule there against the random control.
+
+## OPENED BY ROUND 90 (2026-07-24) — the inversion, and the trap in it
+- **R92: fade the aged structural breakdown.** Shorting the break of an
+  old, well-tested level loses monotonically more the older the level is
+  (-$9 at age20 to -$89 at age500 on BTC 1h, same shape on 4h). Test the
+  other side: BUY those breakdowns.
+- **THE TRAP THAT MUST BE CONTROLLED FOR:** BTC rose over most of the
+  sample. In an uptrending market EVERY short loses and every long wins,
+  and more-aged setups may simply carry longer exposure to that drift. A
+  raw "longs beat shorts" result would be worthless. R92 must therefore
+  (a) benchmark against random entries at the same timestamps with the
+  same holding period, (b) test the MIRROR case (aged resistance broken to
+  the UPSIDE — if aged levels genuinely mean-revert, fading should work in
+  both directions; if only the long side works, it is drift), and (c)
+  split bull and bear sub-periods. Only a symmetric, drift-adjusted result
+  counts.
+- R84's freshness hypothesis deserves ONE better test: the leg-start
+  definition used in R90 resets too often to capture multi-week runs.
+  Re-test with a leg definition that survives minor pullbacks before
+  calling the idea dead.

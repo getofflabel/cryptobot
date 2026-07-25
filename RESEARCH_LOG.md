@@ -992,3 +992,59 @@ partitioning were all sound. It was sloppy about MULTIPLE COMPARISONS:
 36 cells were run and the 2 best were treated as a finding. Every future
 round that sweeps many cells must state its expected-by-chance baseline
 in the same breath as its winners.
+
+## ROUND 90 — R84's level-significance lesson is REFUTED, and inverted (2026-07-24)
+
+R84's blind drills produced a confident lesson: the one winning short broke
+a multi-DAY extreme, all eleven losers only cleared multi-HOUR local
+levels, therefore "local breaks are noise, structural breaks are
+tradeable." R90 tested that mechanically on 25,481 real break events (BTC
++ ETH, 1h + 4h, full history, no-lookahead verified by a truncation test
+producing byte-identical events).
+
+**It is not just unsupported, it is BACKWARDS on the short side.** BTC 1h
+shorts, full train sweep:
+
+| level age cutoff | n | expectancy/trade |
+|---|---|---|
+| 20 bars | 380 | -$9.23 |
+| 50 | 228 | -$26.21 |
+| 100 | 142 | -$35.49 |
+| 200 | 95 | -$57.70 |
+| 500 | 47 | **-$89.12** |
+
+LOCAL shorts sit flat at -$12 to -$13 regardless of cutoff. **Structural
+shorts get monotonically WORSE the older and more-tested the broken level
+is** — 10x worse from the loosest to the tightest cutoff, monotonic across
+every step, and BTC 4h reproduces the identical pattern (-$73.86 ->
+-$180.15). This is not threshold-selection: it holds across the ENTIRE
+swept grid on both timeframes.
+
+Long side: BTC structural longs looked strong (1h +$57.63 train / +$13.85
+val; 4h +$254.57 / +$126.10) and **FAILED the mandatory ETH transfer** on
+both timeframes (val -$30.32 and -$85.77, config carried over unchanged).
+Reported FAIL. Honest caveat recorded by the round: ETH's LOCAL bucket
+also went negative in that same val window, so it may be a bad ETH stretch
+for long breakout entries generally rather than proof the idea is fake.
+
+Freshness hypothesis (R84's second lesson, "consolidation at highs only
+works if the prior move is fresh"): NO SUPPORT. The only adequately
+sampled cell was unprofitable in both fresh and extended buckets and the
+train-favorable gap reversed on val. Also flagged a real limitation: the
+leg-start definition resets too often to capture genuinely extended
+multi-week runs like d037's, so this is a weak test, not a strong refutation.
+
+**RECOMMENDATION TAKEN: no change to chart_reader.py.** Do not add a
+structural-favors-shorts heuristic (the data says the reverse), do not add
+the long-side version (BTC-only, failed transfer), do not add a freshness
+gate (unsupported).
+
+**THIS IS THE SECOND TIME TONIGHT a confident lesson from a small sample
+died under mechanical testing** (R83's veto was the first). R84's story was
+built on 12 discretionary shorts. Twelve trades produce a compelling
+narrative and no evidence. The pattern to remember: a vivid post-mortem is
+a hypothesis generator, never a finding.
+
+**WHAT IT HANDED US INSTEAD:** if breaking an aged, well-defended level is
+a progressively WORSE short, the fade may be the trade. Queued as R92 with
+the drift control that decides whether it is real — see RESEARCH_QUEUE.
