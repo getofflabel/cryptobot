@@ -1,0 +1,3 @@
+tag,selected,verdict,va_exp,thickness
+CL=F,chandelier2.5_r3,"REJECT (thin, under 5x cost)",37.12186761146633,3.918816132912502
+BZ=F,chandelier3.5_trail,SURVIVOR (train+val — sealed look NOT spent),101.13004913473134,15.871635005501718

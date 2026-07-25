@@ -1378,3 +1378,66 @@ BTC's fixed 1.5% volatility gate is open on **96.7% of SOL's bars** versus
 18-53% on BTC. The gate's SELECTIVITY is the entire edge, and it silently
 evaporates when the constant is ported instead of re-derived. That is the
 "never port a constant" rule with a number attached.
+
+## ROUNDS 111-116 — the oil family map: 20 entries, zero WTI survivors (2026-07-25)
+
+**The EIA inventory report reaction is REAL and NOT TRADEABLE.** R78 was
+supposed to test this and never did; oil-trader finally ran it. At the
+official Wednesday release hour: mean |move| **0.570%**, which is **1.75x
+the same-window baseline and 2.2x a randomized-timing control**, decaying
+to 1.07x by 24h. Continuation-shaped. The unofficial Tuesday API estimate
+shows no detectable reaction at all — a clean negative.
+
+Then it was built into an actual costed strategy (R114) and **it fails
+train+val.** That RESOLVES rather than deepens the apparent conflict with
+R78's sealed "EIA reversal" failure: both directions lose after real
+costs. The price tendency is genuine; it is simply smaller than the cost
+of harvesting it. Fifth confirmation of this program's oldest finding.
+
+**The one real lead, and why it is not a green light.** Donchian(55) on
+daily oil with a chandelier(3.5x ATR) trail-only exit, selected TRAIN-only
+from a 9-exit screen, val read once:
+
+- **BZ=F (Brent): train +$160.34/t (n=47), val +$101.13/t (n=17),
+  thickness 15.87x** — the strongest number the oil map has produced, and
+  it beats its chance baseline (val $101.13 vs random-entry mean $87.88).
+- **CL=F (WTI): the identical config is NEGATIVE on its own train window
+  (-$14.65/t, n=74).**
+
+**WTI is the venue we can actually trade. Brent is not.** So this is a
+disciplined, honest Brent-specific result that does not transfer to
+anything executable. Sealed look NOT spent, correctly.
+
+**LEAD AGENT'S CALL: do not spend the sealed look here.** It is best-of-9
+on one instrument (expect ~0.9 cells to clear a 90th-percentile bar by luck
+alone), and it fails on the only instrument we can execute. Spending an
+irreversible look to confirm something untradeable is the worst available
+use of that budget. Correct next move is the agent's own proposal: run the
+identical 9-exit screen on CL=F. If the SAME chandelier pairing wins there
+too, that is far stronger evidence than either instrument alone, because
+the pairing would have transferred rather than been fitted to one
+instrument's noise. And report whether the winning exit is a PLATEAU
+across adjacent multiples or a lone spike — R88 killed a live change whose
+effect existed at exactly one setting and nowhere in the neighbourhood.
+
+**Other entries:** four ported crypto shapes (CHoCH+confluence, hidden
+divergence, vol-gated trend, RSI3 washout) all INSUFFICIENT SAMPLE — oil's
+event frequency for these triggers is far below BTC's on the ~2.4y of
+intraday history available, itself a finding. SPX's RSI2 shape re-confirmed
+FAIL under a real structural stop. Order blocks, pin bars and engulfing
+confirmed dead on oil too — no BTC-dead-but-oil-alive asymmetry found.
+
+**Session structure is a clean real diagnostic, not yet a strategy:**
+London and NY hours sit at the **100th percentile** of realized |return|
+against a 200-draw label-shuffle control; Asia and off-hours at the
+**0th**. Real, oil-specific, structural. Nothing built on it yet.
+
+OPEC meetings and contango/backwardation logged honestly as NOT TESTED /
+NOT TESTABLE (no reliable meeting calendar, no futures-curve data in this
+repo) rather than guessed at.
+
+**HARNESS BUG FOUND:** `step150_common.verdict_for` does not enforce the
+5x thickness bar, and would have mis-labelled two cells SURVIVOR.
+oil-trader caught and hand-corrected them. A verdict function that
+silently over-promotes is exactly how a fitted result reaches a live book
+— fix before any other round reuses that harness.

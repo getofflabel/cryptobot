@@ -1,0 +1,4 @@
+family,tr_n,tr_exp,va_n,va_exp,thickness,verdict
+"Order blocks (base, mult2, 50pct touch) — BTC-dead confirmation",165,-41.00639702910477,57,-72.10828752677301,-1.7599909733392671,FAIL
+"Pin bars (wick2x, roll20 context) — BTC-dead confirmation",200,-47.13928738692216,89,-86.15771666426926,-2.0744097634176937,FAIL
+Engulfing (roll20 context) — BTC-dead confirmation,239,-40.54929300163676,100,-72.29480913511694,-1.717710165423501,FAIL
