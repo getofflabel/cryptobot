@@ -1,0 +1,16 @@
+option,kind,tracks,practice_account,bot_can_reach,hours,smallest_position_usd,max_leverage,round_trip_cost_pct,liquidity_usd_24h,blocker
+BloFin SPY-USDT (real host),perpetual on crypto venue,S&P 500,NO - real money only,"yes, existing code",24/7 incl weekends,7.42,20.0,0.1413,652638.0,BloFin terms prohibit US persons; no practice host
+BloFin QQQ-USDT (real host),perpetual on crypto venue,Nasdaq 100,NO - real money only,"yes, existing code",24/7 incl weekends,6.88,20.0,0.1413,180721.0,same as SPY-USDT
+BloFin IWM-USDT (real host),perpetual on crypto venue,US small caps,NO - real money only,"yes, existing code",24/7 incl weekends,2.91,20.0,0.213,23467.0,"price gap 0.1065% of price, 80x SPY-USDT; too thin"
+BloFin SPX-USDT,memecoin perpetual,"SPX6900 MEMECOIN, NOT the S&P",yes,yes,24/7,0.34,75.0,0.1413,294022.0,WRONG INSTRUMENT ENTIRELY - never trade for S&P exposure
+Alpaca paper,"stock broker, paper",SPY / QQQ actual ETFs,"YES free, no funding","yes, plain web API",regular session; market orders rejected outside it,1.0,1.0,0.04,,needs a sign-up (Wallace only); market orders only in session
+Tradier sandbox,"stock broker, paper",SPY / QQQ actual ETFs,YES no minimum,"yes, plain web API",regular session,,1.0,0.04,,delayed prices in sandbox; needs a sign-up
+IBKR paper,"broker, paper",SPY / QQQ / MES futures,"yes, but a live account must exist first","yes, needs a gateway process running",regular session; futures near 24h,,,0.02,,"live account first, gateway process, market data fees"
+CME Micro E-mini (MES),futures,S&P 500,via broker,via IBKR etc,"Sun 6pm - Fri 5pm ET, 1h daily break",34000.0,,0.02,,"one contract is about ,000 of exposure, far too big for our size"
+Schwab / thinkorswim API,stock broker,SPY / QQQ,"click-only, not reachable by a bot",live trading only,regular session,,1.0,0.04,,no programmatic paper mode at all
+tastytrade sandbox,broker sandbox,SPY / QQQ,yes,yes,regular session,,1.0,0.04,,wipes all positions every 24h; our trades hold 1-10 days
+Robinhood,stock broker,SPY / QQQ,no,no official API,regular session,,1.0,,,terms prohibit bots; unofficial libraries break and get accounts suspended
+TradeStation,stock broker,SPY / QQQ,yes once API access granted,yes,regular session,,1.0,0.04,,"API keys reportedly need a funded live account near ,000"
+"Offshore equity perps (Bybit, Gate, MEXC, KuCoin, Hyperliquid, xStocks, Ondo offshore, Swarm)",perpetual / tokenized,S&P and US stocks,mostly none,varies,24/7,,,,,all state US persons are excluded
+Ostium,on-chain perpetual,"S&P 500, licensed index data",not verified,not verified,24/7,,,,,m oracle exploit halted trading 2026-07-15; US status unverified
+Dinari,"tokenized US shares, licensed",US stocks/ETFs,unknown,unknown - worth checking,24/7 targeted,,1.0,,,the only US-licensed tokenized path found; API existence not verified

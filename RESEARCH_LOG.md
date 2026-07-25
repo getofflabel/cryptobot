@@ -1967,3 +1967,130 @@ Middle window: -0.766% inside versus +0.160% outside (t=-2.10). Those are
 price moves on an unlevered holding. Sign reversal, not a costing problem.
 
 25 Ethereum families now mapped, zero validated edges of its own.
+
+## ROUNDS 360-362 — the S&P venue answer, and the control killed one of our two edges (2026-07-25)
+
+### THE VENUE
+
+**SPX-USDT is settled: it is the SPX6900 memecoin.** Queried BloFin's own
+price endpoint: $0.3366, contract size 10, listed 2024-10-30, and our
+cached file shows it has only ever traded between $0.33 and $0.96. It IS
+tradeable on our practice account and must never be pointed at for index
+exposure.
+
+**The practice host has no S&P anything.** 88 contracts, all crypto plus
+tokenized gold. Nothing hidden.
+
+**The real host has SPY-USDT, QQQ-USDT and IWM-USDT.** SPY-USDT genuinely
+tracks the index (742.25 against the real tracker's 738.18 two sessions
+earlier), 20x max, $652,638 turnover in 24h, buy/sell gap 0.0013% of price.
+IWM-USDT is unusable at eighty times that gap.
+
+**And SPY-USDT never closes.** 500 hourly bars over three weeks: all 500
+traded, all 24 hours, all 140 weekend hours. **Our playbook's claim that
+the ETF's 17.5-hour dark window makes index stops awkward does not apply on
+this venue.** It is a continuous instrument wearing the ETF's name.
+
+Cost there: 0.06% per fill, so ~0.1413% round trip, roughly 3.5x a stock
+broker. The holding charge has averaged -0.0182% per settlement over 100
+settlements, meaning longs get PAID ~0.055% of position per day — but
+that is only ~33 days of data, do not build on it.
+
+**BLOCKER: BloFin's terms prohibit US persons.** Wallace is a US person and
+the Costa Rica routing does not help, because venues match on the identity
+collected at account opening. Documented consequences elsewhere: trading
+switched off, withdrawal-only, or funds frozen pending review. Factual, not
+legal advice. So SPY-USDT is simultaneously the fastest path our code could
+reach and the one with the worst standing problem.
+
+**RANKED ALTERNATIVES, shortest path first:**
+1. **Alpaca paper** — free, unfunded, plain web API of the same shape as our
+   BloFin client, trades SPY and QQQ, fractional shares, **7+ years of free
+   historical bars** which also kills our dependence on the unofficial
+   Yahoo scraper. Our edges fire 4-15 times a year against a
+   200-requests-per-minute ceiling. One real catch: market orders are
+   rejected outside regular hours; both our rules decide at a daily close
+   and fill at the next open, which is inside the session. **Needs a
+   sign-up — not created, Wallace's call.**
+2. Tradier sandbox — no minimum, delayed prices, fine for daily-close rules.
+3. IBKR paper then micro futures — the only real-futures route, but the
+   E-mini controls ~$340,000 and the Micro ~$34,000 near a 6800 index.
+   Against a few hundred dollars of position, even the micro is far too big.
+4. BloFin SPY-USDT real host — closest to plug-and-play, 24h, our code
+   already speaks it, but real money from the first order and the US-person
+   restriction.
+
+**Ruled out:** Schwab, Robinhood, TradeStation, tastytrade sandbox (wipes
+positions every 24h, our trades hold 1-10 days), E*TRADE sandbox, and every
+offshore crypto venue listing an S&P product. Ostium has a real S&P
+perpetual but suffered an $18m oracle exploit on 2026-07-15.
+**Worth a look another day:** Dinari, a Delaware-registered broker-dealer
+issuing tokenized US shares to US persons — a licensed US path rather than
+an offshore workaround.
+
+### THE RESEARCH — 495 settings, and two corrections to what we believed
+
+**RSI2 deep-dip buy: CONFIRMED on SPY, and R60's cross-market claim needs
+downgrading.** On SPY it earns +0.8803% of position per trade against a
+coin flip's +0.1448% in a pool that already knows to be long in an uptrend
+— **100th out of 100 on both scoreboards.** On ES=F it places 78.5th and
+61.3th. R60 called "12 of 12 on both SPY and ES=F" its cleanest
+cross-market result. **It is one real edge on the ETF and one exit riding a
+trend on the futures.**
+
+**"Stay long above the 200-day average": DEMOTED, it is not an entry
+edge.** Per trade it LOSES to a coin flip on all three markets: SPY real
++1.7989% against random **+4.2197%**, placing **6.8th out of 100**. A random
+day picked from an existing uptrend, held to the same exit, earns two and a
+half times more per trade than waiting for the actual cross. Entering at
+the cross means eating every whipsaw. It beats the coin flip on total
+growth only by taking 3-4x as many trades, and on SPY it still loses to
+buying once and never selling (+186.3% against +240.4%). **It is a
+drawdown blanket (worst fall -56.5% to -29.7%), not an edge**, and should
+stop being listed beside the dip-buy.
+
+**Turn-of-month: NEW SURVIVOR and the best result of the round.** Broad
+plateau (51/70, 57/70, 56/70 settings survive), passes the coin-flip test
+on all three markets on both scoreboards in both pools (96th-100th), ~12
+trades/year — three times the dip-buy's frequency. SPY: +0.5947% of
+position per trade, 14.9x the cost of trading, 158 trades.
+
+**Hidden divergence ported from Bitcoin: NEW CANDIDATE.** 100th place on
+both scoreboards on SPY, ES=F and QQQ, every setting surviving on two of
+three. Weak point is SPY's middle slice at +0.0113% over 21 trades.
+
+**Vol-gated trend ported from Bitcoin: REJECTED** — 82x the cost of trading
+and then 79.8th/40.2th/16.2th against the coin flip. Textbook R117: very
+few, very long trades in a market that went up.
+
+### TWO PLAYBOOK CORRECTIONS
+
+**The overnight gap does not threaten a structure stop.** The gap is real
+(SPY moves >0.3% overnight on 46.4% of days) but **the overnight fall alone
+exceeded the 1.84% dip-buy structure stop on only 1.3% of days**, and the
+3.12% turn-of-month stop on 0.2%. What died in R60 was a TIGHT stop at ~1.3%
+of price. Adding a structure stop kept every SPY cell a survivor.
+
+**The 15-20x leverage thesis is NOT supported on daily index bars.** Size =
+risk / stop distance, so leverage is an output: SPY dip-buy gives **0.5x at
+1% risk, 1.1x at 2%**. Turn-of-month 0.3x-0.6x. The index moves less per day
+than crypto but its structure sits proportionally just as far away. **It
+could still hold on intraday bars where structure sits closer — that is now
+the biggest open question and it was not tested.**
+
+### THE VENUE DECIDES WHICH EDGE IS TRADEABLE
+
+Our bar is profit at least 5x the cost of trading. That needs 0.2000% of
+position at a stock broker and **0.7065% on BloFin's perpetual.**
+
+| edge | profit/trade | stock broker | BloFin perpetual |
+|---|---|---|---|
+| SPY RSI2 dip-buy | +0.8803% | 22.0x, passes | 6.2x, passes |
+| SPY turn-of-month | +0.5947% | 14.9x, passes | **4.2x, FAILS** |
+| SPY hidden divergence | +0.7969% | 19.9x, passes | 5.6x, passes |
+
+**Of 314 survivors, 272 clear the bar at stock-broker costs and only 52
+clear it on the BloFin perpetual.** The best result of the round does not
+survive the only venue our bot can technically reach today.
+
+Final untouched slice never opened.
