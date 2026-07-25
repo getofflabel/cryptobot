@@ -663,7 +663,37 @@ def _execute_single(private: BlofinDemoPrivate, demo_feed, symbol: str,
                             for o in private.pending_orders(symbol))
         if not still_pending:
             f = private.fills(symbol, oid)
-            price = float(f[0]["fillPrice"]) if f else limit_price
+            if not f:
+                # PHANTOM-FILL FIX (2026-07-25). Leaving pending_orders() is
+                # NOT proof of a fill. BloFin CANCELS post-only orders that
+                # would cross the book (cancel_by_post_only_depth) — the
+                # order vanishes having filled NOTHING. Reproduced live 8/8
+                # on demo; 84% of this account's visible post-only orders
+                # ended that way. The old code returned `limit_price, True`
+                # here, booking a trade at a price that never existed and
+                # a position that does not exist. Treat it as unfilled and
+                # fall through to the chase below.
+                print(f"    post-only order gone with NO fill after "
+                      f"{waited}s (exchange cancelled it) — chasing")
+                break
+            filled = sum(float(x.get("fillSize") or 0) for x in f)
+            price = (sum(float(x["fillPrice"]) * float(x["fillSize"])
+                         for x in f) / filled) if filled else limit_price
+            if filled + LOT / 2 < contracts:
+                # PARTIAL fill: take what we got and chase the remainder
+                # rather than pretending the whole order landed.
+                print(f"    MAKER partial {filled:.1f}/{contracts:.1f} ct at "
+                      f"{price:,.1f} — chasing the remainder")
+                rest = round(contracts - filled, 1)
+                coidp = make_client_order_id(client_tag) if client_tag else None
+                oidp = private.market_order(symbol, side, rest,
+                                            reduce_only=reduce_only,
+                                            client_order_id=coidp)
+                time.sleep(1.5)
+                fp = private.fills(symbol, oidp)
+                px2 = float(fp[0]["fillPrice"]) if fp else limit_price
+                blended = (price * filled + px2 * rest) / contracts
+                return blended, False
             print(f"    MAKER filled at {price:,.1f} after {waited}s "
                   f"(fee 2 bps, no spread crossed)")
             return price, True
@@ -831,9 +861,17 @@ def decide_and_trade(private: BlofinDemoPrivate, live_feed, symbol: str):
                   "never touch their protection.")
 
         side = "sell" if current_dir > 0 else "buy"
-        print(f"  EXIT  {side} {abs(current_ride):.1f} ct — trying "
-              f"maker at {last_close:,.1f}")
-        exit_fill, was_maker = execute_maker_or_chase(
+        print(f"  EXIT  {side} {abs(current_ride):.1f} ct at market")
+        # MIGRATED 2026-07-25 off execute_maker_or_chase. THE RIDE was the
+        # last caller still on the pre-OWNER'S-LAW path, and that path has
+        # TWO live defects (see step200_maker_safety.md): it infers a fill
+        # from an order merely leaving pending_orders() — but BloFin CANCELS
+        # post-only orders that would cross, 84% of them on this account's
+        # own history, which booked a PHANTOM fill at a price that never
+        # happened — and it still clip-splits over MAX_CLIP, the exact shape
+        # that produced the 2026-07-24 XAUT orphan. execute_market_clips is
+        # one atomic order with retries and returns a REAL fill.
+        exit_fill, was_maker = execute_market_clips(
             private, demo_feed, symbol, side, abs(current_ride),
             last_close, reduce_only=True, client_tag=BOOK_TAG)
         log_event({"action": "exit", "side": side, "fill_price": exit_fill,
@@ -866,8 +904,9 @@ def decide_and_trade(private: BlofinDemoPrivate, live_feed, symbol: str):
         side = "buy" if desired_dir > 0 else "sell"
         print(f"  ENTER {side} {contracts:.1f} ct ≈ "
               f"${contracts * cv * last_close:,.0f} notional — "
-              f"trying maker at {last_close:,.1f}")
-        entry_fill, was_maker = execute_maker_or_chase(
+              f"at market")
+        # MIGRATED 2026-07-25 — see the EXIT path above for why.
+        entry_fill, was_maker = execute_market_clips(
             private, demo_feed, symbol, side, contracts, last_close,
             client_tag=BOOK_TAG)
         log_event({"action": "enter", "side": side, "fill_price": entry_fill,
