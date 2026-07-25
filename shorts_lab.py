@@ -232,6 +232,24 @@ def _book_exit(state, t, exit_price, exit_fee_bps, reason):
     return realized
 
 
+NEW_ENTRIES_ENABLED = False
+"""STOOD DOWN 2026-07-25 — NEW ENTRIES ONLY, on Wallace's instruction.
+
+He said to get rid of this one along with the newsdesk: "its deceiving, it
+doesn't work". It is also the last aggressive short bot on BTC-USDT that
+had no off switch at all, which the bitcoin.py build surfaced.
+
+The evidence agrees with him. Shorting Bitcoin has failed every honest test
+this project has run: 40 blind chart drills went 1 win 11 losses on shorts,
+25,481 mechanical break events showed structural shorts get monotonically
+worse the more significant the level, and 30 mirror tests found shorting
+breakouts loses everywhere and does worse than picking entry times at
+random. Its own live record is one trade, minus $31.34.
+
+Open positions still reconcile and exit normally below. Standing a bot
+down must never strand a live trade."""
+
+
 def run_lab(private: BlofinDemoPrivate, live_feed, demo_feed, state: dict,
            dry: bool = False):
     """One hourly (or shock-cycle) decision for the shorts lab. Returns a
@@ -451,6 +469,16 @@ def run_lab(private: BlofinDemoPrivate, live_feed, demo_feed, state: dict,
                 "est_tp": target_est, "est_sl": stop_est,
                 "max_hold_h": max_hold_h, "funding_bps": fb,
                 "atr_pct": round(atr_pct, 2)}
+
+    # STAND-DOWN GATE — see NEW_ENTRIES_ENABLED above. Placed HERE, after
+    # reconcile and every exit path, so a position held when the flag flips
+    # still closes normally rather than being stranded.
+    if not NEW_ENTRIES_ENABLED:
+        print(f"  [LAB ] {trigger} signal fired but the bot is STOOD DOWN "
+              f"(shorting Bitcoin has failed every honest test we have run)")
+        log_event({"action": "lab_stood_down", "trigger": trigger,
+                   "contracts": contracts})
+        return {"action": "stood_down", "trigger": trigger}
 
     print(f"  [LAB ] {trigger} SIGNAL — selling {contracts:.1f} ct "
           f"(~${notional:,.0f} notional at {LAB_LEV:.0f}x sleeve leverage)")

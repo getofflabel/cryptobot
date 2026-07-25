@@ -500,21 +500,49 @@ def test_g_stood_down_book_does_nothing():
     and re-priced at taker the BTC edge is -$8.15/trade. It stays off until
     a taker-viable variant exists."""
     import breakout_book as _bb
+
+    class _FlatPrivate:
+        """Reconcile now runs BEFORE the gate (so a held position still
+        closes when the flag flips), which means the bot needs a real
+        exchange reader even while stood down. Passing None here only
+        worked while the gate was an early return — the orphan bug."""
+        def net_position_contracts(self, symbol):
+            return 0.0
+        def positions(self, symbol=None):
+            return []
+        def pending_tpsl(self, symbol):
+            return []
+
+    # a real signal-producing frame, so the bot reaches the gate having
+    # decided it WANTS to trade — that is the state worth testing
+    d_long = build_series(direction=1, vol_breakout=1300.0)
+    feed = FakeFeed(d_long)
+
     prev = _bb.ENABLED
     _bb.ENABLED = False
     try:
-        out = _bb.run_breakout_book(None, None, None, {})
+        out = _bb.run_breakout_book(_FlatPrivate(), feed, feed, {})
     finally:
         _bb.ENABLED = prev
     assert out["action"] == "stood_down", out
-    # and it must not have created or touched any book state
+
+    # The right assertion is that it opened NO TRADE — not that it wrote no
+    # state. It legitimately writes state now: reconcile runs BEFORE the gate
+    # (so a position held when the flag flips still closes) and it stamps the
+    # bar as processed so it stays idempotent. The old version of this test
+    # asserted `state == {}`, which only held while the gate was an early
+    # return at the top — the exact arrangement that would strand an open
+    # position, removed 2026-07-25.
     st = {}
     _bb.ENABLED = False
     try:
-        _bb.run_breakout_book(None, None, None, st)
+        _bb.run_breakout_book(_FlatPrivate(), feed, feed, st)
     finally:
         _bb.ENABLED = prev
-    assert st == {}, f"a stood-down book must not write state: {st}"
+    assert st.get("breakout_book", {}).get("open_trade") is None, (
+        f"a stood-down bot must not open a trade: {st}")
+    assert not st.get("breakout_book", {}).get("trades"), (
+        f"a stood-down bot must not book a trade: {st}")
 
 
 def main():

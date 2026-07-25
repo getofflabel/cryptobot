@@ -497,12 +497,13 @@ ENABLED = False
 def run_breakout_book(private, live_feed, demo_feed, state: dict,
                       dry: bool = False):
     """One cycle. Returns a small summary dict, mainly for tests/smoke."""
-    if not ENABLED:
-        return {"action": "stood_down",
-                "reason": "validated on maker fills, we trade taker — "
-                          "BTC val -$8.15/trade under real execution"}
     bb = state.setdefault("breakout_book", _fresh_book())
     t = bb.get("open_trade")
+    # NOTE: the ENABLED gate is NOT here. It sits below, after reconcile and
+    # after every exit path, so a position held when the flag is flipped
+    # still closes normally. Returning here (which this file did until
+    # 2026-07-25) would orphan it — the exact shape test_stand_down_gates
+    # exists to forbid.
     tag = " DRY" if dry else ""
 
     # -- reconcile (book-aware attribution, see book_ledger.py) -----------
@@ -662,6 +663,22 @@ def run_breakout_book(private, live_feed, demo_feed, state: dict,
               f"{'LONG' if direction > 0 else 'SHORT'} breakout signal "
               f"fired but stood down — {gate_reason}")
         return {"action": "stood_down", "reason": gate_reason,
+                "direction": direction, **dec}
+
+    # STAND-DOWN GATE — see ENABLED at the top of this file. It sits HERE,
+    # after reconcile and after every exit path, so a position held when the
+    # flag is flipped still closes normally. It used to be an early return at
+    # the top of this function, which would have orphaned exactly that
+    # position (found 2026-07-25 while building bitcoin.py).
+    if not ENABLED:
+        print("  [BREAKOUT] signal fired but the bot is STOOD DOWN "
+              "(validated on limit orders, we trade market orders — "
+              "-$8.15/trade under real execution)")
+        log_event({"action": "breakout_stood_down", "direction": direction,
+                   "bar_ts": dec["bar_ts"]})
+        bb["last_bar_ts"] = dec["bar_ts"]
+        save_state(state)
+        return {"action": "stood_down", "reason": "bot_stood_down",
                 "direction": direction, **dec}
 
     # -- entry --------------------------------------------------------------

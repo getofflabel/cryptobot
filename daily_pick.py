@@ -582,6 +582,13 @@ def _btc_books_active(state: dict) -> bool:
     trade. Guard (b): the daily pick never even considers BTC while the
     snipers own it."""
     recorded = recorded_book_positions(state)
+    # EXCLUDE OURSELVES (2026-07-25). daily_pick was added to the shared
+    # registry today — it trades BTC-USDT and had never been in it, which
+    # meant every OTHER Bitcoin bot's "my own slice" reading was wrong by
+    # exactly this bot's Bitcoin size. But the guard below asks "does any
+    # OTHER bot own Bitcoin", so counting our own entry here would make this
+    # bot block itself from ever taking a Bitcoin trade again.
+    recorded.pop("daily_pick", None)
     if any(abs(v) > LOT_EPS for v in recorded.values()):
         return True
     if state.get("newsdesk", {}).get("pending"):

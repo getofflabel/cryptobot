@@ -90,7 +90,9 @@ def test_every_gate_sits_after_the_exit_logic():
     # same dead panic-dip trigger — hence this list is explicit.
     entry_points = {"diver": "run_diver", "newsdesk": "run_newsdesk",
                     "tactical": "tactical_cycle",
-                    "tactical:amp": "amplifier_cycle"}
+                    "tactical:amp": "amplifier_cycle",
+                    "shorts_lab": "run_lab",
+                    "breakout_book": "run_breakout_book"}
     for key, fn_name in entry_points.items():
         mod_name = key.split(":")[0]
         m = importlib.import_module(mod_name)

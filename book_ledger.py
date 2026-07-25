@@ -79,6 +79,7 @@ def recorded_book_positions(state: dict) -> dict:
     would silently corrupt the BTC attribution.
     """
     out = {"ride": 0.0, "tact": 0.0, "lab": 0.0, "apprentice": 0.0,
+           "daily_pick": 0.0,
            "newsdesk": 0.0, "diver": 0.0, "breakout": 0.0}
 
     ride = state.get("open_trade")
@@ -112,6 +113,17 @@ def recorded_book_positions(state: dict) -> dict:
         direction = diver.get("direction", 0) or 0
         sign = 1 if direction > 0 else (-1 if direction < 0 else 0)
         out["diver"] = sign * abs(float(diver.get("contracts", 0) or 0))
+
+    # DAILY PICK (added 2026-07-25). It trades BTC-USDT and was NEVER in
+    # this registry, so every other BTC bot's "my own slice" reading was
+    # wrong by exactly Daily Pick's BTC size whenever it held one. It is the
+    # only bot that keeps a LIST of open trades rather than a single one, and
+    # that list is multi-symbol, so we sum only the BTC-USDT rows.
+    for _t in (state.get("daily_pick", {}).get("open_trades") or []):
+        if not isinstance(_t, dict) or _t.get("symbol") != "BTC-USDT":
+            continue
+        _sign = 1.0 if float(_t.get("direction", 0) or 0) > 0 else -1.0
+        out["daily_pick"] += _sign * abs(float(_t.get("contracts", 0) or 0))
 
     breakout = state.get("breakout_book", {}).get("open_trade")
     if breakout:
