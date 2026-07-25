@@ -218,6 +218,12 @@ def test_b_slot_idempotency():
     te._fetch_1h = lambda symbol: None       # every symbol fetch-fails ->
     te._fetch_1d = lambda symbol: None       # nothing ever scores -> no_pick
     te.is_market_open = lambda symbol, now: True
+    # OIL was stood down from te.UNIVERSE on 2026-07-25 (round 110 proved
+    # the live rule set negative on oil: train -$37.10/trade, val -$54.05).
+    # These tests exercise ENGINE MECHANICS using OIL as a fixture symbol,
+    # so they patch UNIVERSE rather than depending on which instruments
+    # happen to be enabled. test_m below is the guard that oil stays out.
+    te.UNIVERSE = [te.OIL]
     _reset_call_logs()
     state = make_state()
 
@@ -262,6 +268,12 @@ def test_c_scoring_reuse_ranked_pick():
     te._fetch_1h = fake_1h
     te._fetch_1d = fake_1d
     te.is_market_open = lambda symbol, now: symbol == te.OIL   # only OIL "open"
+    # OIL was stood down from te.UNIVERSE on 2026-07-25 (round 110 proved
+    # the live rule set negative on oil: train -$37.10/trade, val -$54.05).
+    # These tests exercise ENGINE MECHANICS using OIL as a fixture symbol,
+    # so they patch UNIVERSE rather than depending on which instruments
+    # happen to be enabled. test_m below is the guard that oil stays out.
+    te.UNIVERSE = [te.OIL]
 
     rec = te._score_symbol(te.OIL)
     assert rec is not None
@@ -308,6 +320,12 @@ def test_c_scoring_reuse_ranked_pick():
 
 def test_d_paper_fill_exit_math():
     te.is_market_open = lambda symbol, now: True
+    # OIL was stood down from te.UNIVERSE on 2026-07-25 (round 110 proved
+    # the live rule set negative on oil: train -$37.10/trade, val -$54.05).
+    # These tests exercise ENGINE MECHANICS using OIL as a fixture symbol,
+    # so they patch UNIVERSE rather than depending on which instruments
+    # happen to be enabled. test_m below is the guard that oil stays out.
+    te.UNIVERSE = [te.OIL]
     _reset_call_logs()
     eng = te._fresh_engine()
     cand = {"symbol": te.OIL, "direction": "long", "conviction": 60.0,
@@ -421,6 +439,12 @@ def test_e_ledger_isolation():
 
     te._score_symbol = fake_score
     te.is_market_open = lambda symbol, now: True
+    # OIL was stood down from te.UNIVERSE on 2026-07-25 (round 110 proved
+    # the live rule set negative on oil: train -$37.10/trade, val -$54.05).
+    # These tests exercise ENGINE MECHANICS using OIL as a fixture symbol,
+    # so they patch UNIVERSE rather than depending on which instruments
+    # happen to be enabled. test_m below is the guard that oil stays out.
+    te.UNIVERSE = [te.OIL]
     te.notify = _fake_notify
     te.log_event = _fake_log_event
     te.save_state = _fake_save_state
@@ -470,6 +494,12 @@ def test_e_ledger_isolation():
 
 def test_f_calm_gate_a_only():
     te.is_market_open = lambda symbol, now: True
+    # OIL was stood down from te.UNIVERSE on 2026-07-25 (round 110 proved
+    # the live rule set negative on oil: train -$37.10/trade, val -$54.05).
+    # These tests exercise ENGINE MECHANICS using OIL as a fixture symbol,
+    # so they patch UNIVERSE rather than depending on which instruments
+    # happen to be enabled. test_m below is the guard that oil stays out.
+    te.UNIVERSE = [te.OIL]
     te.notify = _fake_notify
     te.log_event = _fake_log_event
     te.save_state = _fake_save_state
@@ -525,6 +555,12 @@ def test_f_calm_gate_a_only():
 
 def test_g_dry_mode_zero_writes():
     te.is_market_open = lambda symbol, now: True
+    # OIL was stood down from te.UNIVERSE on 2026-07-25 (round 110 proved
+    # the live rule set negative on oil: train -$37.10/trade, val -$54.05).
+    # These tests exercise ENGINE MECHANICS using OIL as a fixture symbol,
+    # so they patch UNIVERSE rather than depending on which instruments
+    # happen to be enabled. test_m below is the guard that oil stays out.
+    te.UNIVERSE = [te.OIL]
     te.notify = _fake_notify
     te.log_event = _fake_log_event
     te.save_state = _fake_save_state
@@ -604,6 +640,12 @@ def test_h_no_order_capability_in_module():
 
 def test_i_shared_pool_sizing_hand_verified():
     te.is_market_open = lambda symbol, now: True
+    # OIL was stood down from te.UNIVERSE on 2026-07-25 (round 110 proved
+    # the live rule set negative on oil: train -$37.10/trade, val -$54.05).
+    # These tests exercise ENGINE MECHANICS using OIL as a fixture symbol,
+    # so they patch UNIVERSE rather than depending on which instruments
+    # happen to be enabled. test_m below is the guard that oil stays out.
+    te.UNIVERSE = [te.OIL]
     eng = te._fresh_engine()
     cand = {"symbol": te.OIL, "direction": "long", "conviction": 60.0,
            "components": [], "atr_pct_1h": 1.0, "last_close": 1000.0}
@@ -640,6 +682,12 @@ def test_i_shared_pool_sizing_hand_verified():
 
 def test_j_paper_pnl_total_accumulation():
     te.is_market_open = lambda symbol, now: True
+    # OIL was stood down from te.UNIVERSE on 2026-07-25 (round 110 proved
+    # the live rule set negative on oil: train -$37.10/trade, val -$54.05).
+    # These tests exercise ENGINE MECHANICS using OIL as a fixture symbol,
+    # so they patch UNIVERSE rather than depending on which instruments
+    # happen to be enabled. test_m below is the guard that oil stays out.
+    te.UNIVERSE = [te.OIL]
     eng = te._fresh_engine()
     state = {"virtual_equity": 5000.0}
     now0 = datetime(2026, 7, 27, 10, 0, tzinfo=timezone.utc)
@@ -745,6 +793,12 @@ def test_l_never_writes_virtual_equity():
     # virtual_equity byte-identical (mirrors test_j, re-asserted here under
     # this test's own name so it stands alone as "the hard test")
     te.is_market_open = lambda symbol, now: True
+    # OIL was stood down from te.UNIVERSE on 2026-07-25 (round 110 proved
+    # the live rule set negative on oil: train -$37.10/trade, val -$54.05).
+    # These tests exercise ENGINE MECHANICS using OIL as a fixture symbol,
+    # so they patch UNIVERSE rather than depending on which instruments
+    # happen to be enabled. test_m below is the guard that oil stays out.
+    te.UNIVERSE = [te.OIL]
     eng = te._fresh_engine()
     state = {"virtual_equity": 42_000.0}
     now0 = datetime(2026, 7, 27, 10, 0, tzinfo=timezone.utc)

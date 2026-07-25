@@ -1219,3 +1219,52 @@ an artifact of a 2020-2026 sample that trended up, and that distinction
 matters before it becomes doctrine. What it justifies today: stop
 spending rounds hunting BTC short setups, and treat every future short
 candidate as guilty until it clears a bear-regime-only test.
+
+## ROUND 110 — the live oil book was never validated. STOOD DOWN. (2026-07-25)
+
+First finding from the new per-market desk (oil-trader, under morgan).
+
+**What was actually running:** daemon -> tradfi_engine, a paper book on
+CL=F. Its entry/exit logic was `daily_pick.score_instrument` — the CRYPTO
+learning engine's scorer — imported unchanged, plus `_stop_target_pct`
+(stop = 1.0x ATR capped at a flat 1.0%), CONVICTION_FLOOR 40, 6h cooldown.
+**Every threshold in it was tuned on BTC/ETH/SOL and none was re-derived
+for oil.**
+
+**How it got there:** R78 tested the rules live that MORNING (gold's
+donchian, the S&P's RSI2 dip) and both FAILED on oil. tradfi_engine.py was
+written LATER THE SAME DAY with a different rule set, and that swap was
+never re-gauntleted. No mention of it being backtested on oil exists
+anywhere in this log or MARKET_PLAYBOOKS.md.
+
+**The replay** (walk-forward of the EXACT live decision loop, every
+function imported not reimplemented, CL=F 2024-03 to 2026-07, 1,888
+trades, 60/20/20 with the sealed 378 untouched, taker 10bps round trip):
+
+| split | n | expectancy | vs 500-resample random-timing control |
+|---|---|---|---|
+| train | 1,132 | **-$37.10/trade** | 81st pctile |
+| val | 378 | **-$54.05/trade** | **8th pctile** |
+
+Negative on both. Thickness -0.96x and -1.47x round-trip cost — below the
+5x bar by being NEGATIVE, not merely thin. Train-good/val-worse-than-noise
+is the textbook signature of an in-sample-only fit.
+
+**Structural violation independent of P&L:** 19% of its trades had the
+stop set by the flat 1.0% cap inherited from crypto rather than by oil's
+own ATR. A swept percentage on oil by construction — precisely what the
+owner ruled out ("the stop loss is supposed to be based on the chart").
+
+**The +$58.39 that has been sitting on our scoreboard as the only real
+winner is n=1 under this rule set.** Confirmed luck, not skill.
+
+**ACTION: oil removed from tradfi_engine's UNIVERSE.** Exits reconcile
+from open trades independently of UNIVERSE, so the one open CL=F position
+still closes normally on its own stop/target — standing an instrument down
+must never orphan a live position, and `test_m_oil_is_stood_down` asserts
+both that oil stays out AND that the exit path is not gated on membership.
+
+**THE S&P LEG OF THE SAME ENGINE RESTS ON THE SAME UNVALIDATED BASIS** —
+same crypto scorer, same crypto constants, never tested on SPY. It remains
+only because it has not yet been DISPROVEN. spx-trader is testing it as
+priority one; if it fails the same way, the engine stops entirely.

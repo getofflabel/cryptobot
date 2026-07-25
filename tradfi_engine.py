@@ -147,7 +147,39 @@ OIL = "CL=F"
 SPX = "SPY"
 # gold trades REAL demo orders on XAUT-USDT via the crypto engine (owner,
 # 2026-07-24) — it left this paper universe the same day it briefly joined.
-UNIVERSE = [OIL, SPX]
+#
+# OIL STOOD DOWN 2026-07-25 (round 110, oil-trader). Do not re-add without
+# a fresh gauntlet. The evidence:
+#   - What ran here was daily_pick's crypto scorer (score_instrument +
+#     _stop_target_pct + CONVICTION_FLOOR 40) imported unchanged. EVERY
+#     threshold in it was tuned on BTC/ETH/SOL. None was ever re-derived
+#     for oil, and this repo's oldest rule is that constants never port.
+#   - Round 78 tested the rules that were live that MORNING (gold's
+#     donchian, the S&P's RSI2 dip) and both FAILED on oil. This engine was
+#     written LATER THE SAME DAY with a different rule set, and that swap
+#     was never re-tested. Nothing in RESEARCH_LOG.md or
+#     MARKET_PLAYBOOKS.md ever gauntleted it.
+#   - Walk-forward replay of the EXACT live decision loop on CL=F's full
+#     history (1,888 trades, 2024-03 to 2026-07, functions imported not
+#     reimplemented, 60/20/20 with the sealed 378 untouched), priced at
+#     taker (10bps round trip): train -$37.10/trade, val -$54.05/trade.
+#     Negative on both.
+#   - Against a 500-resample randomized-timing control it sits at the 81st
+#     percentile in train and the 8th in val — worse than noise
+#     out-of-sample. That gap IS the signature of an in-sample-only fit.
+#   - Structural violation independent of P&L: 19% of its trades had their
+#     stop set by a flat 1.0% cap inherited from crypto rather than by
+#     oil's own ATR. A swept percentage on oil by construction, which is
+#     exactly what the owner ruled out ("the stop loss is supposed to be
+#     based on the chart").
+#   - The single live winner, +$58.39, is n=1 under this rule set.
+#     Confirmed luck on the scoreboard, not skill.
+#
+# THE S&P LEG BELOW IS THE SAME UNVALIDATED BASIS and is only still here
+# because it has not yet been DISPROVEN — spx-trader has been told to test
+# it as priority one. If it fails the same way, remove it too and this
+# engine stops entirely.
+UNIVERSE = [SPX]
 NICE_NAMES = {OIL: "oil", SPX: "the S&P 500"}
 FUTURES = {OIL}                # 2bp/leg fee tier; SPX (SPY) is 1bp/leg
 
