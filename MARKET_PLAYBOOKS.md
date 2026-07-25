@@ -14,11 +14,9 @@ no vibes.
   at higher-low/RSI-lower-low inside trend — sealed +$52/t through the
   drought, ~18/yr, the toolkit's first sealed graduate), 4h trend w/ STRICT 1.5% vol gate (the gate's
   selectivity IS the edge in grinds — R54 sealed proof), 1h RSI3 dip-buys
-  in uptrends (needs 48h room — same-day exits kill it, R43; and since
-  R83 the CHART READ vetoes any dip-buy firing into "messy" tape — that
-  one gate took the live washout trigger from -$6.42/t to +$24.87/t on
-  BTC and $9.78 -> $54.26/t on ETH, 98th pctile vs random skipping on
-  both), news
+  in uptrends (needs 48h room — same-day exits kill it, R43; R83 added a
+  chart-read veto here and R88 REMOVED it again — it did not survive a
+  third asset, see below), news
   momentum (first-hour direction, sealed PASS), sparse volume-shock
   continuation (R50 two-window, sealed look pending).
 - What dies here: order blocks (0/64), pin bars/engulfing/inside-bars
@@ -28,14 +26,20 @@ no vibes.
   kind, same-day dip exits, momentum bursts/session breakouts in grinds.
 - Dials: 1h stops ~1.2-1.7% work; funding matters (8h cadence, extremes
   = crowd signal); maker/taker 2/6bps.
-- WHERE THE CHART READ HELPS (R83, tested on 6 live strategies x 2 assets
-  vs a 200-draw random-skip control): add the eye where the strategy does
-  NOT already have eyes of its own. A bare oscillator threshold (RSI3
-  washout) gains a lot; CHoCH, hidden divergence and the vol-gated trend
-  champion gain NOTHING and get actively WORSE than random skipping,
-  because they already gate on structure/trend/volatility themselves —
-  and "messy" often marks the compression right before a breakout's
-  biggest winners, so vetoing chop there cuts winners, not losers.
+- THE CHART READ IS NOT A FILTER YOU CAN BOLT ON (R83 then R88, the full
+  arc). R83 tested the eye as a veto on 6 live strategies x 2 assets and
+  found it helped only where the strategy had no structural context of
+  its own (the bare RSI3 washout), while being actively WORSE than random
+  on strategies that already gate on trend/structure/volatility — "messy"
+  often marks the compression right before a breakout's biggest winners.
+  That much still stands. But the ONE positive cell did not survive R88:
+  on 3 fresh assets only XRP passed, SOL (which we trade) showed no
+  information content, DOGE was harmful. Across 122 cells the eye cleared
+  the 90th percentile 28 times (12 expected by luck) AND landed at or
+  below the 10th 45 times (12 expected). **Real information, double-edged,
+  direction unpredictable per symbol.** Standing rule from this: two
+  assets agreeing is a hypothesis, not evidence. Test a third and fourth
+  before anything goes live.
 
 ## GOLD (XAUT-USDT live / GLD+GC=F research)
 - Personality: session creature (London 08:00, NY 13:30 UTC), secular

@@ -358,16 +358,7 @@ def test_a_scoring_components():
     r3 = float(_rsi_check(pd.Series(closes_1h3), 3).iloc[-1])
     assert r3 < 10, f"fixture precondition failed: r3={r3}"
 
-    # This block tests the washout SCORING MATH, so the eye's veto (round
-    # 83, wired below the trigger) is held open for it — the fixture is a
-    # deliberate 90%-in-10-bars collapse, which the real reader rightly
-    # calls "messy". test_q below exercises the veto itself, unpatched.
-    _real_read = dp.chart_reader.read_chart
-    dp.chart_reader.read_chart = lambda *a, **k: {"quality": "clean"}
-    try:
-        sc3 = dp.score_instrument(c1h3, c1d3, funding_bps=None)
-    finally:
-        dp.chart_reader.read_chart = _real_read
+    sc3 = dp.score_instrument(c1h3, c1d3, funding_bps=None)
     assert sc3["long_score"] == 25.0, sc3    # 20 washout + 5 align bonus
     assert sc3["short_score"] == 8.0, sc3    # 8 momentum_4h
     assert sc3["direction"] == "long", sc3
@@ -1274,78 +1265,44 @@ def test_p_recap_missed_trade_lines():
 
 
 # ===========================================================================
-# (q) the eye's one sanctioned veto: washout must NOT vote when the real
-#     chart reader calls the tape messy — and must still vote when it
-#     doesn't. Round 83 earned this gate on washout ALONE, so this test
-#     also pins that no OTHER trigger got quietly gated on the eye.
+# (q) REGRESSION GUARD: washout must NOT be gated on the chart reader.
+#     Round 83 shipped exactly that gate; round 88 attacked it and it did
+#     not hold (only 1 of 3 new assets passed, SOL — a symbol this book
+#     trades — showed no information content, and across 122 cells the eye
+#     was actively harmful nearly as often as it helped). This test exists
+#     so the gate cannot quietly come back without someone redoing the work.
 # ===========================================================================
 
-def test_q_eye_vetoes_messy_washout():
+def test_q_washout_is_not_eye_gated():
     c1d = _flat_1d(35, 100.0)
     ramp1d = _mk([105 + 5 * i for i in range(20)], freq="1d",
                 start=c1d["timestamp"].iloc[-1] + pd.Timedelta(days=1))
     c1d = pd.concat([c1d, ramp1d], ignore_index=True)
 
-    # the same deep-washout-plus-turn-candle fixture test_a uses: RSI3 < 10,
-    # 1d uptrend, green turn bar -> washout's own conditions are all met.
+    # deep washout + turn candle: RSI3 < 10, 1d uptrend, green turn bar.
+    # The real chart reader calls this collapse "messy" (asserted below), so
+    # if any eye gate were wired in, washout would go silent here.
     closes = [100] * 10 + [90, 80, 70, 60, 50, 40, 30, 20, 10, 10.5]
     c1h = _mk(closes, freq="1h", volumes=[1000.0] * 20)
     c1h.loc[c1h.index[-1], "open"] = 10.0
 
-    # 1. the REAL reader, unpatched, reads this collapse as messy -> vetoed.
-    assert dp.chart_reader.read_chart(c1h)["quality"] == "messy", \
-        "fixture precondition: the real eye must call this tape messy"
+    import chart_reader as CR
+    assert CR.read_chart(c1h)["quality"] == "messy", \
+        "fixture precondition: the real eye must call this tape messy, " \
+        "otherwise this test cannot detect a re-added gate"
+
     sc = dp.score_instrument(c1h, c1d, funding_bps=None)
     names = {c["name"] for c in sc["components"]}
-    assert "washout" not in names, sc
-    assert "washout_vetoed_messy" in names, sc
-    assert sc["long_score"] == 0.0, sc     # the +20 washout vote is gone
+    assert "washout" in names, \
+        f"washout must fire on its own rule regardless of the chart read: {sc}"
+    assert sc["long_score"] == 25.0, sc      # 20 washout + 5 align bonus
+    assert not any("veto" in n or "eye" in n for n in names), \
+        f"no eye-gate component may appear in the score: {names}"
 
-    # 2. same candles, eye reads clean -> washout votes exactly as before.
-    _real = dp.chart_reader.read_chart
-    dp.chart_reader.read_chart = lambda *a, **k: {"quality": "clean"}
-    try:
-        sc_clean = dp.score_instrument(c1h, c1d, funding_bps=None)
-    finally:
-        dp.chart_reader.read_chart = _real
-    assert "washout" in {c["name"] for c in sc_clean["components"]}, sc_clean
-    assert sc_clean["long_score"] == 25.0, sc_clean
-
-    # 3. a broken eye must FAIL OPEN — never silently kill a live trigger.
-    def _boom(*a, **k):
-        raise RuntimeError("reader exploded")
-    dp.chart_reader.read_chart = _boom
-    try:
-        sc_err = dp.score_instrument(c1h, c1d, funding_bps=None)
-    finally:
-        dp.chart_reader.read_chart = _real
-    names_err = {c["name"] for c in sc_err["components"]}
-    assert "washout" in names_err, sc_err
-    assert "washout_eye_unavailable" in names_err, sc_err
-    assert sc_err["long_score"] == 25.0, sc_err
-
-    # 4. NO other trigger is gated on the eye (round 83 found the veto
-    #    harmful on three other strategies). With the reader forced messy,
-    #    breakout / funding / volume_shock must all still fire normally.
-    dp.chart_reader.read_chart = lambda *a, **k: {"quality": "messy"}
-    try:
-        c1d_bo = _flat_1d(55, 100.0)
-        spike = _mk([130.0], freq="1d",
-                   start=c1d_bo["timestamp"].iloc[-1] + pd.Timedelta(days=1))
-        c1d_bo = pd.concat([c1d_bo, spike], ignore_index=True)
-        sc_bo = dp.score_instrument(_flat_1h(3, 50.0), c1d_bo, funding_bps=None)
-        assert "breakout" in {c["name"] for c in sc_bo["components"]}, sc_bo
-
-        c1d_flat, c1h_flat = _flat_1d(55, 100.0), _flat_1h(3, 50.0)
-        sc_fund = dp.score_instrument(c1h_flat, c1d_flat, funding_bps=2.5)
-        assert "funding" in {c["name"] for c in sc_fund["components"]}, sc_fund
-
-        closes_v = [100.0, 100.1] * 24 + [100.0, 106.0]
-        c1h_v = _mk(closes_v, volumes=[100.0] * 49 + [1000.0], freq="1h")
-        sc_v = dp.score_instrument(c1h_v, c1d_flat, funding_bps=None)
-        assert "volume_shock" in {c["name"] for c in sc_v["components"]}, sc_v
-    finally:
-        dp.chart_reader.read_chart = _real
+    # daily_pick must not even import the chart reader on the live path —
+    # it pulls matplotlib's module tree in and buys nothing (round 88).
+    assert not hasattr(dp, "chart_reader"), \
+        "daily_pick should not import chart_reader; the eye gate was removed"
 
 
 # ---------------------------------------------------------------------------
@@ -1370,7 +1327,7 @@ def main():
         test_n_scored_never_rescored,
         test_o_passed_log_rolling_cap,
         test_p_recap_missed_trade_lines,
-        test_q_eye_vetoes_messy_washout,
+        test_q_washout_is_not_eye_gated,
     ]
     results = []
     for fn in tests:

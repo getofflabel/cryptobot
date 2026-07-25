@@ -41,14 +41,20 @@ HARD SAFETY
   validation round proves these reads actually improve outcomes. This
   module only perceives; store_read() exists to build that evidence.
 
-  ONE EXCEPTION, EARNED (round 83, 2026-07-24): daily_pick's washout
-  trigger calls read_chart() live and drops the vote when quality reads
-  "messy". That single use is exempt because the evidence exists — the
-  veto beat 200 random skips of equal size at the 98th percentile on BOTH
-  BTC and ETH. Round 83 tested the same veto on five other live
-  strategies and it failed on all five (actively harmful on three), so
-  the exemption is deliberately one trigger wide. Any further live use
-  needs its own round.
+  NO EXCEPTIONS CURRENTLY. One was granted on 2026-07-24 (round 83:
+  daily_pick's washout trigger dropped its vote on a "messy" read, having
+  beaten a random-skip control at the 98th percentile on BTC and ETH) and
+  REVOKED the same night by round 88, which attacked it properly:
+    - on 3 assets it had never been selected on, only XRP passed; SOL
+      showed no information content and DOGE was worse than useless. SOL
+      is a symbol daily_pick actually trades.
+    - across 122 cells, 28 cleared the 90th percentile where ~12 are
+      expected by chance, but 45 landed at or BELOW the 10th where ~12 are
+      expected. The read carries real information and is double-edged; we
+      cannot tell in advance which edge a given symbol gets.
+  Two winning cells out of 36 was always inside what luck produces. The
+  lesson for the next exception: two assets agreeing is not evidence, it
+  is a hypothesis. Test a third and a fourth before shipping.
 
 This file is self-contained on purpose (no import from chart_eyes.py, its
 sibling) except for ONE deliberate reuse: swing/pivot detection uses the

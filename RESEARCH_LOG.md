@@ -941,3 +941,54 @@ live on the exchange" rule without changing what was validated.
    multi-day holds. This validated edge is a multi-hour-to-multi-day
    system. That tension is real and is his call, not mine to quietly
    average away.
+
+## ROUND 88 — the veto we shipped tonight does NOT hold. Reverted. (2026-07-24)
+
+R83's one shipped conclusion, attacked deliberately. The live change had
+rested on 2 cells out of 36 clearing the 98th percentile — and with 36
+cells, ~0.7 are EXPECTED to clear it by luck. The only real argument was
+"two different assets agree." R88 tested whether that survives contact
+with a third. It did not.
+
+**Attack 1, a third asset (the cleanest test):**
+
+| Asset | before | after messy-veto | control pctile |
+|---|---|---|---|
+| SOL | -$47.13/t (27) | -$35.35/t (9) | **68.0% — no signal** |
+| XRP | $6.39/t (30) | $29.25/t (19) | 92.0% — passes |
+| DOGE | -$25.18/t (21) | **-$38.33/t** (7) | **36.0% — the kept set got WORSE** |
+
+1 of 3. And **SOL is a symbol daily_pick actually trades** (UNIVERSE =
+BTC, ETH, SOL, XAUT). We had shipped a filter onto SOL with no evidence
+and onto XAUT with none at all.
+
+**Attack 2, the parameter neighbourhood:** genuinely not a knife-edge —
+with the turn-candle guard on, BTC clears the 90th at 10 of 11 nearby
+configs, a real plateau. But the plateau is entirely conditional on the
+guard (guard off flips 70% of cells actively harmful) and does NOT
+reproduce on the new assets: the exact live config lands 65.5th on SOL
+and 39.5th on DOGE.
+
+**Attack 3, time-split:** BTC and ETH both hold across chronological
+halves (87th-96.5th). Real for those two. But that was never the open
+question.
+
+**The number that decided it:** across 122 scored cells, 28 cleared the
+90th percentile where ~12 are expected by chance — but **45 landed at or
+below the 10th where ~12 are expected.** The eye's read carries real
+information and it is DOUBLE-EDGED, and we cannot predict in advance
+which edge a given symbol gets. That makes it undeployable as a blanket
+filter no matter how good the best cell looks.
+
+**ACTION TAKEN: the veto is out of daily_pick.** Washout trades its own
+rule again (oversold + daily trend + turn candle). `test_q` was rewritten
+from "the veto works" into a REGRESSION GUARD that fails if any eye gate
+is re-added. chart_reader's ADVISORY_ONLY exception was revoked.
+
+**STANDING RULE EARNED HERE: two assets agreeing is a hypothesis, not
+evidence. Test a third and a fourth before anything ships.** R83 was not
+sloppy about its method — the random control, the causality, the
+partitioning were all sound. It was sloppy about MULTIPLE COMPARISONS:
+36 cells were run and the 2 best were treated as a finding. Every future
+round that sweeps many cells must state its expected-by-chance baseline
+in the same breath as its winners.
