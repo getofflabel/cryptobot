@@ -110,13 +110,46 @@ _SB_SECRET = _cloud.get("CRYPTOBOT_STATE_SECRET", "")
 CLOUD_STATE = bool(_SB_URL and _SB_KEY and _SB_SECRET)
 
 
+def _json_safe(obj):
+    """Replace NaN / Infinity with None, recursively.
+
+    THE ACTUAL CAUSE of the 2026-07-25 "book-keeping save FAILED" alerts.
+    JSON has no way to represent NaN, so a SINGLE nan anywhere in the state
+    makes `requests`' json= encoder raise before a byte leaves the machine —
+    no timeout, no retry helps, all 3 attempts fail identically. It came
+    from live_read's market data (a yfinance gap or a rolling stat with an
+    incomplete window serialises as nan), and it took the POSITION BOOKS
+    down with it because they share one blob.
+
+    Sanitising at the write boundary fixes it for every writer at once and
+    for every future nan, rather than chasing them one computation at a
+    time. None is the honest representation: the panel already renders a
+    missing value as blank, and nan was never a real number anyway.
+    """
+    import math
+    if isinstance(obj, float):
+        return None if (math.isnan(obj) or math.isinf(obj)) else obj
+    if isinstance(obj, dict):
+        return {k: _json_safe(v) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple)):
+        return [_json_safe(v) for v in obj]
+    # numpy scalars (pandas hands these back constantly) — .item() to a
+    # python float, then the same nan check applies
+    if hasattr(obj, "item") and hasattr(obj, "dtype"):
+        try:
+            return _json_safe(obj.item())
+        except Exception:
+            return None
+    return obj
+
+
 def _sb_rpc(fn: str, payload: dict):
     import requests as _rq
     r = _rq.post(f"{_SB_URL}/rest/v1/rpc/{fn}",
                  headers={"apikey": _SB_KEY,
                           "Authorization": f"Bearer {_SB_KEY}",
                           "Content-Type": "application/json"},
-                 json=payload, timeout=20)
+                 json=_json_safe(payload), timeout=20)
     r.raise_for_status()
     return r.json() if r.text else None
 

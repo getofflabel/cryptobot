@@ -116,6 +116,43 @@
   .scoreboard { margin-bottom: 22px; }
   .scoreboard-head { margin-bottom: 10px; }
 
+  /* ---- By-book scoreboard — separates every closed-trade action out by
+     strategy so a pooled combined number can never hide which book earns
+     and which bleeds. Reuses .paper-chart-card/.paper-positions-table/
+     .paper-pos-cell-pnl (same table look as the paper desk positions
+     table below), just its own wrapper + a couple of row-level tweaks. */
+  .book-scoreboard-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--r-lg);
+    padding: 16px 18px 14px;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  .book-scoreboard-row-highlight { background: rgba(77,141,255,0.06); }
+  .book-scoreboard-badge {
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #bcd4ff;
+    background: var(--accent-soft);
+    border-radius: 5px;
+    padding: 2px 6px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .book-scoreboard-empty-cell {
+    color: var(--text-3);
+    font-style: italic;
+  }
+  .book-scoreboard-note {
+    font-size: 11px;
+    color: var(--text-3);
+    margin-top: 10px;
+    line-height: 1.5;
+  }
+
   .stat-card {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
@@ -994,6 +1031,37 @@
     </div>
   </div>
 
+  <!-- Per-book scoreboard — every closed event grouped by which strategy
+       actually earned or lost it, computed client-side from the same
+       data.events the two scoreboards above already pulled off
+       cryptobot_pnl_sheet. No window filter (1D/7D/30D…) applied here on
+       purpose: this reads the raw event feed as-is so it can never
+       silently disagree with a total computed a different way. See
+       computeBookScoreboard()/renderBookScoreboard() below. -->
+  <div class="scoreboard" id="book-scoreboard-section">
+    <div class="scoreboard-head">
+      <div class="paper-title">By book</div>
+      <div class="paper-title-sub">every closed trade, grouped by strategy, so a bleeding book can't hide inside the combined number</div>
+    </div>
+    <div class="book-scoreboard-card">
+      <div class="paper-positions-scroll">
+        <table class="paper-positions-table">
+          <thead>
+            <tr>
+              <th>Book</th>
+              <th>Trades</th>
+              <th>W-L</th>
+              <th>Net</th>
+              <th>$ / trade</th>
+            </tr>
+          </thead>
+          <tbody id="book-scoreboard-body"></tbody>
+        </table>
+      </div>
+      <div class="book-scoreboard-note">These numbers are noisy until a book has around 50 trades. On the sealed test data a single trade swings about $201 while the average edge is only about $7, so one small negative row here does not mean a strategy is broken.</div>
+    </div>
+  </div>
+
   <div class="controls-row">
     <div class="tabs" id="window-tabs"></div>
     <div class="view-toggle">
@@ -1104,6 +1172,66 @@
     'TradFi Engine · S&P 500': '\u{1F4C8}',
     'S&P Dip-Buy': '\u{1F4C8}'
   };
+
+  // ---- By-book scoreboard — a SEPARATE, deliberately simpler grouping
+  // from BOOKS/PAPER_BOOK_NAMES above. Those key off the `book` field the
+  // pairing logic (buildTrades) already resolved to a display name; this
+  // one keys directly off the raw `action` string on every event that
+  // carries a non-null pnl, because that's the one field every closed
+  // trade — including a brand-new book that hasn't been wired into BOOKS
+  // yet — is guaranteed to have. "owner, 2026-07-25: nothing means
+  // anything... until you are placing live demo trades that show me you
+  // were able to profit on it" — the Breakout Book just went live
+  // sealed-tested and its record needs to be watchable on its own, so it
+  // is named here even though (at the time this shipped) no
+  // breakout_exit event has ever been seen. Any action NOT in this map
+  // still shows up (using the raw action string) rather than being
+  // silently dropped — see computeBookScoreboard().
+  var BOOK_SCOREBOARD_MAP = {
+    breakout_exit: 'Breakout Book',
+    pick_exit: 'Learning Engine',
+    news_exit: 'Newsdesk',
+    news_book_exit: 'Newsdesk',
+    lab_exit: 'Shorts Lab',
+    diver_exit: 'The Diver',
+    gold_exit: 'Gold Book',
+    tact_exit: 'The Strikes',
+    amp_exit: 'Amp (pipeline test)',
+    exit: 'The Ride',
+    spx_book_exit: 'S&P Book',
+    tradfi_exit: 'TradFi paper'
+  };
+  var BREAKOUT_BOOK_NAME = 'Breakout Book';
+  var BREAKOUT_LIVE_SINCE_LABEL = 'live since 2026-07-25';
+
+  // Groups every event with a non-null pnl by its mapped book name (raw
+  // action string if unmapped — see comment above), sorted net-descending.
+  // The Breakout Book row is always present, even at zero trades, so its
+  // record is visible from the very first trade it ever logs.
+  function computeBookScoreboard(events) {
+    var order = [];
+    var groups = {};
+    (events || []).forEach(function (ev) {
+      if (!ev || ev.pnl == null || isNaN(ev.pnl)) return;
+      var action = ev.action || '';
+      var name = BOOK_SCOREBOARD_MAP.hasOwnProperty(action) ? BOOK_SCOREBOARD_MAP[action] : action;
+      if (!groups[name]) {
+        groups[name] = { name: name, trades: 0, wins: 0, losses: 0, net: 0 };
+        order.push(name);
+      }
+      var g = groups[name];
+      g.trades += 1;
+      g.net += ev.pnl;
+      if (ev.pnl > 0) g.wins += 1; else g.losses += 1;
+    });
+    if (!groups[BREAKOUT_BOOK_NAME]) {
+      groups[BREAKOUT_BOOK_NAME] = { name: BREAKOUT_BOOK_NAME, trades: 0, wins: 0, losses: 0, net: 0 };
+      order.push(BREAKOUT_BOOK_NAME);
+    }
+    var rows = order.map(function (name) { return groups[name]; });
+    rows.sort(function (a, b) { return b.net - a.net; });
+    return rows;
+  }
 
   var WINDOWS = [
     { id: '1D', label: '1D', days: 1 },
@@ -1487,6 +1615,7 @@
 
   function render() {
     renderHeaderStats();
+    renderBookScoreboard();
     renderGrid();
     renderDrawer();
   }
@@ -1546,6 +1675,38 @@
       ? (ps.count + ' trade' + (ps.count === 1 ? '' : 's') + ' · ' + fmtPct(ps.winRate) + ' win rate')
       : 'No closed trades in this window';
     drawSparkline(paperClosed, els.sparklinePaper);
+  }
+
+  // Per-book scoreboard — reads state.raw.events directly (NOT the
+  // window-filtered/paired state.trades) so it can never disagree with a
+  // total computed a different way: every row's net is a straight sum of
+  // that book's own events, and the sum of every row's net equals the sum
+  // of every event's pnl, by construction. See computeBookScoreboard().
+  function renderBookScoreboard() {
+    if (!state.raw) return;
+    var rows = computeBookScoreboard(state.raw.events || []);
+    var html = '';
+    rows.forEach(function (row) {
+      var isBreakout = row.name === BREAKOUT_BOOK_NAME;
+      var rowCls = isBreakout ? ' class="book-scoreboard-row-highlight"' : '';
+      var nameCell = escapeHtml(row.name) + (isBreakout ? ' <span class="book-scoreboard-badge">New</span>' : '');
+      if (row.trades === 0) {
+        html += '<tr' + rowCls + '>' +
+          '<td>' + nameCell + '</td>' +
+          '<td colspan="4" class="book-scoreboard-empty-cell">0 trades · ' + BREAKOUT_LIVE_SINCE_LABEL + '</td>' +
+        '</tr>';
+        return;
+      }
+      var perTrade = row.net / row.trades;
+      html += '<tr' + rowCls + '>' +
+        '<td>' + nameCell + '</td>' +
+        '<td>' + row.trades + '</td>' +
+        '<td>' + row.wins + '-' + row.losses + '</td>' +
+        '<td class="paper-pos-cell-pnl tabular ' + pnlClass(row.net) + '">' + fmtMoney(row.net) + '</td>' +
+        '<td class="paper-pos-cell-pnl tabular ' + pnlClass(perTrade) + '">' + fmtMoney(perTrade) + '</td>' +
+      '</tr>';
+    });
+    els.bookScoreboardBody.innerHTML = html;
   }
 
   function drawSparkline(trades, canvas) {
@@ -2304,6 +2465,7 @@
     els.paperPnl = $('#paper-pnl');
     els.paperPnlSub = $('#paper-pnl-sub');
     els.sparklinePaper = $('#sparkline-paper');
+    els.bookScoreboardBody = $('#book-scoreboard-body');
     els.updatedAgo = $('#updated-ago');
     els.liveDot = $('#live-dot');
     els.windowTabs = $('#window-tabs');
