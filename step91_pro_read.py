@@ -7,7 +7,7 @@ Research only -- no commits, no live orders, no live-file edits. Writes
 step91_pro_read.py (this file), step91_results.md, step91_table.csv.
 
 THE SOURCE
-The owner follows a market analyst ("Prof Adam" on The Real World). His
+The owner follows a market analyst ("Prof Michael" on The Real World). His
 Friday end-of-day review was fact-checked claim-by-claim against real
 market data -- every checkable descriptive claim was accurate (the SPY
 squeeze-to-744-then-reversal, QQQ new lows into the close, BTC's 3 red
@@ -462,7 +462,7 @@ def write_results_md(df, eth_df, basis_compare, btc, eth):
     lines = []
     lines.append("# ROUND 91 -- backtesting a working pro's actual read\n")
     lines.append(
-        "Source: the owner's followed analyst (\"Prof Adam\", The Real World), "
+        "Source: the owner's followed analyst (\"Prof Michael\", The Real World), "
         "Friday end-of-day review. Every checkable descriptive claim in that "
         "review verified against real market data (SPY squeeze-to-744-then-"
         "reversal, QQQ new lows into the close, BTC's 3 red closes / close "

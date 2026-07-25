@@ -1,6 +1,6 @@
 # ROUND 91 -- backtesting a working pro's actual read
 
-Source: the owner's followed analyst ("Prof Adam", The Real World), Friday end-of-day review. Every checkable descriptive claim in that review verified against real market data (SPY squeeze-to-744-then-reversal, QQQ new lows into the close, BTC's 3 red closes / close below 65K / retrace to Monday's low, oil and dollar reads). This round formalizes his STATED reasoning pattern into a mechanical, no-lookahead rule and tests whether it is profitable after costs -- descriptive accuracy and predictive edge are different skills, and this tests the second one.
+Source: the owner's followed analyst ("Prof Michael", The Real World), Friday end-of-day review. Every checkable descriptive claim in that review verified against real market data (SPY squeeze-to-744-then-reversal, QQQ new lows into the close, BTC's 3 red closes / close below 65K / retrace to Monday's low, oil and dollar reads). This round formalizes his STATED reasoning pattern into a mechanical, no-lookahead rule and tests whether it is profitable after costs -- descriptive accuracy and predictive edge are different skills, and this tests the second one.
 
 ## Mechanical rule tested
 
