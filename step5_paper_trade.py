@@ -717,6 +717,52 @@ def _execute_single(private: BlofinDemoPrivate, demo_feed, symbol: str,
     return (float(f2[0]["fillPrice"]) if f2 else limit_price, False)
 
 
+RIDE_NEW_ENTRIES_ENABLED = False
+"""STOOD DOWN 2026-07-25 pending a clean re-test. Round 400.
+
+This was the desk's last surviving live edge. Its 1.5% minimum-volatility
+condition does not survive an honest measurement, and the reason is the
+worst version of a problem found the same night on oil.
+
+Our backtester holds one position at a time. Testing a filter by running
+"with it" against "without it" does not isolate the filter, because
+filtering an entry out FREES THE SLOT and lets a different, later trade
+happen. Here it is worse still: this condition sits inside the signal's own
+state machine, so it does not skip a trade, it DELAYS one. Measured, 30% of
+the gated run's first-window trades and 57% of its middle-window trades
+entered on a bar the ungated run could never have entered on, because it
+was already holding.
+
+Three independent clean tests, all agreeing:
+  - one crossover population split by entry condition: quiet entries
+    +$289.38 per trade, lively entries +$31.92, at the 7.4th percentile of
+    2,000 label shuffles
+  - the same 59 trend legs, matched pairs: entering at the crossover
+    +$181.61 per leg, waiting for lively +$45.27. The condition was the
+    better choice on 5 of 59 legs, 1.1st percentile of 2,000 sign flips
+  - the 21 legs where it actually acted: it cost $383.05 each, median wait
+    40 hours, 1.6th percentile
+
+It does avoid one genuinely losing subset (14 legs that never turned
+lively, worth +$1,350) and the delay costs -$8,044. Net -$6,694, which is
+71% of the ungated system's money. Negative in 2020, 2021, 2022, 2023 and
+2025; positive only in 2024, where a single trade carries the year.
+
+Round 150's published +$17.15 / +$99.37 reproduced to the penny before any
+of this ran, so the harness is verified.
+
+WHAT THIS DOES NOT SAY: the underlying trend rule is not condemned — ungated
+is BETTER on the same legs. But ungated has never been tested as its own
+thing with a structural stop at market-order costs, so switching the
+condition off would be deploying an untested variant. Re-test first.
+
+Honest limit: round 54's sealed evidence for this condition sits inside the
+final untouched slice and could not be re-measured without spending that
+look. Round 54 did use the contaminated comparison shape.
+
+Open positions still reconcile and exit normally below."""
+
+
 def decide_and_trade(private: BlofinDemoPrivate, live_feed, symbol: str):
     """One full decision cycle. Returns a summary dict.
 
@@ -902,6 +948,18 @@ def decide_and_trade(private: BlofinDemoPrivate, live_feed, symbol: str):
         notional = state["virtual_equity"] * NOTIONAL_FRACTION
         contracts = max(LOT, round(notional / last_close / cv / LOT) * LOT)
         side = "buy" if desired_dir > 0 else "sell"
+
+        # STAND-DOWN GATE — see RIDE_NEW_ENTRIES_ENABLED above. Placed HERE,
+        # after every exit and reconcile path, so a position held when the
+        # flag flips still closes normally rather than being stranded.
+        if not RIDE_NEW_ENTRIES_ENABLED:
+            print(f"  ENTER {side} signal fired but the ride is STOOD DOWN "
+                  f"(its volatility condition costs 71% of the system's "
+                  f"money under a clean test — round 400)")
+            log_event({"action": "ride_stood_down", "side": side,
+                       "contracts": contracts})
+            return
+
         print(f"  ENTER {side} {contracts:.1f} ct ≈ "
               f"${contracts * cv * last_close:,.0f} notional — "
               f"at market")

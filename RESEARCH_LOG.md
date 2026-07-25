@@ -2094,3 +2094,74 @@ clear it on the BloFin perpetual.** The best result of the round does not
 survive the only venue our bot can technically reach today.
 
 Final untouched slice never opened.
+
+## ROUND 400 — the last live edge fails a clean test. Ride stood down. (2026-07-25)
+
+The audit triggered by oil's R352 finding. **Our one surviving live edge, the
+1.5% minimum-volatility condition on the 4h Bitcoin trend, does not survive
+an honest measurement.**
+
+**It is the worst case for the artifact, not the mildest.** The condition
+sits inside the signal's own state machine, so it does not SKIP a trade, it
+DELAYS one. **30% of the gated run's first-window trades and 57% of its
+middle-window trades entered on a bar the ungated run could never have
+entered on**, because it was already holding. Oil's version was 16-17%.
+
+**Three independent clean tests, all agreeing:**
+- one crossover population split by entry condition: quiet entries
+  **+$289.38** per trade, lively entries **+$31.92**, gap at the 7.4th
+  percentile of 2,000 label shuffles (medians identical — a tail effect,
+  said plainly)
+- the same 59 trend legs, matched pairs: entering at the crossover
+  **+$181.61/leg**, waiting for lively **+$45.27/leg**. The condition was
+  the better choice on **5 of 59 legs**, 1.1st percentile of 2,000 sign flips
+- the 21 legs where it actually acted: it **cost $383.05 each**, median wait
+  40 hours, 1.6th percentile
+
+It does avoid one genuinely losing subset (14 legs that never turned lively,
+worth +$1,350) and the delay costs -$8,044. **Net -$6,694, which is 71% of
+the ungated system's money.** Negative in 2020, 2021, 2022, 2023 and 2025;
+positive only in 2024, where one trade carries the year.
+
+R150's published +$17.15 / +$99.37 reproduced to the penny first, so the
+harness is verified.
+
+**Honest limit:** R54's sealed evidence for this condition sits inside the
+final untouched slice and could not be re-measured without spending that
+look. R54 did use the contaminated comparison shape.
+
+**ACTION: the ride is STOOD DOWN for new entries.** Not because the trend
+rule is condemned — ungated is BETTER on the same legs — but because ungated
+has never been tested as its own thing with a structural stop at
+market-order costs. Switching the condition off would be deploying an
+untested variant. Re-test first.
+
+### THE REFINEMENT WORTH KEEPING: THE WIRING DECIDES THE HARM
+
+Nine studies examined. **Six used the contaminated shape**, two were already
+clean partitions (R83 and R88 — R83's own docstring names and rejects this
+exact artifact a day before it was formally found), two carry no comparison
+at all.
+
+**A gate wired into a state machine reschedules trades and contaminates
+badly. A gate that suppresses a whole excursion of a continuous indicator
+produces a strict subset and is clean** — verified by diffing entry
+timestamps: **0% novel trades in all 24 cells** across R100 and R86. That
+check is cheap and settles it.
+
+**Results that change:**
+- **R63's session axis is the artifact in its purest form.** Its five
+  session cells are mutually exclusive and exhaustive so they must sum to
+  the baseline. They sum to **29-256% more, in 10 of 10 tools, median 76%**.
+  Its headline was measuring manufactured trades. Nothing was deployed.
+- **R100's gold session filter: clean of the artifact, dead for another
+  reason.** GLD produces ZERO trades in the London window because the fund
+  is not open then. An instrument fact, not a session edge.
+- **R86's volume gate: real information, thinner than advertised.** At 1.2x
+  it removes only 3-6% of trades. Moot — the bot is stood down anyway.
+- **R83, R88 and R60's SMA200 inside the live S&P dip-buy: unchanged.**
+
+**Two corrections of fact:** "R79" does not exist — no file, no log entry.
+And **daily_pick's calm gate has no study behind it at all**; it is an owner
+directive shipped straight to live code. Untested is a smaller and different
+problem than wrongly tested, but it should be recorded as untested.
