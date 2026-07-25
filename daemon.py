@@ -49,7 +49,49 @@ _book_fail_counts: dict = {}
 _book_alerted: set = set()
 
 
+# ============================================================================
+# EVERY OLD BOT IS RETIRED (2026-07-25). Wallace:
+#
+#   "all of this is our new build, not no news desk or shorts lab or any of
+#    that garbage, I want to see what a week of trading like him is like"
+#
+# The ten strategies below were built by sweeping settings until something
+# looked good on our own history. That whole approach is over. The new build
+# implements one professional trader's stated method, extracted from his own
+# teaching (step431-step434), and Wallace wants to watch a clean week of it.
+#
+# CLEAN is the operative word: if any of these keep firing, the week is not a
+# read of his method, it is a read of his method plus noise. So they do not
+# run at all. Not stood down behind a flag they could slip past — the
+# dispatcher refuses them by name.
+#
+# The account was flat when this was set: 0 open positions, $1,314.22, so
+# nothing is stranded by switching them off.
+#
+# This is a retirement, not a pause. Anything worth keeping from these files
+# (the exchange plumbing, the sizing, the ledger, the alerting) gets carried
+# into the new build deliberately, by hand, not by leaving a bot running.
+# ============================================================================
+RETIRED_BOTS = {
+    "The Ride", "The Strikes", "Shorts Lab", "The Newsdesk", "The Gold Book",
+    "Daily Pick", "The S&P Book", "The Diver", "The Breakout Book",
+    "TradFi Engine",
+}
+_retirement_logged: set = set()
+
+
 def _run_book(name, fn):
+    if name in RETIRED_BOTS:
+        if name not in _retirement_logged:
+            _retirement_logged.add(name)
+            print(f"  {name}: RETIRED 2026-07-25, not running")
+            try:
+                from step5_paper_trade import log_event
+                log_event({"action": "book_retired", "book": name,
+                           "why": "replaced by the TJR-method build"})
+            except Exception:
+                pass
+        return
     try:
         fn()
         _book_fail_counts[name] = 0
@@ -188,6 +230,39 @@ def full_cycle(private, live_feed, demo_feed, symbol, reason):
 
 
 def main():
+    # ========================================================================
+    # HARD STOP. THIS DAEMON NO LONGER TOUCHES BLOFIN. 2026-07-25.
+    #
+    # Wallace: "remove yourself from blofin completely, I wanted to demo trade
+    #           there myself and the bot just closed my trade"
+    #
+    # It closed a trade HE opened. The BloFin demo account is his now, not
+    # ours, and nothing automated may reach it again.
+    #
+    # Why the earlier retirement did not stop this: RETIRED_BOTS was added to
+    # the local file, but this worker runs the DEPLOYED copy on Render. Until
+    # that deploy happens the old code keeps running, and the retirement flag
+    # only gated the ten strategies anyway — the reconcile and ledger-sync
+    # paths ran before it and they are what can close a position.
+    #
+    # So the stop is here, at the very top of main, before a client is built
+    # and before any network call. Not a flag a code path can slip past: the
+    # process does nothing at all. No client, no keys read, no reconcile, no
+    # ledger sync, no exits.
+    #
+    # It idles rather than exiting so the worker does not restart-loop.
+    #
+    # The new build trades ALPACA (see step435_venue_decision.md) and lives in
+    # tjr_bot.py. It will get its own runner. This file is finished.
+    # ========================================================================
+    print(f"[{_now():%Y-%m-%d %H:%M:%S}] DAEMON RETIRED 2026-07-25 — this bot "
+          f"no longer touches BloFin. The BloFin demo account belongs to "
+          f"Wallace. The new build trades Alpaca via tjr_bot.py. Idling.",
+          flush=True)
+    while True:
+        time.sleep(3600)
+
+    # --- everything below is dead code, kept only for reference -------------
     env = load_env()
     for k, v in env.items():
         os.environ.setdefault(k, v)
