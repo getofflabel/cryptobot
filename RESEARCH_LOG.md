@@ -2165,3 +2165,111 @@ check is cheap and settles it.
 And **daily_pick's calm gate has no study behind it at all**; it is an owner
 directive shipped straight to live code. Untested is a smaller and different
 problem than wrongly tested, but it should be recorded as untested.
+
+## ROUND 370 — the leverage thesis is confirmed, the intraday thesis is dead (2026-07-25)
+
+206,955 regular-hours 5-minute SPY bars, 2,654 sessions, 2016-2026. Plus
+QQQ 5m and SPY 15m. Choosing slice only for selection, middle read once,
+**final 20% never opened.**
+
+### THE LEVERAGE HALF: CONFIRMED
+
+Distance from price to the nearest confirmed swing that would prove a long
+wrong, as a percentage of price (how far price must travel, not a change in
+margin):
+
+| swing definition | median |
+|---|---|
+| **TJR's 2-candle, confirmed 1 bar later** | **0.092%** |
+| ours, 5-bar fractal | 0.137% |
+| ours, 7-bar fractal (R362's setting) | 0.165% |
+| ours, 11-bar fractal | 0.213% |
+
+**His swing sits 44% closer than ours. That single definition choice
+roughly doubles the leverage before any strategy exists.**
+
+Converted, size = risk / stop distance:
+
+| bars | stop | risk 1% | risk 2% |
+|---|---|---|---|
+| daily (R362) | 1.840% | 0.5x | 1.1x |
+| **5-minute, TJR swing** | **0.092%** | **10.9x** | **21.7x** |
+
+**R362's "below one times the account, not twenty" was a statement about
+DAILY bars only.** On 5-minute bars the index structurally supports 11x at
+1% risked and 22x at 2%, arrived at through chart structure rather than
+chosen. Wallace's shape works arithmetically: a $300 slot at 20x is $6,000,
+a 0.092% adverse move is $5.52, which is 1.84% of that slot's margin.
+
+**TJR corroborated independently.** He states his real ES stops run 16-35
+ticks = 0.058%-0.146% of price. Our measured SPY 5-minute 2-candle
+distribution puts p25 at 0.044% and p75 at 0.180%. **His stated range sits
+almost exactly inside our measured interquartile range on a different
+instrument.** He is describing something real and reproducible.
+
+### THE TRADING HALF: REJECTED, AND NOT MARGINALLY
+
+**There is almost no intraday return to win.** Choosing slice, gross:
+
+- SPY **open to close**, the whole 6.5-hour session as one trade:
+  **+0.0163% of price, t=0.80. That is 0.41x the cost of ONE round trip.**
+- SPY **close to next open**, the dark window: +0.0363%, t=1.86.
+- QQQ session +0.0239% (t=0.89); dark window +0.0514% (t=2.40).
+
+**Holding SPY through an entire trading day earns less than half the cost
+of the single round trip needed to do it.** No 5-minute window inside the
+session has a t above 1.85.
+
+**And a tight stop makes the cost bar nineteen times harder on the same
+instrument**, because profit and cost both scale with size while the stop
+shrinks:
+
+| stop | one round trip costs | must make, to clear 5x cost |
+|---|---|---|
+| 0.092% (TJR swing) | **0.44 of the stop** | **2.17 stop distances** |
+| 1.840% (daily dip-buy) | 0.02 | 0.11 (it delivers 0.48) |
+
+**277 settings, four families, one survivor — and that is below chance**
+(luck alone would hand you ~8 of the 169 partition cells).
+
+- opening range break: 12 of 12 negative, both directions, all three ranges
+- **sweep then break of structure (TJR-shaped): 72 of 72 negative.** And
+  scored with **no stop and no target at all**, it shows no directional lift
+  (|t| < 1.9) and **the QQQ replay flips the sign on five of six.** The stops
+  were not the problem — there was nothing to protect.
+- RSI2 dip-buy ported to 5-minute bars: **gross -0.0005% per trade** against
+  the daily version's +0.8803%. Not a constant needing re-tuning; the effect
+  does not exist at this resolution.
+- gap-down buy: after a >0.3% gap the last confirmed swing low sits below
+  the open on only **4.7% of sessions** — there is no structure to stop
+  against 95% of the time.
+
+**Intraday stops cannot be held overnight anyway:** a 0.10% stop is gapped
+straight through on **41.5% of sessions**; the 1.84% daily stop survives
+98.2% of nights.
+
+### THE NEW FINDING: TURN-OF-MONTH LIVES OVERNIGHT
+
+| | open to close | close to next open |
+|---|---|---|
+| SPY turn-of-month lift | +0.0176% = 0.44x a round trip | **+0.0468% = 1.17x** |
+| QQQ turn-of-month lift | +0.0181% = 0.45x | **+0.0807% = 2.02x** |
+
+**The lift is 2.7x larger in the dark window than in the session on SPY and
+4.5x on QQQ.** That is WHY R362's version works by holding 7-8 days: it is
+collecting overnight windows, not trading days. It also means this edge is
+structurally unavailable to an intraday bot.
+
+### THE STRATEGIC READ
+
+**The index's edges are real, slow, and they live overnight.** The correct
+way to trade it is small size held across nights, not big size held across
+minutes. The 20x style is not wrong — it is asking this instrument for the
+one thing it does not have.
+
+**Honest limit:** TJR's entry trigger is a 1-minute break of structure and
+we hold no 1-minute bars, so the trigger was collapsed onto the same
+5-minute bar as the confirmation. Flagged, not buried. But the signal showed
+no directional lift with the stop removed entirely, so 1-minute data is
+unlikely to reverse the sign. Closing it properly is a data purchase, not a
+research question.

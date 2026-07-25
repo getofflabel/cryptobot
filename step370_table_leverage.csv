@@ -1,0 +1,11 @@
+bar_size,source,stop_basis,stop_pct_of_price,position_x_account_risk_1pct,position_x_account_risk_2pct,roundtrip_cost_in_R_at_4bps,R_needed_to_clear_5x_cost_bar
+daily,round 362,"SPY dip-buy, our 3-bar swings",1.84,0.54,1.09,0.022,0.11
+daily,round 362,"SPY dip-buy, our 5-bar swings",2.26,0.44,0.88,0.018,0.09
+daily,round 362,"SPY turn-of-month, 3-bar",3.12,0.32,0.64,0.013,0.06
+daily,round 362,"SPY turn-of-month, 5-bar",4.24,0.24,0.47,0.009,0.05
+5-minute,round 370,"TJR 2-candle swing, same session",0.092,10.87,21.74,0.435,2.17
+5-minute,round 370,"ours fractal k=2, same session",0.137,7.3,14.6,0.292,1.46
+5-minute,round 370,"ours fractal k=3, same session",0.165,6.06,12.12,0.242,1.21
+5-minute,round 370,"ours fractal k=5, same session",0.213,4.69,9.39,0.188,0.94
+15-minute,round 370,"TJR 2-candle swing, same session",0.167,5.99,11.98,0.24,1.2
+15-minute,round 370,"ours fractal k=3, same session",0.314,3.18,6.37,0.127,0.64
