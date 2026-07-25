@@ -23,6 +23,39 @@ services:
     # daemon.py currently idles on purpose — it is the retired BloFin loop.
     # This flips to the new Alpaca runner the moment tjr_bot.py is finished.
     startCommand: python -u daemon.py
+
+    # ------------------------------------------------------------------
+    # WHY THIS EXISTS: the bot was restarting all day and it looked like
+    # Render being unreliable. It was not. On 25 July it redeployed TEN
+    # times between 14:08 and 17:01 — and half of those were commits
+    # titled "journal update [skip ci]".
+    #
+    # `[skip ci]` is a GitHub Actions convention. RENDER DOES NOT HONOUR
+    # IT. Render sees any commit on the branch and rebuilds. So a bot
+    # writing notes to a markdown file was tearing down the trading bot,
+    # reinstalling every dependency, and restarting it — over and over.
+    #
+    # Every restart is dead time. For a strategy that lives inside a
+    # forty-minute window each morning, a restart at the wrong moment is
+    # a missed day, and it would have looked like the bot simply chose
+    # not to trade.
+    #
+    # So: only redeploy when code the bot actually runs has changed.
+    # Research scripts, results, notes, transcripts, cached prices and
+    # the journal all change constantly and none of them affect the
+    # running process.
+    # ------------------------------------------------------------------
+    buildFilter:
+      ignoredPaths:
+        - "**/*.md"                 # notes, results, specs, the journal
+        - "step*.py"                # research rounds, never imported live
+        - "step*.csv"
+        - "test_*.py"               # tests run here, not on the worker
+        - "data_*.parquet"          # cached prices, fetched not deployed
+        - "tjr_transcripts/**"
+        - "dashboard/**"            # the static site, its own service
+        - "journal/**"
+        - "*.log"
     envVars:
       - key: CRYPTOBOT_SUPABASE_URL
         value: https://gpgjujfkktxghqeqvrvh.supabase.co
