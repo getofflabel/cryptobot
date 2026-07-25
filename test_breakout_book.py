@@ -488,7 +488,32 @@ def test_f_never_writes_other_books_state_keys():
 # runner
 # ---------------------------------------------------------------------------
 
+def test_g_stood_down_book_does_nothing():
+    """The kill switch must actually stop the book. Round 87 validated this
+    strategy on MAKER fills; the OWNER'S LAW requires MARKET (taker) orders,
+    and re-priced at taker the BTC edge is -$8.15/trade. It stays off until
+    a taker-viable variant exists."""
+    import breakout_book as _bb
+    prev = _bb.ENABLED
+    _bb.ENABLED = False
+    try:
+        out = _bb.run_breakout_book(None, None, None, {})
+    finally:
+        _bb.ENABLED = prev
+    assert out["action"] == "stood_down", out
+    # and it must not have created or touched any book state
+    st = {}
+    _bb.ENABLED = False
+    try:
+        _bb.run_breakout_book(None, None, None, st)
+    finally:
+        _bb.ENABLED = prev
+    assert st == {}, f"a stood-down book must not write state: {st}"
+
+
 def main():
+    import breakout_book as _bb
+    _bb.ENABLED = True   # logic tests exercise the strategy; test_g flips it back
     tests = [
         test_a_entry_fires_both_directions_with_disaster_stop,
         test_b_volume_gate_blocks_entry_both_directions,
@@ -496,6 +521,7 @@ def main():
         test_d_exit_only_on_midline_cross,
         test_e_handshake_other_book_position_left_alone,
         test_f_never_writes_other_books_state_keys,
+        test_g_stood_down_book_does_nothing,
     ]
     results = []
     for fn in tests:

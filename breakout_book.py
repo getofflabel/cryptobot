@@ -451,9 +451,48 @@ def _fresh_book() -> dict:
 # main entrypoint
 # ===========================================================================
 
+"""STOOD DOWN 2026-07-25, hours after going live. Read this before
+re-enabling anything here.
+
+Round 87 sealed-tested this strategy with `execution="maker"` and it
+passed: BTC +$6.97/trade. But this project's OWNER'S LAW (step5_paper_
+trade.py, 2026-07-24) requires MARKET orders — taker fills at 6bps a leg
+instead of maker's 2bps — because resting maker orders left orphaned
+positions on every crash and deploy. So the strategy was validated under
+fills we are not allowed to use.
+
+Re-priced with `execution="taker"`, which is what we ACTUALLY do:
+
+    BTC   maker train +$14.49  val  +$5.21   <- what was sealed
+          taker train  -$3.66  val  -$8.15   <- what would really happen
+    ETH   maker train +$39.59  val +$20.11
+          taker train  +$6.78  val  +$3.09
+
+The edge is 0.064% of notional. The maker-to-taker gap is 0.08%. The
+execution cost is LARGER THAN THE ENTIRE EDGE, which is exactly why BTC
+flips negative. Wallace called it before the numbers did: "$7 a trade on
+a 10k position is not an edge, that's just gambling."
+
+So this book does nothing until a variant clears the bar under TAKER
+costs. Everything below is kept intact and tested so a taker-viable
+version can be dropped straight in. Do NOT re-enable by flipping the flag
+without a fresh train/val pass at execution="taker".
+
+THE LESSON, recorded so it cannot repeat: every future backtest must be
+run under the SAME execution model the live books use. A validated edge
+that assumes fills we cannot get is not a validated edge.
+"""
+
+ENABLED = False
+
+
 def run_breakout_book(private, live_feed, demo_feed, state: dict,
                       dry: bool = False):
     """One cycle. Returns a small summary dict, mainly for tests/smoke."""
+    if not ENABLED:
+        return {"action": "stood_down",
+                "reason": "validated on maker fills, we trade taker — "
+                          "BTC val -$8.15/trade under real execution"}
     bb = state.setdefault("breakout_book", _fresh_book())
     t = bb.get("open_trade")
     tag = " DRY" if dry else ""
