@@ -185,30 +185,98 @@
   }
 
   // ---- position card (shared shape for every symbol) --------------------
+  //
+  // RISK DATA CONVENTION (Wallace, 2026-07-25 — see BLOFIN_API_REFERENCE.md
+  // and step98_api_audit.md): every number below that BloFin's own API
+  // already reports gets read from there, not recomputed here. Locally
+  // computed numbers are limited to what the exchange genuinely has no
+  // field for: the live client-side ticked price (BloFin's own snapshot is
+  // only as fresh as the last 10s state poll) and price-distance-to-a-level
+  // (stop/target/liquidation), which is inherently a display concern, not
+  // an exchange fact.
+  //
+  // MANDATORY LABELLING: never show a bare percentage. A price move says
+  // "price"; a fraction of margin says "of margin". Where useful, show
+  // both together, e.g. "0.77% price = 15% of margin at 20x" — that is
+  // the exact wording Wallace asked for after being confused by an
+  // unlabelled number once already.
   function renderPositionCard(pos, price, thoughtLine) {
     const size = pos.contracts * pos.contract_size;
-    const pnl = (price - pos.entry) * size * pos.dir;
-    const pnlPct = ((price / pos.entry - 1) * 100) * pos.dir;
+    // Exchange-reported fields win when present — populated server-side by
+    // live_read.py's _merge_exchange_risk from BloFin's own
+    // GET /api/v1/account/positions. Falls back to a local price-move
+    // estimate only when that hasn't been wired for this symbol/cycle
+    // (e.g. the server process didn't have an authenticated client that
+    // run) — degrade gracefully, never show nothing.
+    const hasRisk = pos.unrealized_pnl != null && pos.unrealized_pnl_ratio != null;
+    const pnl = hasRisk ? pos.unrealized_pnl : (price - pos.entry) * size * pos.dir;
     const win = pnl >= 0;
     const cls = win ? "up" : "down";
-    const dist = (lvl) => lvl ? (((lvl / price - 1) * 100)).toFixed(2) + "%" : "—";
+    const lev = pos.leverage_actual || null;
+    // mandatory labelling: never a bare percentage — this is a PRICE move,
+    // so it says so, even though the "target" row label makes the
+    // distinction look obvious to us, it must not rely on the reader
+    // already knowing the convention (that's the exact mistake this whole
+    // change exists to fix).
+    const dist = (lvl) => lvl ? (((lvl / price - 1) * 100)).toFixed(2) + "% price" : "—";
+    // stop/target distance is a genuine PRICE move (no exchange field for
+    // "how far is my stop") — but where leverage is known, ALSO show what
+    // that price move is worth in margin terms, per the mandatory
+    // convention. Approximation (price% x leverage), same shape as
+    // BLOFIN_API_REFERENCE.md's own worked example.
+    const distWithMargin = (lvl) => {
+      if (!lvl) return "—";
+      const pricePct = ((lvl / price - 1) * 100);
+      const base = Math.abs(pricePct).toFixed(2) + "% price";
+      return lev ? base + " = " + Math.abs(pricePct * lev).toFixed(0) + "% of margin at " + lev.toFixed(0) + "x"
+                 : base;
+    };
+    // the PnL% line: "of margin" (BloFin's own screen number) when the
+    // exchange gave it to us; otherwise a clearly-labelled price-move %
+    // (the OLD unlabelled number was the exact confusion this fixes).
+    let pnlPctLine;
+    if (hasRisk) {
+      const pctMargin = pos.unrealized_pnl_ratio * 100;
+      pnlPctLine = (pctMargin >= 0 ? "+" : "") + pctMargin.toFixed(2) + "% of margin";
+    } else {
+      const pricePct = ((price / pos.entry - 1) * 100) * pos.dir;
+      pnlPctLine = (pricePct >= 0 ? "+" : "") + pricePct.toFixed(2) + "% price";
+    }
     let prog = 0;
     if (pos.target) {
       const span = Math.abs(pos.target - pos.entry) || 1;
       prog = Math.max(0, Math.min(100, (Math.abs(price - pos.entry) / span) * 100 * (win ? 1 : 0)));
     }
     const targetLabel = pos.target_label || "trail";
+
+    // liquidation + margin health — ONLY ever rendered when BloFin actually
+    // returned them (never estimated; see BLOFIN_API_REFERENCE.md: "never
+    // estimate it"). Liquidation is 100% of margin lost BY DEFINITION, so
+    // that "= 100% of margin" needs no computation, just the stated fact.
+    let riskRows = "";
+    if (pos.liquidation_price != null) {
+      const liqPricePct = Math.abs(((pos.liquidation_price / price) - 1) * 100);
+      riskRows += `<div class="cbhud-lvl"><span>liq</span><b>$${fmt(pos.liquidation_price, pos.liquidation_price >= 100 ? 0 : 2)}</b>` +
+        `<i class="down">${liqPricePct.toFixed(2)}% price = 100% of margin</i></div>`;
+    }
+    if (pos.margin_ratio != null) {
+      const mrPct = pos.margin_ratio * 100;
+      riskRows += `<div class="cbhud-lvl"><span>margin</span><b>${mrPct.toFixed(0)}%</b>` +
+        `<i>of maint. req.${mrPct < 150 ? " ⚠️" : ""}</i></div>`;
+    }
+
     return `
       <div class="cbhud-postop">
         <span class="cbhud-side ${pos.dir < 0 ? "short" : "long"}">${pos.side}</span>
         <span class="cbhud-book">${pos.book}</span>
       </div>
       <div class="cbhud-pnl ${cls}">${win ? "+" : "−"}$${fmt(Math.abs(pnl), 2)}
-        <span class="cbhud-pnlpct">${win ? "+" : ""}${pnlPct.toFixed(2)}%</span></div>
+        <span class="cbhud-pnlpct">${pnlPctLine}</span></div>
       <div class="cbhud-lvls">
         <div class="cbhud-lvl"><span>entry</span><b>$${fmt(pos.entry, 0)}</b></div>
-        <div class="cbhud-lvl"><span>stop</span><b>$${fmt(pos.stop, 0)}</b><i>${dist(pos.stop)}</i></div>
+        <div class="cbhud-lvl"><span>stop</span><b>$${fmt(pos.stop, 0)}</b><i>${distWithMargin(pos.stop)}</i></div>
         <div class="cbhud-lvl"><span>target</span><b>${pos.target ? "$" + fmt(pos.target, 0) : targetLabel}</b><i>${dist(pos.target)}</i></div>
+        ${riskRows}
       </div>
       ${pos.target ? `<div class="cbhud-bar"><div class="cbhud-bar-fill ${cls}" style="width:${prog}%"></div></div>` : ""}
       <div class="cbhud-thought">${thoughtLine || ""}</div>`;

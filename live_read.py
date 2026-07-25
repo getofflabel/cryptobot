@@ -672,6 +672,48 @@ def _annualized_vol(daily):
     return "STORM" if pct >= 80 else ("CHOPPY" if pct >= 50 else "CALM")
 
 
+def _merge_exchange_risk(d, private, symbol):
+    """Overlay BloFin's own position-risk fields onto a panel-ready dict —
+    liquidation price, margin ratio, PnL as a fraction of INITIAL MARGIN,
+    break-even price, actual leverage — read straight from
+    GET /api/v1/account/positions, never derived (BLOFIN_API_REFERENCE.md:
+    "if a field exists, READ IT. Do not compute it."). This is what
+    finally puts real exchange-reported risk data on the live panel — see
+    step98_api_audit.md finding #6 ("no live display anywhere of the real
+    books' actual liquidation price or margin ratio").
+
+    Leaves `d` untouched if `private` wasn't supplied or the read fails —
+    a hiccup fetching this EXTRA data must never take down the position
+    card itself, which already has everything it needs from local state."""
+    if d is None or private is None:
+        return d
+    try:
+        rows = private.positions(symbol)
+    except Exception:
+        return d
+    if not rows:
+        return d
+    p = rows[0]
+    try:
+        d["mark_price"] = float(p["markPrice"])
+        d["unrealized_pnl"] = float(p["unrealizedPnl"])
+        # fraction of INITIAL MARGIN — the exact number on the BloFin
+        # screen, NOT a price move. See BLOFIN_API_REFERENCE.md's "the one
+        # that caused all the confusion." The dashboard/HUD must always
+        # label this "of margin," never a bare percentage.
+        d["unrealized_pnl_ratio"] = float(p["unrealizedPnlRatio"])
+        d["liquidation_price"] = float(p["liquidationPrice"])
+        d["margin_ratio"] = float(p["marginRatio"])
+        d["initial_margin"] = float(p["initialMargin"])
+        d["maintenance_margin"] = float(p["maintenanceMargin"])
+        d["break_even_price"] = float(p["breakEvenPrice"])
+        d["leverage_actual"] = float(p["leverage"])
+        d["margin_mode"] = p.get("marginMode")
+    except Exception:
+        pass   # a malformed/missing field must not break the rest of the card
+    return d
+
+
 def _norm_trade(book, t, contract_size, target_label=None):
     """Turn ANY book's open_trade dict into the one panel-ready shape every
     position card renders (side, entry, stop, target, size). Shared by every
@@ -697,10 +739,12 @@ def _norm_trade(book, t, contract_size, target_label=None):
     return d
 
 
-def _open_position(state):
+def _open_position(state, private=None):
     """Return BTC-USDT's single open book as a panel-ready dict, or None.
     Checks each BTC book; the exchange nets to one position so at most one
-    is open at a time."""
+    is open at a time. `private`, when supplied, overlays BloFin's own
+    risk fields (liquidation price, margin ratio, PnL % of margin) via
+    _merge_exchange_risk — see that function's docstring."""
     # BTC-USDT books ONLY. The ETH Amplifier lives under symbols["ETH-USDT"]
     # — including it here is what put an ETH trade on the Bitcoin card with
     # BTC prices (the fake +$10k of 2026-07-24). The Daily Pick counts only
@@ -727,7 +771,8 @@ def _open_position(state):
     for name, t, csize in books:
         if not t:
             continue
-        return _norm_trade(name, t, csize)
+        return _merge_exchange_risk(_norm_trade(name, t, csize), private,
+                                    "BTC-USDT")
     return None
 
 
@@ -760,9 +805,15 @@ def _gold_status(gold_daily):
         return {"mode": "unknown"}
 
 
-def _build_symbols(state, position, thesis, waiting, armed, gold_daily):
+def _build_symbols(state, position, thesis, waiting, armed, gold_daily,
+                   private=None):
     """The v3 payload: every instrument the bot might have on screen,
-    keyed by BloFin instId. See the module docstring for why this exists."""
+    keyed by BloFin instId. See the module docstring for why this exists.
+    `private`, when supplied, overlays each REAL BloFin position (BTC, the
+    Gold Book, the ETH Amplifier, Daily Pick's live symbols) with the
+    exchange's own risk fields — see _merge_exchange_risk. Never applied
+    to OIL-PAPER/SPX-PAPER: no BloFin instrument exists for those, so
+    there is nothing on the exchange to read."""
     symbols = {
         "BTC-USDT": {
             "display": DISPLAY_NAMES["BTC-USDT"],
@@ -778,9 +829,10 @@ def _build_symbols(state, position, thesis, waiting, armed, gold_daily):
     if gold_open:
         symbols["XAUT-USDT"] = {
             "display": DISPLAY_NAMES["XAUT-USDT"], "book": "The Gold Book",
-            "position": _norm_trade(
+            "position": _merge_exchange_risk(_norm_trade(
                 "The Gold Book", gold_open,
                 CONTRACT_SIZE["The Gold Book"], target_label="trend exit"),
+                private, "XAUT-USDT"),
         }
     else:
         symbols["XAUT-USDT"] = {
@@ -793,8 +845,10 @@ def _build_symbols(state, position, thesis, waiting, armed, gold_daily):
     if eth_open:
         symbols["ETH-USDT"] = {
             "display": DISPLAY_NAMES["ETH-USDT"], "book": "ETH Amplifier",
-            "position": _norm_trade("ETH Amplifier", eth_open,
-                                    CONTRACT_SIZE["ETH Amplifier"]),
+            "position": _merge_exchange_risk(
+                _norm_trade("ETH Amplifier", eth_open,
+                           CONTRACT_SIZE["ETH Amplifier"]),
+                private, "ETH-USDT"),
         }
     else:
         symbols["ETH-USDT"] = {
@@ -825,8 +879,9 @@ def _build_symbols(state, position, thesis, waiting, armed, gold_daily):
         if t:
             symbols[sym] = {
                 "display": DISPLAY_NAMES[sym], "book": "Daily Pick",
-                "position": _norm_trade("Daily Pick", t,
-                                        CONTRACT_SIZE["Daily Pick"]),
+                "position": _merge_exchange_risk(
+                    _norm_trade("Daily Pick", t, CONTRACT_SIZE["Daily Pick"]),
+                    private, sym),
             }
         else:
             symbols[sym] = {
@@ -842,8 +897,9 @@ def _build_symbols(state, position, thesis, waiting, armed, gold_daily):
             symbols[sym] = {
                 "display": DISPLAY_NAMES.get(sym, sym.replace("-USDT", "")),
                 "book": "Daily Pick",
-                "position": _norm_trade("Daily Pick", t,
-                                        CONTRACT_SIZE["Daily Pick"]),
+                "position": _merge_exchange_risk(
+                    _norm_trade("Daily Pick", t, CONTRACT_SIZE["Daily Pick"]),
+                    private, sym),
             }
 
     # --- OIL-PAPER / SPX-PAPER — the paper desk, pseudo-instIds so a HUD
@@ -948,7 +1004,8 @@ def _thesis(champ, price, fb, r3, lo20, pop4h):
 
 
 def compute_live_read(candles_1h, candles_4h, candles_1d, funding_bps,
-                      state, gold_daily=None, tradfi_market=None) -> dict:
+                      state, gold_daily=None, tradfi_market=None,
+                      private=None) -> dict:
     price = float(candles_1h["close"].iloc[-1])
     cv = vol_gated_ma(candles_4h, fast=20, slow=100, min_atr_pct=1.5).iloc[-1]
     champ = int(cv) if cv == cv else 0
@@ -965,7 +1022,7 @@ def compute_live_read(candles_1h, candles_4h, candles_1d, funding_bps,
     ledger = round(float(state.get("virtual_equity", 0) or 0), 2)
     goal = round(float(state.get("goal", 2000) or 2000), 2)
 
-    position = _open_position(state)
+    position = _open_position(state, private)
     thesis = _thesis(champ, price, fb, r3, lo20, pop4h)
 
     # the Newsdesk's armed/pending news trade — the HUD must NEVER say
@@ -1038,7 +1095,7 @@ def compute_live_read(candles_1h, candles_4h, candles_1d, funding_bps,
         thought = "Quiet tape. Nothing to do but watch."
 
     symbols = _build_symbols(state, position, thesis, waiting, armed,
-                             gold_daily)
+                             gold_daily, private)
     paper = _build_paper(state, tradfi_market)
 
     return {
@@ -1070,7 +1127,13 @@ def compute_live_read(candles_1h, candles_4h, candles_1d, funding_bps,
     }
 
 
-def write_live_read(live_feed, state, save=True):
+def write_live_read(live_feed, state, save=True, private=None):
+    """`private`, when supplied, is used ONLY to overlay the exchange's own
+    per-position risk fields (liquidation price, margin ratio, PnL % of
+    margin) onto whatever books/positions local state already says are
+    open — see _merge_exchange_risk. Optional and additive: every existing
+    caller that doesn't pass it keeps working exactly as before, just
+    without the extra exchange-read fields on the position card."""
     try:
         from step5_paper_trade import current_funding_bps, save_state
         c1 = live_feed.get_candles("BTC-USDT", "1h", 60)
@@ -1199,7 +1262,7 @@ def write_live_read(live_feed, state, save=True):
                 tradfi_market[_sym] = entry
 
         snap = compute_live_read(c1, c4, cd, fb, state, gold_daily=gold_daily,
-                                 tradfi_market=tradfi_market)
+                                 tradfi_market=tradfi_market, private=private)
         state["live_read"] = snap
         if save:
             save_state(state)

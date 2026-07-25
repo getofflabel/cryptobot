@@ -56,9 +56,9 @@ from __future__ import annotations
 import time
 from datetime import datetime, timezone
 
-from blofin_private import BlofinDemoPrivate
+from blofin_private import BlofinDemoPrivate, make_client_order_id
 from book_ledger import attributed_position, unexplained_position
-from step5_paper_trade import (CONTRACT_BTC, LOT, current_funding_bps,
+from step5_paper_trade import (LOT, contract_value, current_funding_bps,
                                execute_maker_or_chase, execute_market_clips, log_event, notify,
                                now_utc, record_trade_outcome,
                                recent_news_headline, save_state, write_lesson)
@@ -66,6 +66,7 @@ from strategy import atr as _atr
 from strategy import vol_gated_ma
 
 SYMBOL = "BTC-USDT"
+BOOK_TAG = "sl"
 
 # -- sizing: one slot, 15% of ledger equity, 5x leverage --------------------
 LAB_ALLOC = 0.15
@@ -187,7 +188,8 @@ def _ensure_bracket(private, symbol, state, t):
     # still genuinely open. Re-arm once.
     try:
         tpsl_id = private.place_tpsl(symbol, "buy", t["contracts"],
-                                     t.get("tp_price"), t["sl_price"])
+                                     t.get("tp_price"), t["sl_price"],
+                                     client_order_id=make_client_order_id(BOOK_TAG))
         t["tpsl_id"] = tpsl_id
         save_state(state)
         print(f"  [LAB] ⚠️ bracket was MISSING — re-armed SL {t['sl_price']:,.1f}")
@@ -203,7 +205,12 @@ def _ensure_bracket(private, symbol, state, t):
 def _book_exit(state, t, exit_price, exit_fee_bps, reason):
     """Close the lab's short on its own ledger line. Short PnL: profit when
     price FALLS (entry - exit), the mirror image of tactical.py's long math."""
-    size_btc = t["contracts"] * CONTRACT_BTC
+    cv = t.get("contract_value")
+    if cv is None:
+        cv = 0.001   # legacy trade (pre-upgrade), verified BTC-USDT fallback
+        print("  [LAB] ⚠️ contract_value missing on this (pre-upgrade) "
+              "trade — using the verified BTC-USDT fallback 0.001")
+    size_btc = t["contracts"] * cv
     gross = (t["entry_price"] - exit_price) * size_btc
     fees = (t["entry_price"] * t.get("entry_fee_bps", 6.0)
             + exit_price * exit_fee_bps) * size_btc / 10_000
@@ -320,6 +327,7 @@ def run_lab(private: BlofinDemoPrivate, live_feed, demo_feed, state: dict,
         lab["open_trade"] = t = {
             "trigger": "adopted", "ctx": {},
             "direction": -1, "contracts": adopted_ct, "entry_price": px,
+            "contract_value": contract_value(demo_feed, SYMBOL),
             "entry_fee_bps": 6.0, "entry_time": now_utc(),
             "tp_price": adopt_tp, "sl_price": adopt_sl,
             "tp_order_id": None, "tpsl_id": None,
@@ -350,7 +358,7 @@ def run_lab(private: BlofinDemoPrivate, live_feed, demo_feed, state: dict,
             quote = demo_feed.get_ticker(SYMBOL)
             fill, was_maker = execute_market_clips(
                 private, demo_feed, SYMBOL, "buy", t["contracts"],
-                quote.ask, reduce_only=True)
+                quote.ask, reduce_only=True, client_tag=BOOK_TAG)
             _book_exit(state, t, fill, 2.0 if was_maker else 6.0,
                       f"{max_hold_h:.0f}h time")
             return {"action": "time_exit", "fill": fill}
@@ -411,8 +419,14 @@ def run_lab(private: BlofinDemoPrivate, live_feed, demo_feed, state: dict,
         print("  [LAB ] no trigger")
         return {"action": "no_trigger"}
 
+    cv = contract_value(demo_feed, SYMBOL)
+    if cv is None:
+        print("  [LAB ] ENTRY SKIPPED — instrument spec unavailable on "
+              "demo (contract value unknown, not guessing)")
+        log_event({"action": "entry_skipped", "reason": "no_contract_spec"})
+        return {"action": "entry_skipped"}
     notional = state["virtual_equity"] * LAB_ALLOC * LAB_LEV
-    contracts = max(LOT, round(notional / last_close / CONTRACT_BTC / LOT) * LOT)
+    contracts = max(LOT, round(notional / last_close / cv / LOT) * LOT)
 
     if trigger == "forensic_short":
         max_hold_h = FORENSIC_MAX_HOLD_H
@@ -444,7 +458,8 @@ def run_lab(private: BlofinDemoPrivate, live_feed, demo_feed, state: dict,
     private.ensure_leverage(SYMBOL, LAB_LEV)
     try:
         entry, was_maker = execute_market_clips(
-            private, demo_feed, SYMBOL, "sell", contracts, last_close)
+            private, demo_feed, SYMBOL, "sell", contracts, last_close,
+            client_tag=BOOK_TAG)
     except Exception as e:
         print(f"  [LAB ] ENTRY FAILED: {str(e)[:100]}")
         notify("⚠️ shorts lab ENTRY FAILED (demo)",
@@ -464,7 +479,8 @@ def run_lab(private: BlofinDemoPrivate, live_feed, demo_feed, state: dict,
     tp_oid = None
     tpsl_id = None
     try:
-        tpsl_id = private.place_tpsl(SYMBOL, "buy", contracts, target, stop)
+        tpsl_id = private.place_tpsl(SYMBOL, "buy", contracts, target, stop,
+                                     client_order_id=make_client_order_id(BOOK_TAG))
     except Exception as e:
         print(f"  [LAB ] TP/SL bracket FAILED: {str(e)[:80]}")
         notify("⚠️ shorts lab bracket failed (demo)",
@@ -478,6 +494,7 @@ def run_lab(private: BlofinDemoPrivate, live_feed, demo_feed, state: dict,
                           f"{lvl:,.1f} at funding {fb:+.2f}bp",
                 "news": recent_news_headline()},
         "direction": -1, "contracts": contracts, "entry_price": entry,
+        "contract_value": cv,
         "entry_fee_bps": 2.0 if was_maker else 6.0,
         "entry_time": now_utc(), "tp_price": target, "sl_price": stop,
         "tp_order_id": tp_oid, "tpsl_id": tpsl_id,

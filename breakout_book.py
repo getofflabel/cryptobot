@@ -204,9 +204,10 @@ import time
 
 import pandas as pd
 
+from blofin_private import make_client_order_id
 from book_ledger import (attributed_position, recorded_book_positions,
                          unexplained_position)
-from step5_paper_trade import (CONTRACT_BTC, LOT, execute_market_clips,
+from step5_paper_trade import (LOT, contract_value, execute_market_clips,
                                log_event, notify, now_utc,
                                record_trade_outcome, save_state)
 from step76_indicators import bb_bands
@@ -214,6 +215,7 @@ from step86_specified import bollinger_breakout_signal, volume_gate_entry
 
 SYMBOL = "BTC-USDT"
 TIMEFRAME = "1h"
+BOOK_TAG = "bo"
 
 # -- the validated rule's exact config (step86 FAMILY C / step87 sealed
 #    exam — see module docstring) -------------------------------------------
@@ -396,7 +398,8 @@ def _ensure_bracket(private, symbol, state, t):
     try:
         close_side = "sell" if t["direction"] > 0 else "buy"
         tpsl_id = private.place_tpsl(symbol, close_side, t["contracts"],
-                                     None, t["sl_price"])
+                                     None, t["sl_price"],
+                                     client_order_id=make_client_order_id(BOOK_TAG))
         t["tpsl_id"] = tpsl_id
         save_state(state)
         print(f"  [BREAKOUT] ⚠️ disaster stop was MISSING — re-armed "
@@ -414,7 +417,12 @@ def _book_exit(state, t, exit_price, exit_fee_bps, reason):
     """Close the Breakout Book's trade on its own ledger line. Direction-
     aware: profit on a rise when long, on a fall when short (mirrors
     diver._book_exit exactly)."""
-    size_btc = t["contracts"] * CONTRACT_BTC
+    cv = t.get("contract_value")
+    if cv is None:
+        cv = 0.001   # legacy trade (pre-upgrade), verified BTC-USDT fallback
+        print("  [BREAKOUT] ⚠️ contract_value missing on this (pre-upgrade) "
+              "trade — using the verified BTC-USDT fallback 0.001")
+    size_btc = t["contracts"] * cv
     gross = t["direction"] * (exit_price - t["entry_price"]) * size_btc
     fees = (t["entry_price"] * t.get("entry_fee_bps", ENTRY_FEE_BPS)
             + exit_price * exit_fee_bps) * size_btc / 10_000
@@ -580,7 +588,7 @@ def run_breakout_book(private, live_feed, demo_feed, state: dict,
             ref_price = quote.bid if side == "sell" else quote.ask
             fill, was_maker = execute_market_clips(
                 private, demo_feed, SYMBOL, side, t["contracts"], ref_price,
-                reduce_only=True)
+                reduce_only=True, client_tag=BOOK_TAG)
             realized = _book_exit(state, t, fill, EXIT_FEE_BPS, "midline_exit")
             bb["last_bar_ts"] = dec["bar_ts"]
             save_state(state)
@@ -614,8 +622,9 @@ def run_breakout_book(private, live_feed, demo_feed, state: dict,
             ref_price = live_feed.get_ticker(SYMBOL).last
         except Exception:
             pass
+        cv = contract_value(demo_feed, SYMBOL) or 0.001   # dry preview only
         notional = float(state.get("virtual_equity", 0.0)) * LEVERAGE
-        contracts = max(LOT, round(notional / ref_price / CONTRACT_BTC / LOT) * LOT)
+        contracts = max(LOT, round(notional / ref_price / cv / LOT) * LOT)
         if direction > 0:
             sl_est = round(ref_price * (1 - DISASTER_STOP_PCT / 100), 1)
         else:
@@ -661,8 +670,16 @@ def run_breakout_book(private, live_feed, demo_feed, state: dict,
         ref_price = live_feed.get_ticker(SYMBOL).last
     except Exception:
         pass
+    cv = contract_value(demo_feed, SYMBOL)
+    if cv is None:
+        print("  [BREAKOUT] ENTRY SKIPPED — instrument spec unavailable "
+              "on demo (contract value unknown, not guessing)")
+        log_event({"action": "entry_skipped", "reason": "no_contract_spec"})
+        bb["last_bar_ts"] = dec["bar_ts"]
+        save_state(state)
+        return {"action": "entry_skipped", **dec}
     notional = float(state.get("virtual_equity", 0.0)) * LEVERAGE
-    contracts = max(LOT, round(notional / ref_price / CONTRACT_BTC / LOT) * LOT)
+    contracts = max(LOT, round(notional / ref_price / cv / LOT) * LOT)
     side = "buy" if direction > 0 else "sell"
 
     print(f"  [BREAKOUT] {'LONG' if direction > 0 else 'SHORT'} SIGNAL "
@@ -671,7 +688,8 @@ def run_breakout_book(private, live_feed, demo_feed, state: dict,
     private.ensure_leverage(SYMBOL, LEVERAGE)
     try:
         entry, was_maker = execute_market_clips(
-            private, demo_feed, SYMBOL, side, contracts, ref_price)
+            private, demo_feed, SYMBOL, side, contracts, ref_price,
+            client_tag=BOOK_TAG)
     except Exception as e:
         print(f"  [BREAKOUT] ENTRY FAILED: {str(e)[:100]}")
         log_event({"action": "breakout_entry_failed", "error": str(e)[:200]})
@@ -691,7 +709,8 @@ def run_breakout_book(private, live_feed, demo_feed, state: dict,
 
     tpsl_id = None
     try:
-        tpsl_id = private.place_tpsl(SYMBOL, close_side, contracts, None, sl)
+        tpsl_id = private.place_tpsl(SYMBOL, close_side, contracts, None, sl,
+                                     client_order_id=make_client_order_id(BOOK_TAG))
     except Exception as e:
         print(f"  [BREAKOUT] disaster stop FAILED to place: {str(e)[:80]}")
         notify("⚠️ Breakout Book position UNPROTECTED (demo)",
@@ -701,6 +720,7 @@ def run_breakout_book(private, live_feed, demo_feed, state: dict,
     bb["open_trade"] = {
         "trigger": "bollinger_breakout", "direction": direction,
         "contracts": contracts, "entry_price": entry,
+        "contract_value": cv,
         "entry_fee_bps": ENTRY_FEE_BPS, "entry_time": now_utc(),
         "tp_price": None, "sl_price": sl, "tpsl_id": tpsl_id,
         "bar_ts": dec["bar_ts"], "band_mid_at_entry": dec["mid"],

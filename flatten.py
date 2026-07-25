@@ -21,7 +21,7 @@ import argparse
 import time
 
 import config
-from blofin_private import BlofinDemoPrivate, load_env
+from blofin_private import BlofinDemoPrivate, load_env, make_client_order_id
 
 
 def main():
@@ -62,7 +62,8 @@ def main():
         side = "sell" if size > 0 else "buy"
         oid = p.market_order(x["instId"], side, abs(size),
                              reduce_only=True,
-                             margin_mode=x["marginMode"])
+                             margin_mode=x["marginMode"],
+                             client_order_id=make_client_order_id("fl"))
         print(f"  {x['instId']}: {side} {abs(size):,.1f} contracts "
               f"(order {oid})")
 

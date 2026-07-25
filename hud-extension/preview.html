@@ -224,20 +224,47 @@
       return `<div class="cbhud-newsstrip">📰 BTC news trade armed${when ? " · decides " + when : ""}</div>`;
     }
 
+    // kept in sync with content.js's renderPositionCard — see that file for
+    // the full explanation of the risk-data convention (2026-07-25).
     function renderPositionCard(pos, price, thoughtLine) {
       const size = pos.contracts * pos.contract_size;
-      const pnl = (price - pos.entry) * size * pos.dir;
-      const pnlPct = ((price / pos.entry - 1) * 100) * pos.dir;
+      const hasRisk = pos.unrealized_pnl != null && pos.unrealized_pnl_ratio != null;
+      const pnl = hasRisk ? pos.unrealized_pnl : (price - pos.entry) * size * pos.dir;
       const win = pnl >= 0, cls = win ? "up" : "down";
-      const dist = (lvl) => lvl ? (((lvl / price - 1) * 100)).toFixed(2) + "%" : "—";
+      const lev = pos.leverage_actual || null;
+      const dist = (lvl) => lvl ? (((lvl / price - 1) * 100)).toFixed(2) + "% price" : "—";
+      const distWithMargin = (lvl) => {
+        if (!lvl) return "—";
+        const pricePct = ((lvl / price - 1) * 100);
+        const base = Math.abs(pricePct).toFixed(2) + "% price";
+        return lev ? base + " = " + Math.abs(pricePct * lev).toFixed(0) + "% of margin at " + lev.toFixed(0) + "x" : base;
+      };
+      let pnlPctLine;
+      if (hasRisk) {
+        const pctMargin = pos.unrealized_pnl_ratio * 100;
+        pnlPctLine = (pctMargin >= 0 ? "+" : "") + pctMargin.toFixed(2) + "% of margin";
+      } else {
+        const pricePct = ((price / pos.entry - 1) * 100) * pos.dir;
+        pnlPctLine = (pricePct >= 0 ? "+" : "") + pricePct.toFixed(2) + "% price";
+      }
       let prog = 0;
       if (pos.target) { const span = Math.abs(pos.target - pos.entry) || 1; prog = Math.max(0, Math.min(100, (Math.abs(price - pos.entry) / span) * 100 * (win ? 1 : 0))); }
       const targetLabel = pos.target_label || "trail";
+      let riskRows = "";
+      if (pos.liquidation_price != null) {
+        const liqPricePct = Math.abs(((pos.liquidation_price / price) - 1) * 100);
+        riskRows += `<div class="cbhud-lvl"><span>liq</span><b>$${fmt(pos.liquidation_price, pos.liquidation_price >= 100 ? 0 : 2)}</b><i class="down">${liqPricePct.toFixed(2)}% price = 100% of margin</i></div>`;
+      }
+      if (pos.margin_ratio != null) {
+        const mrPct = pos.margin_ratio * 100;
+        riskRows += `<div class="cbhud-lvl"><span>margin</span><b>${mrPct.toFixed(0)}%</b><i>of maint. req.${mrPct < 150 ? " ⚠️" : ""}</i></div>`;
+      }
       return `<div class="cbhud-postop"><span class="cbhud-side ${pos.dir < 0 ? "short" : "long"}">${pos.side}</span><span class="cbhud-book">${pos.book}</span></div>
-        <div class="cbhud-pnl ${cls}">${win ? "+" : "−"}$${fmt(Math.abs(pnl), 2)}<span class="cbhud-pnlpct">${win ? "+" : ""}${pnlPct.toFixed(2)}%</span></div>
+        <div class="cbhud-pnl ${cls}">${win ? "+" : "−"}$${fmt(Math.abs(pnl), 2)}<span class="cbhud-pnlpct">${pnlPctLine}</span></div>
         <div class="cbhud-lvls"><div class="cbhud-lvl"><span>entry</span><b>$${fmt(pos.entry, 0)}</b></div>
-        <div class="cbhud-lvl"><span>stop</span><b>$${fmt(pos.stop, 0)}</b><i>${dist(pos.stop)}</i></div>
-        <div class="cbhud-lvl"><span>target</span><b>${pos.target ? "$" + fmt(pos.target, 0) : targetLabel}</b><i>${dist(pos.target)}</i></div></div>
+        <div class="cbhud-lvl"><span>stop</span><b>$${fmt(pos.stop, 0)}</b><i>${distWithMargin(pos.stop)}</i></div>
+        <div class="cbhud-lvl"><span>target</span><b>${pos.target ? "$" + fmt(pos.target, 0) : targetLabel}</b><i>${dist(pos.target)}</i></div>
+        ${riskRows}</div>
         ${pos.target ? `<div class="cbhud-bar"><div class="cbhud-bar-fill ${cls}" style="width:${prog}%"></div></div>` : ""}
         <div class="cbhud-thought">${thoughtLine || ""}</div>`;
     }
@@ -322,7 +349,10 @@
       $("cbhud2-mkt").textContent = "STORM"; $("cbhud2-mkt").className = "cbhud-mkt storm";
       const price = 63980;
       $("cbhud2-price").textContent = "$" + fmt(price, 0);
-      const pos = { book: "Shorts Lab", side: "SHORT", dir: -1, entry: 65200, stop: 66300, target: 61900, contracts: 1.4, contract_size: 0.001 };
+      // exchange-risk fields mocked here to visually verify the new rows —
+      // shape matches live_read.py's _merge_exchange_risk output exactly.
+      const pos = { book: "Shorts Lab", side: "SHORT", dir: -1, entry: 65200, stop: 66300, target: 61900, contracts: 1.4, contract_size: 0.001,
+        unrealized_pnl: 17.08, unrealized_pnl_ratio: 0.0533, liquidation_price: 68450, margin_ratio: 3.2, leverage_actual: 20 };
       $("cbhud2-body").innerHTML = renderPositionCard(pos, price, "Riding the lab short, managing it.")
         + `<div class="cbhud-stamp">bot read 4s ago · price live</div>`;
     })();
@@ -332,6 +362,8 @@
       $("cbhud3-mkt").textContent = "CALM"; $("cbhud3-mkt").className = "cbhud-mkt calm";
       const price = 4610;
       $("cbhud3-price").textContent = "$" + fmt(price, 1);
+      // no leverage_actual mocked here -> exercises the "no exchange risk
+      // data available yet" fallback path (price-move %, no liq/margin rows)
       const pos = { book: "The Gold Book", side: "LONG", dir: 1, entry: 4580.0, stop: 3755.6, target: null, target_label: "trend exit", contracts: 12, contract_size: 0.001 };
       $("cbhud3-body").innerHTML = renderPositionCard(pos, price, "In a long (The Gold Book), managing it.")
         + `<div class="cbhud-stamp">bot read 4s ago · price live</div>`;

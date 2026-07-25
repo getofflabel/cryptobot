@@ -76,11 +76,16 @@
 .cbhud-pnl.down { color: #f87171; }
 .cbhud-pnlpct { font-size: 13px; font-weight: 700; opacity: 0.85; margin-left: 5px; }
 .cbhud-lvls { display: flex; flex-direction: column; gap: 3px; }
-.cbhud-lvl { display: flex; align-items: baseline; font-size: 12px;
+.cbhud-lvl { display: flex; flex-wrap: wrap; align-items: baseline; font-size: 12px;
   font-variant-numeric: tabular-nums; }
 .cbhud-lvl span { width: 52px; color: #8a8a90; }
 .cbhud-lvl b { color: #f0f0f2; font-weight: 600; }
-.cbhud-lvl i { margin-left: auto; color: #9a9aa0; font-style: normal; font-size: 11px; }
+/* the risk-labelling convention (2026-07-25) made some of these strings
+   long (e.g. "3.63% price = 73% of margin at 20x") — basis 100% + wrap
+   drops a long one to its own right-aligned line under label+value
+   instead of crowding the 250px panel; short ones still sit inline. */
+.cbhud-lvl i { margin-left: auto; color: #9a9aa0; font-style: normal; font-size: 11px;
+  flex-basis: 100%; text-align: right; }
 .cbhud-lvl i.up { color: #34d399; }
 .cbhud-lvl i.down { color: #f87171; }
 .cbhud-rr { margin-left: auto; font-size: 10px; font-weight: 700; color: #cfcfd4;

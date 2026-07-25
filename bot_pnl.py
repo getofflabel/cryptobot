@@ -30,7 +30,16 @@ def bot_pnl() -> dict:
     )
 
     start = BASELINE["start_equity_usdt"]
-    equity = balance + unrealized
+    # equity = balance + unrealized used to be added by hand here. BloFin's
+    # own /api/v1/account/balance already reports this combined number as
+    # `totalEquity` — read it instead of re-deriving it (Wallace,
+    # 2026-07-25: "any math ... that could be replaced by the API, don't do
+    # the math"). Falls back to the old hand sum only if that read fails,
+    # so a transient account-balance hiccup never blocks this report.
+    try:
+        equity = float(p.account_balance()["totalEquity"])
+    except Exception:
+        equity = balance + unrealized
 
     return {
         "start_equity": start,

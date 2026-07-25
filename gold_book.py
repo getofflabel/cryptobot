@@ -188,8 +188,11 @@ import time
 import numpy as np
 import pandas as pd
 
+from blofin_private import make_client_order_id
+
 SYMBOL = "XAUT-USDT"          # see module docstring: the demo-tradeable
                                # gold proxy — NOT XAU-USDT (unlisted on demo)
+BOOK_TAG = "gb"
 # 2026-07-24: 55 -> 20 after Wallace's dormancy audit. donchian55 needed a
 # +17.7% rally to fire (median ~113 days away); donchian20 is the SAME shape,
 # was a round-48 two-window survivor on BOTH GLD and GC=F, and PASSED ITS OWN
@@ -657,7 +660,8 @@ def run_gold_book(private, live_feed, state: dict, dry: bool = False) -> dict:
                    "couldn't set leverage — no order placed, check BloFin")
             return {"action": "entry_aborted_leverage", **dec}
         try:
-            order_id = private.market_order(SYMBOL, "buy", contracts)
+            order_id = private.market_order(SYMBOL, "buy", contracts,
+                                            client_order_id=make_client_order_id(BOOK_TAG))
         except Exception as e:
             print(f"  [GOLD] ENTRY FAILED: {str(e)[:100]}")
             log_event({"action": "gold_entry_failed", "error": str(e)[:200]})
@@ -683,7 +687,8 @@ def run_gold_book(private, live_feed, state: dict, dry: bool = False) -> dict:
         tpsl_id = None
         try:
             tpsl_id = private.place_tpsl(SYMBOL, "sell", contracts, None,
-                                         sl_price)
+                                         sl_price,
+                                         client_order_id=make_client_order_id(BOOK_TAG))
         except Exception as e:
             print(f"  [GOLD] protective floor FAILED to place: "
                   f"{str(e)[:80]}")
@@ -741,7 +746,8 @@ def run_gold_book(private, live_feed, state: dict, dry: bool = False) -> dict:
             # no bracket at all if the place call fails partway through.
             try:
                 new_tpsl_id = private.place_tpsl(SYMBOL, "sell",
-                                                 t["contracts"], None, new_sl)
+                                                 t["contracts"], None, new_sl,
+                                                 client_order_id=make_client_order_id(BOOK_TAG))
             except Exception as e:
                 print(f"  [GOLD] trailing floor ratchet FAILED to place "
                       f"the new bracket ({str(e)[:80]}) — the prior stop "
@@ -860,7 +866,8 @@ def intraday_check(private, live_feed, state, price: float):
         # through, and BOOK + BRACKET whatever actually filled — a smaller
         # position with a stop beats a bigger one that's naked.
         try:
-            private.market_order(SYMBOL, "buy", step)
+            private.market_order(SYMBOL, "buy", step,
+                                 client_order_id=make_client_order_id(BOOK_TAG))
         except Exception as e:
             print(f"  [GOLD] clip rejected mid-entry ({str(e)[:60]}) — "
                   f"booking what filled")
@@ -874,7 +881,8 @@ def intraday_check(private, live_feed, state, price: float):
     sl = round(price * (1 - CRASH_SL_PCT), 1)
     tpsl_id = None
     try:
-        tpsl_id = private.place_tpsl(SYMBOL, "sell", abs(net), None, sl)
+        tpsl_id = private.place_tpsl(SYMBOL, "sell", abs(net), None, sl,
+                                     client_order_id=make_client_order_id(BOOK_TAG))
     except Exception as e:
         print(f"  [GOLD] SL FAILED: {str(e)[:80]}")
         notify("⚠️ gold SL failed (demo)", "position unprotected — check BloFin")

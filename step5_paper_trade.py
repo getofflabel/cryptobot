@@ -39,7 +39,7 @@ import time
 from datetime import datetime, timezone
 
 import config
-from blofin_private import BlofinDemoPrivate, load_env
+from blofin_private import BlofinDemoPrivate, load_env, make_client_order_id
 from book_ledger import attributed_position, unexplained_position
 from strategy import vol_filtered_ma
 
@@ -76,9 +76,39 @@ WARMUP_BARS = 300              # hysteresis needs deep history to know state
 CORE_ALLOC = 0.6
 CORE_LEV = 10.0
 NOTIONAL_FRACTION = CORE_ALLOC * CORE_LEV
-CONTRACT_BTC = 0.001           # BloFin BTC-USDT: 1 contract = 0.001 BTC
 LOT = 0.1                      # order size must be a multiple of this
 LOG_FILE = "trades_log.jsonl"
+BOOK_TAG = "cr"                # this book's clientOrderId tag (blofin_private.BOOK_TAGS)
+
+# CONTRACT VALUE (step98_api_audit.md, CRITICAL finding #1): a hardcoded
+# `CONTRACT_BTC = 0.001` used to live here and get imported into five other
+# live books, sizing every real order off ONE unread-from-the-exchange
+# constant. Never again — contract_value() below reads it from BloFin's own
+# instruments endpoint (daily_pick.py's _demo_spec pattern, generalized).
+_contract_spec_cache: dict[str, float] = {}
+
+
+def contract_value(demo_feed, symbol: str) -> float | None:
+    """1 contract's size in the base asset for `symbol`, read from BloFin's
+    DEMO instruments endpoint — never assumed (contract values differ
+    wildly per symbol: BTC 0.001, XRP 100, DOGE 1000). Cached per symbol;
+    only successes are cached, so a transient fetch failure gets retried
+    next call instead of being locked in for the process's life.
+
+    Returns None on failure. A caller about to PLACE a new order must
+    treat None as "do not trade" (see _guard-style checks below) — never
+    guess. A caller CLOSING an already-open position instead falls back to
+    the value stored on that trade's own record at entry time (the value
+    that was actually used to size it), which every entry path below now
+    stores under t["contract_value"]."""
+    if symbol in _contract_spec_cache:
+        return _contract_spec_cache[symbol]
+    try:
+        v = float(demo_feed.get_instrument(symbol)["contractValue"])
+    except Exception:
+        return None
+    _contract_spec_cache[symbol] = v
+    return v
 
 # Protective bracket, round-11 revision: STOP-LOSS ONLY, and WIDE.
 # We measured our original TP+5%/SL-2.5% bracket against six years of
@@ -431,7 +461,16 @@ def book_exit(state: dict, exit_price: float, reason: str,
     This is the number that moves the $1,000 -> $2,000 scoreboard.
     """
     t = state["open_trade"]
-    size_btc = t["contracts"] * CONTRACT_BTC
+    cv = t.get("contract_value")
+    if cv is None:
+        # legacy trade opened before contract_value() existed. This book
+        # has only ever traded BTC-USDT; BLOFIN_API_REFERENCE.md's verified
+        # value is used ONLY as a last resort to close a trade that is
+        # already open and must be booked regardless.
+        cv = 0.001
+        print("  ⚠️ contract_value missing on this (pre-upgrade) trade — "
+              "using the verified BTC-USDT fallback 0.001 to close it")
+    size_btc = t["contracts"] * cv
     gross = t["direction"] * (exit_price - t["entry_price"]) * size_btc
     entry_bps = t.get("entry_fee_bps", config.fee_bps())
     exit_bps = exit_fee_bps if exit_fee_bps is not None else config.fee_bps()
@@ -501,7 +540,8 @@ MAX_CLIP = 5.0        # live-fire finding 2026-07-23: the demo book absorbs
 
 def execute_market_clips(private, demo_feed, symbol: str, side: str,
                          contracts: float, ref_price: float,
-                         reduce_only: bool = False):
+                         reduce_only: bool = False,
+                         client_tag: str | None = None):
     """OWNER'S LAW (2026-07-24, after three stray-buy-order sightings):
     a buy order only exists when we truly want to BUY NOW, and TP/SL are
     ONLY ever the native bracket. So live entries fill via instant MARKET
@@ -521,13 +561,21 @@ def execute_market_clips(private, demo_feed, symbol: str, side: str,
       * ONE market order for the whole size -> atomic, no partial possible
       * transient API hiccups RETRIED (3 attempts, 1.5s apart) instead of
         treated as fatal — the actual failure mode was a momentary stumble
-      * only after retries exhaust does it raise (callers roll back)"""
+      * only after retries exhaust does it raise (callers roll back)
+
+    client_tag: a blofin_private.BOOK_TAGS code (e.g. "cr" for this book).
+    One clientOrderId is generated ONCE, before the retry loop, not
+    per-attempt — NOT verified to be a BloFin de-dupe key, so this is not
+    relied on for correctness, just kept as the more sensible default
+    (one logical order = one id, however many HTTP attempts it took)."""
     import time as _t
     size = round(contracts, 1)
+    coid = make_client_order_id(client_tag) if client_tag else None
     last_err = None
     for attempt in range(3):
         try:
-            private.market_order(symbol, side, size, reduce_only=reduce_only)
+            private.market_order(symbol, side, size, reduce_only=reduce_only,
+                                 client_order_id=coid)
             last_err = None
             break
         except Exception as e:
@@ -550,29 +598,35 @@ def execute_market_clips(private, demo_feed, symbol: str, side: str,
 
 def execute_maker_or_chase(private: BlofinDemoPrivate, demo_feed, symbol: str,
                            side: str, contracts: float, limit_price: float,
-                           reduce_only: bool = False) -> tuple[float, bool]:
+                           reduce_only: bool = False,
+                           client_tag: str | None = None) -> tuple[float, bool]:
     """Fills `contracts` as maker-with-chase. Orders larger than MAX_CLIP
     are executed as a sequence of clips; returns the size-weighted average
-    fill and whether the majority filled as maker."""
+    fill and whether the majority filled as maker.
+
+    client_tag: a blofin_private.BOOK_TAGS code — forwarded to every clip's
+    order so each is individually attributable on the exchange's record."""
     if contracts > MAX_CLIP + LOT / 2:
         fills, makers = [], 0.0
         left = contracts
         while left > LOT / 2:
             clip = min(MAX_CLIP, left)
             px, mk = _execute_single(private, demo_feed, symbol, side,
-                                     round(clip, 1), limit_price, reduce_only)
+                                     round(clip, 1), limit_price, reduce_only,
+                                     client_tag)
             fills.append((px, clip))
             makers += clip if mk else 0.0
             left -= clip
         avg = sum(p * c for p, c in fills) / sum(c for _, c in fills)
         return avg, makers >= contracts / 2
     return _execute_single(private, demo_feed, symbol, side, contracts,
-                           limit_price, reduce_only)
+                           limit_price, reduce_only, client_tag)
 
 
 def _execute_single(private: BlofinDemoPrivate, demo_feed, symbol: str,
                     side: str, contracts: float, limit_price: float,
-                    reduce_only: bool = False) -> tuple[float, bool]:
+                    reduce_only: bool = False,
+                    client_tag: str | None = None) -> tuple[float, bool]:
     """The round-5 execution upgrade, live.
 
     Try to be the PASSIVE side: post-only limit at the signal price. If it
@@ -582,15 +636,21 @@ def _execute_single(private: BlofinDemoPrivate, demo_feed, symbol: str,
 
     Returns (fill_price, was_maker).
     """
+    coid = make_client_order_id(client_tag) if client_tag else None
     try:
         oid = private.post_only_order(symbol, side, contracts, limit_price,
-                                      reduce_only=reduce_only)
+                                      reduce_only=reduce_only,
+                                      client_order_id=coid)
     except Exception as e:
         # post-only got rejected (our price would have crossed the book);
-        # market is already through our level, so just take it
+        # market is already through our level, so just take it. Fresh id —
+        # the post-only attempt never reached the book, so this is a new
+        # logical order, not a retry of the rejected one.
         print(f"    post-only rejected ({str(e)[:60]}) — taking market")
+        coid2 = make_client_order_id(client_tag) if client_tag else None
         oid = private.market_order(symbol, side, contracts,
-                                   reduce_only=reduce_only)
+                                   reduce_only=reduce_only,
+                                   client_order_id=coid2)
         time.sleep(1.5)
         f = private.fills(symbol, oid)
         return (float(f[0]["fillPrice"]) if f else limit_price, False)
@@ -618,8 +678,10 @@ def _execute_single(private: BlofinDemoPrivate, demo_feed, symbol: str,
     if f:                                     # filled at the last moment
         return float(f[0]["fillPrice"]), True
     print(f"    limit unfilled after {MAKER_PATIENCE_S}s — chasing at market")
+    coid3 = make_client_order_id(client_tag) if client_tag else None
     oid2 = private.market_order(symbol, side, contracts,
-                                reduce_only=reduce_only)
+                                reduce_only=reduce_only,
+                                client_order_id=coid3)
     time.sleep(1.5)
     f2 = private.fills(symbol, oid2)
     return (float(f2[0]["fillPrice"]) if f2 else limit_price, False)
@@ -694,8 +756,11 @@ def decide_and_trade(private: BlofinDemoPrivate, live_feed, symbol: str):
     t = state.get("open_trade")
     unreal = 0.0
     if t:
+        # informational snapshot only (never an order) — the trade's own
+        # stored contract_value when present, else the verified BTC-USDT
+        # fallback for a pre-upgrade trade record.
         unreal = (t["direction"] * (last_close - t["entry_price"])
-                  * t["contracts"] * CONTRACT_BTC)
+                  * t["contracts"] * t.get("contract_value", 0.001))
     log_event({"action": "snapshot", "bar": str(last_bar),
                "close": last_close, "signal": desired_dir,
                "position_contracts": net, "ride_contracts": current_ride,
@@ -770,7 +835,7 @@ def decide_and_trade(private: BlofinDemoPrivate, live_feed, symbol: str):
               f"maker at {last_close:,.1f}")
         exit_fill, was_maker = execute_maker_or_chase(
             private, demo_feed, symbol, side, abs(current_ride),
-            last_close, reduce_only=True)
+            last_close, reduce_only=True, client_tag=BOOK_TAG)
         log_event({"action": "exit", "side": side, "fill_price": exit_fill,
                    "maker": was_maker})
         if state.get("open_trade"):
@@ -790,20 +855,27 @@ def decide_and_trade(private: BlofinDemoPrivate, live_feed, symbol: str):
                   f"+{MAX_ENTRY_FUNDING_BPS} — crowd too long, not entering.")
             log_event({"action": "sentiment_veto", "funding_bps": fb})
             return
+        cv = contract_value(demo_feed, symbol)
+        if cv is None:
+            print("  ENTRY SKIPPED — instrument spec unavailable on demo "
+                  "(contract value unknown, not guessing)")
+            log_event({"action": "entry_skipped", "reason": "no_contract_spec"})
+            return
         notional = state["virtual_equity"] * NOTIONAL_FRACTION
-        contracts = max(LOT, round(notional / last_close / CONTRACT_BTC / LOT)
-                        * LOT)
+        contracts = max(LOT, round(notional / last_close / cv / LOT) * LOT)
         side = "buy" if desired_dir > 0 else "sell"
         print(f"  ENTER {side} {contracts:.1f} ct ≈ "
-              f"${contracts * CONTRACT_BTC * last_close:,.0f} notional — "
+              f"${contracts * cv * last_close:,.0f} notional — "
               f"trying maker at {last_close:,.1f}")
         entry_fill, was_maker = execute_maker_or_chase(
-            private, demo_feed, symbol, side, contracts, last_close)
+            private, demo_feed, symbol, side, contracts, last_close,
+            client_tag=BOOK_TAG)
         log_event({"action": "enter", "side": side, "fill_price": entry_fill,
                    "maker": was_maker})
         state["open_trade"] = {"direction": desired_dir,
                                "contracts": contracts,
                                "entry_price": entry_fill,
+                               "contract_value": cv,
                                "entry_fee_bps": 2.0 if was_maker
                                else config.fee_bps(),
                                "funding_bps_est": fb if fb is not None else 1.0,
@@ -821,7 +893,8 @@ def decide_and_trade(private: BlofinDemoPrivate, live_feed, symbol: str):
             sl = ref * (1 + SL_PCT / 100)
             close_side = "buy"
         try:
-            bid = private.place_tpsl(symbol, close_side, contracts, None, sl)
+            bid = private.place_tpsl(symbol, close_side, contracts, None, sl,
+                                     client_order_id=make_client_order_id(BOOK_TAG))
             print(f"  BRACKET set: SL {sl:,.1f} (-{SL_PCT}%), no TP — "
                   f"winners run to the signal exit  [{bid}]")
             log_event({"action": "bracket", "tp": None,

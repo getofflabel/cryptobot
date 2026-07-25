@@ -32,10 +32,13 @@ from __future__ import annotations
 import base64
 import hashlib
 import hmac
+import itertools
 import json
 import os
+import re
 import time
 import uuid
+from datetime import datetime, timezone
 
 import requests
 
@@ -81,6 +84,84 @@ def load_env(path: str = ".env") -> dict:
 # cross positions therefore live out their lives as cross; every NEW position
 # opens isolated as its symbol goes flat.
 MARGIN_MODE = "isolated"
+
+
+# CLIENT-ORDER-ID TAGGING (Wallace, 2026-07-25: "the exchange's own record
+# can't tell a BOT trade from one you placed by hand"). Verified live against
+# the BloFin demo API on 2026-07-25 (see BLOFIN_API_REFERENCE.md):
+#   - clientOrderId accepts only letters, digits, and underscores, max 32
+#     chars (BloFin error 152009 on anything else — no hyphens, no colons).
+#   - It round-trips through GET /api/v1/trade/orders-history for plain
+#     orders AND through GET /api/v1/trade/orders-tpsl-pending for TP/SL
+#     brackets — both endpoints accept the SAME "clientOrderId" body field
+#     on POST /api/v1/trade/order and POST /api/v1/trade/order-tpsl.
+#   - It is NOT present on fills-history rows — book/order attribution has
+#     to go through orders-history, never fills-history.
+#   - Neither orders-history's clientOrderId= nor orderId= query params
+#     filter server-side (confirmed empirically — both return the same full
+#     page regardless of the value passed), so callers must filter the
+#     returned rows themselves. fills-history's orderId= DOES filter
+#     server-side (confirmed) — prefer it when you already have an order id.
+CLIENT_TAG_PREFIX = "CBOT"
+_CLIENT_TAG_RE = re.compile(r"^[A-Za-z0-9]{1,16}$")
+_coid_counter = itertools.count()
+
+# Every order placed before this moment carries clientOrderId == "" — the
+# field was empty on 100% of pre-existing orders-history rows we inspected.
+# From this timestamp forward, every order this codebase places is tagged,
+# so BloFin's own orders-history becomes the authoritative per-book record
+# from here on. BEFORE this timestamp, only the local event log
+# (trades_log.jsonl / the cloud state mirror) can tell a bot trade from one
+# Wallace placed by hand — do not treat pre-cutover exchange history as
+# attributable to any book. See BLOFIN_API_REFERENCE.md.
+#
+# Set to the moment this change was written (2026-07-25 06:25 UTC). If the
+# ACTUAL deploy to the live Render worker happens meaningfully later than
+# that, bump this forward to match the real deploy time — this constant
+# should reflect when tagged orders genuinely started flowing to the
+# exchange, not when the code was written.
+TAGGING_CUTOVER_UTC = datetime(2026, 7, 25, 6, 25, 0, tzinfo=timezone.utc)
+
+# Short, stable codes for every order-placing book — used to build
+# clientOrderIds and to filter orders-history by book once tagged orders
+# exist. Keep these short; make_client_order_id() has headroom to spare
+# but there is no reason to spend it.
+BOOK_TAGS = {
+    "daily_pick": "dp",
+    "gold_book": "gb",
+    "diver": "dv",
+    "newsdesk": "nd",
+    "shorts_lab": "sl",
+    "tactical": "tc",
+    "tactical_eth": "tce",   # the amplifier slot inside tactical.py
+    "breakout_book": "bo",
+    "core_ride": "cr",       # step5_paper_trade.py's own book
+    "flatten": "fl",         # emergency stray-position cleanup, still bot-initiated
+}
+
+
+def make_client_order_id(tag: str) -> str:
+    """A clientOrderId for book `tag` that is unique and legal under
+    BloFin's rules (see the block comment above). Millisecond timestamp +
+    an in-process monotonic counter makes collisions impossible even for
+    two orders placed in the same millisecond (e.g. entry immediately
+    followed by its TP/SL bracket).
+
+    The counter is zero-padded to 6 digits and taken mod 1,000,000 — NOT
+    mod 10 (an earlier version of this function used a single trailing
+    digit and a same-process test caught it colliding within a tight loop:
+    two calls landing in the same millisecond with the counter's last
+    digit having cycled back to the same value). A million sequential
+    calls would have to land in the exact same millisecond to collide,
+    which cannot happen for anything this codebase actually does."""
+    if not _CLIENT_TAG_RE.match(tag):
+        raise ValueError(
+            f"bad client tag {tag!r} — letters/digits only, max 16 chars")
+    seq = next(_coid_counter) % 1_000_000
+    coid = f"{CLIENT_TAG_PREFIX}_{tag}_{int(time.time() * 1000)}{seq:06d}"
+    if len(coid) > 32:
+        raise ValueError(f"clientOrderId too long ({len(coid)} > 32): {coid}")
+    return coid
 
 
 class BlofinDemoPrivate:
@@ -155,6 +236,16 @@ class BlofinDemoPrivate:
                 return row
         raise RuntimeError("No USDT balance found in demo futures account")
 
+    def account_balance(self) -> dict:
+        """The trading-account balance endpoint — a DIFFERENT, richer read
+        than futures_balance()'s /api/v1/asset/balances. This one has
+        `totalEquity` and `isolatedEquity` at the top level: the exchange's
+        OWN balance-plus-unrealized-PnL number, already combined. Anywhere
+        that currently computes "equity = balance + unrealized" by hand
+        (see the old bot_pnl.py) should read `totalEquity` from here
+        instead — see BLOFIN_API_REFERENCE.md."""
+        return self._call("GET", "/api/v1/account/balance")
+
     def positions(self, symbol: str | None = None) -> list[dict]:
         params = {"instId": symbol} if symbol else None
         return self._call("GET", "/api/v1/account/positions", params)
@@ -219,7 +310,8 @@ class BlofinDemoPrivate:
 
     def market_order(self, symbol: str, side: str, contracts: float,
                      reduce_only: bool = False,
-                     margin_mode: str | None = None) -> str:
+                     margin_mode: str | None = None,
+                     client_order_id: str | None = None) -> str:
         """Place a market order for `contracts`. Returns the order id.
 
         side is "buy" or "sell". reduce_only=True marks an order that may
@@ -230,6 +322,12 @@ class BlofinDemoPrivate:
         margin_mode MUST match the existing position's mode ("cross" or
         "isolated") or BloFin rejects the order. When closing, always read
         the mode off the position rather than assuming.
+
+        client_order_id: pass the string from make_client_order_id() so
+        this order is identifiable as OURS (and which book's) on the
+        exchange's own record — see the tagging block comment near the top
+        of this file. Optional only for back-compat call sites; every book
+        should be passing one.
         """
         margin_mode = margin_mode or self._mode_for(symbol)
         body = {
@@ -242,6 +340,8 @@ class BlofinDemoPrivate:
         }
         if reduce_only:
             body["reduceOnly"] = "true"
+        if client_order_id:
+            body["clientOrderId"] = client_order_id
         data = self._call("POST", "/api/v1/trade/order", body=body)
         if isinstance(data, list) and data:
             first = data[0]
@@ -251,11 +351,15 @@ class BlofinDemoPrivate:
         raise RuntimeError(f"Unexpected order response: {data}")
 
     def post_only_order(self, symbol: str, side: str, contracts: float,
-                        price: float, reduce_only: bool = False) -> str:
+                        price: float, reduce_only: bool = False,
+                        client_order_id: str | None = None) -> str:
         """Place a post-only limit order: it either rests in the book as a
         MAKER order (2 bps fee instead of 6, zero spread cost) or, if the
         price would cross the book and take liquidity, the exchange rejects
-        it rather than filling it as taker. That guarantee is the point."""
+        it rather than filling it as taker. That guarantee is the point.
+
+        client_order_id: see market_order() — pass a make_client_order_id()
+        tag so this order is attributable on the exchange's own record."""
         body = {
             "instId": symbol,
             "marginMode": self._mode_for(symbol),
@@ -267,6 +371,8 @@ class BlofinDemoPrivate:
         }
         if reduce_only:
             body["reduceOnly"] = "true"
+        if client_order_id:
+            body["clientOrderId"] = client_order_id
         data = self._call("POST", "/api/v1/trade/order", body=body)
         if isinstance(data, list) and data:
             first = data[0]
@@ -285,7 +391,8 @@ class BlofinDemoPrivate:
 
     def place_tpsl(self, symbol: str, position_side_close: str,
                    contracts: float, tp_price: float | None,
-                   sl_price: float, margin_mode: str | None = None) -> str:
+                   sl_price: float, margin_mode: str | None = None,
+                   client_order_id: str | None = None) -> str:
         """Attach a take-profit / stop-loss bracket to a position.
 
         position_side_close: "sell" to close a long, "buy" to close a short.
@@ -295,7 +402,11 @@ class BlofinDemoPrivate:
 
         This is what makes the position 'projected' in the BloFin app — the
         TP and SL lines show on the position card and the chart.
-        """
+
+        client_order_id: see market_order() — verified live 2026-07-25 that
+        this endpoint accepts the SAME "clientOrderId" body field (it shows
+        up as "clientOrderId" in orders-tpsl-pending, not a separate
+        "algoClientOrderId" field, despite that field existing elsewhere)."""
         margin_mode = margin_mode or self._mode_for(symbol)
         body = {
             "instId": symbol,
@@ -307,6 +418,8 @@ class BlofinDemoPrivate:
             "slOrderPrice": "-1",
             "reduceOnly": "true",
         }
+        if client_order_id:
+            body["clientOrderId"] = client_order_id
         if tp_price is not None:
             # Optional: round 11 measured our +5% TP truncating the big
             # winners the strategy lives on (test return 32% -> 10%).
@@ -336,3 +449,36 @@ class BlofinDemoPrivate:
         if order_id:
             params["orderId"] = order_id
         return self._call("GET", "/api/v1/trade/fills-history", params)
+
+    def order_fee(self, symbol: str, order_id: str | None) -> float | None:
+        """Actual fee BloFin charged for one order, read straight from
+        fills-history (its orderId filter DOES work server-side, confirmed
+        live) — replaces estimating fees from an assumed maker/taker bps
+        rate. Returns None (never a guess) if there is no order id or the
+        fill hasn't posted yet; the caller decides the fallback."""
+        if not order_id:
+            return None
+        try:
+            rows = self.fills(symbol, order_id=order_id)
+        except Exception:
+            return None
+        if not rows:
+            return None
+        try:
+            return sum(float(r.get("fee", 0) or 0) for r in rows)
+        except Exception:
+            return None
+
+    def orders_history(self, symbol: str, limit: int | None = None) -> list[dict]:
+        """Exchange's own order-level record — `pnl`, `fee`, `clientOrderId`,
+        `state` per order, straight from BloFin. This is where
+        clientOrderId actually shows up (never on fills-history), so this
+        is how book/order attribution is done from TAGGING_CUTOVER_UTC
+        onward. NOTE (verified live): neither BloFin's clientOrderId= nor
+        orderId= query params filter server-side here — this always
+        returns the page of recent orders for `symbol`; filter client-side
+        by clientOrderId/orderId on the result."""
+        params = {"instId": symbol}
+        if limit:
+            params["limit"] = str(limit)
+        return self._call("GET", "/api/v1/trade/orders-history", params)

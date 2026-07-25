@@ -162,6 +162,7 @@ from datetime import datetime, timedelta, timezone
 
 import pandas as pd
 
+from blofin_private import make_client_order_id
 from book_ledger import recorded_book_positions
 from step5_paper_trade import (current_funding_bps, execute_market_clips,
                                log_event, notify, now_utc,
@@ -169,6 +170,8 @@ from step5_paper_trade import (current_funding_bps, execute_market_clips,
                                write_lesson)
 from strategy import atr as _atr
 from strategy import rsi as _rsi
+
+BOOK_TAG = "dp"
 
 # ---------------------------------------------------------------------------
 # universe (see module docstring: small on purpose — a DEMO-host limitation)
@@ -1164,7 +1167,8 @@ def _ensure_bracket(private, symbol, state, t):
     try:
         close_side = "sell" if t["direction"] > 0 else "buy"
         tpsl_id = private.place_tpsl(symbol, close_side, t["contracts"],
-                                     t.get("tp_price"), t["sl_price"])
+                                     t.get("tp_price"), t["sl_price"],
+                                     client_order_id=make_client_order_id(BOOK_TAG))
         t["tpsl_id"] = tpsl_id
         save_state(state)
         print(f"  [PICK] ⚠️ bracket was MISSING for {symbol} — "
@@ -1217,7 +1221,34 @@ def _book_exit(state, dp, t, exit_price, exit_fee_bps, reason):
     type "pick_<top_component>" line), and appends a daybook entry — the
     trade-level record the daily recap reads."""
     sym = t["symbol"]
-    contract_value = t.get("contract_value", 0.001)
+    contract_value = t.get("contract_value")
+    if contract_value is None:
+        # step98_api_audit.md MEDIUM finding #4: every trade this book opens
+        # stores its own contract_value at entry (see the "leverage"/
+        # "contract_value" line below in the entry path) — this is a dead
+        # path for any trade opened after that, and should stay dead. If it
+        # ever fires, it means a legacy or corrupted trade record, and this
+        # book trades MANY symbols with wildly different contract values
+        # (BTC 0.001, XRP 100, DOGE 1000) — guessing ANY single number here
+        # would silently misprice the realized PnL, possibly by orders of
+        # magnitude. Check the module's own instrument-spec cache (already
+        # populated if this symbol was looked up earlier this run) before
+        # accepting the loudest possible failure: alert, and use the
+        # verified BTC-USDT value only as an absolute last resort — never
+        # silently, and never assumed correct for a non-BTC symbol.
+        cached = _spec_cache.get(sym)
+        contract_value = cached["contract_value"] if cached else 0.001
+        source = ("this run's cached instrument spec" if cached else
+                  f"the BTC-USDT fallback (0.001), which is almost "
+                  f"certainly WRONG for {sym}")
+        msg = (f"[PICK] ⚠️ DATA INTEGRITY: {sym} trade has no stored "
+              f"contract_value (legacy/corrupted record) — using "
+              f"{source}. realized PnL on this exit may be mispriced — "
+              f"investigate.")
+        print(f"  {msg}")
+        notify("⚠️ daily pick data-integrity alert (demo)", msg)
+        log_event({"action": "contract_value_missing", "symbol": sym,
+                   "used_fallback": contract_value, "had_cache": bool(cached)})
     size = t["contracts"] * contract_value
     gross = t["direction"] * (exit_price - t["entry_price"]) * size
     fees = (t["entry_price"] * t.get("entry_fee_bps", 6.0)
@@ -1332,7 +1363,7 @@ def _do_entry(private, demo_feed, state, dp, cand, spec, low_conviction,
     try:
         entry, was_maker = execute_market_clips(
             private, demo_feed, sym, plan["open_side"], plan["contracts"],
-            plan["ref_price"])
+            plan["ref_price"], client_tag=BOOK_TAG)
     except Exception as e:
         print(f"  [PICK] ENTRY FAILED: {str(e)[:100]}")
         # PARTIAL-FILL ROLLBACK (2026-07-24): a rejected clip can still leave
@@ -1348,7 +1379,8 @@ def _do_entry(private, demo_feed, state, dp, cand, spec, low_conviction,
                     try: private.cancel_tpsl(sym, br.get("tpslId"))
                     except Exception: pass
                 flat_side = "sell" if stray > 0 else "buy"
-                private.market_order(sym, flat_side, abs(stray), reduce_only=True)
+                private.market_order(sym, flat_side, abs(stray), reduce_only=True,
+                                     client_order_id=make_client_order_id(BOOK_TAG))
                 print(f"  [PICK] rolled back partial fill: flattened "
                       f"{stray:+.4g}ct on {sym}")
         except Exception as e2:
@@ -1369,7 +1401,8 @@ def _do_entry(private, demo_feed, state, dp, cand, spec, low_conviction,
     tpsl_id = None
     try:
         tpsl_id = private.place_tpsl(sym, plan["close_side"],
-                                     plan["contracts"], tp, sl)
+                                     plan["contracts"], tp, sl,
+                                     client_order_id=make_client_order_id(BOOK_TAG))
     except Exception as e:
         print(f"  [PICK] TP/SL bracket FAILED: {str(e)[:80]}")
         notify("⚠️ daily pick bracket failed (demo)",
@@ -1480,7 +1513,7 @@ def run_daily_pick(private, live_feed, demo_feed, state: dict, dry: bool = False
             ref_price = quote.bid if side == "sell" else quote.ask
             fill, was_maker = execute_market_clips(
                 private, demo_feed, t["symbol"], side, t["contracts"],
-                ref_price, reduce_only=True)
+                ref_price, reduce_only=True, client_tag=BOOK_TAG)
             realized = _book_exit(state, dp, t, fill, 2.0 if was_maker else 6.0,
                                   f"{max_hold_h:.0f}h time")
             exits.append({"action": "time_exit", "symbol": t["symbol"],
