@@ -1091,3 +1091,45 @@ Follow-up queued as R93: run the identical state machine on 4h and 1h,
 where the same logic should fire 20-50x more often and can actually be
 judged. That also moves it toward the timeframes the owner prefers, since
 he has said repeatedly he does not want daily/4h multi-day holds.
+
+## ROUND 89 — the breakout does NOT generalize. It is a BTC edge. (2026-07-24)
+
+The frozen R86/R87 config replayed with zero tuning on nine never-seen
+assets (SOL, XRP, DOGE, BNB, ADA, LINK, AVAX, LTC, DOT). Free evidence —
+no sealed data existed on these to burn.
+
+**6 of 9 fresh assets FAIL outright.** The run's own summary line reads
+"5/11 PASS, 927.7 trades/year" — that is a POOLED full-history number and
+it is a trap. Read the windows instead:
+
+| Asset | train | val | test | all 3 positive |
+|---|---|---|---|---|
+| BTC (sealed) | +$14.87 | +$5.21 | +$6.97 | YES |
+| ETH (sealed) | +$39.59 | +$26.01 | +$9.68 | YES |
+| AVAX | +$13.83 | +$2.63 | +$12.19 | YES |
+| SOL | +$25.27 | -$1.96 | +$11.86 | no |
+| XRP | -$10.78 | +$84.83 | +$18.88 | no |
+| DOGE | -$12.21 | +$82.15 | -$17.11 | no |
+| DOT/LINK/BNB/LTC/ADA | all negative pooled | | | no |
+
+XRP swings -$10.78 / +$84.83 / +$18.88 and "passes" on the pool. That is
+a number wandering, not an edge.
+
+**AVAX is exactly what luck predicts and therefore counts for nothing.**
+Nine assets x three windows: if the config had no edge and each window
+were a coin flip, ~1.1 assets show all-three-positive by chance. We
+observed 1. Same multiple-comparisons discipline that killed the eye veto
+tonight, applied to a result that happened to favour us.
+
+**Second, independent reason not to run the altcoins: ruin-level risk.**
+This strategy has no fixed stop. Worst single-trade adverse move: BTC
+-3.93%, ETH -7.19%, but SOL -27.9%, XRP -28.9%, LINK -29.4%, DOGE -32.1%.
+Max drawdowns of -81% to -87% on five of the nine. The 6% disaster stop
+that is provably non-binding on BTC would fire constantly on these; a stop
+loose enough not to fire leaves ~30% of position value unprotected. XRP
+"passes" at +$2.89/trade with an 81% peak-to-trough drawdown.
+
+**DECISION: deploy on BTC only.** ETH stays flagged fragile at reduced
+size. The honest frequency for this family is **~191 trades/year on BTC**,
+~400 with ETH — NOT 927. BTC's sealed pass is untouched by this round; what
+died is the expansion story, not the edge.
