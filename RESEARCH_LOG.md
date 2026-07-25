@@ -1048,3 +1048,46 @@ a hypothesis generator, never a finding.
 **WHAT IT HANDED US INSTEAD:** if breaking an aged, well-defended level is
 a progressively WORSE short, the fade may be the trade. Queued as R92 with
 the drift control that decides whether it is real — see RESEARCH_QUEUE.
+
+## ROUND 91 — the pro's read is too RARE to mechanize on the daily (2026-07-24)
+
+The owner posted a Friday review from an analyst he follows (Prof Adam,
+TRW). I fact-checked every checkable claim against real market data first
+and all of them held (SPY's squeeze to 743.72 then a full round-trip to
+738.93, QQQ closing at new lows, BTC's 3 red days and close below 65K,
+oil's retrace, the dollar's grind). Descriptive accuracy verified, so his
+METHOD was worth testing mechanically.
+
+Coded as a no-lookahead state machine on BTC daily (Bitstamp spot, 14.9
+years) and ETH daily: rally tags a prior significant swing high -> N
+consecutive red closes -> the interim minor swing low breaks -> forecast a
+LOWER HIGH rather than continuation. Swept N in {2,3,4} x closed-basis vs
+wick-basis.
+
+**VERDICT: INSUFFICIENT SAMPLE, not FAIL.** At the loosest defensible
+settings this exact pattern fires **2 to 5 times in fifteen years**
+(0.17-0.34 per year). Zero of 6 BTC cells cleared the 30-train/8-val
+floor, so the ETH transfer never ran — there was nothing to transfer.
+
+The detector is not broken: its N=3 closed-basis triggers are real,
+identifiable BTC events (Jun 2020, the Apr 2021 top, Aug 2022, Apr 2024,
+Feb 2025). The forecast resolved correctly 5 of 5. That is a 100% hit rate
+on five events across fifteen years, which is a nice anecdote and not an
+estimate of anything.
+
+**The closed-basis discipline did NOT pay in dollars here** (wick-basis
+matched or beat it at every N; at N=4 closed-basis was -$2,301 worse). But
+at n=2-5 per cell this means nothing in either direction, and it should
+not be quoted as evidence against him.
+
+**What this actually teaches:** his edge is not a mechanical rule we can
+lift. It is judgment applied to a rare, high-context situation, and the
+thing worth copying is the DISCIPLINE (a specific invalidation level
+stated in advance, closed-basis confirmation, a forecast that can be
+scored) rather than the pattern. The pattern itself, at daily resolution,
+is a once-every-three-years event.
+
+Follow-up queued as R93: run the identical state machine on 4h and 1h,
+where the same logic should fire 20-50x more often and can actually be
+judged. That also moves it toward the timeframes the owner prefers, since
+he has said repeatedly he does not want daily/4h multi-day holds.
