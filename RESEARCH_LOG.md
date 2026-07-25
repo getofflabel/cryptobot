@@ -1051,7 +1051,7 @@ the drift control that decides whether it is real — see RESEARCH_QUEUE.
 
 ## ROUND 91 — the pro's read is too RARE to mechanize on the daily (2026-07-24)
 
-The owner posted a Friday review from an analyst he follows (Prof Adam,
+The owner posted a Friday review from an analyst he follows (Prof Michael,
 TRW). I fact-checked every checkable claim against real market data first
 and all of them held (SPY's squeeze to 743.72 then a full round-trip to
 738.93, QQQ closing at new lows, BTC's 3 red days and close below 65K,
@@ -1172,3 +1172,50 @@ Design note recorded honestly by the round: R91's MAX_HOLD_DAYS=45 /
 SEARCH_WINDOW=25 were carried over as literal BAR counts rather than
 recalibrated per timeframe, so holds scale with the timeframe (5m -> 3.75h
 cap, 4h -> 7.5 days). Defensible and stated, not hidden.
+
+## ROUND 92 — fade the aged breakdown: DRIFT, not an edge (2026-07-24)
+
+R90's inversion tested with three mandatory controls. The primary result
+looked excellent: buying the breakdown of an aged structural level (BTC
+1h, age>=500) returned **+$86.96/trade train (93rd pctile vs random) and
++$147.71 val (98th pctile, 76% win rate)**. That is exactly why the
+controls exist.
+
+**CONTROL 2, THE MIRROR — FAILS, decisively.** If aged levels genuinely
+mean-revert, shorting aged RESISTANCE broken upward must work too. It is
+negative in **all 30 mirror cells across both timeframes**, and mostly
+BELOW chance (14th-33rd percentile of a random-entry control), getting
+monotonically worse with level age. The pattern is not "aged levels snap
+back", it is "long works, short does not" — which is what an uptrending
+sample manufactures.
+
+**ETH TRANSFER — FAILS.** 1h train +$298.28 (100th pctile) -> val
+**-$23.57**. 4h train +$53.12 -> val **-$91.31**. A 100th-percentile train
+collapsing to negative val is the signature of fitting.
+
+**CONTROL 3, regime split — the one point in its favour, recorded not
+buried:** buying breakdowns stayed positive in the BEAR regime on adequate
+sample (1h, n=63, +$104.11). Genuine evidence against pure drift. Not
+enough to survive the other two failures.
+
+**Multiple comparisons:** 60 cells swept, ~6 expected above the 90th
+percentile by chance, best cell at the 93rd. The headline was inside luck
+before the mirror even spoke.
+
+**VERDICT: DRIFT. No deployment, no live change.**
+
+### THE CONVERGENT FINDING WORTH KEEPING
+
+Three independent studies tonight, three methods, same answer:
+- R84 (40 blind chart drills): shorts 1W/11L, -0.544R; longs +0.255R
+- R90 (25,481 mechanical break events): structural shorts monotonically
+  worse with level significance, -$9 -> -$89/trade
+- R92 (30 mirror cells): shorting aged upside breakouts negative
+  everywhere, below a random-entry control
+
+**Shorting BTC structurally does not work in this data.** Honest limit on
+that claim: we cannot distinguish a permanent property of the asset from
+an artifact of a 2020-2026 sample that trended up, and that distinction
+matters before it becomes doctrine. What it justifies today: stop
+spending rounds hunting BTC short setups, and treat every future short
+candidate as guilty until it clears a bear-regime-only test.
