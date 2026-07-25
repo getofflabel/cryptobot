@@ -1872,3 +1872,98 @@ that passed anything was Brent, which we cannot trade.
 Honest summary: **oil trends and oil moves, both genuinely, and neither has
 survived contact with what it costs to trade them.** That is a finding about
 a market, not a failure to find one.
+
+## ROUND 340-341 — gold's "17x" was measured against the wrong cost (2026-07-25)
+
+**CORRECTION TO A NUMBER THIS DESK HAS QUOTED ALL NIGHT.** Gold's donchian
+breakout has been described as "17 times the cost of trading". That figure
+used GLD's 0.04% round trip. **The bot would trade XAUT on BloFin with
+market orders: 0.18% round trip.** Re-priced against what we would actually
+pay, middle 20% read once:
+
+| shape | instrument | profit/trade as % of position | x the cost | trades/yr |
+|---|---|---|---|---|
+| 20-day break | GLD | +0.644% | **3.6x** | 5.3 |
+| 20-day break | gold future | +0.952% | **5.3x** | 4.7 |
+| 55-day break | GLD | +1.834% | **10.2x** | 2.5 |
+| 55-day break | gold future | +1.096% | **6.1x** | 2.7 |
+
+The version everyone quotes STRADDLES the 5x bar rather than clearing it.
+The one that clears fires 2.5 times a year.
+
+**The audit was fairer to our own code than expected:** two of the four
+practitioner conditions were already implemented (confirmed close beyond the
+channel; fill at the next bar's open). The missing longer-trend filter helps
+on the window we chose and is a coin flip on the one we did not — the shape
+of a fitted improvement — so it was NOT adopted. A minimum-channel-width
+filter is actively harmful in all 12 cells.
+
+**Against random entry timing, 500 draws:** the breakout entry beats 88-97
+of 100 draws over 13-15 years, so **the entry is real**. On the middle 20%
+it falls to the 74th-78th percentile, and the table shows why: random
+entries with this exit are worth +0.27% to +0.64% per trade in the modern
+window versus +0.02% to +0.14% in the older one. **A meaningful part of
+recent performance IS the exit riding gold's rise.** Holding the trend
+regime constant sharpens it further: the 20-day falls to the 61st-65th
+percentile while the 55-day holds at the 92nd. The slower channel is the
+one carrying real entry information into the recent window.
+
+### THE ROUND-86 PATTERN, A THIRD TIME
+
+**Gold's dip-buy is not dead.** R48 buried it 1 out of 72 using a version
+with a fixed hold, a fixed target and **no longer-trend condition**. With
+that mandatory condition added it SURVIVES on all three gold instruments
+(GLD +0.302%/37 trades then +0.885%/12). Without it, it goes outright
+negative on two instruments. It is alive, too thin (1.7x-2.7x) and too rare
+(3/yr) — but the playbook entry saying it is dead is wrong.
+
+**My flagship port hypothesis failed.** The volume gate on the Bollinger
+breakout is DEAD on gold: it lifts one window and collapses the other, in
+opposite directions on the two instruments. The ungated band breakout
+survives at 4.3x-4.9x, just under the bar, and at 4.2 trades a year is
+probably the channel breakout wearing a different hat.
+
+**Also corrected:** R48's "Bitcoin's 1.5% gate gives zero trades on gold"
+is true on HOURLY bars (gold 0.28%-0.72%) but false on DAILY, where gold's
+range is 1.13%-1.29% and the same gate is open 23%-33% of days.
+
+**Best lead: the 4-hour gold future — 28.6 trades/year, 2.9x then 9.6x**,
+with the honest caveat that its first window is only 1.43 years and 41
+trades. Thin-window rule applies.
+
+**Gold shorts now 0 for 58.** Overnight gap family mapped and closed.
+
+### THE HIGHEST-LEVERAGE QUESTION ON THE GOLD DESK IS PLUMBING, NOT RESEARCH
+
+Dropping XAUT's round trip from 0.18% toward 0.06% would flip turn-of-month,
+the dip-buy AND the hourly breakout from rejects to candidates in one
+stroke. That is the limit-order question, and it is now load-bearing for two
+markets rather than one.
+
+## ROUND 320 — Ethereum: five ported shapes, all die, and two live-code corrections (2026-07-25)
+
+49 cells, every dial re-derived from Ethereum's own bars with the original
+number printed beside it. All five families die or reject. **Luck alone
+would produce ~7.8 winners on this grid; it produced 4. Below chance.**
+Nothing claimed. Two cells were positive in both windows and cleared the
+cost bar, but neither was the pre-registered pick and reaching for them is
+exactly the move that causes this problem — logged as replication
+candidates only.
+
+**Correction 1: "Bitcoin's 1.5% volatility gate" is not one number.**
+Measured on Bitcoin's own 4h bars it let entries through on **63.2% of the
+first window, 53.5% of the middle, and 24.3% of the final fifth.** Bitcoin's
+volatility decayed across its own history, so the constant grew steadily
+pickier with nobody changing it. R170's note of 18.7% matches none of those
+windows. This feeds directly into the R400 audit of our one live edge.
+
+**Correction 2: the flag-touch shape was sealed on limit orders and never
+tested on another coin.** At market-order costs on Ethereum it loses in all
+six cells.
+
+**Ethereum's turn-of-month does not merely fail, the tendency INVERTS.**
+First window: +0.743% inside the window versus -0.027% outside (t=3.01).
+Middle window: -0.766% inside versus +0.160% outside (t=-2.10). Those are
+price moves on an unlevered holding. Sign reversal, not a costing problem.
+
+25 Ethereum families now mapped, zero validated edges of its own.

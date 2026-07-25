@@ -1,0 +1,37 @@
+symbol,family,config,train_n,train_dollars_per_trade,train_pct_of_position,train_x_research_cost,train_x_live_venue_cost,val_n,val_dollars_per_trade,val_pct_of_position,val_x_research_cost,val_x_live_venue_cost,trades_per_year_train,trades_per_year_val,verdict
+GLD,incumbent,"donchian20 + EMA20 exit (round 48, unchanged)",67,80.61,0.7253,18.13,4.03,23,62.09,0.644,16.1,3.58,5.16,5.31,SURVIVOR
+GLD,filtered,donchian20 + EMA20 exit | no trend filter | width>=own median (6.68% of price),36,30.85,0.3821,9.55,2.12,6,-116.98,-1.1971,-29.93,-6.65,2.77,1.39,NOT ENOUGH TRADES
+GLD,filtered,donchian20 + EMA20 exit | no trend filter | width>=own upper quarter (8.94% of price),19,-9.04,0.0084,0.21,0.05,4,-142.7,-1.4493,-36.23,-8.05,1.46,0.92,NOT ENOUGH TRADES
+GLD,filtered,donchian20 + EMA20 exit | close>SMA100 | none,55,125.79,1.0465,26.16,5.81,20,43.05,0.48,12.0,2.67,4.23,4.62,SURVIVOR
+GLD,filtered,donchian20 + EMA20 exit | close>SMA100 | width>=own median (6.68% of price),32,61.31,0.648,16.2,3.6,6,-116.98,-1.1971,-29.93,-6.65,2.46,1.39,NOT ENOUGH TRADES
+GLD,filtered,donchian20 + EMA20 exit | close>SMA100 | width>=own upper quarter (8.94% of price),16,66.39,0.7332,18.33,4.07,4,-142.7,-1.4493,-36.23,-8.05,1.23,0.92,NOT ENOUGH TRADES
+GLD,filtered,donchian20 + EMA20 exit | close>SMA200 | none,47,144.02,1.1957,29.89,6.64,20,29.69,0.3545,8.86,1.97,3.62,4.62,SURVIVOR
+GLD,filtered,donchian20 + EMA20 exit | close>SMA200 | width>=own median (6.68% of price),31,69.69,0.7214,18.04,4.01,6,-116.98,-1.1971,-29.93,-6.65,2.39,1.39,NOT ENOUGH TRADES
+GLD,filtered,donchian20 + EMA20 exit | close>SMA200 | width>=own upper quarter (8.94% of price),16,46.26,0.5468,13.67,3.04,4,-142.7,-1.4493,-36.23,-8.05,1.23,0.92,NOT ENOUGH TRADES
+GLD,incumbent,"donchian55 + EMA20 exit (round 48, unchanged)",39,93.25,0.901,22.53,5.01,11,192.79,1.8342,45.85,10.19,3.0,2.54,SURVIVOR
+GLD,filtered,donchian55 + EMA20 exit | no trend filter | width>=own median (11.59% of price),21,-36.61,-0.3228,-8.07,-1.79,4,-51.38,-0.4912,-12.28,-2.73,1.62,0.92,NOT ENOUGH TRADES
+GLD,filtered,donchian55 + EMA20 exit | no trend filter | width>=own upper quarter (15.81% of price),8,-42.82,-0.415,-10.38,-2.31,2,-401.68,-4.0855,-102.14,-22.7,0.62,0.46,NOT ENOUGH TRADES
+GLD,filtered,donchian55 + EMA20 exit | close>SMA100 | none,39,93.25,0.901,22.53,5.01,11,192.79,1.8342,45.85,10.19,3.0,2.54,SURVIVOR
+GLD,filtered,donchian55 + EMA20 exit | close>SMA100 | width>=own median (11.59% of price),21,-36.61,-0.3228,-8.07,-1.79,4,-51.38,-0.4912,-12.28,-2.73,1.62,0.92,NOT ENOUGH TRADES
+GLD,filtered,donchian55 + EMA20 exit | close>SMA100 | width>=own upper quarter (15.81% of price),8,-42.82,-0.415,-10.38,-2.31,2,-401.68,-4.0855,-102.14,-22.7,0.62,0.46,NOT ENOUGH TRADES
+GLD,filtered,donchian55 + EMA20 exit | close>SMA200 | none,35,114.88,1.071,26.78,5.95,11,156.33,1.5238,38.1,8.47,2.69,2.54,SURVIVOR
+GLD,filtered,donchian55 + EMA20 exit | close>SMA200 | width>=own median (11.59% of price),20,-26.07,-0.2085,-5.21,-1.16,4,-51.38,-0.4912,-12.28,-2.73,1.54,0.92,NOT ENOUGH TRADES
+GLD,filtered,donchian55 + EMA20 exit | close>SMA200 | width>=own upper quarter (15.81% of price),8,-42.82,-0.415,-10.38,-2.31,2,-401.68,-4.0855,-102.14,-22.7,0.62,0.46,NOT ENOUGH TRADES
+GC=F,incumbent,"donchian20 + EMA20 exit (round 48, unchanged)",89,57.51,0.5436,27.18,3.02,24,95.09,0.9522,47.61,5.29,5.72,4.65,SURVIVOR
+GC=F,filtered,donchian20 + EMA20 exit | no trend filter | width>=own median (6.37% of price),47,5.48,0.1274,6.37,0.71,5,175.64,1.7945,89.72,9.97,3.02,0.97,NOT ENOUGH TRADES
+GC=F,filtered,donchian20 + EMA20 exit | no trend filter | width>=own upper quarter (8.47% of price),26,-60.05,-0.5574,-27.87,-3.1,4,51.85,0.5876,29.38,3.26,1.67,0.77,NOT ENOUGH TRADES
+GC=F,filtered,donchian20 + EMA20 exit | close>SMA100 | none,77,88.34,0.7576,37.88,4.21,22,61.44,0.6809,34.05,3.78,4.95,4.26,SURVIVOR
+GC=F,filtered,donchian20 + EMA20 exit | close>SMA100 | width>=own median (6.37% of price),42,21.63,0.2788,13.94,1.55,4,278.95,2.7774,138.87,15.43,2.7,0.77,NOT ENOUGH TRADES
+GC=F,filtered,donchian20 + EMA20 exit | close>SMA100 | width>=own upper quarter (8.47% of price),24,-28.82,-0.2063,-10.32,-1.15,4,51.85,0.5876,29.38,3.26,1.54,0.77,NOT ENOUGH TRADES
+GC=F,filtered,donchian20 + EMA20 exit | close>SMA200 | none,72,99.38,0.8333,41.67,4.63,20,72.31,0.7765,38.82,4.31,4.63,3.87,SURVIVOR
+GC=F,filtered,donchian20 + EMA20 exit | close>SMA200 | width>=own median (6.37% of price),40,47.26,0.5101,25.5,2.83,4,278.95,2.7774,138.87,15.43,2.57,0.77,NOT ENOUGH TRADES
+GC=F,filtered,donchian20 + EMA20 exit | close>SMA200 | width>=own upper quarter (8.47% of price),23,-36.17,-0.2827,-14.14,-1.57,4,51.85,0.5876,29.38,3.26,1.48,0.77,NOT ENOUGH TRADES
+GC=F,incumbent,"donchian55 + EMA20 exit (round 48, unchanged)",55,41.95,0.4663,23.32,2.59,14,111.61,1.096,54.8,6.09,3.54,2.71,SURVIVOR
+GC=F,filtered,donchian55 + EMA20 exit | no trend filter | width>=own median (11.07% of price),30,-78.31,-0.8215,-41.07,-4.56,5,-71.89,-0.6785,-33.92,-3.77,1.93,0.97,NOT ENOUGH TRADES
+GC=F,filtered,donchian55 + EMA20 exit | no trend filter | width>=own upper quarter (14.58% of price),14,-114.36,-1.2025,-60.12,-6.68,2,-349.06,-3.5424,-177.12,-19.68,0.9,0.39,NOT ENOUGH TRADES
+GC=F,filtered,donchian55 + EMA20 exit | close>SMA100 | none,55,41.95,0.4663,23.32,2.59,14,111.61,1.096,54.8,6.09,3.54,2.71,SURVIVOR
+GC=F,filtered,donchian55 + EMA20 exit | close>SMA100 | width>=own median (11.07% of price),30,-78.31,-0.8215,-41.07,-4.56,5,-71.89,-0.6785,-33.92,-3.77,1.93,0.97,NOT ENOUGH TRADES
+GC=F,filtered,donchian55 + EMA20 exit | close>SMA100 | width>=own upper quarter (14.58% of price),14,-114.36,-1.2025,-60.12,-6.68,2,-349.06,-3.5424,-177.12,-19.68,0.9,0.39,NOT ENOUGH TRADES
+GC=F,filtered,donchian55 + EMA20 exit | close>SMA200 | none,53,38.21,0.4344,21.72,2.41,12,113.54,1.1242,56.21,6.25,3.41,2.32,SURVIVOR
+GC=F,filtered,donchian55 + EMA20 exit | close>SMA200 | width>=own median (11.07% of price),29,-72.05,-0.7365,-36.82,-4.09,5,-71.89,-0.6785,-33.92,-3.77,1.87,0.97,NOT ENOUGH TRADES
+GC=F,filtered,donchian55 + EMA20 exit | close>SMA200 | width>=own upper quarter (14.58% of price),13,-101.2,-1.0422,-52.11,-5.79,2,-349.06,-3.5424,-177.12,-19.68,0.84,0.39,NOT ENOUGH TRADES

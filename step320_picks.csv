@@ -1,0 +1,6 @@
+family,pick,outcome,train_trades,train_avg_profit,val_trades,val_avg_profit,times_cost_val
+A volatility-gated trend,4h 20/100 gate 1.80%,"REJECTED ON THICKNESS: positive both windows but the profit is only 0.97 times the cost of trading, under the 5x bar",33,13.119844135282143,12,6.398209441034569,0.9672268736349494
+B donchian breakout,4h channel 20 bars (gold's number copied straight across),"DIES (profitable on the first 60%, loses on the middle 20%)",125,29.641317005668952,43,-10.595797423246932,-1.936473891851809
+C RSI dip-buy,4h RSI<5.00 above 200-bar avg [the S&P's number copied straight across + the S&P's 200-bar filter copied straight across],DIES (the best cell on the first 60% still loses money there),68,-5.430700378537548,25,-32.95381505735964,-1.5015204584954076
+D flag touch,4h 80-hour trend line (touched on 12.7% of bars),DIES (the best cell on the first 60% still loses money there),138,-0.5050986191139274,43,-35.27096473966113,-2.9419163269507616
+E turn of the month,1d 5 days before through 5 after,"DIES (profitable on the first 60%, loses on the middle 20%)",38,58.70386521345222,13,-74.18953846957115,-11.268383624065114

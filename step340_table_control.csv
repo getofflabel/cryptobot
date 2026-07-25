@@ -1,0 +1,17 @@
+symbol,config,window,years,price_move_pct,real_n,real_pct_of_position,random_mean_pct,random_p05,random_p95,real_percentile_vs_luck,random_median_trades
+GLD,donchian20+EMA20exit,first 60%,12.99,173.6,67,0.7253,0.1399,-0.4276,0.6644,96.6,58
+GLD,donchian20+EMA20exit,middle 20%,4.33,47.39,23,0.644,0.267,-0.6086,1.1612,78.0,19
+GLD,donchian55+EMA20exit,first 60%,12.99,173.6,39,0.901,0.1334,-0.6099,0.849,96.2,36
+GLD,donchian55+EMA20exit,middle 20%,4.33,47.39,11,1.8342,0.2532,-0.8756,1.6382,96.6,10
+GC=F,donchian20+EMA20exit,first 60%,15.55,357.76,89,0.5436,0.046,-0.425,0.5898,93.6,76
+GC=F,donchian20+EMA20exit,middle 20%,5.16,49.8,24,0.9522,0.5654,-0.2601,1.6007,75.2,20
+GC=F,donchian55+EMA20exit,first 60%,15.55,357.76,55,0.4663,0.0238,-0.6023,0.6481,87.6,50
+GC=F,donchian55+EMA20exit,middle 20%,5.16,49.8,14,1.096,0.6415,-0.4746,2.1645,74.2,13
+GLD,donchian20+SMA200+EMA20exit,first 60% (random drawn inside trend regime),12.99,173.6,47,1.1957,0.2452,-0.4955,0.9894,97.8,39
+GLD,donchian20+SMA200+EMA20exit,middle 20% (random drawn inside trend regime),4.33,47.39,20,0.3545,0.2191,-0.6795,1.269,61.4,16
+GLD,donchian55+SMA200+EMA20exit,first 60% (random drawn inside trend regime),12.99,173.6,35,1.071,0.2326,-0.6309,1.1631,93.2,30
+GLD,donchian55+SMA200+EMA20exit,middle 20% (random drawn inside trend regime),4.33,47.39,11,1.5238,0.224,-1.135,1.7397,92.2,10
+GC=F,donchian20+SMA200+EMA20exit,first 60% (random drawn inside trend regime),15.55,357.76,72,0.8333,0.0979,-0.4373,0.6834,97.4,59
+GC=F,donchian20+SMA200+EMA20exit,middle 20% (random drawn inside trend regime),5.16,49.8,20,0.7765,0.5532,-0.4406,1.7076,64.6,16
+GC=F,donchian55+SMA200+EMA20exit,first 60% (random drawn inside trend regime),15.55,357.76,53,0.4344,0.0783,-0.5393,0.7533,80.0,45
+GC=F,donchian55+SMA200+EMA20exit,middle 20% (random drawn inside trend regime),5.16,49.8,12,1.1242,0.634,-0.7221,2.3915,71.4,11

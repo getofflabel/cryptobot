@@ -1,0 +1,4 @@
+shape,timeframe,draws,luck_pass_rate,mean_train_exp,mean_val_exp
+"trend-shaped: trailing chart stop, ride until stopped",4h,30,0.3,37.31047610542908,-20.901079364881262
+"dip/flag-shaped: fixed chart stop, 3:1 target, 48h cap",1h,30,0.0,-23.56521784028167,-27.92360963174783
+"calendar-shaped: fixed chart stop, 7-day hold",1d,30,0.2,-15.14352559227953,-68.32489048679265
