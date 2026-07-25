@@ -134,11 +134,11 @@ from datetime import datetime, timezone
 
 import pandas as pd
 
-from blofin_private import BlofinDemoPrivate
+from blofin_private import BlofinDemoPrivate, make_client_order_id
 from book_ledger import attributed_position, recorded_book_positions, unexplained_position
 from step43_daytrade import CHAMP_KW
 from step58_divergence_mtf import STOP_CAP_SWING, divergence_events, swings
-from step5_paper_trade import (CONTRACT_BTC, LOT, execute_market_clips,
+from step5_paper_trade import (LOT, contract_value, execute_market_clips,
                                log_event, notify, now_utc,
                                record_trade_outcome, recent_news_headline,
                                save_state, write_lesson)
@@ -146,6 +146,7 @@ from strategy import rsi, vol_gated_ma
 
 SYMBOL = "BTC-USDT"
 TIMEFRAME = "4h"
+BOOK_TAG = "dv"
 
 # -- the validated rule's exact config (step58 family1, "RSI14 k8 hidden
 #    buf0.35% tgt3x hold48h, 4h" — see module docstring for the sealed
@@ -349,7 +350,8 @@ def _ensure_bracket(private, symbol, state, t):
     try:
         close_side = "sell" if t["direction"] > 0 else "buy"
         tpsl_id = private.place_tpsl(symbol, close_side, t["contracts"],
-                                     t.get("tp_price"), t["sl_price"])
+                                     t.get("tp_price"), t["sl_price"],
+                                     client_order_id=make_client_order_id(BOOK_TAG))
         t["tpsl_id"] = tpsl_id
         save_state(state)
         print(f"  [DIVER] ⚠️ bracket was MISSING — re-armed SL "
@@ -367,7 +369,12 @@ def _book_exit(state, t, exit_price, exit_fee_bps, reason):
     """Close the Diver's trade on its own ledger line. Direction-aware:
     profit on a rise when long, on a fall when short (mirrors
     newsdesk._book_exit exactly)."""
-    size_btc = t["contracts"] * CONTRACT_BTC
+    cv = t.get("contract_value")
+    if cv is None:
+        cv = 0.001   # legacy trade (pre-upgrade), verified BTC-USDT fallback
+        print("  [DIVER] ⚠️ contract_value missing on this (pre-upgrade) "
+              "trade — using the verified BTC-USDT fallback 0.001")
+    size_btc = t["contracts"] * cv
     gross = t["direction"] * (exit_price - t["entry_price"]) * size_btc
     fees = (t["entry_price"] * t.get("entry_fee_bps", 6.0)
             + exit_price * exit_fee_bps) * size_btc / 10_000
@@ -393,6 +400,24 @@ def _book_exit(state, t, exit_price, exit_fee_bps, reason):
 # ===========================================================================
 # main entrypoint
 # ===========================================================================
+
+NEW_ENTRIES_ENABLED = False
+"""STOOD DOWN 2026-07-25 (rounds 150 + 170) — NEW ENTRIES ONLY.
+
+This book runs 4h hidden RSI divergence, sealed at +$52.03/trade under
+MAKER fills and a swept-percentage stop. Re-tested at taker execution with
+a real chart-structure stop: train +$15.20, **val -$9.30**. A wider
+structural stop did not rescue it (-$0.30 / -$13.57).
+
+Round 170 replayed the same edge on ETH with the config unchanged and it
+failed every window (train -$54.24, val -$147.94, sealed -$8.78).
+
+The original sealed pass was real but was measured under fills and stop
+geometry we are not allowed to use. Void, not fraudulent — and not
+re-runnable, since that sealed slice is spent.
+
+Open positions still reconcile and exit normally below."""
+
 
 def run_diver(private: BlofinDemoPrivate, live_feed, demo_feed,
              state: dict, dry: bool = False):
@@ -472,7 +497,7 @@ def run_diver(private: BlofinDemoPrivate, live_feed, demo_feed,
             ref_price = quote.bid if side == "sell" else quote.ask
             fill, was_maker = execute_market_clips(
                 private, demo_feed, SYMBOL, side, t["contracts"],
-                ref_price, reduce_only=True)
+                ref_price, reduce_only=True, client_tag=BOOK_TAG)
             _book_exit(state, t, fill, 2.0 if was_maker else 6.0,
                       f"{max_hold_h:.0f}h time")
             return {"action": "time_exit", "fill": fill}
@@ -511,8 +536,9 @@ def run_diver(private: BlofinDemoPrivate, live_feed, demo_feed,
             ref_price = live_feed.get_ticker(SYMBOL).last
         except Exception:
             pass
+        cv = contract_value(demo_feed, SYMBOL) or 0.001   # dry preview only
         notional = float(state.get("virtual_equity", 0.0)) * DIVER_ALLOC * DIVER_LEV
-        contracts = max(LOT, round(notional / ref_price / CONTRACT_BTC / LOT) * LOT)
+        contracts = max(LOT, round(notional / ref_price / cv / LOT) * LOT)
         if direction > 0:
             tp_est = round(ref_price * (1 + TARGET_PCT / 100), 1)
             sl_est = round(ref_price * (1 - STOP_PCT / 100), 1)
@@ -527,6 +553,20 @@ def run_diver(private: BlofinDemoPrivate, live_feed, demo_feed,
         return {"action": "would_enter", "direction": direction,
                 "contracts": contracts, "entry_ref": ref_price,
                 "est_tp": tp_est, "est_sl": sl_est, **dec}
+
+    # STAND-DOWN GATE (2026-07-25, rounds 150+170) — see NEW_ENTRIES_ENABLED
+    # above. Placed HERE, after every exit/reconcile path has already run and
+    # after the signal is fully computed, so the book still closes what it
+    # holds and still LOGS what it would have taken. Only the order is
+    # withheld.
+    if not NEW_ENTRIES_ENABLED:
+        print("  [DIVER] signal fired but the book is STOOD DOWN "
+              "(taker+structure retest: val -$9.30/trade; 0/5 on ETH)")
+        log_event({"action": "diver_stood_down", "direction": direction,
+                   "contracts": contracts, "entry_ref": ref_price})
+        dv["last_bar_ts"] = dec["bar_ts"]
+        save_state(state)
+        return {"action": "stood_down", "direction": direction, **dec}
 
     # -- idempotency: this exact 4h bar was already decided on ------------
     if dv.get("last_bar_ts") == dec["bar_ts"]:
@@ -560,8 +600,16 @@ def run_diver(private: BlofinDemoPrivate, live_feed, demo_feed,
         ref_price = live_feed.get_ticker(SYMBOL).last
     except Exception:
         pass
+    cv = contract_value(demo_feed, SYMBOL)
+    if cv is None:
+        print("  [DIVER] ENTRY SKIPPED — instrument spec unavailable on "
+              "demo (contract value unknown, not guessing)")
+        log_event({"action": "entry_skipped", "reason": "no_contract_spec"})
+        dv["last_bar_ts"] = dec["bar_ts"]
+        save_state(state)
+        return {"action": "entry_skipped", **dec}
     notional = float(state.get("virtual_equity", 0.0)) * DIVER_ALLOC * DIVER_LEV
-    contracts = max(LOT, round(notional / ref_price / CONTRACT_BTC / LOT) * LOT)
+    contracts = max(LOT, round(notional / ref_price / cv / LOT) * LOT)
     side = "buy" if direction > 0 else "sell"
 
     print(f"  [DIVER] {'LONG' if direction > 0 else 'SHORT'} SIGNAL "
@@ -570,7 +618,8 @@ def run_diver(private: BlofinDemoPrivate, live_feed, demo_feed,
     private.ensure_leverage(SYMBOL, DIVER_LEV)
     try:
         entry, was_maker = execute_market_clips(
-            private, demo_feed, SYMBOL, side, contracts, ref_price)
+            private, demo_feed, SYMBOL, side, contracts, ref_price,
+            client_tag=BOOK_TAG)
     except Exception as e:
         print(f"  [DIVER] ENTRY FAILED: {str(e)[:100]}")
         log_event({"action": "diver_entry_failed", "error": str(e)[:200]})
@@ -593,7 +642,8 @@ def run_diver(private: BlofinDemoPrivate, live_feed, demo_feed,
 
     tpsl_id = None
     try:
-        tpsl_id = private.place_tpsl(SYMBOL, close_side, contracts, tp, sl)
+        tpsl_id = private.place_tpsl(SYMBOL, close_side, contracts, tp, sl,
+                                     client_order_id=make_client_order_id(BOOK_TAG))
     except Exception as e:
         print(f"  [DIVER] TP/SL bracket FAILED: {str(e)[:80]}")
         notify("⚠️ The Diver bracket failed (demo)",
@@ -602,6 +652,7 @@ def run_diver(private: BlofinDemoPrivate, live_feed, demo_feed,
     dv["open_trade"] = {
         "trigger": "hidden_divergence", "direction": direction,
         "contracts": contracts, "entry_price": entry,
+        "contract_value": cv,
         "entry_fee_bps": 6.0, "entry_time": now_utc(),
         "tp_price": tp, "sl_price": sl, "tpsl_id": tpsl_id,
         "max_hold_h": MAX_HOLD_H, "bar_ts": dec["bar_ts"],

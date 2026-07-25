@@ -31,13 +31,17 @@ import time
 from datetime import datetime, timezone
 
 import config
-from blofin_private import BlofinDemoPrivate
+from blofin_private import BlofinDemoPrivate, make_client_order_id
 from book_ledger import attributed_position
-from step5_paper_trade import (CONTRACT_BTC, LOT, MAX_ENTRY_FUNDING_BPS,
+from step5_paper_trade import (LOT, MAX_ENTRY_FUNDING_BPS,
+                               contract_value,
                                current_funding_bps, execute_maker_or_chase, execute_market_clips,
                                log_event, notify, now_utc,
                                record_trade_outcome, save_state)
 from strategy import rsi, vol_gated_ma
+
+BOOK_TAG = "tc"          # this book's BTC-slot clientOrderId tag
+BOOK_TAG_ETH = "tce"     # the amplifier (ETH) slot's tag
 
 # THE STRIKE FORCE — multi-asset (round 21). Tradeable universe per
 # Wallace: BTC, ETH, SOL. Same machine, different volatility levels, so
@@ -50,11 +54,15 @@ from strategy import rsi, vol_gated_ma
 #             activates only if a quarterly re-audit passes it.
 # Allocation split so a simultaneous BTC+ETH fire (same signal by design)
 # stays inside the agreed total aggression:
+# step98_api_audit.md CRITICAL finding #2: this dict used to hardcode a
+# "contract" (contract value) per symbol — BTC 0.001, ETH 0.01 — never read
+# from the exchange. Removed; every slot now calls
+# step5_paper_trade.contract_value(demo_feed, symbol) at the point of use
+# (see run_strikes/amplifier_cycle below), the same instruments-endpoint
+# read daily_pick.py and gold_book.py already use.
 SLOTS = {
-    "BTC-USDT": {"state_key": "tactical", "alloc": 0.25,
-                 "contract": 0.001, "lot": 0.1},
-    "ETH-USDT": {"state_key": "tactical_eth", "alloc": 0.15,
-                 "contract": 0.01, "lot": 0.1,
+    "BTC-USDT": {"state_key": "tactical", "alloc": 0.25, "lot": 0.1},
+    "ETH-USDT": {"state_key": "tactical_eth", "alloc": 0.15, "lot": 0.1,
                  "stop": 1.81, "target": 5.43, "lev": 20.0,
                  "trigger": "amplifier"},
 }
@@ -96,7 +104,12 @@ def _signals_1h(live_feed, symbol):
 
 
 def _book_exit(state, t, exit_price, exit_fee_bps, reason):
-    size_btc = t["contracts"] * CONTRACT_BTC
+    cv = t.get("contract_value")
+    if cv is None:
+        cv = 0.001   # legacy trade (pre-upgrade), verified BTC-USDT fallback
+        print("  [TACT] ⚠️ contract_value missing on this (pre-upgrade) "
+              "trade — using the verified BTC-USDT fallback 0.001")
+    size_btc = t["contracts"] * cv
     gross = (exit_price - t["entry_price"]) * size_btc
     fees = (t["entry_price"] * t.get("entry_fee_bps", 6.0)
             + exit_price * exit_fee_bps) * size_btc / 10_000
@@ -169,7 +182,8 @@ def _ensure_bracket(private, symbol, state, t):
     # still genuinely open. Re-arm once.
     try:
         tpsl_id = private.place_tpsl(symbol, "sell", t["contracts"],
-                                     t.get("tp_price"), t["sl_price"])
+                                     t.get("tp_price"), t["sl_price"],
+                                     client_order_id=make_client_order_id(BOOK_TAG))
         t["tpsl_id"] = tpsl_id
         save_state(state)
         print(f"  [TACT] ⚠️ bracket was MISSING — re-armed SL {t['sl_price']:,.1f}")
@@ -193,6 +207,28 @@ def _cleanup_orders(private, symbol, t):
             private.cancel_tpsl(symbol, t["tpsl_id"])
     except Exception:
         pass
+
+
+NEW_ENTRIES_ENABLED = False
+"""STOOD DOWN 2026-07-25 (round 150, btc-trader) — NEW ENTRIES ONLY.
+
+This book's edge is BTC's 1h RSI3 panic-dip. Re-tested at taker execution
+with a real per-trade chart-structure stop (instead of the flat 1.5%/4.5%
+swept percentages it shipped with), it did not merely fail, it was
+**decisively negative and WORSE THAN CHANCE, twice**:
+
+    train -$70.09/trade    val -$69.54/trade
+    a wider structural stop made it WORSE (-$24.78 / -$68.88)
+
+Independently, round 170 replayed it on ETH and found a 0% survivor-by-luck
+rate across 30 random-timing draws — the signal performs worse than
+entering at random times.
+
+Its original validation used mixed fills and swept-percentage stops, i.e.
+conditions this project does not trade under. That validation is void.
+
+Open positions still reconcile and exit normally below — standing a book
+down must never orphan a live trade."""
 
 
 def run_strikes(private: BlofinDemoPrivate, live_feed, demo_feed, state: dict):
@@ -251,7 +287,7 @@ def tactical_cycle(private: BlofinDemoPrivate, live_feed, demo_feed,
             quote = demo_feed.get_ticker(symbol)
             fill, was_maker = execute_market_clips(
                 private, demo_feed, symbol, "sell", t["contracts"],
-                quote.bid, reduce_only=True)
+                quote.bid, reduce_only=True, client_tag=BOOK_TAG)
             _book_exit(state, t, fill, 2.0 if was_maker else 6.0, "48h time")
             t = None
         else:
@@ -293,15 +329,34 @@ def tactical_cycle(private: BlofinDemoPrivate, live_feed, demo_feed,
     # runs at the max its stop geometry allows under BloFin's ~4.5%
     # liquidation distance at 20x — all three stops (1.5/1.5/2.2%) fit.
     trig_lev = {"panic-dip": 20.0, "flag-touch": 20.0, "flag-2h": 20.0}[trigger]
+    cv = contract_value(demo_feed, symbol)
+    if cv is None:
+        print("  [TACT] ENTRY SKIPPED — instrument spec unavailable on "
+              "demo (contract value unknown, not guessing)")
+        log_event({"action": "entry_skipped", "reason": "no_contract_spec"})
+        return
     notional = state["virtual_equity"] * TACT_ALLOC * trig_lev
-    contracts = max(LOT, round(notional / last_close / CONTRACT_BTC / LOT) * LOT)
+    contracts = max(LOT, round(notional / last_close / cv / LOT) * LOT)
+
+    # STAND-DOWN GATE (2026-07-25, round 150) — see NEW_ENTRIES_ENABLED
+    # above. Every exit/reconcile path has already run by here; only the
+    # order itself is withheld, and the would-be trade is still logged so
+    # the passed-trade record stays honest.
+    if not NEW_ENTRIES_ENABLED:
+        print(f"  [TACT] {trigger} SIGNAL but the book is STOOD DOWN "
+              f"(taker+structure retest: train -$70.09, val -$69.54, "
+              f"worse than chance twice)")
+        log_event({"action": "tact_stood_down", "trigger": trigger,
+                   "symbol": symbol, "contracts": contracts})
+        return {"action": "stood_down", "trigger": trigger, "symbol": symbol}
 
     print(f"  [TACT] {trigger} SIGNAL — entering {contracts:.1f} ct "
           f"(~${notional:,.0f} notional at {trig_lev:.0f}x sleeve leverage)")
     private.ensure_leverage(symbol, trig_lev)   # per-trade leverage
     try:
         entry, was_maker = execute_market_clips(
-            private, demo_feed, symbol, "buy", contracts, last_close)
+            private, demo_feed, symbol, "buy", contracts, last_close,
+            client_tag=BOOK_TAG)
     except Exception as e:
         print(f"  [TACT] ENTRY FAILED: {str(e)[:100]}")
         notify("⚠️ tactical ENTRY FAILED (demo)",
@@ -315,7 +370,8 @@ def tactical_cycle(private: BlofinDemoPrivate, live_feed, demo_feed,
     tp_oid = None
     tpsl_id = None
     try:
-        tpsl_id = private.place_tpsl(symbol, "sell", contracts, tp, sl)
+        tpsl_id = private.place_tpsl(symbol, "sell", contracts, tp, sl,
+                                     client_order_id=make_client_order_id(BOOK_TAG))
     except Exception as e:
         print(f"  [TACT] TP/SL bracket FAILED: {str(e)[:80]}")
         notify("⚠️ tactical bracket failed (demo)",
@@ -330,6 +386,7 @@ def tactical_cycle(private: BlofinDemoPrivate, live_feed, demo_feed,
                                     "funding_bps": fb,
                                     "news": recent_news_headline()},
         "direction": 1, "contracts": contracts, "entry_price": entry,
+        "contract_value": cv,
         "entry_fee_bps": 2.0 if was_maker else 6.0,
         "entry_time": now_utc(), "tp_price": tp, "sl_price": sl,
         "tp_order_id": tp_oid, "tpsl_id": tpsl_id,
@@ -381,7 +438,7 @@ def amplifier_cycle(private: BlofinDemoPrivate, live_feed, demo_feed,
             quote = demo_feed.get_ticker(sym)
             fill, was_maker = execute_market_clips(
                 private, demo_feed, sym, "sell", t["contracts"],
-                quote.bid, reduce_only=True)
+                quote.bid, reduce_only=True, client_tag=BOOK_TAG_ETH)
             _book_slot_exit(state, key, cfg, t, fill,
                             2.0 if was_maker else 6.0, "48h time")
         else:
@@ -402,16 +459,22 @@ def amplifier_cycle(private: BlofinDemoPrivate, live_feed, demo_feed,
 
     c = live_feed.get_candles(sym, "1h", 3)
     last_close = float(c["close"].iloc[-1])
+    cv = contract_value(demo_feed, sym)
+    if cv is None:
+        print("  [AMP ] ENTRY SKIPPED — instrument spec unavailable on "
+              "demo (contract value unknown, not guessing)")
+        return {"action": "entry_skipped", "reason": "no_contract_spec"}
     notional = state["virtual_equity"] * cfg["alloc"] * cfg["lev"]
     contracts = max(cfg["lot"],
-                    round(notional / last_close / cfg["contract"] / cfg["lot"])
+                    round(notional / last_close / cv / cfg["lot"])
                     * cfg["lot"])
     print(f"  [AMP ] entering {contracts:.1f} ct ETH "
           f"(~${notional:,.0f} notional at {cfg['lev']:.0f}x slot leverage)")
     private.ensure_leverage(sym, cfg["lev"])    # per-trade leverage
     try:
         entry, was_maker = execute_market_clips(
-            private, demo_feed, sym, "buy", contracts, last_close)
+            private, demo_feed, sym, "buy", contracts, last_close,
+            client_tag=BOOK_TAG_ETH)
     except Exception as e:
         print(f"  [AMP ] ENTRY FAILED: {str(e)[:100]}")
         notify("⚠️ amplifier ENTRY FAILED (demo)",
@@ -422,13 +485,15 @@ def amplifier_cycle(private: BlofinDemoPrivate, live_feed, demo_feed,
     tp_oid = None
     tpsl_id = None
     try:
-        tpsl_id = private.place_tpsl(sym, "sell", contracts, tp, sl)
+        tpsl_id = private.place_tpsl(sym, "sell", contracts, tp, sl,
+                                     client_order_id=make_client_order_id(BOOK_TAG_ETH))
     except Exception as e:
         print(f"  [AMP ] TP/SL bracket FAILED: {str(e)[:80]}")
         notify("⚠️ amplifier bracket failed (demo)",
                "ETH position opened but TP/SL not set — check BloFin")
     book["open_trade"] = {
         "direction": 1, "contracts": contracts, "entry_price": entry,
+        "contract_value": cv,
         "entry_fee_bps": 2.0 if was_maker else 6.0,
         "entry_time": now_utc(), "tp_price": tp, "sl_price": sl,
         "tp_order_id": tp_oid, "tpsl_id": tpsl_id,
@@ -442,7 +507,12 @@ def amplifier_cycle(private: BlofinDemoPrivate, live_feed, demo_feed,
 
 
 def _book_slot_exit(state, key, cfg, t, exit_price, exit_fee_bps, reason):
-    size_base = t["contracts"] * cfg["contract"]
+    cv = t.get("contract_value")
+    if cv is None:
+        cv = 0.01   # legacy trade (pre-upgrade), verified ETH-USDT fallback
+        print("  [AMP ] ⚠️ contract_value missing on this (pre-upgrade) "
+              "trade — using the verified ETH-USDT fallback 0.01")
+    size_base = t["contracts"] * cv
     gross = (exit_price - t["entry_price"]) * size_base
     fees = (t["entry_price"] * t.get("entry_fee_bps", 6.0)
             + exit_price * exit_fee_bps) * size_base / 10_000

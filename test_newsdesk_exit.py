@@ -327,7 +327,11 @@ def test_e_bracket_fired_exit_uses_trailed_sl():
     result = newsdesk.run_newsdesk(private, feed, feed, state)
 
     assert state["newsdesk"]["open_trade"] is None, "the exit must be booked"
-    size_btc = contracts * newsdesk.CONTRACT_BTC
+    # BLOFIN_API_REFERENCE.md verified BTC-USDT contract value, independent
+    # of production code (see test_diver.py's identical note) — this trade
+    # record predates contract_value(), so _book_exit's documented legacy
+    # fallback (0.001) applies.
+    size_btc = contracts * 0.001
     gross = 1 * (exit_price - entry) * size_btc
     # long, exit_price >= entry_price -> the reconcile branch's own
     # (unchanged) price-direction heuristic labels this "TP hit" -> 2bp
@@ -398,7 +402,35 @@ def test_f_dry_mode_zero_side_effects():
 # Runner
 # ---------------------------------------------------------------------------
 
+
+# ===========================================================================
+# GUARD: the newsdesk must stay stood down until it is re-validated
+# ===========================================================================
+
+def test_z_newsdesk_stood_down():
+    """Rounds 150+170. News momentum was BTC's ONLY sealed-pass edge across
+    45 rounds (+$10.35/trade). Re-tested at taker execution with a real
+    chart-structure stop: train -$8.88 / val -$15.25. A wider stop turns it
+    technically positive (+$5.82/+$0.32) at 0.03x round-trip cost — an edge
+    three percent the size of the cost of trading it. Round 170: fails at
+    val on ETH too. This book also holds the two largest losers on the live
+    record.
+
+    This test exists so it cannot quietly resume."""
+    import importlib, newsdesk as fresh
+    importlib.reload(fresh)
+    assert fresh.NEW_ENTRIES_ENABLED is False, (
+        "the newsdesk is taking new entries again without a fresh gauntlet")
+    import inspect
+    src = inspect.getsource(fresh.run_newsdesk)
+    assert "STAND-DOWN GATE" in src, "the stand-down gate was removed"
+    assert src.index("STAND-DOWN GATE") > src.index("open_trade"), (
+        "the stand-down gate must not run before exits reconcile")
+
+
 def main():
+    import newsdesk as _m
+    _m.NEW_ENTRIES_ENABLED = True   # mechanics tests exercise the entry path; test_z re-checks the flag
     tests = [
         test_a_initial_stop_entry_bar_extreme,
         test_b_floor_ratchets_up_never_back,

@@ -147,15 +147,16 @@ from datetime import datetime, timezone
 import numpy as np
 import pandas as pd
 
-from blofin_private import BlofinDemoPrivate
+from blofin_private import BlofinDemoPrivate, make_client_order_id
 from book_ledger import attributed_position, unexplained_position
 from step45b_news_events import classify_headline
-from step5_paper_trade import (CLOUD_STATE, CONTRACT_BTC, LOT, _SB_SECRET,
-                               _sb_rpc, execute_maker_or_chase, execute_market_clips, log_event,
+from step5_paper_trade import (CLOUD_STATE, LOT, _SB_SECRET,
+                               _sb_rpc, contract_value, execute_maker_or_chase, execute_market_clips, log_event,
                                notify, now_utc, record_trade_outcome,
                                save_state, write_lesson)
 
 SYMBOL = "BTC-USDT"
+BOOK_TAG = "nd"
 
 # -- sizing: one slot, 15% of ledger equity, 20x leverage (owner's 15-20x
 # tier mandate — see shorts_lab.py's identical LAB_ALLOC/LAB_LEV choice) --
@@ -427,7 +428,8 @@ def _ensure_bracket(private, symbol, state, t):
     try:
         close_side = "sell" if t["direction"] > 0 else "buy"
         tpsl_id = private.place_tpsl(symbol, close_side, t["contracts"],
-                                     t.get("tp_price"), t["sl_price"])
+                                     t.get("tp_price"), t["sl_price"],
+                                     client_order_id=make_client_order_id(BOOK_TAG))
         t["tpsl_id"] = tpsl_id
         save_state(state)
         print(f"  [NEWS] ⚠️ bracket was MISSING — re-armed SL "
@@ -495,7 +497,8 @@ def _ratchet_trail_floor(private, live_feed, state, t, dry: bool):
     close_side = "sell" if t["direction"] > 0 else "buy"
     try:
         new_tpsl_id = private.place_tpsl(SYMBOL, close_side, t["contracts"],
-                                         None, new_sl)
+                                         None, new_sl,
+                                         client_order_id=make_client_order_id(BOOK_TAG))
     except Exception as e:
         print(f"  [NEWS] trailing floor ratchet FAILED to place the new "
               f"bracket ({str(e)[:80]}) — the prior stop "
@@ -529,7 +532,12 @@ def _book_exit(state, t, exit_price, exit_fee_bps, reason):
     """Close the newsdesk's trade on its own ledger line. Direction-aware:
     profit on a rise when long, on a fall when short (mirrors
     shorts_lab.py's short-only math, generalized by t['direction'])."""
-    size_btc = t["contracts"] * CONTRACT_BTC
+    cv = t.get("contract_value")
+    if cv is None:
+        cv = 0.001   # legacy trade (pre-upgrade), verified BTC-USDT fallback
+        print("  [NEWS] ⚠️ contract_value missing on this (pre-upgrade) "
+              "trade — using the verified BTC-USDT fallback 0.001")
+    size_btc = t["contracts"] * cv
     gross = t["direction"] * (exit_price - t["entry_price"]) * size_btc
     fees = (t["entry_price"] * t.get("entry_fee_bps", 6.0)
             + exit_price * exit_fee_bps) * size_btc / 10_000
@@ -555,6 +563,24 @@ def _book_exit(state, t, exit_price, exit_fee_bps, reason):
 # ===========================================================================
 # main entrypoint
 # ===========================================================================
+
+NEW_ENTRIES_ENABLED = False
+"""STOOD DOWN 2026-07-25 (rounds 150 + 170) — NEW ENTRIES ONLY.
+
+News momentum was BTC's only sealed-pass edge across the whole 45-round
+history (+$10.35/trade). Re-tested at taker execution with a real
+chart-structure stop: train -$8.88, val -$15.25. With a wider stop it turns
+technically positive (+$5.82 / +$0.32) but at **0.03x round-trip cost** —
+far under the 5x thickness floor. An edge three percent the size of the
+cost of trading it is not an edge.
+
+Round 170 replayed it on ETH: fails at val (train +$10.49, val -$25.31).
+
+This book also holds the two largest losers on the live record
+(-$58.16 and -$31.34).
+
+Open positions still reconcile and exit normally below."""
+
 
 def run_newsdesk(private: BlofinDemoPrivate, live_feed, demo_feed,
                  state: dict, dry: bool = False):
@@ -624,7 +650,7 @@ def run_newsdesk(private: BlofinDemoPrivate, live_feed, demo_feed,
             ref_price = quote.bid if side == "sell" else quote.ask
             fill, was_maker = execute_market_clips(
                 private, demo_feed, SYMBOL, side, t["contracts"],
-                ref_price, reduce_only=True)
+                ref_price, reduce_only=True, client_tag=BOOK_TAG)
             _book_exit(state, t, fill, 2.0 if was_maker else 6.0,
                       f"{max_hold_h:.0f}h time")
             return {"action": "time_exit", "fill": fill}
@@ -689,8 +715,18 @@ def run_newsdesk(private: BlofinDemoPrivate, live_feed, demo_feed,
             return {"action": "skipped_opposed", "net": net,
                     "direction": direction}
 
+        cv = contract_value(demo_feed, SYMBOL)
+        if cv is None:
+            print(f"  [NEWS{tag}] ENTRY SKIPPED — instrument spec "
+                  f"unavailable on demo (contract value unknown, not "
+                  f"guessing)")
+            log_event({"action": "entry_skipped", "reason": "no_contract_spec"})
+            if not dry:
+                nd["pending"] = None
+                save_state(state)
+            return {"action": "entry_skipped"}
         notional = state["virtual_equity"] * NEWS_ALLOC * NEWS_LEV
-        contracts = max(LOT, round(notional / bar_close / CONTRACT_BTC / LOT)
+        contracts = max(LOT, round(notional / bar_close / cv / LOT)
                         * LOT)
         side = "buy" if direction > 0 else "sell"
 
@@ -740,13 +776,29 @@ def run_newsdesk(private: BlofinDemoPrivate, live_feed, demo_feed,
                     "contracts": contracts, "entry_ref": bar_close,
                     "est_sl": sl_est, "headline": pending["headline"]}
 
+        # STAND-DOWN GATE (2026-07-25, rounds 150+170) — see
+        # NEW_ENTRIES_ENABLED above. After every exit/reconcile path, so the
+        # book still closes what it holds and still logs what it would have
+        # taken. Only the order is withheld.
+        if not NEW_ENTRIES_ENABLED:
+            print("  [NEWS ] signal fired but the book is STOOD DOWN "
+                  "(taker+structure retest: val -$15.25/trade, "
+                  "recovery thickness 0.03x)")
+            log_event({"action": "news_stood_down", "direction": direction,
+                       "contracts": contracts,
+                       "headline": pending["headline"]})
+            nd["pending"] = None
+            save_state(state)
+            return {"action": "stood_down", "direction": direction}
+
         print(f"  [NEWS ] {'LONG' if direction > 0 else 'SHORT'} SIGNAL "
               f"(news_momentum) — {side} {contracts:.1f} ct (~${notional:,.0f} "
               f"notional at {NEWS_LEV:.0f}x sleeve leverage)")
         private.ensure_leverage(SYMBOL, NEWS_LEV)
         try:
             entry, was_maker = execute_market_clips(
-                private, demo_feed, SYMBOL, side, contracts, bar_close)
+                private, demo_feed, SYMBOL, side, contracts, bar_close,
+                client_tag=BOOK_TAG)
         except Exception as e:
             print(f"  [NEWS ] ENTRY FAILED: {str(e)[:100]}")
             notify("⚠️ newsdesk ENTRY FAILED (demo)",
@@ -767,7 +819,8 @@ def run_newsdesk(private: BlofinDemoPrivate, live_feed, demo_feed,
         tpsl_id = None
         try:
             tpsl_id = private.place_tpsl(SYMBOL, close_side, contracts,
-                                         None, sl)
+                                         None, sl,
+                                         client_order_id=make_client_order_id(BOOK_TAG))
         except Exception as e:
             print(f"  [NEWS ] SL bracket FAILED: {str(e)[:80]}")
             notify("⚠️ newsdesk bracket failed (demo)",
@@ -778,6 +831,7 @@ def run_newsdesk(private: BlofinDemoPrivate, live_feed, demo_feed,
         nd["open_trade"] = {
             "trigger": "news_momentum", "direction": direction,
             "contracts": contracts, "entry_price": entry,
+            "contract_value": cv,
             "entry_fee_bps": 2.0 if was_maker else 6.0,
             "entry_time": now_utc(), "tp_price": None, "sl_price": sl,
             "tpsl_id": tpsl_id, "max_hold_h": MAX_HOLD_H,

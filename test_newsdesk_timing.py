@@ -50,6 +50,12 @@ class FakeCandleFeed:
         t.last, t.bid, t.ask = last, last, last
         return t
 
+    def get_instrument(self, symbol="BTC-USDT"):
+        # BLOFIN_API_REFERENCE.md verified value — lets contract_value()
+        # (step5_paper_trade.py) resolve real sizing instead of skipping.
+        return {"instId": symbol, "contractValue": "0.001", "minSize": "0.1",
+               "lotSize": "0.1", "tickSize": "0.1", "maxLeverage": "125"}
+
 
 def ts(s: str) -> pd.Timestamp:
     return pd.Timestamp(s, tz="UTC")
@@ -267,7 +273,11 @@ def test_iii_reconcile_books_short_tp_exit():
     result = newsdesk.run_newsdesk(private, feed, feed, state)
 
     assert state["newsdesk"]["open_trade"] is None, "the exit must be booked"
-    size_btc = contracts * newsdesk.CONTRACT_BTC
+    # BLOFIN_API_REFERENCE.md verified BTC-USDT contract value, independent
+    # of production code (see test_diver.py's identical note) — this trade
+    # record predates contract_value(), so _book_exit's documented legacy
+    # fallback (0.001) applies.
+    size_btc = contracts * 0.001
     gross = -1 * (exit_price - entry) * size_btc
     fees = (entry * 6.0 + exit_price * 2.0) * size_btc / 10_000   # TP -> maker
     expected_pnl = round(gross - fees, 2)
@@ -311,6 +321,9 @@ def test_iv_doji_discards_pending():
 # ---------------------------------------------------------------------------
 
 def main():
+    import newsdesk as _m
+    _m.NEW_ENTRIES_ENABLED = True   # mechanics tests exercise the entry path;
+    # test_newsdesk_exit.py's test_z is the guard that the flag stays False in production
     tests = [
         test_i_bar_close_timing_and_direction,
         test_ii_direction_gate_skip_when_opposed,

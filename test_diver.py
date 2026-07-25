@@ -121,6 +121,12 @@ class FakeFeed:
             ask = self.last_close
         return _T()
 
+    def get_instrument(self, symbol="BTC-USDT"):
+        # BLOFIN_API_REFERENCE.md verified value — lets contract_value()
+        # (step5_paper_trade.py) resolve real sizing instead of skipping.
+        return {"instId": symbol, "contractValue": "0.001", "minSize": "0.1",
+               "lotSize": "0.1", "tickSize": "0.1", "maxLeverage": "125"}
+
 
 def make_state(open_trade=None, last_bar_ts=None, **extra_books) -> dict:
     state = {"virtual_equity": 1000.0, "goal": 2000.0, "open_trade": None,
@@ -320,7 +326,13 @@ def test_d_reconcile_bracket_exit_both_directions():
     assert state_long["diver"]["open_trade"] is None, \
         "the long's exit must be booked"
 
-    size_btc = t_long["contracts"] * diver.CONTRACT_BTC
+    # BLOFIN_API_REFERENCE.md verified BTC-USDT contract value — diver.py no
+    # longer hardcodes this (reads it live via contract_value()); this test
+    # trade record predates that field, so _book_exit's own documented
+    # legacy fallback (0.001) applies. Kept as a literal here, independent
+    # of production code, so this check can't accidentally pass by sharing
+    # a bug with the code under test.
+    size_btc = t_long["contracts"] * 0.001
     gross_long = 1 * (fill_long - entry_long) * size_btc
     fees_long = (entry_long * 6.0 + fill_long * 2.0) * size_btc / 10_000
     expected_pnl_long = round(gross_long - fees_long, 2)
@@ -416,7 +428,37 @@ def test_e_dry_mode_zero_side_effects():
 # runner
 # ---------------------------------------------------------------------------
 
+
+# ===========================================================================
+# GUARD: the diver must stay stood down until it is re-validated
+# ===========================================================================
+
+def test_z_diver_stood_down():
+    """Rounds 150+170. Re-tested at taker execution with a real chart-
+    structure stop, 4h hidden divergence went train +$15.20 / val -$9.30,
+    and a wider structural stop did not rescue it. Round 170 replayed it
+    unchanged on ETH: negative in every window. Its original +$52.03/trade
+    sealed pass was measured under MAKER fills and a swept-percentage stop,
+    conditions this project does not trade under.
+
+    This test exists so the book cannot quietly resume without someone
+    re-running that work."""
+    import importlib, diver as fresh
+    importlib.reload(fresh)
+    assert fresh.NEW_ENTRIES_ENABLED is False, (
+        "the diver is taking new entries again without a fresh gauntlet")
+    import inspect
+    src = inspect.getsource(fresh.run_diver)
+    assert "STAND-DOWN GATE" in src, "the stand-down gate was removed"
+    # the gate must sit AFTER the exit/reconcile logic — standing a book
+    # down must never orphan an open position
+    assert src.index("STAND-DOWN GATE") > src.index("open_trade"), (
+        "the stand-down gate must not run before exits reconcile")
+
+
 def main():
+    import diver as _m
+    _m.NEW_ENTRIES_ENABLED = True   # mechanics tests exercise the entry path; test_z re-checks the flag
     tests = [
         test_a_oracle_fires_hidden_long_entry,
         test_b_idempotency_same_bar_twice,

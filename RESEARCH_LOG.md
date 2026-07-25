@@ -1325,3 +1325,56 @@ asset-specific edges exist (gold's donchian does not work on crypto and
 nobody thinks that makes it fake). But it changes the prior sharply, and
 it means **cross-asset transfer must become part of validation, not a
 post-hoc check.** Recorded as a standing rule.
+
+## ROUND 150 — 3 of BTC's 5 edges die at taker + structure stops (2026-07-25)
+
+btc-trader re-tested all five documented BTC edges under the conditions we
+ACTUALLY trade: execution="taker" always, and real per-trade chart-
+structure stops via exits.py instead of the swept percentages and maker
+fills they were originally validated under. Sealed slice never loaded —
+these are train+val verdicts.
+
+| Edge | Original sealed | Retest train / val | Verdict |
+|---|---|---|---|
+| 1h CHoCH + confluence>=2 | +$99.52/t | -$42.92 / +$70.61 | **DIED** |
+| 4h hidden RSI divergence | +$52.03/t | +$15.20 / **-$9.30** | **DIED** |
+| 4h vol-gated trend | +$401.30/t | -$12.18 / +$328.69 at buffer 0 | **RECOVERED** at 1.5% buffer: +$17.15 / +$99.37, **26.4x / 17.6x thickness — the night's strongest survivor** |
+| 1h RSI3 dip-buy | live | **-$70.09 / -$69.54** | **DIED, worse than chance, twice** |
+| News momentum | +$10.35/t | -$8.88 / -$15.25 | **DIED** (recovery is +$5.82/+$0.32 at **0.03x** thickness — an edge 3% the size of its trading cost) |
+
+**Taker fees were secondary here.** Unlike the Bollinger breakout, these
+did not die on the fee delta — they died on the STOP. A real per-trade
+structure stop has variance that a train-median or flat percentage
+silently erased: sometimes tighter than assumed (edges 4 and 5, win rates
+collapsing to 27-41%), sometimes wider (edges 1 and 2, R-multiple targets
+no longer reachable inside the hold window so trades drift to the time cap).
+
+**ACTION TAKEN — three live books stood down for NEW ENTRIES ONLY:**
+`tactical.py` (the strikes / RSI3 panic-dip), `diver.py` (hidden
+divergence), `newsdesk.py` (news momentum). Each gate sits AFTER all
+exit/reconcile logic, so open positions still close normally and the
+would-be trade is still logged — standing a book down must never orphan a
+live position. `test_z` guards in test_diver.py and test_newsdesk_exit.py
+assert both the flag and the gate's position relative to the exit path.
+
+`the ride` (edge 3) stays live and is the one edge that got STRONGER under
+honest testing. Its flat -8% stop should become a structural trailing floor
+with a ~1.5% buffer — a strategy change, so it needs its own round first.
+
+## ROUND 190 — SOL: the edge that died at home survives abroad (2026-07-25)
+
+sol-trader replayed the same five BTC edges on SOL at taker costs:
+
+- **1h CHoCH + confluence>=2: SURVIVOR (unsealed)** — $218.95/trade over
+  71 trades, 95th percentile against a random-entry control, **8.4x
+  thickness.** This edge DIED on BTC under honest retest and DIED on ETH,
+  and it is alive on SOL. Exactly the asymmetry worth hunting.
+- 1h RSI3 washout: **1st percentile — an ANTI-signal**, second independent
+  confirmation after R88 that it is actively harmful on SOL.
+- Hidden divergence, vol-gated trend, news momentum: all FAIL.
+
+**The mechanistic finding of the night:** SOL's median ATR is 3.07%, so
+BTC's fixed 1.5% volatility gate is open on **96.7% of SOL's bars** versus
+18-53% on BTC. The gate's SELECTIVITY is the entire edge, and it silently
+evaporates when the constant is ported instead of re-derived. That is the
+"never port a constant" rule with a number attached.
