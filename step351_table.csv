@@ -1,0 +1,25 @@
+kind,shape,exit,session,max_hold_h,n,exp_per_trade,draws,pct_of_position,cost_multiple_12bps
+random_floor,(random times),structure_trail_only,all_hours,24,250,-33.58845192020241,60,,
+random_floor,(random times),structure_trail_only,london_ny,24,250,-38.38113068292407,60,,
+random_floor,(random times),structure_trail_only,asia_off,24,250,-25.760301401353242,60,,
+random_floor,(random times),structure_stop_2R,all_hours,24,250,-36.03285758422905,60,,
+random_floor,(random times),structure_stop_2R,london_ny,24,250,-38.70303487124386,60,,
+random_floor,(random times),structure_stop_2R,asia_off,24,250,-30.15252350303221,60,,
+leash,breakout_24h,structure_trail_only,all_hours,24,271,-11.891041358656205,0,-0.14583249126824022,-1.2152707605686688
+leash,breakout_24h,structure_trail_only,london_ny,24,241,-9.067276475636262,0,-0.10692865361827363,-0.8910721134856135
+leash,breakout_24h,structure_trail_only,asia_off,24,109,-21.17597986534374,0,-0.28145589312370206,-2.3454657760308506
+leash,breakout_24h,structure_stop_2R,all_hours,24,268,-14.070155229618365,0,-0.17616858415732517,-1.4680715346443762
+leash,breakout_24h,structure_stop_2R,london_ny,24,241,-15.112733486314978,0,-0.19294926192457604,-1.6079105160381337
+leash,breakout_24h,structure_stop_2R,asia_off,24,106,-23.930851362841562,0,-0.3353891518588075,-2.794909598823396
+leash,breakout_24h,structure_trail_only,all_hours,48,209,-10.389755116066901,0,-0.1254441582387689,-1.045367985323074
+leash,breakout_24h,structure_trail_only,london_ny,48,191,-2.406747563459322,0,-0.02690218226030331,-0.22418485216919426
+leash,breakout_24h,structure_trail_only,asia_off,48,97,-15.085773374674883,0,-0.19775770977001847,-1.6479809147501538
+leash,breakout_24h,structure_stop_2R,all_hours,48,182,-26.06937982176128,0,-0.3993570902861277,-3.3279757523843974
+leash,breakout_24h,structure_stop_2R,london_ny,48,172,-28.20268684694575,0,-0.4466826194416007,-3.722355162013339
+leash,breakout_24h,structure_stop_2R,asia_off,48,90,-27.74855823938008,0,-0.41669368438323273,-3.472447369860273
+leash,breakout_24h,structure_trail_only,all_hours,72,195,-10.405534568584962,0,-0.11945257118616552,-0.9954380932180461
+leash,breakout_24h,structure_trail_only,london_ny,72,179,-1.2670484316530786,0,-0.013588817494728466,-0.11324014578940388
+leash,breakout_24h,structure_trail_only,asia_off,72,96,-12.08808798467212,0,-0.1503253826287652,-1.2527115219063765
+leash,breakout_24h,structure_stop_2R,all_hours,72,141,-17.351111494081703,0,-0.242954445099638,-2.0246203758303167
+leash,breakout_24h,structure_stop_2R,london_ny,72,132,-8.894256098988409,0,-0.1193615556293905,-0.994679630244921
+leash,breakout_24h,structure_stop_2R,asia_off,72,85,-37.773336474670174,0,-0.582780661908589,-4.856505515904908

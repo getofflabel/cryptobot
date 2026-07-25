@@ -1817,3 +1817,58 @@ of its trades on the clock and only 3-10% ever reach the target. **A fixed
 multiple of a structure stop, under a 12-bar hold cap, is decoration rather
 than a target.** That is a problem with how we specify exits generally, not
 a property of any one signal, and it deserves its own round.
+
+## ROUNDS 350-352 — oil parked, and a measurement bug that flatters every gate study (2026-07-25)
+
+**Oil confirmed not live**, verified by reading daemon.py, tradfi_engine.py
+and every book file rather than trusting the note. `UNIVERSE = [SPX]`, oil
+removed. The reconcile loop walks open trades regardless of UNIVERSE, so a
+position open at stand-down still gets exit-managed rather than orphaned —
+the right shape.
+
+**The session finding is real and does not convert into an edge.** An oil
+hour in New York moves 0.3548% of price on average versus 0.1676% in Asia,
+at the 100th and 0th percentile of a 200-draw shuffled control. Every
+constant re-derived on oil's own first-60% slice first (oil's own 1h range
+median 0.4301%; oil's own RSI(2) 10th/90th at 7.3/93.4 — the S&P bot's
+below-10 and BTC's RSI(3) level both explicitly not carried). 18 cells, all
+negative; best was a 24h breakout in London/NY hours through a trailing
+structure stop at an average loss of $9.07 per trade over 241 trades. 18
+more cells at longer leashes, none positive. Nothing cleared the floor so
+the middle 20% was never read and the final slice never loaded.
+
+Random entries through the same exits at the same costs lose $26-$39 per
+trade, so the shape beats random by ~$29 and still never crosses zero.
+**More movement is not more edge. It is more movement at the same cost.**
+
+### THE FINDING THAT MATTERS BEYOND OIL
+
+**Comparing a filtered run against an unfiltered run is not a clean test of
+a filter, in a single-position engine.** Filtering entries out does not
+merely delete them — it FREES THE SLOT and lets different, later trades
+happen. Measured: **16-17% of the filtered run's trades are trades the
+unfiltered run never took.**
+
+The like-for-like test nobody had run: take ONE trade population and split
+it by the hour each trade was entered. On the same trades, **London/NY
+entries lost $17.76 each and Asia entries MADE $19.01 each** — the opposite
+of the hypothesis, and at the 17th percentile of 2,000 label shuffles,
+i.e. ordinary chance.
+
+**Every regime gate, volatility gate and session study on this desk that
+used the filtered-vs-unfiltered shape is flattered by this.** That includes
+things we currently believe. Audit queued.
+
+### OIL: PARKED
+
+6 rounds, ~20 families, zero survivors. R78's playbook, the borrowed rules
+(R110), exit variations (R116), the Brent transfer, the full breakout
+lookback sweep (R117), and now the last unbuilt lead. No queued oil idea
+has evidence behind it. The remaining ones — the weekly inventory calendar,
+futures-curve data, meeting dates — are blocked on DATA WE DO NOT HAVE, and
+a research round cannot solve a procurement problem. The only instrument
+that passed anything was Brent, which we cannot trade.
+
+Honest summary: **oil trends and oil moves, both genuinely, and neither has
+survived contact with what it costs to trade them.** That is a finding about
+a market, not a failure to find one.
