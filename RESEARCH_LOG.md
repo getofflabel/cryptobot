@@ -1268,3 +1268,60 @@ both that oil stays out AND that the exit path is not gated on membership.
 same crypto scorer, same crypto constants, never tested on SPY. It remains
 only because it has not yet been DISPROVEN. spx-trader is testing it as
 priority one; if it fails the same way, the engine stops entirely.
+
+## ROUND 170 — 0 of 5 BTC edges survive on ETH (2026-07-25)
+
+eth-trader's first round, and the most uncomfortable result of the night.
+Every one of BTC's five validated edges replayed on ETH with the config
+UNCHANGED, at taker costs, using the BTC signal code imported directly
+(step56/step58/step45b) rather than reimplemented. ETH's own ATR was
+recomputed fresh: 1h median 0.955%, 4h median 2.023% — roughly **2x BTC's
+current decayed-era level**, which is the root cause of at least one
+failure and probably a factor in others.
+
+| BTC edge | BTC sealed | ETH result |
+|---|---|---|
+| 1h CHoCH k8 + confluence>=2 | +$99.52/t | **FAIL** all windows (train -$70.92, val -$195.96, sealed -$37.90) |
+| 4h hidden RSI divergence | +$52.03/t | **FAIL** all windows (train -$54.24, val -$147.94, sealed -$8.78) |
+| 4h vol-gated trend ("the ride") | live | **FAIL** unchanged at val |
+| 1h RSI3 dip-buy | live | **FAIL**, and WORSE than random timing (0% survivor-by-luck in 30 draws) |
+| News momentum | +$10.35/t | **FAIL** at val (train +$10.49, val -$25.31, sealed +$10.97) |
+
+**The single most damning detail:** on CHoCH the dose-response INVERTS.
+On BTC, more confluence agreement means better results. On ETH, more
+confluence means WORSE. A real structural effect does not reverse sign
+across two highly correlated assets; a fitted one does.
+
+**The one live thread:** the vol-gated trend re-derived on ETH's OWN
+numbers (min_atr_pct 2.7% vs BTC's 1.5%, structure stop 12.68% replacing
+the swept -8%) went train +$214/t and val +$26/t — BOTH POSITIVE, but on
+22 and 5 trades, under the 30/8 floor. Correctly reported INSUFFICIENT
+SAMPLE rather than dressed up as a survivor. Worth a dedicated round with
+a looser MA pair to clear the sample floor.
+
+**News momentum deserves its own note:** it was BTC's only sealed-pass
+edge across the whole 45-round history, and it does not generalize even
+to ETH.
+
+### THE PATTERN THIS COMPLETES, AND IT IS THE NIGHT'S BIGGEST FINDING
+
+Four independent results now say the same thing about our BTC work:
+- R88: the shipped chart-read veto failed on a third asset (SOL showed no
+  information content, DOGE was harmful) and had to be reverted.
+- R89: a sealed-passed config replayed on nine fresh assets — 6 of 9
+  failed outright, and the one apparent survivor was exactly what chance
+  predicts from nine coin flips.
+- R100: gold's own chance baseline showed most big-dollar "survivors" had
+  16-32% odds of clearing the bar from RANDOM entries during a bull run.
+- R170: 5 of 5 BTC edges fail on ETH, one with an inverted dose-response.
+
+**Our BTC results are systematically more fitted than 50 rounds of
+apparent rigour suggested.** The sealed-test discipline was real, but it
+was applied one asset at a time, and single-asset sealed tests do not
+catch asset-specific overfitting. Transfer does.
+
+This does NOT automatically condemn the live BTC books — genuine
+asset-specific edges exist (gold's donchian does not work on crypto and
+nobody thinks that makes it fake). But it changes the prior sharply, and
+it means **cross-asset transfer must become part of validation, not a
+post-hoc check.** Recorded as a standing rule.
