@@ -61,13 +61,25 @@ def recorded_book_positions(state: dict) -> dict:
                                                                   divergence,
                                                                   see
                                                                   diver.py)
+      "breakout"   state["breakout_book"]["open_trade"]         — signed by
+                                                                  "direction"
+                                                                  (round 87,
+                                                                  1h
+                                                                  volume-
+                                                                  gated
+                                                                  Bollinger
+                                                                  breakout,
+                                                                  BTC-USDT
+                                                                  only, see
+                                                                  breakout_
+                                                                  book.py)
 
     state["tactical_eth"] is EXCLUDED on purpose — it trades ETH-USDT, a
     different symbol with its own separate exchange net. Mixing it in here
     would silently corrupt the BTC attribution.
     """
     out = {"ride": 0.0, "tact": 0.0, "lab": 0.0, "apprentice": 0.0,
-           "newsdesk": 0.0, "diver": 0.0}
+           "newsdesk": 0.0, "diver": 0.0, "breakout": 0.0}
 
     ride = state.get("open_trade")
     if ride:
@@ -100,6 +112,12 @@ def recorded_book_positions(state: dict) -> dict:
         direction = diver.get("direction", 0) or 0
         sign = 1 if direction > 0 else (-1 if direction < 0 else 0)
         out["diver"] = sign * abs(float(diver.get("contracts", 0) or 0))
+
+    breakout = state.get("breakout_book", {}).get("open_trade")
+    if breakout:
+        direction = breakout.get("direction", 0) or 0
+        sign = 1 if direction > 0 else (-1 if direction < 0 else 0)
+        out["breakout"] = sign * abs(float(breakout.get("contracts", 0) or 0))
 
     return out
 

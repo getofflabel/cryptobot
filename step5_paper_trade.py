@@ -139,14 +139,19 @@ def sync_ledger_to_account(private, symbol, state) -> None:
 
     ROUND-58 EXTENSION: the Diver (diver.py) now places REAL demo orders on
     BTC-USDT too — same guard, same reasoning, checked exactly like every
-    other BTC book above it."""
+    other BTC book above it.
+
+    ROUND-87 EXTENSION: the Breakout Book (breakout_book.py) now places
+    REAL demo orders on BTC-USDT too — same guard, same reasoning, checked
+    exactly like every other BTC book above it."""
     has_trade = (state.get("open_trade")
                  or state.get("tactical", {}).get("open_trade")
                  or state.get("tactical_eth", {}).get("open_trade")
                  or state.get("shorts_lab", {}).get("open_trade")
                  or state.get("newsdesk", {}).get("open_trade")
                  or state.get("gold_book", {}).get("open_trade")
-                 or state.get("diver", {}).get("open_trade"))
+                 or state.get("diver", {}).get("open_trade")
+                 or state.get("breakout_book", {}).get("open_trade"))
     if has_trade:
         return
     try:

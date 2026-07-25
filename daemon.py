@@ -150,6 +150,19 @@ def full_cycle(private, live_feed, demo_feed, symbol, reason):
 
     _run_book("The Diver", _diver)
 
+    def _breakout():
+        # THE BREAKOUT BOOK (round 87, sealed-passed volume-gated Bollinger
+        # breakout on BTC-USDT, see breakout_book.py's module docstring).
+        # Safe to call on EVERY full_cycle: state["breakout_book"]
+        # ["last_bar_ts"] makes every call a no-op except the first one
+        # after a NEW 1h bar closes, and it reconciles against the
+        # exchange's own position every time before deciding anything.
+        from breakout_book import run_breakout_book
+        from step5_paper_trade import load_state
+        run_breakout_book(private, live_feed, demo_feed, load_state())
+
+    _run_book("The Breakout Book", _breakout)
+
     def _tradfi():
         # THE TRADFI ENGINE (paper): the crypto learning engine's twin for
         # gold/oil/S&P — every-2h candle-scored slots on real yfinance

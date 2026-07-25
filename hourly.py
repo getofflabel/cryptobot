@@ -306,6 +306,28 @@ def main(storm=None):
         log_event({"action": "error", "book": "diver",
                    "error": str(e)[:300]})
 
+    # 3e3. THE BREAKOUT BOOK (round 87, sealed-passed volume-gated
+    #      Bollinger breakout on BTC-USDT, see breakout_book.py's module
+    #      docstring). Same daemon handoff pattern as gold/diver as a
+    #      backstop; it is also idempotent per 1h bar
+    #      (state["breakout_book"]["last_bar_ts"]) AND reconciles against
+    #      the exchange's own position every call, so running it here even
+    #      right after the daemon's own hourly call is always safe and
+    #      never double-trades.
+    try:
+        from step5_paper_trade import load_state
+        from breakout_book import run_breakout_book
+        state = state_holder.get("s") or load_state()
+        if not daemon_alive:
+            run_breakout_book(private, live_feed, demo_feed, state)
+        else:
+            print("  the breakout book skipped — daemon owns trading")
+    except Exception as e:
+        print(f"THE BREAKOUT BOOK cycle error: {str(e)[:150]}")
+        from step5_paper_trade import log_event
+        log_event({"action": "error", "book": "breakout_book",
+                   "error": str(e)[:300]})
+
     # 3e2. THE S&P PAPER BOOK (round 60 sealed RSI2 dip-buy edge, run on its
     #      own internal virtual ledger — see spx_book.py's module docstring
     #      for why this book never places a real order). Same daemon
