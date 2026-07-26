@@ -938,6 +938,41 @@ class BlofinVenue(Venue):
                 f"contracts and this symbol's smallest tradeable amount is "
                 f"{lot}. Too small to place.", "note": reason})
 
+        # NO STOP, NO TRADE. An OPENING order must carry the level that
+        # proves the idea wrong, and it must be on the correct side of the
+        # market, or nothing is sent at all.
+        #
+        # This is the last hole from the 26 July DOT failure. Attaching the
+        # stop to the entry removed the WINDOW between filling and being
+        # protected; this removes the case where there was never a stop to
+        # attach. Without it, a caller that simply forgot the argument opens
+        # a naked position and nothing objects — which is exactly how the old
+        # bot used to strand positions.
+        #
+        # A closing order is exempt: there is nothing left to protect.
+        if not kw.get("reduce_only"):
+            stop = kw.get("stop")
+            ref = kw.get("reference_price")
+            if stop is None:
+                return self._record({
+                    "status": "rejected", "symbol": symbol, "side": side,
+                    "qty": qty, "refused_by": "no stop",
+                    "reason": "an opening order must carry its stop, and this "
+                              "one did not. Nothing was sent.", "note": reason})
+            if ref:
+                wrong = (side == "buy" and float(stop) >= float(ref)) or \
+                        (side == "sell" and float(stop) <= float(ref))
+                if wrong:
+                    return self._record({
+                        "status": "rejected", "symbol": symbol, "side": side,
+                        "qty": qty, "refused_by": "stop on the wrong side",
+                        "reason": f"the stop at {float(stop):g} is on the "
+                                  f"wrong side of {float(ref):g} for a "
+                                  f"{side}, so it would either be refused by "
+                                  f"the exchange or close the trade the "
+                                  f"instant it opened. Nothing was sent.",
+                        "note": reason})
+
         lev = kw.get("leverage")
         if lev is None:
             lev = self._leverage_for(symbol, qty, kw.get("stop"),

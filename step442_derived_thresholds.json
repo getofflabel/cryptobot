@@ -1,72 +1,92 @@
 {
-  "BTC/USD": {
-    "spread_pct": 0.0011362,
-    "spread_pct_of_price": 0.1136,
-    "sweep_median_bars": 10.0,
-    "sweep_max_age_bars": 20,
-    "sweep_n": 873
-  },
-  "ETH/USD": {
-    "spread_pct": 0.00113106,
-    "spread_pct_of_price": 0.1131,
-    "sweep_median_bars": 8.0,
-    "sweep_max_age_bars": 16,
-    "sweep_n": 1047
-  },
-  "SOL/USD": {
-    "spread_pct": 0.00432101,
-    "spread_pct_of_price": 0.4321,
-    "sweep_median_bars": 10.0,
-    "sweep_max_age_bars": 20,
-    "sweep_n": 894
-  },
-  "XRP/USD": {
-    "spread_pct": 0.00453342,
-    "spread_pct_of_price": 0.4533,
-    "sweep_median_bars": 11.0,
-    "sweep_max_age_bars": 22,
-    "sweep_n": 827
-  },
-  "DOGE/USD": {
-    "spread_pct": 0.00383851,
-    "spread_pct_of_price": 0.3839,
-    "sweep_median_bars": 8.0,
-    "sweep_max_age_bars": 16,
-    "sweep_n": 1007
-  },
-  "LINK/USD": {
-    "spread_pct": 0.00217457,
-    "spread_pct_of_price": 0.2175,
-    "sweep_median_bars": 8.0,
-    "sweep_max_age_bars": 16,
-    "sweep_n": 1093
-  },
-  "AVAX/USD": {
-    "spread_pct": 0.00649705,
-    "spread_pct_of_price": 0.6497,
-    "sweep_median_bars": 8.0,
-    "sweep_max_age_bars": 16,
-    "sweep_n": 981
-  },
-  "LTC/USD": {
-    "spread_pct": 0.00699055,
-    "spread_pct_of_price": 0.6991,
-    "sweep_median_bars": 8.0,
-    "sweep_max_age_bars": 16,
-    "sweep_n": 901
-  },
-  "ADA/USD": {
-    "spread_pct": 0.00401606,
-    "spread_pct_of_price": 0.4016,
-    "sweep_median_bars": 8.0,
-    "sweep_max_age_bars": 16,
-    "sweep_n": 1003
-  },
-  "DOT/USD": {
-    "spread_pct": 0.00216511,
-    "spread_pct_of_price": 0.2165,
-    "sweep_median_bars": 8.0,
-    "sweep_max_age_bars": 16,
-    "sweep_n": 1083
-  }
+ "BTC/USD": {
+  "spread_pct": 0.0012015550031838462,
+  "spread_pct_of_price": 0.1136,
+  "sweep_median_bars": 10.0,
+  "sweep_max_age_bars": 20,
+  "sweep_n": 873,
+  "spread_measured_on": "blofin-demo order book, median of 5 samples",
+  "fee_round_trip": 0.0012
+ },
+ "ETH/USD": {
+  "spread_pct": 0.0012053198139129044,
+  "spread_pct_of_price": 0.1131,
+  "sweep_median_bars": 8.0,
+  "sweep_max_age_bars": 16,
+  "sweep_n": 1047,
+  "spread_measured_on": "blofin-demo order book, median of 5 samples",
+  "fee_round_trip": 0.0012
+ },
+ "SOL/USD": {
+  "spread_pct": 0.0013336987766560718,
+  "spread_pct_of_price": 0.4321,
+  "sweep_median_bars": 10.0,
+  "sweep_max_age_bars": 20,
+  "sweep_n": 894,
+  "spread_measured_on": "blofin-demo order book, median of 5 samples",
+  "fee_round_trip": 0.0012
+ },
+ "XRP/USD": {
+  "spread_pct": 0.0012911784818782665,
+  "spread_pct_of_price": 0.4533,
+  "sweep_median_bars": 11.0,
+  "sweep_max_age_bars": 22,
+  "sweep_n": 827,
+  "spread_measured_on": "blofin-demo order book, median of 5 samples",
+  "fee_round_trip": 0.0012
+ },
+ "DOGE/USD": {
+  "spread_pct": 0.0013372777815909961,
+  "spread_pct_of_price": 0.3839,
+  "sweep_median_bars": 8.0,
+  "sweep_max_age_bars": 16,
+  "sweep_n": 1007,
+  "spread_measured_on": "blofin-demo order book, median of 5 samples",
+  "fee_round_trip": 0.0012
+ },
+ "LINK/USD": {
+  "spread_pct": 0.001318856599512622,
+  "spread_pct_of_price": 0.2175,
+  "sweep_median_bars": 8.0,
+  "sweep_max_age_bars": 16,
+  "sweep_n": 1093,
+  "spread_measured_on": "blofin-demo order book, median of 5 samples",
+  "fee_round_trip": 0.0012
+ },
+ "AVAX/USD": {
+  "spread_pct": 0.0013470263912371454,
+  "spread_pct_of_price": 0.6497,
+  "sweep_median_bars": 8.0,
+  "sweep_max_age_bars": 16,
+  "sweep_n": 981,
+  "spread_measured_on": "blofin-demo order book, median of 5 samples",
+  "fee_round_trip": 0.0012
+ },
+ "LTC/USD": {
+  "spread_pct": 0.0014141098383470294,
+  "spread_pct_of_price": 0.6991,
+  "sweep_median_bars": 8.0,
+  "sweep_max_age_bars": 16,
+  "sweep_n": 901,
+  "spread_measured_on": "blofin-demo order book, median of 5 samples",
+  "fee_round_trip": 0.0012
+ },
+ "ADA/USD": {
+  "spread_pct": 0.0018055101422949846,
+  "spread_pct_of_price": 0.4016,
+  "sweep_median_bars": 8.0,
+  "sweep_max_age_bars": 16,
+  "sweep_n": 1003,
+  "spread_measured_on": "blofin-demo order book, median of 5 samples",
+  "fee_round_trip": 0.0012
+ },
+ "DOT/USD": {
+  "spread_pct": 0.0024172854534388324,
+  "spread_pct_of_price": 0.2165,
+  "sweep_median_bars": 8.0,
+  "sweep_max_age_bars": 16,
+  "sweep_n": 1083,
+  "spread_measured_on": "blofin-demo order book, median of 5 samples",
+  "fee_round_trip": 0.0012
+ }
 }

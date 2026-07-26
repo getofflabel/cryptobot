@@ -508,6 +508,53 @@ def main() -> int:
     return 1 if failed else 0
 
 
+def test_no_stop_no_trade():
+    """26 July: a DOT short filled, the stop could not be placed afterwards
+    because price had already run past where it belonged, and the position
+    had to be closed a second later.
+
+    Two holes were behind it and both are closed here:
+      1. the stop went on as a SECOND request, leaving a window where the
+         position existed unprotected (fixed by attaching it to the entry)
+      2. nothing REQUIRED a stop at all, so a caller that simply forgot the
+         argument opened a naked position and nothing objected
+
+    An opening order must carry the level that proves the idea wrong, and it
+    must be on the correct side of the market. A closing order is exempt —
+    there is nothing left to protect.
+    """
+    # no stop at all
+    cli = FakeClient(position=None, orders=[]); v = build(cli)
+    r = v.market_order(SYMBOL, "buy", 0.01, reference_price=60000.0)
+    assert r["status"] == "rejected", f"a naked position was opened: {r}"
+    assert not cli.placed, "an order reached the exchange with no stop"
+
+    # a stop on the wrong side would close the trade the instant it opened
+    for side, ref, bad in (("buy", 60000.0, 60500.0), ("sell", 60000.0, 59500.0)):
+        cli = FakeClient(position=None, orders=[]); v = build(cli)
+        r = v.market_order(SYMBOL, side, 0.01, reference_price=ref, stop=bad)
+        assert r["status"] == "rejected", f"{side} took a stop at {bad}: {r}"
+        assert not cli.placed, f"{side} sent an order with an unusable stop"
+
+    # and the good case still works, with the stop ATTACHED not sent after
+    cli = FakeClient(position=None, orders=[]); v = build(cli)
+    r = v.market_order(SYMBOL, "buy", 0.01, reference_price=60000.0,
+                       stop=59500.0, targets=[60800.0, 61500.0])
+    assert r["status"] == "filled", r
+    assert cli.placed[-1]["stop_price"] == 59500.0, \
+        "the entry went out without its stop attached"
+
+
+def test_closing_does_not_need_a_stop():
+    """The no-stop rule must not lock us out of getting flat. A closing
+    order has nothing left to protect."""
+    cli = FakeClient(position=position_row(size=10.0),
+                     orders=[order_row(coid=OURS_COID, size=10.0)])
+    v = build(cli)
+    r = v.close_position(SYMBOL, reason="taking half off")
+    assert r["status"] in ("filled", "closed"), f"could not get flat: {r}"
+
+
 if __name__ == "__main__":
     sys.exit(main())
 
@@ -536,3 +583,5 @@ def test_the_entry_carries_its_own_stop():
         f"the entry went out with no stop attached: {o}"
     assert o["take_profit"] == 61500.0, \
         f"the attached target should be the LAST one, not the first: {o}"
+
+
