@@ -471,10 +471,23 @@ class Desk:
         risk_pct = 0.01
         if equity > 0 and sig.get("risk_wanted"):
             risk_pct = float(sig["risk_wanted"]) / equity
+
+        # PASS THROUGH WHAT THE DAY HAS LEFT. Without this the desk sized
+        # every trade as though it were the only one, and the outer limit is
+        # a ceiling on the DAY, not on a trade — his words, "one percent down
+        # ON THE DAY, two percent down or three percent down ON THE DAY".
+        #
+        # Harmless while the bot took one trade a day. The moment two were
+        # allowed it stopped being harmless: two positions would each have
+        # been sized to the full outer limit, so the day could spend twice
+        # what it is allowed to. The signal already carries these; the desk
+        # simply was not forwarding them.
         return tjr_alerts.position_size(
             m.name, sig["symbol"], equity, entry, stop_distance,
             float(sig.get("tightest_stop_pct") or 0.0),
-            float(sig.get("usd_per_quote") or 1.0), risk_pct)
+            float(sig.get("usd_per_quote") or 1.0), risk_pct,
+            buying_power=sig.get("buying_power_used"),
+            outer_allowance=sig.get("outer_allowance"))
 
     def _place_one(self, m: Market, sig: dict, equity: float) -> dict:
         size = self._size_for(m, sig, equity)

@@ -52,6 +52,8 @@ import datetime as dt
 import math
 import os
 
+import tjr_bot
+
 # ======================================================== THE MARKETS
 #
 # Everything that is TRUE OF A MARKET rather than true of the method. The
@@ -165,7 +167,7 @@ def distance_phrase(market: str, symbol: str, price_distance: float,
 
 # ------------------------------------------------------------------ sizing
 #
-# THE ONE CAP, AND IT IS OURS, NOT HIS — HE HAS NOT ANSWERED ON IT YET.
+# THE OUTER LIMIT, AND IT IS HIS — AND IT IS ON THE DAY, NOT ON ONE TRADE.
 #
 # His rule sets the size once off the tightest stop an instrument normally
 # gives and then holds it still, so a wider stop on the day risks more. On
@@ -176,29 +178,38 @@ def distance_phrase(market: str, symbol: str, price_distance: float,
 # setups: DOT's WIDEST stop is 36 times its tightest. Held to a fixed size,
 # a wide-stop DOT signal would put 36% OF THE ACCOUNT on one trade. That is
 # not a percentage move in the price — it is more than a third of the money,
-# gone, on a single stop being hit.
+# gone, on a single stop being hit. So a ceiling is needed, and it used to be
+# ours because he had not answered.
 #
-# We are not resolving that on his behalf. The cap below is a CEILING ON
-# WHAT ONE TRADE MAY RISK, set to 3% of the account, which is the top of the
-# band he himself states ("risking two percent... or three"). So the default
-# enforces his own words rather than overriding them, and it only ever binds
-# on the tail his words did not anticipate.
+# HE HAS NOW ANSWERED, AND THE UNIT WAS WRONG. Boot Camp 2.0 Day 8: "I only
+# lost 50 percent of what I was willing to risk ON THE DAY, that's better
+# than a full you know like one percent down ON THE DAY, two percent down or
+# three percent down ON THE DAY." The 3% is the top of a band that belongs to
+# the DAY. Applied per trade, as it was here until 2026-07-26, it let a single
+# position spend the entire outer limit — precisely what Day 8 and Day 9 warn
+# against. It now lives in tjr_bot.Config.max_day_risk_share and is enforced
+# by tjr_bot.DayBudget across every trade the day takes.
 #
-# It is loud when it binds: the message says so in plain words, and the order
-# path logs it. To switch it off entirely, set it to None or 0 — either here
-# or with CRYPTOBOT_MAX_RISK_PCT in the environment (a share, so "0.03").
-MAX_RISK_SHARE_OF_ACCOUNT = 0.03
+# What is left here is the same number for the single-trade case, so an alert
+# built without a day ledger still cannot state a size outside his band. It is
+# loud when it binds: the message says so in plain words, and the order path
+# logs it. CRYPTOBOT_MAX_RISK_PCT still switches it off (a share, so "0.03").
+MAX_DAY_RISK_SHARE_OF_ACCOUNT = 0.03
+# the old name, kept so nothing importing it breaks. Same number, and the
+# number was never the thing that was wrong.
+MAX_RISK_SHARE_OF_ACCOUNT = MAX_DAY_RISK_SHARE_OF_ACCOUNT
 
 
 def max_risk_share() -> float:
-    """The cap as a share of the account, or 0 when it is switched off."""
+    """The day's outer limit as a share of the account, or 0 when it is
+    switched off."""
     raw = os.environ.get("CRYPTOBOT_MAX_RISK_PCT")
     if raw not in (None, ""):
         try:
             return max(0.0, float(raw))
         except ValueError:
             pass
-    return float(MAX_RISK_SHARE_OF_ACCOUNT or 0.0)
+    return float(MAX_DAY_RISK_SHARE_OF_ACCOUNT or 0.0)
 
 
 def margin_share() -> float:
@@ -221,81 +232,75 @@ def margin_share() -> float:
 def position_size(market: str, symbol: str, account: float, entry: float,
                   stop_distance: float, tightest_stop_pct: float,
                   usd_per_quote: float = 1.0, risk_pct: float = 0.01,
-                  cap_share: float | None = None) -> dict:
-    """THE ARITHMETIC HE SHOULD NEVER HAVE TO DO — and it is HIS arithmetic,
-    which is not the obvious one.
+                  cap_share: float | None = None,
+                  buying_power: float | None = None,
+                  outer_allowance: float | None = None) -> dict:
+    """THE ARITHMETIC HE SHOULD NEVER HAVE TO DO — AND IT IS NOT DONE HERE.
 
-    THE RULE, from the bootcamp day he gives entirely to position size:
+    THIS FUNCTION NO LONGER SIZES ANYTHING. It translates a market's units and
+    then calls `tjr_bot.size_position`, which is the one place in this project
+    that turns a stop into a number of units.
 
-        "you're going to set your stop loss in points — what's usually the
-         LOWEST your stop loss will be during a trade. For me it's usually
-         400. We calculate that, boom, 25 lots. That is going to be our SET
-         lot size. And you're probably saying, well that doesn't make any
-         sense — well it does, because that means I'm going to be risking one
-         percent if price hits stop right here. That also means I'll be
-         risking two percent of my account if we have a larger stop loss."
+    WHY THAT MATTERS MORE THAN IT SOUNDS. Until 2026-07-26 there were two
+    sizing rules. This one — his set size, worked out off the tightest stop
+    the instrument normally gives and then held still — is what the orders
+    that actually went out used. `tjr_bot.TjrBot._open` sized fresh at 1% of
+    equity on every trade, and that is what every replay and every backtest
+    number this project has ever produced came out of. The two disagree by
+    the ratio of today's stop to the tightest stop, which on DOT is up to 36
+    times. So every backtest described a bot nobody was running. There is now
+    one function, both paths call it, and
+    `test_tjr_bot.test_the_replay_and_the_live_path_size_identically` fails if
+    they can ever drift apart again.
 
-    So the size is worked out ONCE, off the TIGHTEST stop that instrument
-    normally gives, such that THAT stop would cost one percent of the
-    account. Then it is held fixed. A wider stop on the day therefore risks
-    two percent, or three. That is not a leak in the rule — it is the rule.
-    The size does not shrink to hold the risk at one percent, and the one-to-
-    three-percent band is an OUTPUT of holding the size still, never a dial.
+    `risk_pct` is THIS TRADE'S SHARE OF THE DAY'S BUDGET, as a share of the
+    account. One percent when the trade has the day to itself, half of one
+    percent on a news day or a holiday, and half again when a second setup
+    was already forming — the caller reads it off `risk_wanted`, which the
+    bot works out against `tjr_bot.DayBudget`. The double-size tier stays
+    disabled: he forbids it to anyone without a proven record and we have
+    none.
 
-        set size = (one percent of the account)
-                   / (the tightest stop x dollars per unit of the quote currency)
-
-    `tightest_stop_pct` is that stop as a SHARE OF THE PRICE, measured from
-    the instrument's own recent setups — never carried across from another
-    market. Bitcoin's tightest stop and SPY's are permanently different
-    numbers, and as a share of price they stay comparable when the price
-    itself moves.
+    `tightest_stop_pct` is that instrument's own tightest stop as a SHARE OF
+    THE PRICE — never carried across from another market. Bitcoin's tightest
+    stop and SPY's are permanently different numbers.
 
     `usd_per_quote` is 1 everywhere except a yen pair, where the profit
     arrives in yen and has to become dollars before the size means anything.
     Getting that wrong would be off by about the yen rate — a factor of some
     145, not a rounding error.
 
-    `risk_pct` is one percent normally and half of one percent on a news day
-    or a holiday, which is his rule too. The double-size tier stays disabled:
-    he forbids it to anyone without a proven record and we have none.
+    `outer_allowance`, when the caller has a day ledger, is the DOLLARS the
+    day has left under the top of his band. Without one it falls back to the
+    single-trade reading of the same 3%, which is what an alert built outside
+    a session has to assume.
     """
-    baseline = float(tightest_stop_pct) * float(entry)
-    if baseline <= 0 or stop_distance <= 0 or usd_per_quote <= 0 or account <= 0:
-        return {"units": 0.0, "lots": 0.0, "per_step": 0.0, "ok": False,
-                "risk_dollars": 0.0, "risk_share_pct": 0.0, "wider": 1.0}
-    units = (risk_pct * account) / (baseline * usd_per_quote)
-    risk_dollars = units * stop_distance * usd_per_quote
-
-    # THE CAP. See the block comment above MAX_RISK_SHARE_OF_ACCOUNT: this is
-    # ours, pending his answer, and it is a ceiling on what ONE trade may put
-    # at risk. It does not touch the set size in the ordinary case — it only
-    # binds on the tail where a stop is many times wider than the tightest
-    # this instrument gives. When it binds, BOTH numbers are reported, so
-    # what the rule asked for is never hidden behind what was taken.
     cap = max_risk_share() if cap_share is None else float(cap_share or 0.0)
-    uncapped_units, uncapped_risk = units, risk_dollars
-    capped = False
-    if cap > 0 and risk_dollars > cap * account:
-        units = units * (cap * account) / risk_dollars
-        risk_dollars = units * stop_distance * usd_per_quote
-        capped = True
+    if outer_allowance is None:
+        outer_allowance = cap * account if cap > 0 else None
 
-    out = {"units": units, "lots": units / STANDARD_LOT, "ok": True,
-           "baseline_stop": baseline,
-           "risk_dollars": risk_dollars,
-           "risk_share_pct": 100.0 * risk_dollars / account,
-           # how much wider today's stop is than the one the size was set on
-           "wider": stop_distance / baseline,
-           "capped": capped,
-           "cap_share_pct": 100.0 * cap,
-           "uncapped_units": uncapped_units,
-           "uncapped_risk_dollars": uncapped_risk,
-           "uncapped_risk_share_pct": 100.0 * uncapped_risk / account}
+    out = tjr_bot.size_position(
+        account=account, entry=entry, stop_distance=stop_distance,
+        risk_allowance=float(risk_pct) * float(account),
+        tightest_stop_pct=tightest_stop_pct, usd_per_quote=usd_per_quote,
+        buying_power=buying_power, outer_allowance=outer_allowance)
+    if not out["ok"]:
+        return out
+    if not out["measured"]:
+        # THE ONE POLICY ON TOP OF THE ARITHMETIC, AND IT IS HIS. The bot will
+        # size off today's own stop for research when an instrument's tightest
+        # stop has never been measured. An ORDER may not: "sizing off another
+        # market's number is exactly what his rule forbids", and a size that
+        # is not the set size is not the size his rule produces. So the alert
+        # refuses to state one rather than inventing it.
+        out["ok"] = False
+        out["units"] = 0.0
+        return out
+
+    out["lots"] = out["units"] / STANDARD_LOT
+    out["cap_share_pct"] = 100.0 * cap
     if market == "currencies":
-        out["per_step"] = units * pip_size(symbol) * usd_per_quote
-    else:
-        out["per_step"] = units * usd_per_quote          # per 1.00 of price
+        out["per_step"] = out["units"] * pip_size(symbol) * usd_per_quote
     return out
 
 
@@ -357,19 +362,20 @@ def size_lines(market: str, symbol: str, size: dict, entry: float,
                      f"wrong. Do not shrink it.")
 
     # WHEN THE CAP BINDS, SAY SO IN FULL. The size that came back is NOT the
-    # one his rule produced, and hiding that would be the worst kind of quiet
-    # change. Both numbers, and whose decision it was.
+    # one the set size produced, and hiding that would be the worst kind of
+    # quiet change. Both numbers, and which rule did it.
     if size.get("capped"):
         lines.append(
-            f"               SIZE CUT BY OUR CAP, NOT BY HIS RULE. Held to "
-            f"the set size this trade would have risked "
+            f"               SIZE CUT TO KEEP THE DAY INSIDE HIS BAND. Held "
+            f"to the set size this trade would have risked "
             f"${size['uncapped_risk_dollars']:,.0f}, which is "
             f"{size['uncapped_risk_share_pct']:.1f}% OF THE ACCOUNT — today's "
             f"stop is {size['wider']:.0f} times wider than the tightest this "
-            f"market gives. The size was cut to hold it at "
+            f"market gives. It was cut to hold the DAY at "
             f"{size['cap_share_pct']:.0f}% of the account, the top of the "
-            f"band he states. THIS CEILING IS OURS AND HE HAS NOT RULED ON "
-            f"IT. Switch it off with CRYPTOBOT_MAX_RISK_PCT=0.")
+            f"band he states: \"one percent down on the day, two percent down "
+            f"or three percent down on the day\". Switch it off with "
+            f"CRYPTOBOT_MAX_RISK_PCT=0.")
 
     face = size["units"] * entry * usd_per_quote
     if face > 0 and account > 0:
@@ -533,7 +539,15 @@ def trade_block(sig: dict, account: float, usd_per_quote: float = 1.0) -> list:
     risk_pct = 0.01
     if account > 0 and sig.get("risk_wanted"):
         risk_pct = float(sig["risk_wanted"]) / account
-    half_size_day = risk_pct < 0.0075
+    # THE TWO HALVINGS ARE DIFFERENT THINGS AND MUST NOT BE CONFLATED. One is
+    # the news-day half size, which halves the DAY's whole budget. The other
+    # is Day 8's split, which gives THIS trade half of a full-size day because
+    # a second setup was already forming. Reading the trade's share alone said
+    # "HALF SIZE today — news or a holiday" on an ordinary day with two
+    # setups on it, which is simply false.
+    share = float(sig.get("budget_share") or 1.0)
+    day_pct = risk_pct / share if share > 0 else risk_pct
+    half_size_day = day_pct < 0.0075
 
     size = position_size(market, sym, account, entry, dist,
                          float(sig.get("tightest_stop_pct") or 0.0),
@@ -578,17 +592,28 @@ def trade_block(sig: dict, account: float, usd_per_quote: float = 1.0) -> list:
     lines.append(f"SL      {fmt_price(sym, stop)}   -{money(lost)}   "
                  f"{100.0 * dist / entry:.2f}% move in the price")
 
-    first_off = float(sig.get("partial_fraction") or 0.5)
-    n_after = max(0, len(tgts) - 1)
-    fracs = ([first_off] + [(1.0 - first_off) / n_after] * n_after
-             if n_after else [1.0])
+    # HIS LADDER, from the bot, never re-derived here. Half at the first
+    # target, half of what is still open at the second, and the last quarter
+    # is a runner that sits on no target at all. This used to spread the tail
+    # evenly across every target, which was ours and a guess; Day 9 answered
+    # it — "another fifty percent of the OPEN position".
+    fracs = list(sig.get("target_fractions")
+                 or tjr_bot.target_fractions(len(tgts), tjr_bot.Config()))
+    runner = float(sig.get("runner_fraction")
+                   or tjr_bot.runner_fraction(len(tgts), tjr_bot.Config()))
     running = 0.0
     for i, tp in enumerate(tgts):
-        made = units * fracs[i] * abs(tp - entry) * (usd_per_quote or 1.0)
+        frac = fracs[i] if i < len(fracs) else 0.0
+        made = units * frac * abs(tp - entry) * (usd_per_quote or 1.0)
         running += made
         name = "TP " if len(tgts) == 1 else f"TP{i + 1}"
+        if frac <= 0:
+            lines.append(f"{name}     {fmt_price(sym, tp)}   nothing comes "
+                         f"off here — the last piece rides through it")
+            continue
         tail = f"   running +{money(running)}" if len(tgts) > 1 else ""
-        lines.append(f"{name}     {fmt_price(sym, tp)}   +{money(made)}{tail}")
+        lines.append(f"{name}     {fmt_price(sym, tp)}   +{money(made)}"
+                     f"   {100*frac:.0f}% off{tail}")
     if not tgts:
         lines.append("TP      none on the chart ahead — run it to the stop")
 
@@ -617,14 +642,29 @@ def trade_block(sig: dict, account: float, usd_per_quote: float = 1.0) -> list:
                      f"market's tightest, and the size does not shrink for "
                      f"it — that is his rule, on purpose. So this one is "
                      f"carrying more than usual: {size['risk_share_pct']:.2f}% "
-                     f"OF THE ACCOUNT if the stop is hit, against the usual 1%.")
+                     f"OF THE ACCOUNT if the stop is hit, against the "
+                     f"{100*risk_pct:.2f}% this trade drew from today's "
+                     f"budget.")
     if size.get("capped"):
-        lines.append(f"Size cut by OUR ceiling to hold risk at "
-                     f"{size['cap_share_pct']:.0f}% of the account. His band "
-                     f"tops out there. Switch off with CRYPTOBOT_MAX_RISK_PCT=0.")
+        lines.append(f"Size cut to hold THE DAY inside "
+                     f"{size['cap_share_pct']:.0f}% of the account, which is "
+                     f"the top of his band. Switch off with "
+                     f"CRYPTOBOT_MAX_RISK_PCT=0.")
+
+    if share < 0.999:
+        lines.append(f"This one takes {100*share:.0f}% of today's risk "
+                     f"budget, not all of it"
+                     + (" — a second setup was already forming"
+                        if sig.get("second_setup_expected") else ""))
 
     if len(tgts) > 1:
-        lines.append(f"Half comes off at TP1 and the stop moves to your entry.")
+        lines.append("Half comes off at TP1 and the stop moves to your entry. "
+                     "Half of what is left comes off at TP2.")
+        if runner > 0:
+            lines.append(f"The last {100*runner:.0f}% has no target on it. It "
+                         f"comes off when the 1-minute chart breaks back "
+                         f"against you, and otherwise it stops at your entry "
+                         f"price and costs nothing.")
 
     lines += ["", "Why:", "  " + plain_reason(sig)]
     return lines
@@ -697,9 +737,12 @@ def entry_message(sigs, account: float, usd_per_quote=None,
     body += ["", spec["instrument"]]
     if any(s.get("targets") for s in sigs):
         body.append("")
-        body.append("When the first target is reached: take half off and move "
-                    "the stop to your entry price. I will message you at that "
-                    "point, and again when it is time to be out.")
+        body.append("When the first target is reached: take HALF off and move "
+                    "the stop to your entry price. At the second target take "
+                    "HALF OF WHAT IS STILL OPEN. The last quarter has no "
+                    "target on it and comes off when the 1-minute chart "
+                    "breaks back against you. I will message you at each of "
+                    "those points.")
     body += ["", f"Fired {when:%H:%M} New York time, {when:%A %-d %B}."]
 
     syms = ", ".join(s["symbol"] for s in sigs)
@@ -723,8 +766,9 @@ def first_target_message(market: str, symbol: str, entry: float, target: float,
         "  1. Take HALF the position off here.",
         f"  2. Move your stop to {fmt_price(symbol, entry)}, your entry price.",
         "",
-        "From here the trade cannot lose money. The rest runs to the next "
-        "target.",
+        "From here the trade cannot lose money. Half of what is still open "
+        "comes off at the second target, and the last quarter comes off when "
+        "the 1-minute chart breaks back against you.",
         "",
         f"{when:%H:%M} New York time."])
     return f"{MARKETS[market]['label']} · {symbol}: half off, move the stop", msg

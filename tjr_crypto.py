@@ -9,10 +9,10 @@ So everything in tjr_bot.py that is METHOD is imported and used untouched:
 the two-candle swing, levels off the 1-hour and 4-hour only, a level taken
 out staying pending until a break of structure confirms it, the confirmation
 sequence, fair value gaps and equilibrium as the pullback, side must match
-the daily bias, stop beyond the sweep, size = 1% of equity / stop distance,
-first target at the next pool one timeframe up with half off and the stop to
-break even, and the losing-streak rule that tightens the filter instead of
-stopping.
+the daily bias, stop beyond the sweep, his set size drawn against the DAY's
+risk budget, first target at the next pool one timeframe up with half off and
+the stop to break even, and the losing-streak rule that tightens the filter
+instead of stopping.
 
 Everything in tjr_bot.py that is A CLOCK is absent. Not replaced — absent.
 `Instrument` was already built so every time rule defaults to None, so the
@@ -510,13 +510,20 @@ def slice_for(data: dict, day: pd.Timestamp, cfg: Config) -> dict:
 
 # ======================================================= THE REPLAY
 #
-# ONE PAIR PER run_day CALL. tjr_bot.run_day takes at most one trade across
-# every symbol it is handed, which is right for two charts of one market and
-# wrong for ten separate assets — handing it all ten would cap the whole book
-# at one trade a day and let whichever pair happened to fire first silence the
-# other nine. Each pair gets its own call, its own account clone, and its own
+# ONE PAIR PER run_day CALL. run_day now shares ONE DAY'S RISK BUDGET across
+# every symbol it is handed, which is right for two charts of one market —
+# they are two views of the same read and one budget is what he spends on the
+# day. It is wrong for ten separate assets: handing it all ten would make the
+# first pair to fire spend budget the other nine then could not draw on, so
+# whichever pair happened to move first would silence the rest. Each pair gets
+# its own call, its own account clone, its own day budget and its own
 # losing-streak state. That is also what makes the index veto structurally
 # absent rather than merely switched off.
+#
+# STATED PLAINLY, because it is a real gap: ten pairs each running their own
+# day budget is ten days' budgets, not one. He trades a handful of markets and
+# never says what happens across ten. Sizing the book as a whole is a question
+# for the desk, not for this file, and it is not answered here.
 
 def _reword(why: str) -> str:
     """tjr_bot's stand-down sentences end in "before 10:30" because that is
@@ -559,16 +566,16 @@ def run_pair(pair: str, start=None, end=None, cfg: Config | None = None,
             skipped += 1
             continue
         res = bot.run_day({pair: win}, day)
-        if res["trade"] is not None:
-            trades.append(res["trade"])
+        trades += res["trades"]
         for why in res["stand_down"].values():
             why = _reword(why)
             reasons[why] = reasons.get(why, 0) + 1
-        if verbose and res["trade"] is not None:
-            tr = res["trade"]
-            side = "long" if tr.direction > 0 else "short"
-            print(f"  {day:%Y-%m-%d} {pair:9s} {side:5s} off the {tr.level_tf} "
-                  f"level at {tr.level_price:,.4f} -> {tr.outcome}")
+        if verbose:
+            for tr in res["trades"]:
+                side = "long" if tr.direction > 0 else "short"
+                print(f"  {day:%Y-%m-%d} {pair:9s} {side:5s} off the "
+                      f"{tr.level_tf} level at {tr.level_price:,.4f} -> "
+                      f"{tr.outcome}")
     return {"pair": pair, "days": len(days) - skipped, "trades": trades,
             "reasons": reasons, "account": bot.account}
 
@@ -583,8 +590,13 @@ def setups_per_day(pairs=None, start=None, end=None, verbose: bool = True) -> di
 
     A "setup" here is a completed sequence that reached an entry: a marked
     level pushed through, a 5-minute confirmation, a pullback into the
-    midpoint or a fair value gap, and a 1-minute trigger with the trade. It
-    is one per pair per day at most, which is the bot's own rule.
+    midpoint or a fair value gap, and a 1-minute trigger with the trade.
+
+    IT IS NO LONGER CAPPED AT ONE PER PAIR PER DAY. Boot Camp 2.0 Day 8 and
+    Day 9 make more than one trade a day the method rather than an edge case,
+    and what ends the day is the risk budget, not a count — "we took three
+    trades today" (Day 9), four on Day 12. So a pair can now show more than
+    one setup on a day and this number can exceed 1.000.
     """
     out, derived = {}, load_derived()
     for pair in (pairs or PAIRS):
@@ -649,20 +661,37 @@ def live_step(pair: str, data: dict, now: pd.Timestamp, account: float,
     bot.buying_power = None if buying_power is None else float(buying_power)
     bot.week_pnl = dict(week_pnl or {})
     res = bot.run_day({pair: data}, day, stop_at=now)
-    tr = res["trade"]
-    if tr is None:
-        why = "; ".join(f"{k}: {v}" for k, v in res["stand_down"].items())
-        return {"action": "wait", "escalated": res["escalated"],
-                "reason": why or "the sequence has not completed yet"}
-    if tr.entry_t != now - pd.Timedelta(minutes=1):
+    # THE TRADE THAT MATTERS IS THE ONE THAT FIRED ON THIS MINUTE, not the
+    # first of the day. Since the day budget went in, a pair can take more
+    # than one, and reading res["trade"] would silently ignore every one
+    # after the first.
+    fired = [t for t in res["trades"]
+             if t.entry_t == now - pd.Timedelta(minutes=1)]
+    if not fired:
+        if not res["trades"]:
+            why = "; ".join(f"{k}: {v}" for k, v in res["stand_down"].items())
+            return {"action": "wait", "escalated": res["escalated"],
+                    "reason": why or "the sequence has not completed yet"}
+        last = res["trades"][-1]
         return {"action": "wait",
-                "reason": f"the entry fired at {tr.entry_t}, already handled"}
+                "reason": f"the entry fired at {last.entry_t}, already handled"}
+    tr = fired[0]
 
     out = {"action": "enter", "symbol": pair, "direction": tr.direction,
            "side": "buy" if tr.direction > 0 else "sell",
            "reference_price": tr.entry, "stop": tr.stop, "qty": tr.shares,
            "targets": list(tr.targets), "target_sources": list(tr.target_srcs),
+           "target_fractions": tjr_bot.target_fractions(len(tr.targets), cfg),
+           "runner_fraction": tjr_bot.runner_fraction(len(tr.targets), cfg),
            "partial_fraction": cfg.partial_fraction,
+           "budget_share": tr.budget_share,
+           "second_setup_expected": tr.second_setup_expected,
+           "size_basis": tr.size_basis,
+           # the exact three inputs the size was worked out from — see the
+           # note on the same three in tjr_bot.live_step
+           "sizing_account": tr.sizing_account,
+           "buying_power_used": tr.sizing_buying_power,
+           "outer_allowance": tr.sizing_outer_allowance,
            "stop_anchor": tr.stop_anchor, "level_tf": tr.level_tf,
            "level_price": tr.level_price, "confirmed_by": tr.confirm_kind,
            "pullback_into": tr.pullback_kind, "notional": tr.notional,

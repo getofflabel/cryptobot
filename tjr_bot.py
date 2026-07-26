@@ -36,13 +36,28 @@ NO LOOKAHEAD, THE THING MOST LIKELY TO GO WRONG
     forward only. test_tjr_bot.py proves it by re-deciding a bar with the
     future deleted.
 
-SIZING, AND WHY THE VENUE DECIDES IT
-    Risk 1% of equity, position = dollars risked / stop distance, then
-    clamped to the buying power the broker actually reports. At a typical
-    SPY stop the 1% target wants roughly $463,000 of stock against $400,000
-    of paper buying power, so the clamp binds on nearly every trade and the
-    real risk lands near 0.86% of the account. That is the venue's ceiling,
-    not our choice, and every clamped trade says so out loud.
+SIZING, AND THERE IS EXACTLY ONE OF IT (step452 item 3 and item 8)
+    `size_position` below is the only place in this project that turns a
+    stop into a number of units. The replay calls it and the live path calls
+    it, through `tjr_alerts.position_size`, which is now a translation layer
+    with no arithmetic of its own. Until 2026-07-26 there were two rules —
+    the replay sized fresh at 1% of equity every trade while the orders that
+    actually went out used his set size capped at 3% — so every backtest
+    number this project had ever produced described a bot nobody was running.
+
+    THE RULE ITSELF IS HIS: the size is worked out once, off the TIGHTEST
+    stop the instrument normally gives, so that stop would cost the trade's
+    share of the day's budget. It is then held still, and a wider stop today
+    costs proportionally more. That is where his one-to-three-percent band
+    comes from — it is an output of holding the size still, never a dial.
+
+THE BUDGET IS THE DAY'S, NOT THE TRADE'S (step452 item 3, Boot Camp 2.0)
+    "I only lost 50 percent of what I was willing to risk on the day, that's
+    better than a full you know like one percent down on the day two percent
+    down or three percent down on the day." Every one of those numbers is
+    attached to THE DAY. So `DayBudget` holds 1% of the account (0.5% on a
+    news day), trades draw shares of it, and the 3% is the outer limit the
+    whole day may reach, not a ceiling one trade may spend on its own.
 
 COSTS ARE CHARGED, NEVER CONSULTED
     The measured 0.0035% round trip is subtracted so the money is honest.
@@ -58,6 +73,8 @@ SAFETY
 from __future__ import annotations
 
 import datetime as dt
+import json
+import os
 from collections import namedtuple
 from dataclasses import dataclass, field
 
@@ -144,16 +161,55 @@ class Config:
     # --- which market. Nothing below branches on it. ---------------------
     instrument: Instrument = field(default_factory=lambda: US_INDEX_ETF)
 
-    # --- sizing (step433 section 2, step436 section 7) -------------------
-    risk_pct_normal: float = 0.01        # HIS: 1% of the account per trade
-    risk_pct_derisk: float = 0.005       # HIS: half size on news days and holidays
+    # --- sizing (step433 section 2, step436 section 7, step452 item 3) ----
+    #
+    # THE UNIT CHANGED ON 2026-07-26 AND THE NUMBERS DID NOT. These were read
+    # as a per-TRADE risk. Boot Camp 2.0 Day 8 attaches every one of them to
+    # "on the day": "I only lost 50 percent of what I was willing to risk on
+    # the day, that's better than a full you know like one percent down on
+    # the day two percent down or three percent down on the day." His own
+    # working figure is the bottom of the band — Day 3, "my usual risk
+    # tolerance is around like 20 grand", against an account his own
+    # arithmetic puts near two million.
+    risk_pct_normal: float = 0.01        # HIS: 1% of the account PER DAY
+    risk_pct_derisk: float = 0.005       # HIS: half of it on news days and holidays
+    # HIS: the top of the band, and it is the ceiling on THE DAY. It used to
+    # live in tjr_alerts as MAX_RISK_SHARE_OF_ACCOUNT applied to one trade,
+    # which let a single position spend the whole outer limit — the exact
+    # mistake Day 8 and Day 9 are warning against.
+    max_day_risk_share: float = 0.03
+    # HIS, Day 8: "I'm going to go in with like half of what I would want to
+    # risk on the day knowing damn well that I'm probably going to take a
+    # second trade."
+    first_trade_share_when_second_expected: float = 0.50
+    # HIS, Day 9: once target one is taken and the stop is at break even the
+    # trade stops holding the whole allocation — "we lost 50 of what we were
+    # willing to lose once take profit one got hit, okay, now we're down to
+    # like 25 of what we were willing to lose for the day". 50 -> 25 is half
+    # of what that trade was holding.
+    break_even_releases_share: float = 0.50
+    # OURS, a guess, and it is the only number in the multi-trade path that
+    # is not his. He gives no floor. A quarter of the day's budget is the
+    # smallest piece his own Day 9 accounting ever names, so below that there
+    # is nothing left worth opening and the day is done. Without a floor the
+    # last sliver of budget buys a position too small to matter and the
+    # ledger never closes.
+    min_budget_share_to_open: float = 0.25
     double_size_enabled: bool = False    # HIS: forbidden without a proven record. STAYS OFF.
     partial_fraction: float = 0.50       # HIS: "I took off 50 of the position"
+    # HIS, Day 9, said three times in the same words: "take profit two right
+    # here where I managed another fifty percent of the OPEN position". Half
+    # of the half is a quarter of the original, and the last quarter is the
+    # runner he closes by hand.
+    second_partial_fraction: float = 0.50
 
-    # --- the targets (step433 section 3, bootcamp Day 37) ----------------
-    # HIS: "I usually set like three or four take profits." Four is the top
-    # of the range he names and the number in his own worked example.
-    max_targets: int = 4
+    # --- the targets (step433 section 3, bootcamp Day 37, step452 item 1) -
+    # HIS, and Boot Camp 2.0 raised it: "we have take profit three right here
+    # and then take profit four all the way up here" (Day 9) and "I also had
+    # several other take profits like four and five all the way up here if it
+    # wanted to hit some high time frame highs" (Day 11). Four and sometimes
+    # five, so five is the top of the range he names.
+    max_targets: int = 5
     # OURS, a guess. He skips a building block that "kind of envelops" one he
     # has already used but never says how close that is. A tenth of what was
     # risked is our reading of "envelops".
@@ -889,6 +945,17 @@ class Trade:
     target_srcs: list      # which building block each one is
     escalated: bool
     regime: str
+    # what share of the DAY's budget this trade was allowed to spend, and
+    # whether it was halved because a second setup was already forming
+    budget_share: float = 1.0
+    second_setup_expected: bool = False
+    size_basis: str = ""
+    # the exact inputs the size was worked out from, kept so the live path
+    # can be asked for a size on the same inputs and be held to the same
+    # answer. See test_the_replay_and_the_live_path_size_identically.
+    sizing_account: float = 0.0
+    sizing_buying_power: float = 0.0
+    sizing_outer_allowance: float = 0.0
     exit_t: object = None
     exit_price: float = 0.0
     outcome: str = ""
@@ -932,6 +999,7 @@ class SymbolDay:
         self.notes: list[str] = []
         self.blocked_by_direction = False
         self.d5_hist = d5_hist
+        self.last_bos1 = 0          # the 1-minute's most recent break, if any
 
         open_t = session_start(day, cfg.instrument)
         # warm the 5-minute trend and gap book on bars that had ALL closed
@@ -1157,6 +1225,11 @@ class SymbolDay:
         5-minute pullback to have reached the midpoint or a gap.
         """
         bos = self.t1.update(bar)
+        # kept so an OPEN position can be managed off the same 1-minute
+        # structure the entry was triggered on: "I closed the rest of the
+        # trade out once we broke structure to the downside on the one
+        # minute" (Day 9).
+        self.last_bos1 = bos
         s = self.seq
         if s.stage not in ("confirmed", "pullback"):
             return False
@@ -1165,6 +1238,42 @@ class SymbolDay:
             return False
         return (s.stage == "pullback" and s.counter_bos and
                 s.index_gate_ok and bos == s.trade_dir)
+
+    # ------------------------------------------------- choosing between two
+    def confluence_count(self) -> int:
+        """How many separate things are lining up behind this setup.
+
+        HIS TEST, OUR TALLY. Day 8, on picking between setups: "which one has
+        more confluences, which one is more in line with your daily bias, and
+        which one gives a better risk reward — those are kind of the top
+        three ones that I would cycle through in my head." The three tests
+        and their ORDER are his. Turning "more confluences" into a number is
+        OURS, NOT HIS: he counts what he sees on the chart and never lists
+        what is on the list. Everything counted below is something the
+        sequence had already established for its own reasons, so nothing new
+        is invented — but the tally itself is ours, and it is only ever used
+        to break a tie between two setups that both already qualify. It can
+        never let a trade in or keep one out.
+        """
+        s, n = self.seq, 0
+        pb = str(s.pullback_kind or "")
+        if "midpoint" in pb:
+            n += 1
+        if "fair value gap" in pb:
+            n += 1
+        if "break of structure" in str(s.confirm_kind or ""):
+            n += 1
+        if s.level is not None and LEVEL_RANK.get(s.level.tf, 0) >= 3:
+            n += 1
+        return n
+
+    def timeframes_with_the_trade(self) -> int:
+        """His second test: "which one is more in line with your daily bias".
+        How many of the daily, the 4-hour and the 1-hour point the same way
+        as this trade. All three of them are already read in build_context."""
+        d = self.seq.trade_dir
+        return sum(1 for x in (self.ctx.daily_dir, self.ctx.h4_dir,
+                               self.ctx.h1_dir) if x == d and d != 0)
 
 
 # ------------------------------------------------------------ the targets
@@ -1183,6 +1292,45 @@ def gaps_at(d5_hist, now, minutes: int, cfg, anchor: int = 0) -> list[Gap]:
     for r in tf.itertuples():
         book.update(Bar(r.t, r.open, r.high, r.low, r.close))
     return list(book.gaps)
+
+
+def _orders_filled_beyond(d5: pd.DataFrame, lv: Level, now) -> float | None:
+    """Where the orders actually sat, when the level being targeted is a high
+    that was ITSELF taken out before a leg back down.
+
+    HIS RULE, Day 11 "Where to Take Profit", and it is a placement rule we
+    did not have:
+
+        "this was a liquidity sweep then a leg down so technically this high
+         is not where orders were filled, orders were filled ABOVE this high,
+         so with that in mind it's just an easier way for me to be able to
+         set take profits... because sometimes you'll see hey why didn't
+         price come up and sweep this high, it's because everything from this
+         high and above is where previous downward orders were able to get
+         filled."
+
+    So a target on such a high goes ABOVE the high, not at it. Mirrored for a
+    low. HOW FAR above is not a number he gives, and rather than invent an
+    offset this returns THE FURTHEST PRICE THE SWEEP ITSELF REACHED — the top
+    of the ground price actually covered when those orders were filled. That
+    choice of price is OURS, NOT HIS; the rule that the target belongs above
+    the high rather than at it is his.
+
+    Causal: it reads only bars between the moment the level became knowable
+    and `now`, both of which have already closed.
+    """
+    if len(d5) == 0 or lv.formed is None:
+        return None
+    w = d5[(d5["t"] >= lv.formed) & (d5["t"] < now)]
+    if len(w) == 0:
+        return None
+    last = float(w["close"].iloc[-1])
+    if lv.side > 0:
+        hi = float(w["high"].max())
+        # taken out, and then a leg back down: price is on the near side again
+        return hi if hi > lv.price and last < lv.price else None
+    lo = float(w["low"].min())
+    return lo if lo < lv.price and last > lv.price else None
 
 
 def building_blocks(d5_hist, now, direction, entry, marked_levels, cfg):
@@ -1220,7 +1368,13 @@ def building_blocks(d5_hist, now, direction, entry, marked_levels, cfg):
     #     liquidity all the way up here"
     for lv in marked_levels:
         if (direction > 0 and lv.side > 0) or (direction < 0 and lv.side < 0):
-            out.append((lv.price, f"a {lv.tf} draw on liquidity", False))
+            beyond = _orders_filled_beyond(d5, lv, now)
+            if beyond is None:
+                out.append((lv.price, f"a {lv.tf} draw on liquidity", False))
+            else:
+                out.append((beyond, f"a {lv.tf} draw on liquidity, placed at "
+                                    f"the far edge of where the orders were "
+                                    f"actually filled", False))
 
     # (3) fair value gaps on that same higher timeframe
     for g in gaps_at(d5_hist, now, tf1, cfg, anchor):
@@ -1292,25 +1446,272 @@ def build_targets(d5_hist, now, direction, entry, risk_per_share,
 
 
 def target_fractions(n: int, cfg) -> list[float]:
-    """How much of the position comes off at each target.
+    """How much of the ORIGINAL position comes off at each target.
 
-    HIS, and the only fraction he ever names: "after take profit one got hit
-    I took off 50 of the position" (Day 54 recap).
+    HIS, and he says it three times in the same words. Day 9 "Leveraging
+    Risk": "we had take profit one right here where I managed 50 of the
+    position, we had take profit two right here where I managed ANOTHER
+    FIFTY PERCENT OF THE OPEN POSITION, and then I closed the rest of the
+    trade out once we broke structure to the downside on the one minute."
+    Day 7: "first take profit was just like a simple one-to-one RR off, I
+    closed fifty percent of the open position there and move stop to break
+    even." Day 5.5: "I've already taken half of this position off and stops
+    at break even."
 
-    OURS, a guess: what happens to the other half. He never gives a number
-    for targets 2, 3 and 4. The one thing his own narration pins down is that
-    something is still open after target 3 — "take profit one gets hit, take
-    profit two gets hit, take profit three gets hit, we miss out on take
-    profit four, and then the rest of our position gets stopped out at break
-    even" — so the remaining half is spread evenly across the targets after
-    the first rather than dumped at any one of them.
+    So: half at target one, half of what is STILL OPEN at target two — which
+    is a quarter of the original — and the last quarter is a RUNNER. The
+    runner sits on no target. He closes it by hand when the 1-minute breaks
+    structure against him, and `TjrBot._manage` does exactly that.
+
+    This replaces an even spread across the tail (50 / 16.7 / 16.7 / 16.7
+    with four targets) whose own docstring said it was ours and a guess.
+    Targets three, four and five are still set and still reported — he draws
+    them and points at them — they simply take nothing off, because the
+    ladder he narrates stops after two.
     """
     if n <= 0:
         return []
+    first = cfg.partial_fraction
     if n == 1:
-        return [1.0]
-    rest = (1.0 - cfg.partial_fraction) / (n - 1)
-    return [cfg.partial_fraction] + [rest] * (n - 1)
+        return [first]
+    second = (1.0 - first) * cfg.second_partial_fraction
+    return [first, second] + [0.0] * (n - 2)
+
+
+def runner_fraction(n: int, cfg) -> float:
+    """What is left over once his ladder is done — the piece he closes by
+    hand. A quarter of the original at his usual two-rung ladder."""
+    return max(0.0, 1.0 - sum(target_fractions(n, cfg)))
+
+
+# ============================================================ THE SIZING
+#
+# ONE FUNCTION. THE REPLAY AND THE LIVE PATH BOTH CALL THIS ONE, AND NOTHING
+# ANYWHERE ELSE WORKS OUT A SIZE.
+#
+# Until 2026-07-26 there were two of them and they disagreed. `TjrBot._open`
+# sized fresh at 1% of equity on every trade, which is what every replay and
+# every backtest number came out of; `tjr_alerts.position_size` used his set
+# size capped at 3%, which is what the orders that actually went out used. So
+# the backtests described a bot we were not running. The fix is deletion, not
+# agreement: the arithmetic lives here once and `tjr_alerts.position_size` is
+# a translation layer in front of it with no arithmetic of its own.
+# `test_tjr_bot.test_the_replay_and_the_live_path_size_identically` fails if
+# they can ever drift apart again.
+
+STOP_FLOOR_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                               "step443_stop_floors.json")
+_STOP_FLOORS: dict = {}
+
+
+def tightest_stop(symbol: str) -> float:
+    """The tightest stop this instrument NORMALLY gives, as a share of the
+    price, measured from its own past setups.
+
+    Measured by tjr_desk.derive_stop_floors at the tenth percentile of that
+    instrument's own stop distances — "what's USUALLY the lowest your stop
+    loss will be during a trade" — and stored in step443_stop_floors.json.
+    Read here rather than imported, so this module still imports nothing that
+    can reach a broker.
+
+    ZERO when it has never been measured for this symbol. Borrowing another
+    market's number is the one thing his rule forbids: "Bitcoin's tightest
+    stop and SPY's are permanently different numbers."
+    """
+    global _STOP_FLOORS
+    if not _STOP_FLOORS:
+        try:
+            with open(STOP_FLOOR_PATH) as fh:
+                _STOP_FLOORS = json.load(fh)
+        except (FileNotFoundError, ValueError):
+            _STOP_FLOORS = {"__missing__": True}
+    row = _STOP_FLOORS.get(symbol) or {}
+    return float(row.get("tightest_stop_pct") or 0.0)
+
+
+def size_position(account: float, entry: float, stop_distance: float,
+                  risk_allowance: float, tightest_stop_pct: float = 0.0,
+                  usd_per_quote: float = 1.0,
+                  buying_power: float | None = None,
+                  outer_allowance: float | None = None) -> dict:
+    """HIS ARITHMETIC, ONCE. Every path that needs a size calls this.
+
+    THE RULE, from the bootcamp day he gives entirely to position size:
+
+        "you're going to set your stop loss in points — what's usually the
+         LOWEST your stop loss will be during a trade. For me it's usually
+         400. We calculate that, boom, 25 lots. That is going to be our SET
+         lot size. And you're probably saying, well that doesn't make any
+         sense — well it does, because that means I'm going to be risking one
+         percent if price hits stop right here. That also means I'll be
+         risking two percent of my account if we have a larger stop loss."
+
+    So the size is worked out ONCE, off the TIGHTEST stop the instrument
+    normally gives, such that THAT stop would cost `risk_allowance`. Then it
+    is held still. A wider stop today therefore costs proportionally more,
+    and that is the rule rather than a leak in it — his one-to-three-percent
+    band is the OUTPUT of holding the size still, never a dial.
+
+    account         the equity the day's budget was worked out on
+    entry           the reference price
+    stop_distance   today's stop, in the price
+    risk_allowance  DOLLARS this trade may spend if the tightest stop is hit
+                    — its share of the DAY's budget, not a per-trade ceiling
+    tightest_stop_pct  that instrument's own tightest stop, as a share of the
+                    price. ZERO means it has never been measured, and the
+                    size then falls out of today's stop instead; the answer
+                    says which of the two it was.
+    usd_per_quote   1 everywhere except a yen pair, where profit arrives in
+                    yen and has to become dollars before the size means
+                    anything — off by a factor of about 145 if it is wrong
+    buying_power    the broker's own figure. None means do not clamp.
+    outer_allowance DOLLARS still free under the DAY's outer limit. When the
+                    set size would spend more than the day has left, the size
+                    is cut and `capped` says so.
+    """
+    out = {"units": 0.0, "lots": 0.0, "per_step": 0.0, "ok": False,
+           "risk_dollars": 0.0, "risk_share_pct": 0.0, "wider": 1.0,
+           "risk_wanted": float(risk_allowance or 0.0), "measured": False,
+           "capped": False, "clamped": False, "basis": "not worked out"}
+    if (account <= 0 or entry <= 0 or stop_distance <= 0 or usd_per_quote <= 0
+            or not risk_allowance or risk_allowance <= 0):
+        return out
+
+    baseline = float(tightest_stop_pct or 0.0) * float(entry)
+    measured = baseline > 0
+    if measured:
+        basis = ("his set size, worked out off the tightest stop this market "
+                 "normally gives and then held still")
+    else:
+        # Never measured. Sizing off another market's number is what his rule
+        # forbids, so the size falls out of TODAY's stop instead, which makes
+        # the allowance exact rather than a floor. Said out loud in `basis`.
+        baseline = float(stop_distance)
+        basis = ("today's own stop — this market's tightest stop has never "
+                 "been measured, and borrowing another market's is what his "
+                 "rule forbids")
+    units = float(risk_allowance) / (baseline * usd_per_quote)
+    risk_dollars = units * stop_distance * usd_per_quote
+    uncapped_units, uncapped_risk = units, risk_dollars
+
+    # THE OUTER LIMIT, AND IT IS NOW ON THE DAY. His band tops out at three
+    # percent OF THE ACCOUNT ON THE DAY, so what is passed in here is what
+    # the day has left, not a fresh ceiling for every trade.
+    capped = False
+    if outer_allowance is not None and float(outer_allowance) > 0 and \
+            risk_dollars > float(outer_allowance):
+        units *= float(outer_allowance) / risk_dollars
+        risk_dollars = units * stop_distance * usd_per_quote
+        capped = True
+
+    # THE VENUE'S OWN CEILING, which is not a choice of ours either.
+    clamped = False
+    if buying_power is not None and entry > 0:
+        max_units = float(buying_power) / entry
+        if units > max_units:
+            units = max_units
+            risk_dollars = units * stop_distance * usd_per_quote
+            clamped = True
+
+    out.update({
+        "units": units, "lots": units / 100_000, "ok": True,
+        "basis": basis, "measured": measured, "baseline_stop": baseline,
+        "risk_dollars": risk_dollars,
+        "risk_share_pct": 100.0 * risk_dollars / account,
+        # how much wider today's stop is than the one the size was set on
+        "wider": stop_distance / baseline if baseline else 1.0,
+        "capped": capped, "clamped": clamped,
+        "uncapped_units": uncapped_units,
+        "uncapped_risk_dollars": uncapped_risk,
+        "uncapped_risk_share_pct": 100.0 * uncapped_risk / account,
+        "per_step": units * usd_per_quote})
+    return out
+
+
+# ======================================================== THE DAY'S BUDGET
+@dataclass
+class DayBudget:
+    """What the day may lose, and the ledger the trades draw from.
+
+    HIS, Day 8 "How to split positions" and Day 9 "Leveraging Risk", which
+    together are the biggest fill in Boot Camp 2.0:
+
+        "if you do have two trades that you are able to take during the day
+         make sure your risk plan is like set up and ready for that... I'm
+         going to go in with like half of what I would want to risk on the
+         day knowing damn well that I'm probably going to take a second trade"
+        "I only risked 50 of what I was willing to risk for the day"
+        "we lost 50 of what we were willing to lose once take profit one got
+         hit okay now we're down to like 25 of what we were willing to lose
+         for the day"
+        "that gives me the ability to now know that hey the most I'm going to
+         lose on the day is going to be 25, I can now risk an extra 75 of
+         whatever I'm willing to risk on the day"
+        "if I risk 75 of what I'm willing to risk on the day and I'm only
+         down 25... then if this one hits stop loss then I'll lose 100 of
+         what I'm willing to risk on the day"
+
+    So the accounting is in SHARES OF ONE DAY'S BUDGET: what the open trades
+    are holding plus what has already been lost may never exceed 100%, and a
+    trade that has taken target one and moved its stop to break even stops
+    holding half of what it was holding.
+
+    A SECOND, SEPARATE LEDGER runs alongside it in dollars, against the top
+    of his band — three percent of the account, on the day. It exists because
+    the set size does not shrink for a wider stop, so a day can hold 100% of
+    its budget in his accounting and still be carrying two or three times the
+    budget in real dollars. That is exactly the one-to-three-percent band he
+    describes, and the outer ledger is where it stops.
+
+    NOTHING HERE HALTS TRADING AFTER A LOSS. Day 12 "Red Day": he took three
+    losses, took a fourth trade at the same size, and says "if this was a
+    fourth loss I would have been completely okay with it". What ends his day
+    is this budget running out, never the count of losses.
+    """
+    account: float
+    share_of_account: float          # 1% normally, half that on a news day
+    outer_share: float               # 3% — the top of his band, on the day
+    held: float = 0.0                # shares of the budget the OPEN trades hold
+    lost: float = 0.0                # shares of the budget already lost
+    dollars_at_risk: float = 0.0     # what the open trades can still lose
+    dollars_lost: float = 0.0        # what the day has already lost
+
+    @property
+    def budget_dollars(self) -> float:
+        return self.account * self.share_of_account
+
+    @property
+    def outer_dollars(self) -> float:
+        return self.account * self.outer_share
+
+    def free(self) -> float:
+        """Shares of the day's budget still available. His 75%."""
+        return max(0.0, 1.0 - self.held - self.lost)
+
+    def outer_free(self) -> float:
+        """Dollars still available under the top of his band."""
+        return max(0.0, self.outer_dollars - self.dollars_at_risk
+                   - self.dollars_lost)
+
+    def take(self, share: float, risk_dollars: float) -> None:
+        self.held += share
+        self.dollars_at_risk += risk_dollars
+
+    def to_break_even(self, share: float, risk_dollars: float) -> None:
+        """Target one filled and the stop moved to the entry: the trade can
+        no longer cost what it was holding, so the budget comes back."""
+        self.held = max(0.0, self.held - share)
+        self.dollars_at_risk = max(0.0, self.dollars_at_risk - risk_dollars)
+
+    def release(self, share: float, risk_dollars: float, pnl: float) -> None:
+        """The trade is closed. It stops holding anything, and whatever it
+        actually lost is spent. A winner spends nothing and frees the lot."""
+        self.held = max(0.0, self.held - share)
+        self.dollars_at_risk = max(0.0, self.dollars_at_risk - risk_dollars)
+        if pnl < 0:
+            self.dollars_lost += -pnl
+            if self.budget_dollars > 0:
+                self.lost += -pnl / self.budget_dollars
 
 
 # ----------------------------------------------------------------- the bot
@@ -1344,6 +1745,14 @@ class TjrBot:
     def run_day(self, data: dict, day: pd.Timestamp, stop_at=None) -> dict:
         """One session, both index charts, strictly forward.
 
+        MORE THAN ONE TRADE A DAY IS THE METHOD, NOT AN EDGE CASE (step452
+        item 4). This used to hold a single `trade` and break out of the walk
+        the moment it resolved. He runs two, three ("we took three trades
+        today, absurd for me", Day 9) and four (Day 12), and what governs is
+        the day's budget rather than a count. So the walk now keeps going,
+        several positions can be open at once, and `DayBudget` is the thing
+        that stops the day.
+
         data:    {symbol: {"5m": frame, "1m": frame}}, `t` in US Eastern
         stop_at: walk no further than this timestamp — the truncation test
                  uses it to ask "what had you decided by then".
@@ -1356,8 +1765,12 @@ class TjrBot:
         syms = list(data.keys())
         legs = {s: SymbolDay(s, data[s]["5m"], data[s]["1m"], day, cfg,
                              self.news, self.escalated) for s in syms}
+        budget = DayBudget(account=self.account, share_of_account=risk_pct,
+                           outer_share=cfg.max_day_risk_share)
+        self.budget = budget
         result = {"day": day, "escalated": self.escalated, "derisk": derisk,
-                  "trade": None, "stand_down": {}, "notes": {},
+                  "trade": None, "trades": [], "budget": budget,
+                  "stand_down": {}, "notes": {},
                   "context": {s: legs[s].ctx for s in syms}}
         for s in syms:
             if legs[s].ctx.stand_down:
@@ -1386,26 +1799,14 @@ class TjrBot:
                      for r in d5[s].itertuples()} for s in syms}
         stamps = sorted({t for s in live for t in idx[s]})
 
-        trade = None
+        open_trades: list[Trade] = []
+        taken: list[Trade] = []
         for t in stamps:
             close_t = t + pd.Timedelta(minutes=1)
             if stop_at is not None and close_t > stop_at:
                 break
 
-            # 1) a position, once open, is the only thing that matters
-            if trade is not None:
-                self._manage(trade, idx[trade.symbol].get(t))
-                if trade.outcome:
-                    break
-                continue
-
-            # 2) 10:30 and nothing has triggered: done for the day. Nothing
-            #    after this point may advance a setup, because he stops
-            #    looking — "if I can't find a trade by 10:30, I'm done."
-            if past_cutoff(t, inst):
-                break
-
-            # 3) any 5-minute bar closing right now, on EVERY symbol first,
+            # 1) any 5-minute bar closing right now, on EVERY symbol first,
             #    so the index gate reads both charts at the same instant
             #    EVERY symbol, not just the tradeable ones: the veto is "if
             #    the S&P 500 and the NASDAQ on the five minute are not aligned,
@@ -1424,36 +1825,148 @@ class TjrBot:
                     others = [legs[o].t5.state for o in syms if o != s]
                     legs[s].check_index_gate(others[0] if others else legs[s].t5.state)
 
-            # 4) the 1-minute trigger. Never before 09:50, never after 10:30.
+            # 2) the 1-minute bar, fed to every live symbol whether or not it
+            #    is holding a position, because the runner is closed off this
+            #    same 1-minute structure
+            fires = []
             for s in live:
                 b1 = idx[s].get(t)
                 if b1 is None:
                     continue
-                if not legs[s].on_1m(b1) or trade is not None:
-                    continue
-                if too_early(t, inst):
+                if legs[s].on_1m(b1):
+                    fires.append((s, b1))
+
+            # 3) manage what is already open, on the bar that just closed
+            for tr in list(open_trades):
+                self._manage(tr, idx[tr.symbol].get(t), budget,
+                             legs[tr.symbol].last_bos1)
+                if tr.outcome:
+                    open_trades.remove(tr)
+
+            # 4) 10:30: he stops LOOKING, he does not stop managing. "if I
+            #    can't find a trade by 10:30, I'm done." With nothing open
+            #    and nothing left to find, the day is over.
+            if past_cutoff(t, inst):
+                if not open_trades:
+                    break
+                continue
+
+            # 5) new entries. Never before 09:50, never after 10:30.
+            if not fires:
+                continue
+            if too_early(t, inst):
+                for s, _ in fires:
                     legs[s].notes.append(
                         f"{t:%H:%M} the trigger landed inside the manipulation "
                         f"window — no entry")
+                continue
+            for s, b1 in self._choose(legs, fires, day):
+                if budget.free() < cfg.min_budget_share_to_open:
+                    legs[s].notes.append(
+                        f"{t:%H:%M} a setup completed but the day's risk "
+                        f"budget is spent — {100*budget.free():.0f}% of it is "
+                        f"left and he does not open on less than "
+                        f"{100*cfg.min_budget_share_to_open:.0f}%")
                     continue
-                if past_cutoff(t, inst):
-                    legs[s].notes.append(f"{t:%H:%M} past the cut-off")
+                second = self._second_setup_forming(legs, live, s)
+                tr = self._open(legs[s], b1, day, budget, second,
+                                legs[s].d5_hist)
+                if tr is None:
                     continue
-                trade = self._open(legs[s], b1, day, risk_pct, legs[s].d5_hist)
+                open_trades.append(tr)
+                taken.append(tr)
+                # a fresh setup is needed before this symbol may fire again:
+                # the sweep that produced this trade has been used
+                legs[s].seq = SeqState()
 
         for s in syms:
             result["notes"][s] = legs[s].notes
-            if legs[s].ctx.stand_down is None and trade is None:
+            if legs[s].ctx.stand_down is None and not any(
+                    tr.symbol == s for tr in taken):
                 result["stand_down"].setdefault(s, self._why_no_trade(legs[s]))
 
-        if trade is not None:
-            if not trade.outcome:
-                self._force_flat(trade, idx[trade.symbol])
-            self.account = trade.account_after
+        for tr in open_trades:
+            if not tr.outcome:
+                self._force_flat(tr, idx[tr.symbol], budget)
+        for tr in taken:
+            self.account += tr.pnl
+            tr.account_after = self.account
         wk = (day - pd.Timedelta(days=day.weekday())).normalize()
-        self.week_pnl[wk] = self.week_pnl.get(wk, 0.0) + (trade.pnl if trade else 0.0)
-        result["trade"] = trade
+        self.week_pnl[wk] = (self.week_pnl.get(wk, 0.0)
+                             + sum(tr.pnl for tr in taken))
+        result["trades"] = taken
+        # kept for every caller that predates the day budget. It is the FIRST
+        # trade of the day, which is the one that used to be the only one.
+        result["trade"] = taken[0] if taken else None
         return result
+
+    @staticmethod
+    def _second_setup_forming(legs: dict, live: list, this: str) -> bool:
+        """Is a second setup already visibly forming somewhere else?
+
+        HIS RULE, Day 8: "when I see like two or three trade setups for the
+        day like today right... I pretty much was like okay cool like I'm
+        going to go in with like half of what I would want to risk on the day
+        knowing damn well that I'm probably going to take a second trade."
+
+        HOW WE SEE IT IS OURS, NOT HIS. He is looking at several charts and
+        judging it. Our stand-in is the only observable equivalent: another
+        symbol whose sequence has already CONFIRMED — the level was taken
+        there and the 5-minute has turned on it, so what is left is a
+        pullback and a trigger. A level merely pushed through is not yet a
+        setup and does not count. It reads nothing from the future and it can
+        only ever HALVE a size, never enlarge one.
+        """
+        for o in live:
+            if o == this:
+                continue
+            if legs[o].seq.stage in ("confirmed", "pullback"):
+                return True
+        return False
+
+    def _choose(self, legs: dict, fires: list, day) -> list:
+        """Several setups completed on the same minute — his order of tests.
+
+        HIS, Day 8, and the ORDER is his: "which one has more confluences,
+        which one is more in line with your daily bias, and which one gives a
+        better risk reward — those are kind of the top three ones that I would
+        cycle through in my head." The worked example is arithmetic on the
+        reward, not on feel: he dropped a setup because "the best it was going
+        to give me was a one to one, or actually when I mapped it out it was
+        like a one to like 0.7... that's not worth it to me when gu is giving
+        me like a one two 1.5 on my first take profit."
+
+        This RANKS, it does not refuse. Every setup here has already passed
+        the entry sequence. When the day's budget can fund them all, they are
+        all taken and the ranking only decides who draws first — "let's say
+        you got like three and two of them are higher probability than the
+        other, there's no reason to take all three, just split those positions
+        up amongst those two trades."
+        """
+        if len(fires) < 2:
+            return fires
+
+        def rank(item):
+            s, b1 = item
+            leg = legs[s]
+            reward = 0.0
+            seq = leg.seq
+            entry = b1.c
+            buf = self.cfg.stop_buffer_pct_of_price * entry
+            stop = (seq.sweep_extreme + buf if seq.trade_dir < 0
+                    else seq.sweep_extreme - buf)
+            rps = abs(entry - stop)
+            if rps > 0:
+                tg, _ = build_targets(leg.d5_hist,
+                                      b1.t + pd.Timedelta(minutes=1),
+                                      seq.trade_dir, entry, rps,
+                                      leg.ctx.levels, self.cfg)
+                if tg:
+                    reward = abs(tg[0] - entry) / rps
+            return (leg.confluence_count(), leg.timeframes_with_the_trade(),
+                    reward)
+
+        return sorted(fires, key=rank, reverse=True)
 
     @staticmethod
     def _why_no_trade(leg: SymbolDay) -> str:
@@ -1474,7 +1987,15 @@ class TjrBot:
             return "the 1-minute never broke back with the trade before 10:30"
         return "the sequence did not complete before 10:30"
 
-    def _open(self, leg: SymbolDay, b1: Bar, day, risk_pct, d5_hist) -> Trade | None:
+    def _open(self, leg: SymbolDay, b1: Bar, day, budget: DayBudget,
+              second_setup: bool, d5_hist) -> Trade | None:
+        """Open one trade against the DAY's budget.
+
+        The share it may spend is his: half the day's budget when a second
+        setup is already forming (Day 8), otherwise whatever the day has
+        left. The size then falls out of `size_position`, which is the same
+        function the live path calls.
+        """
         cfg, s = self.cfg, leg.seq
         entry = b1.c
         buf = cfg.stop_buffer_pct_of_price * entry
@@ -1482,19 +2003,59 @@ class TjrBot:
         rps = abs(entry - stop)
         if rps <= 0:
             return None
+        # THE STOP HAS TO BE ON THE PROTECTIVE SIDE OF THE ENTRY, and once in
+        # a while it is not: `sweep_extreme` freezes when the 5-minute
+        # confirms, so a pullback that runs back past it and then triggers
+        # would put a short's stop BELOW its entry. That is not a trade, it is
+        # a position with nothing under it. The live order path already
+        # refuses the same thing at the venue — on 26 July it opened a DOT
+        # short, could not place the stop because price had already run past
+        # where the stop belonged, and closed the position one second later.
+        # Refusing here is that same refusal, one step earlier.
+        if (stop <= entry) if s.trade_dir < 0 else (stop >= entry):
+            leg.notes.append(
+                f"{b1.t:%H:%M} price had already run back past where the stop "
+                f"belonged, so there was nothing to put under the trade — no "
+                f"entry")
+            return None
 
-        risk_wanted = self.account * risk_pct
-        shares = risk_wanted / rps
-        bp = self._buying_power()
-        max_shares = bp / entry if entry > 0 else 0.0
-        clamped = shares > max_shares
+        share = (cfg.first_trade_share_when_second_expected if second_setup
+                 else 1.0)
+        share = min(share, budget.free())
+        if share < cfg.min_budget_share_to_open:
+            return None
+        risk_wanted = share * budget.budget_dollars
+        bp, outer = self._buying_power(), budget.outer_free()
+
+        size = size_position(
+            account=budget.account, entry=entry, stop_distance=rps,
+            risk_allowance=risk_wanted,
+            tightest_stop_pct=tightest_stop(leg.symbol),
+            buying_power=bp, outer_allowance=outer)
+        if not size["ok"]:
+            leg.notes.append(f"{b1.t:%H:%M} the size could not be worked out")
+            return None
+        shares = size["units"]
+        clamped = size["clamped"]
+        if second_setup:
+            leg.notes.append(
+                f"{b1.t:%H:%M} a second setup was already forming elsewhere, "
+                f"so this one took {100*share:.0f}% of the day's risk budget "
+                f"instead of all of it")
+        if size["capped"]:
+            leg.notes.append(
+                f"{b1.t:%H:%M} size cut to hold the DAY inside "
+                f"{100*cfg.max_day_risk_share:.0f}% of the account: the set "
+                f"size would have put ${size['uncapped_risk_dollars']:,.0f} "
+                f"at risk and the day had ${budget.outer_free():,.0f} left")
         if clamped:
-            shares = max_shares
             leg.notes.append(
                 f"{b1.t:%H:%M} size clamped by buying power: wanted "
-                f"${risk_wanted:,.0f} at risk ({risk_pct*100:.2f}% of equity), "
-                f"took ${shares*rps:,.0f} ({100*shares*rps/self.account:.2f}%)")
-        risk_dollars = shares * rps
+                f"${size['uncapped_risk_dollars']:,.0f} at risk, took "
+                f"${size['risk_dollars']:,.0f} "
+                f"({100*size['risk_dollars']/budget.account:.2f}% of the "
+                f"account)")
+        risk_dollars = size["risk_dollars"]
         notional = shares * entry
 
         targets, target_srcs = build_targets(
@@ -1507,7 +2068,7 @@ class TjrBot:
             # visible if it ever actually happens.
             leg.notes.append(f"{b1.t:%H:%M} no building block anywhere ahead of "
                              f"the entry — this trade has no take profit")
-        return Trade(
+        tr = Trade(
             symbol=leg.symbol, day=day, direction=s.trade_dir,
             level_price=s.level.price, level_tf=s.level.tf, swept_at=s.swept_at,
             confirm_kind=s.confirm_kind, confirmed_at=s.confirmed_at,
@@ -1516,21 +2077,37 @@ class TjrBot:
                          f"{s.level.tf} level was being taken, plus a spread buffer"),
             risk_per_share=rps, shares=shares, notional=notional,
             risk_dollars=risk_dollars, risk_wanted=risk_wanted,
-            risk_pct_used=(risk_dollars / self.account if self.account else 0.0),
+            risk_pct_used=(risk_dollars / budget.account if budget.account
+                           else 0.0),
             clamped=clamped, targets=targets, target_srcs=target_srcs,
-            escalated=self.escalated, regime=leg.ctx.regime)
+            escalated=self.escalated, regime=leg.ctx.regime,
+            budget_share=share, second_setup_expected=second_setup,
+            size_basis=size["basis"], sizing_account=budget.account,
+            sizing_buying_power=bp, sizing_outer_allowance=outer)
+        tr._share_held = share
+        tr._risk_held = risk_dollars
+        budget.take(share, risk_dollars)
+        return tr
 
-    def _manage(self, tr: Trade, b1: Bar | None) -> None:
-        """Scale out at his three or four targets, and after the first one
-        the stop sits at break even for the rest of the trade.
+    def _manage(self, tr: Trade, b1: Bar | None, budget: DayBudget | None = None,
+                bos1: int = 0) -> None:
+        """His ladder, and then the runner he closes by hand.
 
-        "take profit one gets hit, take profit two gets hit, take profit
-        three gets hit, we miss out on take profit four, and then the rest of
-        our position gets stopped out at break even" (Strategy_Revealed). A
-        runner stopped at break even is a NORMAL outcome and there is no
-        logic here that tries to avoid it. The stop moves once, to the entry,
-        when the first target fills, and never again — he describes no trail
-        and none is added.
+        HIS, Day 9: "we had take profit one right here where I managed 50 of
+        the position, we had take profit two right here where I managed
+        another fifty percent of the OPEN position, and then I closed the rest
+        of the trade out once we broke structure to the downside on the one
+        minute." So half at target one, a quarter at target two, and the last
+        quarter is a runner with no resting target on it — it comes off when
+        the 1-minute breaks structure against the trade, and otherwise it
+        stops at break even, which is a NORMAL outcome he describes and there
+        is no logic here that tries to avoid it.
+
+        The stop moves once, to the entry, when the first target fills, and
+        never again — he describes no trail and none is added. That move is
+        also what releases budget back to the day: "we lost 50 of what we were
+        willing to lose, once take profit one got hit, okay, now we're down to
+        like 25 of what we were willing to lose for the day."
         """
         if b1 is None or tr.outcome:
             return
@@ -1539,11 +2116,13 @@ class TjrBot:
             tr._open_shares, tr._realised = tr.shares, 0.0
             tr._filled, tr._stop_now = 0, tr.stop
             tr._fracs = target_fractions(len(tr.targets), self.cfg)
+            tr._rungs = sum(1 for f in tr._fracs if f > 0)
         # the stop is checked first inside a bar: we never take the good side
         # of an ambiguous bar
         if (b1.l <= tr._stop_now) if d > 0 else (b1.h >= tr._stop_now):
             self._close(tr, tr._stop_now, b1.t,
-                        "stopped at break even" if tr._filled else "stopped out")
+                        "stopped at break even" if tr._filled else "stopped out",
+                        budget)
             return
         while tr._filled < len(tr.targets):
             tp = tr.targets[tr._filled]
@@ -1554,24 +2133,46 @@ class TjrBot:
             tr._open_shares -= part
             tr._filled += 1
             tr.targets_filled = tr._filled
-            tr._stop_now = tr.entry          # break even, once, after target 1
+            if tr._filled == 1:
+                tr._stop_now = tr.entry      # break even, once, after target 1
+                if budget is not None:
+                    # HIS 50 -> 25: the trade stops holding half of what it
+                    # was holding, and the rest goes back to the day.
+                    back = tr._share_held * self.cfg.break_even_releases_share
+                    back_d = tr._risk_held * self.cfg.break_even_releases_share
+                    budget.to_break_even(back, back_d)
+                    tr._share_held -= back
+                    tr._risk_held -= back_d
         if tr._open_shares <= 1e-9:
             self._close(tr, tr.targets[-1], b1.t,
-                        f"all {tr._filled} targets reached")
+                        f"all {tr._filled} targets reached", budget)
+            return
+        # THE RUNNER. His ladder is done and the last piece has no resting
+        # target — he closes it on the opposite break of structure on the
+        # 1-minute. OURS, and marked: he also has targets three, four and
+        # five drawn, and if price reaches the last of them the runner comes
+        # off there rather than being carried past every level he named.
+        if tr._rungs and tr._filled >= tr._rungs and bos1 == -d:
+            self._close(tr, b1.c, b1.t,
+                        "the 1-minute broke structure against the trade — the "
+                        "rest closed by hand", budget)
             return
         if time_to_be_flat(b1.t, self.cfg.instrument):
-            self._close(tr, b1.c, b1.t, "flat by the close")
+            self._close(tr, b1.c, b1.t, "flat by the close", budget)
 
-    def _force_flat(self, tr: Trade, index: dict) -> None:
+    def _force_flat(self, tr: Trade, index: dict,
+                    budget: DayBudget | None = None) -> None:
         if tr.outcome:
             return
         if not index:
-            self._close(tr, tr.entry, tr.entry_t, "no bars left, flat at entry")
+            self._close(tr, tr.entry, tr.entry_t, "no bars left, flat at entry",
+                        budget)
             return
         last = max(index)
-        self._close(tr, index[last].c, last, "flat by the close")
+        self._close(tr, index[last].c, last, "flat by the close", budget)
 
-    def _close(self, tr: Trade, price: float, t, outcome: str) -> None:
+    def _close(self, tr: Trade, price: float, t, outcome: str,
+               budget: DayBudget | None = None) -> None:
         if not hasattr(tr, "_open_shares"):
             tr._open_shares, tr._realised, tr._filled = tr.shares, 0.0, 0
         tr._realised += tr._open_shares * (price - tr.entry) * tr.direction
@@ -1582,6 +2183,10 @@ class TjrBot:
         tr.r_multiple = tr.pnl / tr.risk_dollars if tr.risk_dollars else 0.0
         tr.account_after = self.account + tr.pnl
         tr.pct_of_account = 100.0 * tr.pnl / self.account if self.account else 0.0
+        if budget is not None:
+            budget.release(getattr(tr, "_share_held", 0.0),
+                           getattr(tr, "_risk_held", 0.0), tr.pnl)
+            tr._share_held, tr._risk_held = 0.0, 0.0
 
 
 # ------------------------------------------------------- the causal probe
@@ -1622,17 +2227,22 @@ class LivePosition:
             self.original_shares = self.shares
 
 
-def manage_step(pos: LivePosition, last: Bar, cfg: Config | None = None) -> dict:
+def manage_step(pos: LivePosition, last: Bar, cfg: Config | None = None,
+                bos1: int = 0) -> dict:
     """What to do with an open position on this closed bar.
 
-    Scale out at his three or four targets — half at the first, the rest
-    spread over the ones after it — and from the first fill onward the stop
-    sits at break even. "take profit one gets hit, take profit two gets hit,
-    take profit three gets hit, we miss out on take profit four, and then the
-    rest of our position gets stopped out at break even." A runner stopped at
-    break even is a NORMAL outcome and there is nothing here that tries to
-    avoid it. The stop is never widened, never removed, never moved before
-    target 1, and never trailed. Size is never added.
+    HIS LADDER, Day 9: half the position at target one, "another fifty
+    percent of the OPEN position" at target two — a quarter of the original —
+    and "then I closed the rest of the trade out once we broke structure to
+    the downside on the one minute". From the first fill onward the stop sits
+    at break even. A runner stopped at break even is a NORMAL outcome and
+    there is nothing here that tries to avoid it. The stop is never widened,
+    never removed, never moved before target 1, and never trailed. Size is
+    never added.
+
+    `bos1` is the 1-minute chart's most recent break of structure on this bar
+    (+1 up, -1 down, 0 none). It is the only thing that closes the runner
+    before its stop or the final target, and it is what he does by hand.
 
     Returns one of:
       {"action": "hold"}
@@ -1648,10 +2258,12 @@ def manage_step(pos: LivePosition, last: Bar, cfg: Config | None = None) -> dict
                 "reason": ("stopped at break even" if pos.targets_filled
                            else "stopped out")}
     n = pos.targets_filled
-    if n < len(pos.targets):
+    fracs = target_fractions(len(pos.targets), cfg)
+    rungs = sum(1 for f in fracs if f > 0)
+    if n < rungs:
+        # still on his ladder: half, then half of what is open
         tp = pos.targets[n]
         if (last.h >= tp) if d > 0 else (last.l <= tp):
-            fracs = target_fractions(len(pos.targets), cfg)
             want = min(pos.original_shares * fracs[n], pos.shares)
             if n == len(pos.targets) - 1 or want >= pos.shares:
                 return {"action": "close", "shares": pos.shares, "price": tp,
@@ -1660,6 +2272,21 @@ def manage_step(pos: LivePosition, last: Bar, cfg: Config | None = None) -> dict
                     "new_stop": pos.entry,
                     "reason": (f"target {n + 1} reached: "
                                f"{100 * fracs[n]:.0f}% off, stop at break even")}
+    elif rungs:
+        # THE RUNNER. Targets three, four and five are drawn and pointed at
+        # and take nothing off; the runner rides through them and comes off
+        # on the opposite break of structure on the 1-minute. A position with
+        # no target at all never becomes a runner — his ladder never ran, so
+        # it goes to its stop or to the close.
+        if len(pos.targets) > rungs:
+            fin = pos.targets[-1]
+            if (last.h >= fin) if d > 0 else (last.l <= fin):
+                return {"action": "close", "shares": pos.shares, "price": fin,
+                        "reason": f"all {len(pos.targets)} targets reached"}
+        if bos1 == -d:
+            return {"action": "close", "shares": pos.shares, "price": last.c,
+                    "reason": ("the 1-minute broke structure against the "
+                               "trade — the rest closed by hand")}
     if time_to_be_flat(last.t, inst):
         return {"action": "close", "shares": pos.shares, "price": last.c,
                 "reason": "flat by the close"}
@@ -1706,22 +2333,40 @@ def live_step(data: dict, now: pd.Timestamp, account: float,
     bot.buying_power = None if buying_power is None else float(buying_power)
     bot.week_pnl = dict(week_pnl or {})
     res = bot.run_day(data, day, stop_at=now)
-    tr = res["trade"]
-    if tr is None:
-        why = "; ".join(f"{k}: {v}" for k, v in res["stand_down"].items())
-        return {"action": "wait", "escalated": res["escalated"],
-                "reason": why or "the sequence has not completed yet"}
-    if tr.entry_t != now - pd.Timedelta(minutes=1):
+    # MORE THAN ONE TRADE A DAY IS THE METHOD, so the one that matters on
+    # this minute is the one that fired on this minute, not the first of the
+    # day. Reading res["trade"] here silently ignored every trade after the
+    # first the moment the day budget went in.
+    fired = [t for t in res["trades"]
+             if t.entry_t == now - pd.Timedelta(minutes=1)]
+    if not fired:
+        if not res["trades"]:
+            why = "; ".join(f"{k}: {v}" for k, v in res["stand_down"].items())
+            return {"action": "wait", "escalated": res["escalated"],
+                    "reason": why or "the sequence has not completed yet"}
+        last = res["trades"][-1]
         return {"action": "wait",
-                "reason": f"the entry fired at {tr.entry_t}, already handled"}
+                "reason": f"the entry fired at {last.entry_t}, already handled"}
+    tr = fired[0]
     if too_early(now, inst):
         return {"action": "wait", "reason": "inside the manipulation window"}
     return {"action": "enter", "symbol": tr.symbol, "direction": tr.direction,
             "reference_price": tr.entry, "stop": tr.stop, "shares": tr.shares,
             "targets": list(tr.targets), "target_sources": list(tr.target_srcs),
             "target_fractions": target_fractions(len(tr.targets), cfg),
+            "runner_fraction": runner_fraction(len(tr.targets), cfg),
             "target1": tr.tp1, "target2": tr.tp2,
             "partial_fraction": cfg.partial_fraction,
+            "budget_share": tr.budget_share,
+            "second_setup_expected": tr.second_setup_expected,
+            "size_basis": tr.size_basis,
+            # the exact three inputs the size was worked out from. A caller
+            # that re-sizes rather than sending tr.shares must pass these
+            # three into tjr_alerts.position_size or it will get a different
+            # number the moment a second position is open.
+            "sizing_account": tr.sizing_account,
+            "buying_power_used": tr.sizing_buying_power,
+            "outer_allowance": tr.sizing_outer_allowance,
             "stop_anchor": tr.stop_anchor, "level_tf": tr.level_tf,
             "level_price": tr.level_price, "confirmed_by": tr.confirm_kind,
             "pullback_into": tr.pullback_kind, "notional": tr.notional,

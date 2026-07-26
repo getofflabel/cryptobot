@@ -163,11 +163,15 @@ def test_the_size_only_changes_when_equity_or_the_measurement_does():
     assert abs(c["units"] - 2 * a["units"]) < 1e-6
 
 
-def test_the_cap_is_ours_and_it_says_so():
-    """OUR ceiling on what one trade may risk, defaulting to 3% OF THE
-    ACCOUNT — the top of the band he himself states. It must not touch an
-    ordinary trade, it must bind on the tail, and when it binds BOTH numbers
-    have to survive so nothing is quietly swapped."""
+def test_the_cap_is_his_band_on_the_day_and_it_says_so():
+    """THE CEILING IS 3% OF THE ACCOUNT AND IT BELONGS TO THE DAY, not to one
+    trade. Boot Camp 2.0 Day 8: "I only lost 50 percent of what I was willing
+    to risk ON THE DAY, that's better than a full you know like one percent
+    down ON THE DAY, two percent down or three percent down ON THE DAY." It
+    used to be ours and per-trade, which let one position spend the whole
+    outer limit. It must not touch an ordinary trade, it must bind on the
+    tail, and when it binds BOTH numbers have to survive so nothing is
+    quietly swapped."""
     ordinary = tjr_alerts.position_size("crypto", "BTC/USD", ACC, 60000.0,
                                         420.0, 0.0035)
     assert not ordinary["capped"], "the cap bound on an ordinary 2% trade"
@@ -178,7 +182,8 @@ def test_the_cap_is_ours_and_it_says_so():
     assert tail["risk_share_pct"] <= 3.0 + 1e-9
     assert tail["uncapped_risk_share_pct"] > 30.0, tail
     lines = "\n".join(tjr_alerts.size_lines("crypto", "DOT/USD", tail, 4.0, ACC))
-    assert "OURS" in lines and "CRYPTOBOT_MAX_RISK_PCT" in lines
+    assert "THE DAY" in lines and "CRYPTOBOT_MAX_RISK_PCT" in lines
+    assert "on the day" in lines, "the message no longer says whose rule it is"
 
 
 def test_the_cap_can_be_switched_off():
@@ -584,6 +589,37 @@ def test_the_why_survives_every_compaction():
         for banned in ("swept", "liquidity", "invalidation", "BOS", "FVG"):
             assert banned.lower() not in why.lower(), \
                 f"{s['market']} why contains jargon {banned!r}: {why!r}"
+
+
+def test_the_day_budget_is_not_spent_twice():
+    """The outer limit is a ceiling on the DAY, not on a trade — his words,
+    "one percent down ON THE DAY, two percent down or three percent down ON
+    THE DAY".
+
+    The desk sized every trade as though it were the only one, which was
+    harmless while the bot took one trade a day and stopped being harmless
+    the moment two were allowed: two positions would each have been sized to
+    the full outer limit, so a day could spend twice what it is allowed to.
+    The signal already carried the day's remaining allowance; the desk was
+    simply not forwarding it.
+    """
+    import inspect
+    src = inspect.getsource(tjr_desk.Desk._size_for)
+    assert "outer_allowance" in src, \
+        "the desk is not forwarding what the day has left, so each trade " \
+        "will be sized as if it were the only one"
+    assert "buying_power" in src, \
+        "the desk is not forwarding buying power, so a second position can " \
+        "be sized on money the first one already used"
+
+    # and it must actually bind: a trade asking for more than the day has
+    # left comes back smaller
+    full = tjr_alerts.position_size("crypto", "BTC/USD", ACC, 60000.0, 300.0,
+                                    0.0035)
+    left = tjr_alerts.position_size("crypto", "BTC/USD", ACC, 60000.0, 300.0,
+                                    0.0035, outer_allowance=full["risk_dollars"] / 4)
+    assert left["units"] < full["units"], \
+        f"the day's remaining allowance did not cut the size: {left}"
 
 
 TESTS = [(k, v) for k, v in sorted(globals().items())
