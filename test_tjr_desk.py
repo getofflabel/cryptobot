@@ -552,6 +552,40 @@ def test_an_unreadable_account_says_so_rather_than_guessing():
     assert "$" not in line, f"a number was invented: {line}"
 
 
+def test_the_why_survives_every_compaction():
+    """Wallace, 2026-07-26: "just make sure, you still include all the why you
+    took this trade."
+
+    The message was compacted to a table that day and the explanation is the
+    one part that must never be compacted away — it is what lets him check
+    the bot against the chart instead of trusting it.
+
+    Asserting the word "Why:" is present is not enough: an empty line under
+    it would pass. This checks the explanation actually says WHAT was taken
+    out, WHERE, and WHAT confirmed it, on every market.
+    """
+    for s in every_market_sample():
+        _, msg = tjr_alerts.entry_message(s, ACC)
+        assert "Why:" in msg, f"{s['market']} lost the explanation entirely"
+        why = msg[msg.index("Why:") + 4:].split("\n\n")[0].strip()
+        assert len(why) > 80, \
+            f"{s['market']} why is too thin to check against a chart: {why!r}"
+        # the level that was taken out, and its price
+        assert "ran past" in why or "came straight back" in why, \
+            f"{s['market']} does not say what price did: {why!r}"
+        assert any(tf in why for tf in
+                   ("1-hour", "4-hour", "15-minute", "previous day",
+                    "Asia", "London", "pre-market")), \
+            f"{s['market']} does not say WHICH level: {why!r}"
+        # and what confirmed it
+        assert "5-minute" in why and "1-minute" in why, \
+            f"{s['market']} does not say what confirmed it: {why!r}"
+        # still no jargon in the part he reads most
+        for banned in ("swept", "liquidity", "invalidation", "BOS", "FVG"):
+            assert banned.lower() not in why.lower(), \
+                f"{s['market']} why contains jargon {banned!r}: {why!r}"
+
+
 TESTS = [(k, v) for k, v in sorted(globals().items())
          if k.startswith("test_") and callable(v)]
 
