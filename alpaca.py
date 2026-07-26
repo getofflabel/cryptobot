@@ -123,6 +123,153 @@ class AlpacaPaper:
         out = self._get(f"/v2/stocks/{symbol}/trades/latest", base=DATA_URL)
         return (out or {}).get("trade") or {}
 
+    # -- crypto market data -------------------------------------------------
+    #
+    # A DIFFERENT PATH, NOT A DIFFERENT VENUE. Same account, same keys, same
+    # host. Three things genuinely differ and every one of them is handled
+    # here rather than left for the caller to trip over:
+    #
+    #   1. The symbol carries a SLASH — "BTC/USD", not "BTCUSD". It goes in a
+    #      query parameter here, never in the URL path, so nothing has to be
+    #      escaped. The ORDER path is the one place the slash reaches a URL
+    #      (closing a position), and crypto_close_position handles it.
+    #   2. One call answers for MANY symbols, keyed by symbol, so the whole
+    #      pair list costs one request instead of ten.
+    #   3. The answer is PAGED. `limit` caps the rows in one response, not the
+    #      rows you asked for; a next_page_token means there is more. Ignoring
+    #      it silently truncates history, which is the single most dangerous
+    #      way for this to go wrong — it looks like a short market, not a
+    #      short download.
+
+    def crypto_bars(self, symbols, timeframe: str = "5Min",
+                    start: str | None = None, end: str | None = None,
+                    limit: int = 10000, max_pages: int = 400) -> dict:
+        """Historical crypto bars, every page of them. Returns
+        {symbol: [bar, ...]}. Five-minute history goes back to 2023-01-01.
+
+        `symbols` is one symbol or a list of them, each with the slash.
+        """
+        if isinstance(symbols, str):
+            symbols = [symbols]
+        params = {"symbols": ",".join(symbols), "timeframe": timeframe,
+                  "limit": limit}
+        if start:
+            params["start"] = start
+        if end:
+            params["end"] = end
+        out: dict = {s: [] for s in symbols}
+        token, pages = None, 0
+        while pages < max_pages:
+            if token:
+                params["page_token"] = token
+            got = self._get("/v1beta3/crypto/us/bars", params, base=DATA_URL) or {}
+            for sym, rows in (got.get("bars") or {}).items():
+                out.setdefault(sym, []).extend(rows)
+            token = got.get("next_page_token")
+            pages += 1
+            if not token:
+                break
+        return out
+
+    def crypto_latest_quotes(self, symbols) -> dict:
+        """The live bid and ask per symbol. This is where the spread we CHARGE
+        comes from — measured, never assumed, and never consulted by any
+        decision."""
+        if isinstance(symbols, str):
+            symbols = [symbols]
+        out = self._get("/v1beta3/crypto/us/latest/quotes",
+                        {"symbols": ",".join(symbols)}, base=DATA_URL)
+        return (out or {}).get("quotes") or {}
+
+    def crypto_quotes(self, symbols, start: str, end: str,
+                      limit: int = 10000, max_pages: int = 1) -> dict:
+        """HISTORICAL bid/ask, which is what lets the spread we charge be a
+        measured number over months rather than a snapshot taken on one quiet
+        evening. Returns {symbol: [quote, ...]}.
+
+        `max_pages` defaults to 1 on purpose: these arrive tens of thousands
+        per minute and a caller almost always wants a SAMPLE of a window, not
+        all of it."""
+        if isinstance(symbols, str):
+            symbols = [symbols]
+        params = {"symbols": ",".join(symbols), "start": start, "end": end,
+                  "limit": limit}
+        out: dict = {s: [] for s in symbols}
+        token, pages = None, 0
+        while pages < max_pages:
+            if token:
+                params["page_token"] = token
+            got = self._get("/v1beta3/crypto/us/quotes", params, base=DATA_URL) or {}
+            for sym, rows in (got.get("quotes") or {}).items():
+                out.setdefault(sym, []).extend(rows)
+            token = got.get("next_page_token")
+            pages += 1
+            if not token:
+                break
+        return out
+
+    def crypto_assets(self) -> list:
+        """Every crypto pair the account can actually trade, with the venue's
+        own minimum order size and price increment. Read these; do not guess
+        them."""
+        got = self._get("/v2/assets", {"asset_class": "crypto",
+                                       "status": "active"}) or []
+        return [a for a in got if a.get("tradable")]
+
+    # -- crypto orders ------------------------------------------------------
+
+    def crypto_market_order(self, symbol: str, side: str, qty: float,
+                            client_order_id: str | None = None) -> dict:
+        """One atomic crypto market order.
+
+        TWO REAL DIFFERENCES FROM THE STOCK PATH, both verified 2026-07-25
+        against the live account rather than assumed:
+
+        NO MARKET-OPEN CHECK. Crypto trades every day including weekends.
+        /v2/clock reported is_open false on a Saturday evening while the bars
+        endpoint was still printing a full 24 hours for that same Saturday and
+        Sunday. clock() describes the STOCK session and has no authority over
+        this path.
+
+        TIME IN FORCE IS "gtc", NOT "day". Crypto has no trading day for a
+        "day" order to expire at, and the venue rejects it. "gtc" on a market
+        order still fills immediately — nothing rests.
+
+        NOT SHORTABLE, AND THIS METHOD REFUSES RATHER THAN SILENTLY
+        SUCCEEDING. Every one of the 36 US-dollar pairs reports
+        shortable=false and marginable=false. A sell without an existing
+        position is not a short here, it is an error, and pretending otherwise
+        would let a short setup look filled when nothing happened.
+        """
+        if side not in ("buy", "sell"):
+            raise ValueError(f"side must be buy or sell, not {side!r}")
+        body = {"symbol": symbol, "side": side, "type": "market",
+                "time_in_force": "gtc", "qty": str(qty)}
+        if client_order_id:
+            body["client_order_id"] = client_order_id
+        return self._post("/v2/orders", body)
+
+    def crypto_close_position(self, symbol: str) -> dict:
+        """Close a crypto position. THE SLASH REACHES THE URL HERE and nowhere
+        else, so it is percent-encoded — "BTC/USD" unescaped would read as two
+        path segments and 404."""
+        import urllib.parse
+
+        import requests
+        enc = urllib.parse.quote(symbol, safe="")
+        r = requests.delete(f"{BASE_URL}/v2/positions/{enc}",
+                            headers=self._headers(), timeout=20)
+        if r.status_code >= 400:
+            raise RuntimeError(f"alpaca crypto close -> {r.status_code} {r.text[:200]}")
+        return r.json() if r.text else {}
+
+    def crypto_position(self, symbol: str) -> dict | None:
+        import urllib.parse
+        try:
+            return self._get(f"/v2/positions/{urllib.parse.quote(symbol, safe='')}")
+        except RuntimeError:
+            return None                       # no position is a 404, not an error
+
     # -- orders -------------------------------------------------------------
 
     def market_order(self, symbol: str, side: str, qty: float,
@@ -172,15 +319,24 @@ def verify() -> dict:
     is_paper = bool(acct.get("id")) and BASE_URL.startswith("https://paper-")
     clock = cli.clock()
 
+    # Alpaca returns NOTHING when no `start` is given — it answers
+    # "bars": null rather than erroring, so a missing start looks exactly
+    # like an empty market. Every call below passes one. (Found 2026-07-25
+    # while building sp500.py: this function was reporting 0 bars on a
+    # perfectly healthy connection.)
+    from datetime import timedelta
+    today = datetime.now(timezone.utc).date()
+    recent = str(today - timedelta(days=30))
+
     # the two instruments our surviving S&P edges are measured on
     checks = {}
     for sym in ("SPY", "QQQ"):
-        daily = cli.bars(sym, "1Day", limit=10)
+        daily = cli.bars(sym, "1Day", limit=10, start=recent)
         checks[sym] = {"daily_bars": len(daily),
                        "latest_close": daily[-1]["c"] if daily else None}
 
     # the thing we have never been able to test: intraday history
-    intraday = cli.bars("SPY", "5Min", limit=1000)
+    intraday = cli.bars("SPY", "5Min", limit=1000, start=str(today - timedelta(days=7)))
 
     # how far back the free history actually goes
     deep = cli.bars("SPY", "1Day", limit=10000, start="2016-01-01")
@@ -202,5 +358,60 @@ def verify() -> dict:
     return out
 
 
+def verify_crypto() -> dict:
+    """Prove the crypto path works, and prove the three things about it that
+    the stock path would have let us assume wrongly. Reads only. No orders."""
+    cli = from_env()
+    if cli is None:
+        return {"ok": False, "why": "ALPACA keys are not in .env yet"}
+
+    from datetime import timedelta
+    today = datetime.now(timezone.utc).date()
+
+    assets = cli.crypto_assets()
+    usd = [a for a in assets if a["symbol"].endswith("/USD")]
+
+    pairs = ["BTC/USD", "ETH/USD"]
+    b5 = cli.crypto_bars(pairs, "5Min", start=str(today - timedelta(days=3)))
+    b1 = cli.crypto_bars(pairs, "1Min", start=str(today - timedelta(days=1)))
+    deep = cli.crypto_bars("BTC/USD", "1Day", start="2023-01-01")
+    quotes = cli.crypto_latest_quotes(pairs)
+
+    # the weekend proof: the STOCK clock is shut, and crypto bars print anyway
+    clock = cli.clock()
+    week = cli.crypto_bars("BTC/USD", "1Hour",
+                           start=str(today - timedelta(days=8)))["BTC/USD"]
+    import collections
+    by_dow = collections.Counter(
+        datetime.fromisoformat(r["t"].replace("Z", "+00:00")).weekday()
+        for r in week)
+
+    acct = cli.account()
+    out = {
+        "ok": True,
+        "tradable_usd_pairs": len(usd),
+        "shortable_anywhere": any(a.get("shortable") for a in usd),
+        "marginable_anywhere": any(a.get("marginable") for a in usd),
+        "cash_buying_power": acct.get("non_marginable_buying_power"),
+        "margin_buying_power_stocks_only": acct.get("buying_power"),
+        "bars_5m": {s: len(v) for s, v in b5.items()},
+        "bars_1m": {s: len(v) for s, v in b1.items()},
+        "btc_daily_bars_since_2023": len(deep.get("BTC/USD") or []),
+        "btc_history_starts": (deep.get("BTC/USD") or [{}])[0].get("t"),
+        "spreads_pct_of_mid": {
+            s: round(200 * (q["ap"] - q["bp"]) / (q["ap"] + q["bp"]), 4)
+            for s, q in quotes.items()},
+        "stock_clock_open": clock.get("is_open"),
+        "crypto_hours_by_weekday_0_is_monday": dict(sorted(by_dow.items())),
+        "orders_ever_placed": len(cli.orders("all", 50)),
+    }
+    print(json.dumps(out, indent=2, default=str))
+    return out
+
+
 if __name__ == "__main__":
-    verify()
+    import sys
+    if "--crypto" in sys.argv:
+        verify_crypto()
+    else:
+        verify()

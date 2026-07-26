@@ -156,7 +156,47 @@ BOOK_TAGS = {
     "breakout_book": "bo",
     "core_ride": "cr",       # step5_paper_trade.py's own book
     "flatten": "fl",         # emergency stray-position cleanup, still bot-initiated
+    # The 2026-07-25 rebuild: one method, three markets, two venues. Only the
+    # crypto one places orders here — the stock and gold tags exist so a fill
+    # log is unambiguous about which market a row came from even though those
+    # two go to Alpaca.
+    "tjr_crypto": "tjc",
+    "tjr_stocks": "tjs",
+    "tjr_gold": "tjg",
 }
+
+
+def fmt_size(size: float, lot: float | None = None) -> str:
+    """An order size the exchange will accept.
+
+    Lot sizes are NOT the same across symbols (verified live: LINK-USDT
+    trades in whole contracts, SOL and LTC in hundredths, everything else in
+    tenths). A size that is not a multiple of the symbol's own lotSize is
+    rejected, so the size is snapped DOWN to the lot — down, never up,
+    because rounding up puts more on the line than the size that was worked
+    out. Pass lot=None to keep the old one-decimal behaviour."""
+    if lot and lot > 0:
+        size = int(abs(size) / lot) * lot * (1 if size >= 0 else -1)
+    places = 1
+    if lot and lot > 0:
+        s = f"{lot:.10f}".rstrip("0")
+        places = max(1, len(s.split(".")[1])) if "." in s else 0
+    return f"{size:.{places}f}"
+
+
+def fmt_price(price: float, tick: float | None = None) -> str:
+    """A price the exchange will accept.
+
+    THIS MATTERS MORE THAN IT LOOKS. Tick sizes run from 0.1 on Bitcoin to
+    0.00001 on DOGE. Formatting every price to one decimal — which this file
+    used to do everywhere — turns a DOGE stop of 0.18432 into "0.2", which is
+    not a rounding error, it is a completely different stop. Pass tick=None
+    to keep the old behaviour for the callers that only ever see Bitcoin."""
+    if tick and tick > 0:
+        s = f"{tick:.12f}".rstrip("0")
+        places = len(s.split(".")[1]) if "." in s else 0
+        return f"{round(price / tick) * tick:.{places}f}"
+    return f"{price:.1f}"
 
 
 def make_client_order_id(tag: str) -> str:
@@ -265,6 +305,14 @@ class BlofinDemoPrivate:
         instead — see BLOFIN_API_REFERENCE.md."""
         return self._call("GET", "/api/v1/account/balance")
 
+    def instruments(self, inst_type: str = "SWAP") -> list[dict]:
+        """Every tradeable contract's own spec — contractValue, lotSize,
+        tickSize, maxLeverage. READ THESE, never assume them: contract values
+        run from 0.001 on Bitcoin to 1000 on DOGE, so a size worked out
+        against the wrong one is wrong by a factor of a million."""
+        return self._call("GET", "/api/v1/market/instruments",
+                          {"instType": inst_type})
+
     def positions(self, symbol: str | None = None) -> list[dict]:
         params = {"instId": symbol} if symbol else None
         return self._call("GET", "/api/v1/account/positions", params)
@@ -330,7 +378,8 @@ class BlofinDemoPrivate:
     def market_order(self, symbol: str, side: str, contracts: float,
                      reduce_only: bool = False,
                      margin_mode: str | None = None,
-                     client_order_id: str | None = None) -> str:
+                     client_order_id: str | None = None,
+                     lot_size: float | None = None) -> str:
         """Place a market order for `contracts`. Returns the order id.
 
         side is "buy" or "sell". reduce_only=True marks an order that may
@@ -355,7 +404,7 @@ class BlofinDemoPrivate:
             "positionSide": "net",
             "side": side,
             "orderType": "market",
-            "size": f"{contracts:.1f}",
+            "size": fmt_size(contracts, lot_size),
         }
         if reduce_only:
             body["reduceOnly"] = "true"
@@ -411,7 +460,9 @@ class BlofinDemoPrivate:
     def place_tpsl(self, symbol: str, position_side_close: str,
                    contracts: float, tp_price: float | None,
                    sl_price: float, margin_mode: str | None = None,
-                   client_order_id: str | None = None) -> str:
+                   client_order_id: str | None = None,
+                   lot_size: float | None = None,
+                   tick_size: float | None = None) -> str:
         """Attach a take-profit / stop-loss bracket to a position.
 
         position_side_close: "sell" to close a long, "buy" to close a short.
@@ -432,8 +483,8 @@ class BlofinDemoPrivate:
             "marginMode": margin_mode,
             "positionSide": "net",
             "side": position_side_close,
-            "size": f"{contracts:.1f}",
-            "slTriggerPrice": f"{sl_price:.1f}",
+            "size": fmt_size(contracts, lot_size),
+            "slTriggerPrice": fmt_price(sl_price, tick_size),
             "slOrderPrice": "-1",
             "reduceOnly": "true",
         }
@@ -443,7 +494,7 @@ class BlofinDemoPrivate:
             # Optional: round 11 measured our +5% TP truncating the big
             # winners the strategy lives on (test return 32% -> 10%).
             # Stop-loss-only brackets are now the default.
-            body["tpTriggerPrice"] = f"{tp_price:.1f}"
+            body["tpTriggerPrice"] = fmt_price(tp_price, tick_size)
             body["tpOrderPrice"] = "-1"
         data = self._call("POST", "/api/v1/trade/order-tpsl", body=body)
         if isinstance(data, dict):
