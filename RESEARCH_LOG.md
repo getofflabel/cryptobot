@@ -2273,3 +2273,119 @@ we hold no 1-minute bars, so the trigger was collapsed onto the same
 no directional lift with the stop removed entirely, so 1-minute data is
 unlikely to reverse the sign. Closing it properly is a data purchase, not a
 research question.
+
+## ROUND 450 — his 1-minute trigger is the whole difference, and the venue eats it (2026-07-26)
+
+**What was tested.** TJR's sweep → break-of-structure entry on the market
+the desk is actually armed in (crypto), at the resolution he actually
+specifies. Round 370 rejected this shape 72 cells out of 72 on 5-minute
+SPY and closed with one named limit: **his confirmation is on the 5-minute
+and his ENTRY TRIGGER is on the 1-MINUTE** (step431 §0, step436 §4), and
+the project held no 1-minute data, so the trigger was collapsed onto the
+5-minute confirmation bar. We now hold Alpaca 1-minute bars on eight crypto
+pairs from 2026-03-01, so both halves of that limit — the resolution and
+the instrument — are closed at once.
+
+Files: `step450_tjr_crypto_1m.py`, `step450b_significance.py`.
+Window: 2026-03-01 → 2026-07-26 UTC, 147 days, the overlap where both
+charts exist so the two arms score the same tape. BTC 42,386 5-minute bars
+and 208,210 1-minute bars, ETH and SOL alongside.
+**60/20/20. The final 20% was NEVER OPENED — nothing qualified.**
+
+**Faithful to him:** the two-candle swing everywhere; levels marked only on
+the high timeframes (previous day, session highs and lows, 1-hour and
+4-hour swings); a level traded through is not a sweep until price reacts,
+and the reaction IS the break of structure (§4b) — no reaction, no trade;
+break of structure is a body close, never a wick; the sweep hunted on the
+5-minute and never on the 1-minute; the stop at the extreme traded between
+the sweep and the entry.
+**Ours, and labelled:** UTC midnight day boundary (the live desk's own
+decision), a 2-hour pending-sweep expiry, a 24-hour hold cap. All three
+fixed before the run and never swept.
+
+### The verdict, at the top: REJECT on net, and below chance
+
+**0 of 64 pooled cells** are positive on both the choosing and the middle
+slice with at least 2 of 3 assets agreeing. **Luck alone would have handed
+us about 16.** Same shape as round 370 — not a near miss, a zero.
+
+### But the trigger resolution is real, and it is the round's finding
+
+Choosing slice, one row per entry, gross, pooled across BTC + ETH + SOL:
+
+| construction | trades | mean gross | t | median stop | lev @1% risked |
+|---|---|---|---|---|---|
+| 5-minute trigger (round 370's) | 3,376 | **−0.0352%** | −1.40 | 0.507% | 2.0x |
+| **1-MINUTE trigger (his)** | 3,119 | **+0.0551%** | **+2.63** | **0.211%** | **4.7x** |
+| control, random entry, same stop machinery | 702 | −0.0514% | −1.85 | 0.162% | 6.2x |
+
+- 1-minute minus 5-minute: **+0.0903% of price per trade, t = 2.76**
+- 1-minute minus random entry: **+0.1066% of price per trade, t = 3.05**
+
+**Moving the trigger from the 5-minute bar to the 1-minute bar flips the
+sign of the gross edge and beats a random control at t = 3.** Round 370's
+rejection was made with the wrong trigger, and it said so at the time. On
+30 of 32 one-minute cells the gross mean is positive; on the five-minute
+arm only 13 of 32 are. He is describing something that exists, and the
+resolution he states is load-bearing rather than decorative.
+
+### And the same choice is what makes it unaffordable here
+
+The tighter trigger cuts the structural stop by roughly 60%, from 0.507%
+of price to 0.211%. That is the leverage win. It is also the problem:
+
+- one Alpaca crypto round trip at taker rates is **0.50% of notional**
+- the whole signal is **0.055% of price per trade** — **0.11x one round trip**
+- against a 0.211% stop, that round trip costs **2.4 stop distances**
+
+This is round 370's arithmetic reappearing on a different instrument: the
+tighter the stop, the larger the trading cost becomes relative to the thing
+being protected. Charged for honesty, used to decide nothing (owner rule,
+2026-07-25) — and it does not need to decide anything, because the point
+is not that fees disqualify the method. **The point is that the measured
+signal is one ninth of the size of the transaction needed to collect it.**
+At literally zero cost this is +0.055% of price per trade and would be
+worth building. At Alpaca crypto's rates it is not reachable from here.
+
+**So this is a venue finding, not a method finding**, and it lands on the
+same line `alpaca.py` already carries: cheaper trading multiplies every
+edge we own rather than adding one. The number to hunt is a crypto venue
+whose round trip is a small fraction of 0.055% of notional — which is
+roughly a tenth of what we pay now.
+
+### The leverage census, all eight pairs
+
+Distance from price to the structure that would prove a long wrong, as a
+price move (not a change in the position's value):
+
+| pair | 5m swing | 1m swing | ratio | lev @1% risked, 1m |
+|---|---|---|---|---|
+| BTCUSD | 0.167% | **0.077%** | 0.46 | 13.1x |
+| ETHUSD | 0.210% | 0.159% | 0.76 | 6.3x |
+| SOLUSD | 0.261% | 0.190% | 0.73 | 5.3x |
+| LINKUSD | 0.257% | 0.202% | 0.78 | 5.0x |
+| LTCUSD | 0.229% | 0.218% | 0.95 | 4.6x |
+| DOTUSD | 0.298% | 0.206% | 0.69 | 4.8x |
+| XRPUSD | 0.243% | 0.199% | 0.82 | 5.0x |
+| ADAUSD | 0.284% | 0.212% | 0.75 | 4.7x |
+
+Structure alone supports 4.6x to 13.1x at 1% risked on every pair we hold,
+arrived at by reading the chart rather than by choosing a number. **US law
+caps it at 10x regardless**, so only BTC's 1-minute structure is tighter
+than the legal ceiling. This extends round 370's confirmed leverage finding
+from the index onto crypto: it holds on eight more instruments.
+
+### Honest limits
+
+- **147 days, one regime.** The 1-minute history starts 2026-03-01. This is
+  a five-month read, not a six-year one, and it cannot see a regime change.
+- The signal is small and its t of 2.6 comes from 3,119 trades. A single
+  window at that size is a hypothesis with a pulse, not a validated edge.
+- The pending-sweep expiry and the hold cap are ours. Different numbers
+  would give different populations; they were not swept, and they should
+  not be swept later to rescue this.
+
+### Looks consumed
+
+**None.** No cell qualified, so the final 20% of the crypto 1-minute window
+is still sealed for this family.
