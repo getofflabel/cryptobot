@@ -1,6 +1,6 @@
 # LEARNINGS — the bot's own diary (plain English)
 
-Ledger: $1,509.07 / goal $3,000
+Ledger: $1,500.44 / goal $3,000
 
 
 ## Scorecard by strategy (live trades)
