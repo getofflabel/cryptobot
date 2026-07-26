@@ -508,87 +508,97 @@ def plain_reason(sig: dict) -> str:
 
 # ------------------------------------------------------------- THE MESSAGE
 def trade_block(sig: dict, account: float, usd_per_quote: float = 1.0) -> list:
-    """One symbol's numbers. Used alone in a single-symbol alert and repeated
-    inside a combined one, so the two can never drift apart.
+    """One symbol's numbers, COMPACT.
 
-    `sig["tightest_stop_pct"]` is what the set size was worked out from: the
-    tightest stop this instrument normally gives, as a share of its price,
-    measured from its own setups. Without it there is no set size and this
-    refuses rather than quietly falling back to sizing per trade, which is
-    the thing his rule specifically rejects.
+    Wallace, 2026-07-26: "instead of all these words, just do tp($,%) if
+    theres only 1, if theres more than one just do tp1, tp2. and same for
+    sl($,%). just say 203.71 margin (xxx% of account)."
+
+    The long form said the right things and said too many of them. This is
+    the same information as a table he can read in one glance on a phone.
+
+    THE PERCENTAGE RULE IS NOT BROKEN, IT IS HOISTED. Every number in the
+    money column is a share of the ACCOUNT, and the block says so once at the
+    top rather than repeating it on nine lines. A percentage that appears
+    beside a PRICE is still labelled as a move in the price, because those
+    two are the pair that gets confused.
     """
     market, sym = sig["market"], sig["symbol"]
-    buy = sig["direction"] > 0
-    entry, stop = float(sig["reference_price"]), float(sig["stop"])
+    spec = MARKETS[market]
+    entry = float(sig["reference_price"])
+    stop = float(sig["stop"])
     dist = abs(entry - stop)
+    side = "BUY" if sig["direction"] > 0 else "SELL SHORT"
 
-    # one percent normally, half of one percent on a news day or holiday —
-    # read from what the bot itself asked for rather than re-decided here
     risk_pct = 0.01
     if account > 0 and sig.get("risk_wanted"):
         risk_pct = float(sig["risk_wanted"]) / account
-    half = risk_pct < 0.0075
+    half_size_day = risk_pct < 0.0075
 
     size = position_size(market, sym, account, entry, dist,
                          float(sig.get("tightest_stop_pct") or 0.0),
                          usd_per_quote, risk_pct)
 
-    lines = [f"{'BUY' if buy else 'SELL'} {sym}", ""]
-    lines.append(f"Enter around   {fmt_price(sym, entry)}")
-    lines.append(f"Stop           {fmt_price(sym, stop)}   "
-                 f"({distance_phrase(market, sym, dist, entry)})")
-    lines.append(f"               it sits {stop_sits_on(sig)}")
+    def money(d):
+        """A dollar amount and what it is as a share of the account."""
+        pct = (100.0 * d / account) if account > 0 else 0.0
+        return f"${d:,.2f} ({pct:.2f}%)"
 
-    tgts = list(sig.get("targets") or [])
+    lines = [f"{side} {sym}", ""]
+    if not size.get("ok"):
+        lines.append("SIZE COULD NOT BE WORKED OUT — do not take this one")
+        lines.append(f"  no measured tightest stop for {sym}, and borrowing "
+                     f"another market's number is the one thing his rule "
+                     f"forbids")
+        lines += ["", "Why:", "  " + plain_reason(sig)]
+        return lines
+
+    lines.append("money below: dollars, and the share OF THE ACCOUNT")
+    lines.append(f"Entry   {fmt_price(sym, entry)}")
+
+    tgts = [float(t) for t in (sig.get("targets") or [])][:4]
     srcs = list(sig.get("target_sources") or [])
-    names = ["First target ", "Second target", "Third target ", "Fourth target"]
-
-    # WHAT EACH TARGET IS WORTH, IN DOLLARS. The stop already says what
-    # being wrong costs; being right should say what it pays, in the same
-    # unit, so the two are comparable at a glance.
-    #
-    # The arithmetic follows his exit, not a naive units x distance: HALF
-    # comes off at the first target and the rest is spread across the ones
-    # after it. So the first line is half the position's move, and the later
-    # ones are a share of the remainder — which is why the second target is
-    # not simply double the first.
     units = size.get("units") or 0.0
-    # NOT `half` — that is a boolean meaning "half-size day". The share taken
-    # off at the FIRST target is his stated 50%, and the rest is spread
-    # evenly across the targets after it (that split is ours; he says three
-    # or four targets but never what comes off at each).
-    first_off = float(sig.get("partial_fraction") or 0.5)
-    n_after = max(0, len(tgts[:4]) - 1)
-    fracs = [first_off] + [(1.0 - first_off) / n_after] * n_after if n_after \
-        else [1.0]
-    running = 0.0
-    for i, tp in enumerate(tgts[:4]):
-        d = abs(float(tp) - entry)
-        src = target_source_name(srcs[i], sig["direction"]) if i < len(srcs) else ""
-        lines.append(f"{names[i]}  {fmt_price(sym, float(tp))}   "
-                     f"({distance_phrase(market, sym, d, entry)})"
-                     + (f", {src}" if src else ""))
-        if units > 0 and i < len(fracs):
-            made = units * fracs[i] * d * (usd_per_quote or 1.0)
-            running += made
-            # NEVER a bare percentage — this one is a share OF THE POSITION,
-            # not a move in the price and not a share of the account. Said
-            # in words where words are clearer than a number.
-            pct = 100.0 * fracs[i]
-            share = {50.0: "half the position",
-                     25.0: "a quarter of the position",
-                     100.0: "the whole position"}.get(
-                         round(pct, 0), f"{pct:.0f}% OF THE POSITION")
-            lines.append(
-                f"               if it reaches here you take {share} off "
-                f"for ${made:,.2f}"
-                + (f", ${running:,.2f} banked in total" if i else ""))
-    if not tgts:
-        lines.append("Targets        the chart offers nowhere ahead that he "
-                     "would take profit — run it to the stop or to the close")
 
-    lines += [""] + size_lines(market, sym, size, entry, account,
-                               usd_per_quote, half)
+    lost = units * dist * (usd_per_quote or 1.0)
+    lines.append(f"SL      {fmt_price(sym, stop)}   -{money(lost)}   "
+                 f"{100.0 * dist / entry:.2f}% move in the price")
+
+    first_off = float(sig.get("partial_fraction") or 0.5)
+    n_after = max(0, len(tgts) - 1)
+    fracs = ([first_off] + [(1.0 - first_off) / n_after] * n_after
+             if n_after else [1.0])
+    running = 0.0
+    for i, tp in enumerate(tgts):
+        made = units * fracs[i] * abs(tp - entry) * (usd_per_quote or 1.0)
+        running += made
+        name = "TP " if len(tgts) == 1 else f"TP{i + 1}"
+        tail = f"   running +{money(running)}" if len(tgts) > 1 else ""
+        lines.append(f"{name}     {fmt_price(sym, tp)}   +{money(made)}{tail}")
+    if not tgts:
+        lines.append("TP      none on the chart ahead — run it to the stop")
+
+    whole = spec["whole_units"]
+    u = f"{units:,.0f}" if whole else f"{units:,.6f}".rstrip("0").rstrip(".")
+    face = units * entry * (usd_per_quote or 1.0)
+    lines.append(f"Size    {u} {spec['size_unit']}  =  ${face:,.0f} position")
+    lines.append(f"Margin  ${account * margin_share():,.2f} "
+                 f"({margin_share() * 100:.0f}% of account)")
+
+    if half_size_day:
+        lines.append("HALF SIZE today — news or a holiday")
+    if size.get("wider", 1.0) > 1.6:
+        lines.append(f"Today's stop is {size['wider']:.1f}x the tightest this "
+                     f"market gives, and the size does not shrink for it. "
+                     f"That is his rule, on purpose.")
+    if size.get("capped"):
+        lines.append(f"Size cut by OUR ceiling to hold risk at "
+                     f"{size['cap_share_pct']:.0f}% of the account. His band "
+                     f"tops out there. Switch off with CRYPTOBOT_MAX_RISK_PCT=0.")
+
+    if len(tgts) > 1:
+        lines.append(f"Half comes off at TP1 and the stop moves to your entry.")
+
     lines += ["", "Why:", "  " + plain_reason(sig)]
     return lines
 
