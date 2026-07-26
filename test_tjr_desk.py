@@ -94,9 +94,10 @@ def test_the_size_is_set_off_the_tightest_stop_not_off_todays_stop():
 def test_a_three_percent_day_is_the_rule_working_and_is_said_out_loud():
     s = sig("gold", "GLD", entry=400.0, stop=403.0, tightest=0.0025)
     _, msg = tjr_alerts.entry_message(s, ACC)
-    assert "OF THE ACCOUNT" in msg
-    assert "the size does not shrink for it" in msg, \
-        "he would have discovered the wider risk instead of being told"
+    assert "3.00% OF THE ACCOUNT" in msg, \
+        "a three-percent day must be said in ACCOUNT terms, not left as a " \
+        "share of the margin for him to convert"
+    assert "the size does not shrink for it" in msg
     assert "his rule, on purpose" in msg
 
 
@@ -201,7 +202,7 @@ def test_every_market_carries_everything_he_needs():
         assert msg.startswith(label), "the market is not the first thing he sees"
         assert label in title
         for must in ("Entry", "SL", "TP", "Margin", "Size",
-                     "OF THE ACCOUNT", "Why:", "New York time"):
+                     "OF THE MARGIN", "Why:", "New York time"):
             assert must in msg, f"{s['market']} alert is missing: {must}"
         assert "the size is in" in msg, \
             f"{s['market']} does not say which instrument the size assumes"
@@ -217,8 +218,9 @@ def test_no_percentage_anywhere_is_left_unlabelled():
     must still say so on the line, because a move in the price and a share of
     the account are the pair that gets confused."""
     inline = ("OF THE ACCOUNT", "MOVE IN THE PRICE", "of the account",
-              "move in the price", "of account", "more than one percent")
-    declared = "money below: dollars, and the share OF THE ACCOUNT"
+              "move in the price", "of account", "of the margin",
+              "OF THE MARGIN", "more than one percent")
+    declared = "% OF THE MARGIN"
     msgs = [tjr_alerts.entry_message(s, ACC)[1] for s in every_market_sample()]
     msgs.append(tjr_alerts.entry_message(
         sig("gold", "GLD", entry=400.0, stop=403.0, tightest=0.0025), ACC)[1])

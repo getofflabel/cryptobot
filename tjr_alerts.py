@@ -539,10 +539,23 @@ def trade_block(sig: dict, account: float, usd_per_quote: float = 1.0) -> list:
                          float(sig.get("tightest_stop_pct") or 0.0),
                          usd_per_quote, risk_pct)
 
+    marg = account * margin_share()
+
     def money(d):
-        """A dollar amount and what it is as a share of the account."""
-        pct = (100.0 * d / account) if account > 0 else 0.0
-        return f"${d:,.2f} ({pct:.2f}%)"
+        """A dollar amount and what it is AS A SHARE OF THE MARGIN.
+
+        Wallace, 2026-07-26: "change it to the % of the margin. so like my
+        recent eth trade that i tp for 35% and made 176 dollars, my margin
+        was like 500."
+
+        That is the number the exchange puts on his screen — BloFin's
+        unrealizedPnlRatio is profit over the margin posted, not over the
+        account. Showing a share of the ACCOUNT here made every trade look
+        tiny (1% instead of 10%) and did not match anything he could see
+        while the trade was running.
+        """
+        pct = (100.0 * d / marg) if marg > 0 else 0.0
+        return f"${d:,.2f} ({pct:.1f}%)"
 
     lines = [f"{side} {sym}", ""]
     if not size.get("ok"):
@@ -553,7 +566,8 @@ def trade_block(sig: dict, account: float, usd_per_quote: float = 1.0) -> list:
         lines += ["", "Why:", "  " + plain_reason(sig)]
         return lines
 
-    lines.append("money below: dollars, and the share OF THE ACCOUNT")
+    lines.append("money below: dollars, and the % OF THE MARGIN "
+                 "(what the exchange shows you)")
     lines.append(f"Entry   {fmt_price(sym, entry)}")
 
     tgts = [float(t) for t in (sig.get("targets") or [])][:4]
@@ -582,15 +596,22 @@ def trade_block(sig: dict, account: float, usd_per_quote: float = 1.0) -> list:
     u = f"{units:,.0f}" if whole else f"{units:,.6f}".rstrip("0").rstrip(".")
     face = units * entry * (usd_per_quote or 1.0)
     lines.append(f"Size    {u} {spec['size_unit']}  =  ${face:,.0f} position")
-    lines.append(f"Margin  ${account * margin_share():,.2f} "
-                 f"({margin_share() * 100:.0f}% of account)")
+    lines.append(f"Margin  ${marg:,.2f} "
+                 f"({margin_share() * 100:.0f}% of the account)")
 
     if half_size_day:
         lines.append("HALF SIZE today — news or a holiday")
     if size.get("wider", 1.0) > 1.6:
+        # The one place the ACCOUNT share has to be said out loud. Everything
+        # else on the message is a share of the margin, which is what the
+        # exchange shows — but a day where his rule quietly risks three
+        # percent of the whole account instead of one is the day he should
+        # be told in account terms, not left to convert it.
         lines.append(f"Today's stop is {size['wider']:.1f}x the tightest this "
-                     f"market gives, and the size does not shrink for it. "
-                     f"That is his rule, on purpose.")
+                     f"market gives and the size does not shrink for it — "
+                     f"that is his rule, on purpose. So this one risks "
+                     f"{size['risk_share_pct']:.2f}% OF THE ACCOUNT, not the "
+                     f"usual 1%.")
     if size.get("capped"):
         lines.append(f"Size cut by OUR ceiling to hold risk at "
                      f"{size['cap_share_pct']:.0f}% of the account. His band "
