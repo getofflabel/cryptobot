@@ -1,6 +1,6 @@
 # LEARNINGS — the bot's own diary (plain English)
 
-Ledger: $1,509.09 / goal $3,000
+Ledger: $1,509.07 / goal $3,000
 
 
 ## Scorecard by strategy (live trades)
@@ -11,7 +11,7 @@ Ledger: $1,509.09 / goal $3,000
 ## AI news judges (on probation)
 
 - **opus**: 1/6 graded calls (17% right)
-- **sonnet**: 1/10 graded calls (10% right)
+- **sonnet**: 1/11 graded calls (9% right)
 
 ## Trade reviews (newest first)
 
