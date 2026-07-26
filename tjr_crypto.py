@@ -74,12 +74,19 @@ REPO = os.path.dirname(os.path.abspath(__file__))
 #
 # This list is HIS to set. Anything he says has never worked for him comes
 # out, and it does not go back in on the strength of a backtest.
-PAIRS = ["BTC/USD", "ETH/USD", "SOL/USD", "XRP/USD", "DOGE/USD",
+PAIRS = ["BTC/USD", "ETH/USD", "SOL/USD", "XRP/USD",
          "LINK/USD", "LTC/USD", "ADA/USD", "DOT/USD"]
 
 # Named so the reason survives, and so nothing quietly re-adds them.
+#
+# DOGE went out knowing exactly what it cost us: it produced three of the
+# six crypto trades in the week to 25 July and two of the three winners,
+# including the best trade of the week (+1.04% of the account, all three
+# targets reached). It comes out anyway. He will not trade it, and a bot
+# trading something its owner would not is a bot he cannot judge.
 RETIRED_PAIRS = {
     "AVAX/USD": "Wallace, 2026-07-25 — never worked for him",
+    "DOGE/USD": "Wallace, 2026-07-25 — would not trade it",
 }
 
 
