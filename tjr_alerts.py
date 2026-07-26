@@ -201,6 +201,23 @@ def max_risk_share() -> float:
     return float(MAX_RISK_SHARE_OF_ACCOUNT or 0.0)
 
 
+def margin_share() -> float:
+    """How much of the account is set aside per trade to hold a position.
+
+    HE NEVER SPECIFIES THIS — it is not part of his method, because forex
+    and futures do not have a leverage dial. So it is ours, and round 449
+    measured it: anything from 5% to 20% gives an identical result because
+    the capital is never the binding constraint. Above that it starts
+    costing trades (at 50% only two positions fit and 9 of 32 setups this
+    week were missed, turning a +14% week into +4%).
+    """
+    import os
+    try:
+        return float(os.environ.get("CRYPTOBOT_MARGIN_SHARE", "0.10"))
+    except ValueError:
+        return 0.10
+
+
 def position_size(market: str, symbol: str, account: float, entry: float,
                   stop_distance: float, tightest_stop_pct: float,
                   usd_per_quote: float = 1.0, risk_pct: float = 0.01,
@@ -361,6 +378,34 @@ def size_lines(market: str, symbol: str, size: dict, entry: float,
                      + (f", which is {times:.1f} times the account — if your "
                         f"broker will not allow that much, take what it does"
                         if times > 1.05 else ""))
+
+        # MARGIN AND RISK, BOTH IN DOLLARS, BOTH ON THE MESSAGE.
+        #
+        # Wallace, 2026-07-26: "I thought margin and risk to you was the
+        # same." They sound identical and they are not, and the difference
+        # is the whole reason a $6,000 position can only cost $20:
+        #
+        #   MARGIN is what is set aside to hold the position. It comes back
+        #          when the trade closes.
+        #   RISK   is what is actually lost if the stop is hit.
+        #
+        # They differ only because the stop is CLOSE. Put them side by side
+        # in dollars so the gap is visible rather than something he has to
+        # work out from a percentage.
+        marg = account * margin_share()
+        if marg > 0:
+            lines.append(
+                f"Money down     ${marg:,.2f} of margin to hold it "
+                f"(that comes back when the trade closes)")
+            lines.append(
+                f"Money at risk  ${size['risk_dollars']:,.2f} if the stop is "
+                f"hit — that is what you actually lose, "
+                f"{size['risk_share_pct']:.2f}% OF THE ACCOUNT")
+            if marg > 0 and size["risk_dollars"] > 0:
+                lines.append(
+                    f"               so ${marg:,.2f} down controls "
+                    f"${face:,.0f}, and being wrong costs "
+                    f"${size['risk_dollars']:,.2f} of it")
     return lines
 
 
@@ -497,12 +542,40 @@ def trade_block(sig: dict, account: float, usd_per_quote: float = 1.0) -> list:
     tgts = list(sig.get("targets") or [])
     srcs = list(sig.get("target_sources") or [])
     names = ["First target ", "Second target", "Third target ", "Fourth target"]
+
+    # WHAT EACH TARGET IS WORTH, IN DOLLARS. The stop already says what
+    # being wrong costs; being right should say what it pays, in the same
+    # unit, so the two are comparable at a glance.
+    #
+    # The arithmetic follows his exit, not a naive units x distance: HALF
+    # comes off at the first target and the rest is spread across the ones
+    # after it. So the first line is half the position's move, and the later
+    # ones are a share of the remainder — which is why the second target is
+    # not simply double the first.
+    units = size.get("units") or 0.0
+    # NOT `half` — that is a boolean meaning "half-size day". The share taken
+    # off at the FIRST target is his stated 50%, and the rest is spread
+    # evenly across the targets after it (that split is ours; he says three
+    # or four targets but never what comes off at each).
+    first_off = float(sig.get("partial_fraction") or 0.5)
+    n_after = max(0, len(tgts[:4]) - 1)
+    fracs = [first_off] + [(1.0 - first_off) / n_after] * n_after if n_after \
+        else [1.0]
+    running = 0.0
     for i, tp in enumerate(tgts[:4]):
         d = abs(float(tp) - entry)
         src = target_source_name(srcs[i], sig["direction"]) if i < len(srcs) else ""
         lines.append(f"{names[i]}  {fmt_price(sym, float(tp))}   "
                      f"({distance_phrase(market, sym, d, entry)})"
                      + (f", {src}" if src else ""))
+        if units > 0 and i < len(fracs):
+            made = units * fracs[i] * d * (usd_per_quote or 1.0)
+            running += made
+            share = f"{100.0 * fracs[i]:.0f}%"
+            lines.append(
+                f"               if it reaches here you take {share} off for "
+                f"${made:,.2f}"
+                + (f", ${running:,.2f} banked in total" if i else ""))
     if not tgts:
         lines.append("Targets        the chart offers nowhere ahead that he "
                      "would take profit — run it to the stop or to the close")
