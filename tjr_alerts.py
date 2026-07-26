@@ -596,8 +596,8 @@ def trade_block(sig: dict, account: float, usd_per_quote: float = 1.0) -> list:
     u = f"{units:,.0f}" if whole else f"{units:,.6f}".rstrip("0").rstrip(".")
     face = units * entry * (usd_per_quote or 1.0)
     lines.append(f"Size    {u} {spec['size_unit']}  =  ${face:,.0f} position")
-    lines.append(f"Margin  ${marg:,.2f} "
-                 f"({margin_share() * 100:.0f}% of the account)")
+    lev = (face / marg) if marg > 0 else 0.0
+    lines.append(f"Margin  ${marg:,.2f}   Leverage {lev:.0f}x")
 
     if half_size_day:
         lines.append("HALF SIZE today — news or a holiday")
@@ -607,11 +607,17 @@ def trade_block(sig: dict, account: float, usd_per_quote: float = 1.0) -> list:
         # exchange shows — but a day where his rule quietly risks three
         # percent of the whole account instead of one is the day he should
         # be told in account terms, not left to convert it.
-        lines.append(f"Today's stop is {size['wider']:.1f}x the tightest this "
-                     f"market gives and the size does not shrink for it — "
-                     f"that is his rule, on purpose. So this one risks "
-                     f"{size['risk_share_pct']:.2f}% OF THE ACCOUNT, not the "
-                     f"usual 1%.")
+        # SAY IT IN LEVERAGE, NOT IN "RISK". Wallace, 2026-07-26: "dont
+        # ever use that term again and just stick with leverage... on that
+        # blofin screen i see leverage, I hope you know that." The account
+        # share still appears because a day that quietly costs three percent
+        # of everything instead of one has to be said in those terms — but
+        # leverage leads, because leverage is what he can see.
+        lines.append(f"Today's stop is {size['wider']:.1f}x wider than this "
+                     f"market's tightest, and the size does not shrink for "
+                     f"it — that is his rule, on purpose. So this one is "
+                     f"carrying more than usual: {size['risk_share_pct']:.2f}% "
+                     f"OF THE ACCOUNT if the stop is hit, against the usual 1%.")
     if size.get("capped"):
         lines.append(f"Size cut by OUR ceiling to hold risk at "
                      f"{size['cap_share_pct']:.0f}% of the account. His band "
