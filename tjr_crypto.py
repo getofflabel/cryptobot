@@ -63,9 +63,24 @@ REPO = os.path.dirname(os.path.abspath(__file__))
 
 # ============================================================ THE PAIRS
 # Wallace named ten in order, and said all 36 US-dollar pairs are available
-# "if the structure reads cleanly on more". These ten are what is wired.
+# "if the structure reads cleanly on more".
+#
+# AVAX REMOVED 2026-07-25 on his call: "avax is not something that was ever
+# good to me". That is his own trading experience and it outranks anything
+# here. The week's numbers happened to agree — it had the widest gap between
+# its buy and sell price of the ten (0.65% of price) and produced the single
+# largest loss of the week, most of which was the cost of trading rather
+# than the market moving.
+#
+# This list is HIS to set. Anything he says has never worked for him comes
+# out, and it does not go back in on the strength of a backtest.
 PAIRS = ["BTC/USD", "ETH/USD", "SOL/USD", "XRP/USD", "DOGE/USD",
-         "LINK/USD", "AVAX/USD", "LTC/USD", "ADA/USD", "DOT/USD"]
+         "LINK/USD", "LTC/USD", "ADA/USD", "DOT/USD"]
+
+# Named so the reason survives, and so nothing quietly re-adds them.
+RETIRED_PAIRS = {
+    "AVAX/USD": "Wallace, 2026-07-25 — never worked for him",
+}
 
 
 def cache_name(pair: str, tf: str) -> str:
