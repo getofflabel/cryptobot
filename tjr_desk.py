@@ -578,7 +578,9 @@ class Desk:
                 # The exchange's own stop did this. The bot closes anything
                 # left over (normally nothing) and lets go of the record.
                 self._act(m, sym, None, "the stop was hit")
-                self._push(*tjr_alerts.stopped_message(m.name, sym, stop, at))
+                self._push(*tjr_alerts.stopped_message(
+                    m.name, sym, stop, at,
+                    account=tjr_alerts.account_line(m.venue)))
                 self.open_trades.pop(key, None)
                 continue
 
@@ -598,7 +600,8 @@ class Desk:
                     self._act(m, sym, None, "the second target was hit")
                     self._push(*tjr_alerts.close_message(
                         m.name, sym, tgts[1],
-                        "The second target is reached. That is the trade.", at))
+                        "The second target is reached. That is the trade.", at,
+                        account=tjr_alerts.account_line(m.venue)))
                     self.open_trades.pop(key, None)
                     continue
 
@@ -610,7 +613,8 @@ class Desk:
                 self._push(*tjr_alerts.close_message(
                     m.name, sym, float(bar["close"]),
                     "This market closes shortly and he does not hold through "
-                    "it, so the bot closed what was left at market.", at))
+                    "it, so the bot closed what was left at market.", at,
+                    account=tjr_alerts.account_line(m.venue)))
                 self.open_trades.pop(key, None)
 
     def _act(self, m: Market, symbol: str, qty, reason: str) -> dict:

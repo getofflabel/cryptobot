@@ -512,6 +512,46 @@ def test_the_desk_writes_exactly_one_file_and_it_is_the_measured_sizes():
         assert "STOP_FLOOR_PATH" in o, f"the desk opens something else: {o}"
 
 
+
+
+
+def test_every_closing_message_says_where_the_account_stands():
+    """Wallace, 2026-07-26: "after a trade is done just give me an update on
+    my account equity on telegram."
+
+    Every message that ENDS a trade carries it — stopped out, target reached,
+    or closed because the market is about to shut. And it is READ from the
+    venue, never computed: the exchange's equity already has the fees and the
+    realised profit inside it, and this project has twice put a wrong number
+    in front of him by modelling something the venue would have stated.
+    """
+    class _V:
+        def account(self):
+            return {"equity": 2144.40}
+
+    line = tjr_alerts.account_line(_V())
+    assert "2,144.40" in line, line
+
+    _, closed = tjr_alerts.close_message("crypto", "BTC/USD", 64900.0,
+                                         "The second target is reached.",
+                                         account=line)
+    _, stopped = tjr_alerts.stopped_message("crypto", "BTC/USD", 64194.0,
+                                            account=line)
+    for msg in (closed, stopped):
+        assert "2,144.40" in msg, f"a closing message did not say the account: {msg}"
+
+
+def test_an_unreadable_account_says_so_rather_than_guessing():
+    """A stale equity figure is worse than none — he would act on it."""
+    class _Broken:
+        def account(self):
+            raise RuntimeError("connection reset")
+
+    line = tjr_alerts.account_line(_Broken())
+    assert "could not be read" in line, line
+    assert "$" not in line, f"a number was invented: {line}"
+
+
 TESTS = [(k, v) for k, v in sorted(globals().items())
          if k.startswith("test_") and callable(v)]
 
@@ -566,3 +606,5 @@ def test_a_refused_trade_never_tells_him_to_place_it_himself():
             f"status={status} still tells him to place it himself: {head!r}")
         assert "nothing for you to do" in head, (
             f"status={status} does not tell him he is off the hook: {head!r}")
+
+

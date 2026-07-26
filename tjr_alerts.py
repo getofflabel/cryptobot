@@ -725,19 +725,20 @@ def first_target_message(market: str, symbol: str, entry: float, target: float,
 
 
 def close_message(market: str, symbol: str, price: float, why: str,
-                  when: dt.datetime | None = None) -> tuple:
+                  when: dt.datetime | None = None, account: str = "") -> tuple:
     when = when or dt.datetime.now()
     msg = "\n".join([
         f"{MARKETS[market]['label']} — {symbol}",
         "=" * 46, "",
         f"Close it now, around {fmt_price(symbol, price)}.",
         "", why, "",
+        *( [account, ""] if account else [] ),
         f"{when:%H:%M} New York time."])
     return f"{MARKETS[market]['label']} · {symbol}: close it", msg
 
 
 def stopped_message(market: str, symbol: str, price: float,
-                    when: dt.datetime | None = None) -> tuple:
+                    when: dt.datetime | None = None, account: str = "") -> tuple:
     when = when or dt.datetime.now()
     msg = "\n".join([
         f"{MARKETS[market]['label']} — {symbol}",
@@ -747,8 +748,32 @@ def stopped_message(market: str, symbol: str, price: float,
         "Check the position is closed. Nothing else to do — this one was "
         "wrong and it cost exactly what it was set up to cost.",
         "",
+        *( [account, ""] if account else [] ),
         f"{when:%H:%M} New York time."])
     return f"{MARKETS[market]['label']} · {symbol}: stopped out", msg
+
+
+def account_line(venue, market: str = "") -> str:
+    """Where the account stands, read from the venue, for the end of a
+    close message.
+
+    Wallace, 2026-07-26: "after a trade is done just give me an update on my
+    account equity on telegram."
+
+    READ IT, DO NOT COMPUTE IT. The exchange's own equity already has the
+    fees and the realised profit inside it, and this project has twice put a
+    wrong number in front of him by modelling something the venue was already
+    willing to state. If the read fails, SAY it failed — an equity figure
+    that is quietly stale is worse than none, because he would act on it.
+    """
+    try:
+        acct = venue.account() or {}
+        eq = float(acct.get("equity") or 0.0)
+        if eq <= 0:
+            return "Account: could not be read just now."
+        return f"Account now ${eq:,.2f}"
+    except Exception as e:                                   # noqa: BLE001
+        return f"Account: could not be read just now ({str(e)[:60]})."
 
 
 # ------------------------------------------------------------- the sending
