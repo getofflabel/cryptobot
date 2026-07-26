@@ -20,9 +20,19 @@ services:
     runtime: python
     plan: starter
     buildCommand: pip install -r requirements.txt
-    # daemon.py currently idles on purpose — it is the retired BloFin loop.
-    # This flips to the new Alpaca runner the moment tjr_bot.py is finished.
-    startCommand: python -u daemon.py
+    # THE DESK. Runs the trader's method across crypto (BloFin demo), the
+    # S&P and gold (Alpaca paper). daemon.py is retired — it was the old
+    # ten-strategy loop and it now only idles.
+    #
+    # WHICH MARKETS MAY SEND AN ORDER is separate from which are watched.
+    # Default is crypto only: the BloFin demo account is a demo account, the
+    # attribution rule under it is built and tested, and it is the venue
+    # Wallace named for crypto. Stocks and gold are WATCHED but not armed —
+    # the Alpaca account has never had an order placed on it in its life and
+    # it stays that way until he says otherwise. Unarmed still decides,
+    # sizes, records and messages exactly as it would live; it just does not
+    # send. Override with CRYPTOBOT_ARM=crypto,sp500,gold
+    startCommand: python -u tjr_desk.py --watch
 
     # ------------------------------------------------------------------
     # WHY THIS EXISTS: the bot was restarting all day and it looked like
