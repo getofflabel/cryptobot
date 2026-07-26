@@ -64,19 +64,36 @@ services:
       - key: CRYPTOBOT_STATE_SECRET
         sync: false
 
-      # The new venue. Paper account, no funded account behind these keys.
+      # STOCKS — Alpaca paper. SPY and QQQ. No funded account behind these.
       - key: ALPACA_API_KEY
         sync: false
       - key: ALPACA_API_SECRET
         sync: false
 
-      # DELIBERATELY ABSENT — do not re-add:
-      #   BLOFIN_DEMO_API_KEY
-      #   BLOFIN_DEMO_API_SECRET
-      #   BLOFIN_DEMO_PASSPHRASE
-      # The BloFin demo account belongs to Wallace and nothing automated may
-      # reach it. Removing the keys is what makes that true rather than
-      # merely intended.
+      # CRYPTO — BloFin demo. Restored 2026-07-25 on Wallace's instruction:
+      # "lets do stocks with alpaca on trading view and crypto on blofin,
+      #  both ran by api."
+      #
+      # These were removed a few hours earlier, after the OLD bot closed a
+      # trade Wallace had opened himself on this account. That must not
+      # happen again, and removing the keys is no longer what prevents it —
+      # ATTRIBUTION is:
+      #
+      #   The bot may only ever touch a position it opened itself. Every
+      #   order carries our tag (blofin_private.make_client_order_id). Any
+      #   position without our tag is invisible to it: not reconciled, not
+      #   counted, not closed, not tidied up. Anything it cannot positively
+      #   attribute to itself is HIS, and ambiguity always resolves to hands
+      #   off. A test fails the build if any close or reduce path can run
+      #   without that check.
+      #
+      # That is what lets him trade this same demo account alongside the bot.
+      - key: BLOFIN_DEMO_API_KEY
+        sync: false
+      - key: BLOFIN_DEMO_API_SECRET
+        sync: false
+      - key: BLOFIN_DEMO_PASSPHRASE
+        sync: false
 
   - type: web
     name: cryptobot-pnl
