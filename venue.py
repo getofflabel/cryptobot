@@ -907,6 +907,7 @@ class BlofinVenue(Venue):
         inst = self.venue_symbol(symbol)
         spec = self.spec(symbol)
         cv, lot = spec.get("contract_value") or 0.0, spec.get("lot") or 0.0
+        tick = spec.get("tick") or 0.0
         if cv <= 0:
             return self._record({
                 "status": "rejected", "symbol": symbol, "side": side,
@@ -952,10 +953,31 @@ class BlofinVenue(Venue):
                 "silent-rejection bug happened.", "note": reason})
 
         coid = self._bp.make_client_order_id(self._tag)
+        # THE PROTECTION RIDES IN WITH THE ENTRY. Wallace, 2026-07-26:
+        # "stops can literally be placed with the order together, it doesnt
+        # have to be after" ... "stop and take profit by the way".
+        #
+        # Placing the stop as a SECOND request leaves a window where the
+        # position exists with nothing under it. That window is not
+        # theoretical: on 26 July a DOT short filled, price ran past where
+        # the stop belonged before the second call landed, the exchange
+        # refused the stop as invalid, and the position had to be closed a
+        # second later. Attached, there is no window and no second call.
+        #
+        # The attached take profit is the LAST target, not the first — his
+        # method takes half off at the first and lets the rest run, and an
+        # attached bracket covers the whole position. So this is the "if we
+        # lose contact with this entirely, get out somewhere sensible" order.
+        # The staged partial exits are still worked bar by bar.
+        targets = kw.get("targets") or []
         try:
             oid = self._cli.market_order(inst, side, contracts,
                                          margin_mode=self._bp.MARGIN_MODE,
-                                         client_order_id=coid, lot_size=lot)
+                                         client_order_id=coid, lot_size=lot,
+                                         stop_price=kw.get("stop"),
+                                         take_profit=(float(targets[-1])
+                                                      if targets else None),
+                                         tick_size=tick)
         except Exception as e:                               # noqa: BLE001
             return self._record({"status": "rejected", "symbol": symbol,
                                  "side": side, "qty": qty,

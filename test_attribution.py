@@ -97,10 +97,13 @@ class FakeClient:
         return True
 
     def market_order(self, symbol, side, contracts, reduce_only=False,
-                     margin_mode=None, client_order_id=None, lot_size=None):
+                     margin_mode=None, client_order_id=None, lot_size=None,
+                     stop_price=None, take_profit=None, tick_size=None):
         self.placed.append({"symbol": symbol, "side": side,
                             "contracts": contracts, "reduce_only": reduce_only,
-                            "client_order_id": client_order_id})
+                            "client_order_id": client_order_id,
+                            "stop_price": stop_price,
+                            "take_profit": take_profit})
         return "order-1"
 
     def post_only_order(self, symbol, side, contracts, price,
@@ -507,3 +510,29 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+
+
+def test_the_entry_carries_its_own_stop():
+    """Wallace, 2026-07-26: "stops can literally be placed with the order
+    together, it doesnt have to be after" ... "stop and take profit by the
+    way".
+
+    Placing the stop as a SECOND request leaves a window where the position
+    exists with nothing under it, and on 26 July that window bit: a DOT short
+    filled, price ran past where the stop belonged before the second call
+    landed, the exchange refused the stop as invalid, and the position had to
+    be closed a second later.
+
+    So an OPENING order must carry its stop. A closing one must not — there
+    is nothing left to protect."""
+    cli = FakeClient(position=None, orders=[])
+    v = build(cli)
+    v.market_order(SYMBOL, "buy", 0.01, reference_price=60000.0,
+                   stop=59500.0, targets=[60800.0, 61500.0])
+    opened = [p for p in cli.placed if not p["reduce_only"]]
+    assert opened, "nothing was placed"
+    o = opened[-1]
+    assert o["stop_price"] == 59500.0, \
+        f"the entry went out with no stop attached: {o}"
+    assert o["take_profit"] == 61500.0, \
+        f"the attached target should be the LAST one, not the first: {o}"

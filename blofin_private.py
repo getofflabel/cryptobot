@@ -379,8 +379,43 @@ class BlofinDemoPrivate:
                      reduce_only: bool = False,
                      margin_mode: str | None = None,
                      client_order_id: str | None = None,
-                     lot_size: float | None = None) -> str:
+                     lot_size: float | None = None,
+                     stop_price: float | None = None,
+                     take_profit: float | None = None,
+                     tick_size: float | None = None) -> str:
         """Place a market order for `contracts`. Returns the order id.
+
+        stop_price / take_profit: BOTH GO ON WITH THE ORDER, NOT AFTER IT.
+
+            Wallace, 2026-07-26: "stops can literally be placed with the
+            order together, it doesnt have to be after" ... "stop and take
+            profit by the way".
+
+            He is right and this endpoint takes both. Verified live on the
+            demo account: slTriggerPrice and tpTriggerPrice on
+            POST /api/v1/trade/order return code 0, and both are resting at
+            the exchange the moment the position exists.
+
+            ONE THING THIS DOES NOT SOLVE, stated so nobody assumes it does.
+            The attached bracket covers the WHOLE position, and his method
+            takes half off at the first target and lets the rest run. So the
+            attached take profit is the LAST target, not the first — it is
+            the "if we lose contact with this position entirely, get out
+            somewhere sensible" order. The staged partial exits are still
+            managed by the bot on each bar, and if the bot dies the position
+            is left with a real stop and a real target rather than nothing.
+
+            Why it matters more than a tidier call: placing the stop as a
+            SECOND request leaves a window where the position is open with
+            nothing under it, and that window is not theoretical. On 26 July
+            a DOT short filled, price ran past where the stop belonged
+            before the second call landed, the exchange refused the stop as
+            invalid ("SL trigger price should be higher than the latest
+            trading price"), and the bot had to close the position a second
+            later. Attached, there is no window and no second call to fail.
+
+            Always pass tick_size with it — an unrounded trigger price is
+            rejected or, worse, truncated onto the wrong side of the market.
 
         side is "buy" or "sell". reduce_only=True marks an order that may
         only shrink an existing position — the standard guard that prevents
@@ -410,6 +445,15 @@ class BlofinDemoPrivate:
             body["reduceOnly"] = "true"
         if client_order_id:
             body["clientOrderId"] = client_order_id
+        # The protection rides IN with the entry. -1 means "when it
+        # triggers, get out at market" — in a fast move you want out, not a
+        # resting limit the market can skip straight over.
+        if stop_price is not None:
+            body["slTriggerPrice"] = fmt_price(stop_price, tick_size)
+            body["slOrderPrice"] = "-1"
+        if take_profit is not None:
+            body["tpTriggerPrice"] = fmt_price(take_profit, tick_size)
+            body["tpOrderPrice"] = "-1"
         data = self._call("POST", "/api/v1/trade/order", body=body)
         if isinstance(data, list) and data:
             first = data[0]
