@@ -1,0 +1,16 @@
+{
+  "GLD": {
+    "spread_pct": 0.00013347,
+    "spread_pct_of_price": 0.01335,
+    "sweep_median_bars": 9.0,
+    "sweep_max_age_bars": 18,
+    "sweep_n": 346
+  },
+  "IAU": {
+    "spread_pct": 0.00012362,
+    "spread_pct_of_price": 0.01236,
+    "sweep_median_bars": 9.0,
+    "sweep_max_age_bars": 18,
+    "sweep_n": 348
+  }
+}

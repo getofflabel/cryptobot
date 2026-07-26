@@ -1,0 +1,18 @@
+{
+  "GBP/USD": {
+    "spread_pct": 5.236e-05,
+    "spread_pct_of_price": 0.00524,
+    "spread_pips": 0.7,
+    "sweep_median_bars": 9.0,
+    "sweep_max_age_bars": 18,
+    "sweep_n": 485
+  },
+  "GBP/JPY": {
+    "spread_pct": 7.878e-05,
+    "spread_pct_of_price": 0.00788,
+    "spread_pips": 1.72,
+    "sweep_median_bars": 8.0,
+    "sweep_max_age_bars": 16,
+    "sweep_n": 470
+  }
+}

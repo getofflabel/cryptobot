@@ -1,0 +1,2184 @@
+{
+ "generated_utc": "2026-07-25T21:40:25+00:00",
+ "timezone": "America/New_York",
+ "note": "Every time in this file is US Eastern (America/New_York), which is how BLS, the Federal Reserve, BEA and DOL publish them. Never UTC.",
+ "coverage": {
+  "start": "2026-01-01",
+  "end": "2026-12-31"
+ },
+ "day_killers": [
+  "Consumer Price Index",
+  "Producer Price Index",
+  "Employment Situation",
+  "FOMC Statement"
+ ],
+ "sources": {
+  "bls": "https://www.bls.gov/schedule/2026/01_sched.htm (and 02..12)",
+  "fomc": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+  "fomc_time": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260128a.htm \u2014 'For release at 2:00 p.m. EST'",
+  "bea": "https://www.bea.gov/news/schedule",
+  "dol_claims": "https://oui.doleta.gov/unemploy/claims.asp",
+  "umich": "http://www.sca.isr.umich.edu/"
+ },
+ "not_covered": [
+  "BEA GDP and PCE for Jan-Jul 2026 (BEA publishes the schedule forward only; past dates are absent, not guessed)",
+  "ISM manufacturing and services, 10:00 New York (ismworld.org blocks automated fetching)",
+  "Census retail sales, 08:30 New York (calendar is JavaScript-only)",
+  "Conference Board consumer confidence, 10:00 New York",
+  "Most University of Michigan consumer sentiment dates"
+ ],
+ "holidays": [
+  {
+   "date": "2026-01-01",
+   "name": "New Year's Day"
+  },
+  {
+   "date": "2026-01-19",
+   "name": "Birthday of Martin Luther King, Jr."
+  },
+  {
+   "date": "2026-02-16",
+   "name": "Washington's Birthday"
+  },
+  {
+   "date": "2026-05-25",
+   "name": "Memorial Day"
+  },
+  {
+   "date": "2026-06-19",
+   "name": "Juneteenth National Independence Day"
+  },
+  {
+   "date": "2026-07-03",
+   "name": "Independence Day"
+  },
+  {
+   "date": "2026-09-07",
+   "name": "Labor Day"
+  },
+  {
+   "date": "2026-10-12",
+   "name": "Columbus Day"
+  },
+  {
+   "date": "2026-11-11",
+   "name": "Veterans Day"
+  },
+  {
+   "date": "2026-11-26",
+   "name": "Thanksgiving Day"
+  },
+  {
+   "date": "2026-12-25",
+   "name": "Christmas Day"
+  }
+ ],
+ "releases": [
+  {
+   "date": "2026-01-07",
+   "name": "Job Openings and Labor Turnover Survey",
+   "time_et": "10:00",
+   "period": "November 2025",
+   "source": "bls.gov/schedule/2026/01_sched.htm",
+   "verified": true,
+   "impact": "high"
+  },
+  {
+   "date": "2026-01-07",
+   "name": "State Employment and Unemployment (Monthly)",
+   "time_et": "10:00",
+   "period": "November 2025",
+   "source": "bls.gov/schedule/2026/01_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-01-08",
+   "name": "Productivity and Costs (P)",
+   "time_et": "08:30",
+   "period": "Third Quarter 2025",
+   "source": "bls.gov/schedule/2026/01_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-01-08",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-01-09",
+   "name": "Employment Situation",
+   "time_et": "08:30",
+   "period": "December 2025",
+   "source": "bls.gov/schedule/2026/01_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-01-13",
+   "name": "Consumer Price Index",
+   "time_et": "08:30",
+   "period": "December 2025",
+   "source": "bls.gov/schedule/2026/01_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-01-13",
+   "name": "Real Earnings",
+   "time_et": "08:30",
+   "period": "December 2025",
+   "source": "bls.gov/schedule/2026/01_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-01-14",
+   "name": "Producer Price Index",
+   "time_et": "08:30",
+   "period": "November 2025",
+   "source": "bls.gov/schedule/2026/01_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-01-15",
+   "name": "U.S. Import and Export Price Indexes",
+   "time_et": "08:30",
+   "period": "November 2025",
+   "source": "bls.gov/schedule/2026/01_sched.htm",
+   "verified": true,
+   "impact": "high"
+  },
+  {
+   "date": "2026-01-15",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-01-16",
+   "name": "Metropolitan Area Employment and Unemployment (Monthly)",
+   "time_et": "10:00",
+   "period": "November 2025",
+   "source": "bls.gov/schedule/2026/01_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-01-16",
+   "name": "Occupational Requirements in the United States",
+   "time_et": "10:00",
+   "period": "Annual 2025",
+   "source": "bls.gov/schedule/2026/01_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-01-22",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-01-22",
+   "name": "Employer-Reported Workplace Injuries and Illnesses (Annual)",
+   "time_et": "10:00",
+   "period": "Annual 2024",
+   "source": "bls.gov/schedule/2026/01_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-01-22",
+   "name": "Work Experience of the Population (Annual)",
+   "time_et": "10:00",
+   "period": "Annual 2024",
+   "source": "bls.gov/schedule/2026/01_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-01-27",
+   "name": "State Employment and Unemployment (Monthly)",
+   "time_et": "10:00",
+   "period": "December 2025",
+   "source": "bls.gov/schedule/2026/01_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-01-27",
+   "name": "State Job Openings and Labor Turnover",
+   "time_et": "10:00",
+   "period": "November 2025",
+   "source": "bls.gov/schedule/2026/01_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-01-28",
+   "name": "Usual Weekly Earnings of Wage and Salary Workers",
+   "time_et": "10:00",
+   "period": "Annual 2025",
+   "source": "bls.gov/schedule/2026/01_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-01-28",
+   "name": "FOMC Statement",
+   "time_et": "14:00",
+   "period": "rate decision, day 2 of the meeting",
+   "source": "federalreserve.gov statement URL monetary20260128",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-01-29",
+   "name": "Productivity and Costs (R)",
+   "time_et": "08:30",
+   "period": "Third Quarter 2025",
+   "source": "bls.gov/schedule/2026/01_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-01-29",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-01-30",
+   "name": "Producer Price Index",
+   "time_et": "08:30",
+   "period": "December 2025",
+   "source": "bls.gov/schedule/2026/01_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-02-05",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-02-05",
+   "name": "Job Openings and Labor Turnover Survey",
+   "time_et": "10:00",
+   "period": "December 2025",
+   "source": "bls.gov/schedule/2026/02_sched.htm",
+   "verified": true,
+   "impact": "high"
+  },
+  {
+   "date": "2026-02-06",
+   "name": "Metropolitan Area Employment and Unemployment (Monthly)",
+   "time_et": "10:00",
+   "period": "December 2025",
+   "source": "bls.gov/schedule/2026/02_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-02-10",
+   "name": "Employment Cost Index",
+   "time_et": "08:30",
+   "period": "Fourth Quarter 2025",
+   "source": "bls.gov/schedule/2026/02_sched.htm",
+   "verified": true,
+   "impact": "high"
+  },
+  {
+   "date": "2026-02-10",
+   "name": "U.S. Import and Export Price Indexes",
+   "time_et": "08:30",
+   "period": "December 2025",
+   "source": "bls.gov/schedule/2026/02_sched.htm",
+   "verified": true,
+   "impact": "high"
+  },
+  {
+   "date": "2026-02-11",
+   "name": "Employment Situation",
+   "time_et": "08:30",
+   "period": "January 2026",
+   "source": "bls.gov/schedule/2026/02_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-02-12",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-02-13",
+   "name": "Consumer Price Index",
+   "time_et": "08:30",
+   "period": "January 2026",
+   "source": "bls.gov/schedule/2026/02_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-02-13",
+   "name": "Real Earnings",
+   "time_et": "08:30",
+   "period": "January 2026",
+   "source": "bls.gov/schedule/2026/02_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-02-18",
+   "name": "Union Membership (Annual)",
+   "time_et": "10:00",
+   "period": "Annual 2025",
+   "source": "bls.gov/schedule/2026/02_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-02-19",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-02-19",
+   "name": "Census of Fatal Occupational Injuries",
+   "time_et": "10:00",
+   "period": "Annual 2024",
+   "source": "bls.gov/schedule/2026/02_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-02-19",
+   "name": "State Job Openings and Labor Turnover",
+   "time_et": "10:00",
+   "period": "December 2025",
+   "source": "bls.gov/schedule/2026/02_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-02-20",
+   "name": "Major Work Stoppages (Annual)",
+   "time_et": "10:00",
+   "period": "Annual 2025",
+   "source": "bls.gov/schedule/2026/02_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-02-24",
+   "name": "Employer Costs for Employee Compensation",
+   "time_et": "10:00",
+   "period": "September 2025",
+   "source": "bls.gov/schedule/2026/02_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-02-26",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-02-26",
+   "name": "Quarterly Data Series on Business Employment Dynamics",
+   "time_et": "10:00",
+   "period": "Second Quarter 2025",
+   "source": "bls.gov/schedule/2026/02_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-02-27",
+   "name": "Producer Price Index",
+   "time_et": "08:30",
+   "period": "January 2026",
+   "source": "bls.gov/schedule/2026/02_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-03-03",
+   "name": "People with a Disability: Labor Force Characteristics",
+   "time_et": "10:00",
+   "period": "Annual 2025",
+   "source": "bls.gov/schedule/2026/03_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-03-05",
+   "name": "Productivity and Costs (P)",
+   "time_et": "08:30",
+   "period": "Fourth Quarter 2025",
+   "source": "bls.gov/schedule/2026/03_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-03-05",
+   "name": "U.S. Import and Export Price Indexes",
+   "time_et": "08:30",
+   "period": "January 2026",
+   "source": "bls.gov/schedule/2026/03_sched.htm",
+   "verified": true,
+   "impact": "high"
+  },
+  {
+   "date": "2026-03-05",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-03-06",
+   "name": "Employment Situation",
+   "time_et": "08:30",
+   "period": "February 2026",
+   "source": "bls.gov/schedule/2026/03_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-03-10",
+   "name": "County Employment and Wages",
+   "time_et": "10:00",
+   "period": "Third Quarter 2025",
+   "source": "bls.gov/schedule/2026/03_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-03-11",
+   "name": "Consumer Price Index",
+   "time_et": "08:30",
+   "period": "February 2026",
+   "source": "bls.gov/schedule/2026/03_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-03-11",
+   "name": "Real Earnings",
+   "time_et": "08:30",
+   "period": "February 2026",
+   "source": "bls.gov/schedule/2026/03_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-03-12",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-03-13",
+   "name": "Job Openings and Labor Turnover Survey",
+   "time_et": "10:00",
+   "period": "January 2026",
+   "source": "bls.gov/schedule/2026/03_sched.htm",
+   "verified": true,
+   "impact": "high"
+  },
+  {
+   "date": "2026-03-18",
+   "name": "Producer Price Index",
+   "time_et": "08:30",
+   "period": "February 2026",
+   "source": "bls.gov/schedule/2026/03_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-03-18",
+   "name": "FOMC Statement",
+   "time_et": "14:00",
+   "period": "rate decision, day 2 of the meeting",
+   "source": "federalreserve.gov statement URL monetary20260318",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-03-19",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-03-19",
+   "name": "Total Factor Productivity",
+   "time_et": "10:00",
+   "period": "Annual 2025",
+   "source": "bls.gov/schedule/2026/03_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-03-20",
+   "name": "Employer Costs for Employee Compensation",
+   "time_et": "10:00",
+   "period": "December 2025",
+   "source": "bls.gov/schedule/2026/03_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-03-24",
+   "name": "Productivity and Costs (R)",
+   "time_et": "08:30",
+   "period": "Fourth Quarter 2025",
+   "source": "bls.gov/schedule/2026/03_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-03-25",
+   "name": "U.S. Import and Export Price Indexes",
+   "time_et": "08:30",
+   "period": "February 2026",
+   "source": "bls.gov/schedule/2026/03_sched.htm",
+   "verified": true,
+   "impact": "high"
+  },
+  {
+   "date": "2026-03-26",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-03-31",
+   "name": "Job Openings and Labor Turnover Survey",
+   "time_et": "10:00",
+   "period": "February 2026",
+   "source": "bls.gov/schedule/2026/03_sched.htm",
+   "verified": true,
+   "impact": "high"
+  },
+  {
+   "date": "2026-04-02",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-04-03",
+   "name": "Employment Situation",
+   "time_et": "08:30",
+   "period": "March 2026",
+   "source": "bls.gov/schedule/2026/04_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-04-08",
+   "name": "State Employment and Unemployment (Monthly)",
+   "time_et": "10:00",
+   "period": "January 2026",
+   "source": "bls.gov/schedule/2026/04_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-04-09",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-04-10",
+   "name": "Consumer Price Index",
+   "time_et": "08:30",
+   "period": "March 2026",
+   "source": "bls.gov/schedule/2026/04_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-04-10",
+   "name": "Real Earnings",
+   "time_et": "08:30",
+   "period": "March 2026",
+   "source": "bls.gov/schedule/2026/04_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-04-14",
+   "name": "Producer Price Index",
+   "time_et": "08:30",
+   "period": "March 2026",
+   "source": "bls.gov/schedule/2026/04_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-04-15",
+   "name": "U.S. Import and Export Price Indexes",
+   "time_et": "08:30",
+   "period": "March 2026",
+   "source": "bls.gov/schedule/2026/04_sched.htm",
+   "verified": true,
+   "impact": "high"
+  },
+  {
+   "date": "2026-04-16",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-04-16",
+   "name": "Metropolitan Area Employment and Unemployment (Monthly)",
+   "time_et": "10:00",
+   "period": "January 2026",
+   "source": "bls.gov/schedule/2026/04_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-04-16",
+   "name": "Usual Weekly Earnings of Wage and Salary Workers",
+   "time_et": "10:00",
+   "period": "First Quarter 2026",
+   "source": "bls.gov/schedule/2026/04_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-04-22",
+   "name": "State Employment and Unemployment (Monthly)",
+   "time_et": "10:00",
+   "period": "February 2026",
+   "source": "bls.gov/schedule/2026/04_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-04-23",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-04-23",
+   "name": "Employment Characteristics of Families",
+   "time_et": "10:00",
+   "period": "Annual 2025",
+   "source": "bls.gov/schedule/2026/04_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-04-28",
+   "name": "Employment Situation of Veterans",
+   "time_et": "10:00",
+   "period": "Annual 2025",
+   "source": "bls.gov/schedule/2026/04_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-04-29",
+   "name": "Metropolitan Area Employment and Unemployment (Monthly)",
+   "time_et": "10:00",
+   "period": "February 2026",
+   "source": "bls.gov/schedule/2026/04_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-04-29",
+   "name": "Quarterly Data Series on Business Employment Dynamics",
+   "time_et": "10:00",
+   "period": "Third Quarter 2025",
+   "source": "bls.gov/schedule/2026/04_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-04-29",
+   "name": "FOMC Statement",
+   "time_et": "14:00",
+   "period": "rate decision, day 2 of the meeting",
+   "source": "federalreserve.gov statement URL monetary20260429",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-04-30",
+   "name": "Employment Cost Index",
+   "time_et": "08:30",
+   "period": "First Quarter 2026",
+   "source": "bls.gov/schedule/2026/04_sched.htm",
+   "verified": true,
+   "impact": "high"
+  },
+  {
+   "date": "2026-04-30",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-05-05",
+   "name": "Job Openings and Labor Turnover Survey",
+   "time_et": "10:00",
+   "period": "March 2026",
+   "source": "bls.gov/schedule/2026/05_sched.htm",
+   "verified": true,
+   "impact": "high"
+  },
+  {
+   "date": "2026-05-05",
+   "name": "Labor Market Experience, Education, Partner Status, and Health for those Born 1980-1984",
+   "time_et": "10:00",
+   "period": "Biennial",
+   "source": "bls.gov/schedule/2026/05_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-05-06",
+   "name": "State Employment and Unemployment (Monthly)",
+   "time_et": "10:00",
+   "period": "March 2026",
+   "source": "bls.gov/schedule/2026/05_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-05-07",
+   "name": "Productivity and Costs (P)",
+   "time_et": "08:30",
+   "period": "First Quarter 2026",
+   "source": "bls.gov/schedule/2026/05_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-05-07",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-05-08",
+   "name": "Employment Situation",
+   "time_et": "08:30",
+   "period": "April 2026",
+   "source": "bls.gov/schedule/2026/05_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-05-12",
+   "name": "Consumer Price Index",
+   "time_et": "08:30",
+   "period": "April 2026",
+   "source": "bls.gov/schedule/2026/05_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-05-12",
+   "name": "Real Earnings",
+   "time_et": "08:30",
+   "period": "April 2026",
+   "source": "bls.gov/schedule/2026/05_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-05-13",
+   "name": "Producer Price Index",
+   "time_et": "08:30",
+   "period": "April 2026",
+   "source": "bls.gov/schedule/2026/05_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-05-14",
+   "name": "U.S. Import and Export Price Indexes",
+   "time_et": "08:30",
+   "period": "April 2026",
+   "source": "bls.gov/schedule/2026/05_sched.htm",
+   "verified": true,
+   "impact": "high"
+  },
+  {
+   "date": "2026-05-14",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-05-15",
+   "name": "Occupational Employment and Wages",
+   "time_et": "10:00",
+   "period": "Annual 2025",
+   "source": "bls.gov/schedule/2026/05_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-05-19",
+   "name": "Labor Force Characteristics of Foreign-born Workers",
+   "time_et": "10:00",
+   "period": "Annual 2025",
+   "source": "bls.gov/schedule/2026/05_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-05-19",
+   "name": "Metropolitan Area Employment and Unemployment (Monthly)",
+   "time_et": "10:00",
+   "period": "March 2026",
+   "source": "bls.gov/schedule/2026/05_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-05-21",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-05-22",
+   "name": "Consumer Sentiment (Final)",
+   "time_et": "10:00",
+   "period": "",
+   "source": "sca.isr.umich.edu \u2014 10:00 New York time VERIFIED on the official site; date confirmed there but the full-year schedule is not published, so most months are MISSING",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-05-22",
+   "name": "State Employment and Unemployment (Monthly)",
+   "time_et": "10:00",
+   "period": "April 2026",
+   "source": "bls.gov/schedule/2026/05_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-05-28",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-05-28",
+   "name": "Productivity and Costs by Industry: Wholesale Trade and Retail Trade",
+   "time_et": "10:00",
+   "period": "Annual 2025",
+   "source": "bls.gov/schedule/2026/05_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-05-28",
+   "name": "Productivity by State",
+   "time_et": "10:00",
+   "period": "Annual 2025",
+   "source": "bls.gov/schedule/2026/05_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-06-02",
+   "name": "County Employment and Wages",
+   "time_et": "10:00",
+   "period": "Fourth Quarter 2025",
+   "source": "bls.gov/schedule/2026/06_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-06-02",
+   "name": "Job Openings and Labor Turnover Survey",
+   "time_et": "10:00",
+   "period": "April 2026",
+   "source": "bls.gov/schedule/2026/06_sched.htm",
+   "verified": true,
+   "impact": "high"
+  },
+  {
+   "date": "2026-06-03",
+   "name": "Metropolitan Area Employment and Unemployment (Monthly)",
+   "time_et": "10:00",
+   "period": "April 2026",
+   "source": "bls.gov/schedule/2026/06_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-06-04",
+   "name": "Productivity and Costs (R)",
+   "time_et": "08:30",
+   "period": "First Quarter 2026",
+   "source": "bls.gov/schedule/2026/06_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-06-04",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-06-05",
+   "name": "Employment Situation",
+   "time_et": "08:30",
+   "period": "May 2026",
+   "source": "bls.gov/schedule/2026/06_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-06-10",
+   "name": "Consumer Price Index",
+   "time_et": "08:30",
+   "period": "May 2026",
+   "source": "bls.gov/schedule/2026/06_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-06-10",
+   "name": "Real Earnings",
+   "time_et": "08:30",
+   "period": "May 2026",
+   "source": "bls.gov/schedule/2026/06_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-06-11",
+   "name": "Producer Price Index",
+   "time_et": "08:30",
+   "period": "May 2026",
+   "source": "bls.gov/schedule/2026/06_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-06-11",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-06-12",
+   "name": "Consumer Sentiment (Preliminary)",
+   "time_et": "10:00",
+   "period": "",
+   "source": "sca.isr.umich.edu \u2014 10:00 New York time VERIFIED on the official site; date confirmed there but the full-year schedule is not published, so most months are MISSING",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-06-12",
+   "name": "Employer Costs for Employee Compensation",
+   "time_et": "10:00",
+   "period": "March 2026",
+   "source": "bls.gov/schedule/2026/06_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-06-16",
+   "name": "U.S. Import and Export Price Indexes",
+   "time_et": "08:30",
+   "period": "May 2026",
+   "source": "bls.gov/schedule/2026/06_sched.htm",
+   "verified": true,
+   "impact": "high"
+  },
+  {
+   "date": "2026-06-17",
+   "name": "FOMC Statement",
+   "time_et": "14:00",
+   "period": "rate decision, day 2 of the meeting",
+   "source": "federalreserve.gov statement URL monetary20260617",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-06-18",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-06-23",
+   "name": "State Employment and Unemployment (Monthly)",
+   "time_et": "10:00",
+   "period": "May 2026",
+   "source": "bls.gov/schedule/2026/06_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-06-24",
+   "name": "Productivity and Costs by Industry: Manufacturing and Mining Industries",
+   "time_et": "10:00",
+   "period": "Annual 2025",
+   "source": "bls.gov/schedule/2026/06_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-06-24",
+   "name": "Total Factor Productivity for Detailed Industries",
+   "time_et": "10:00",
+   "period": "Annual 2023",
+   "source": "bls.gov/schedule/2026/06_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-06-25",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-06-25",
+   "name": "American Time Use Survey",
+   "time_et": "10:00",
+   "period": "Annual 2025",
+   "source": "bls.gov/schedule/2026/06_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-06-26",
+   "name": "Consumer Sentiment (Final)",
+   "time_et": "10:00",
+   "period": "",
+   "source": "sca.isr.umich.edu \u2014 10:00 New York time VERIFIED on the official site; date confirmed there but the full-year schedule is not published, so most months are MISSING",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-06-30",
+   "name": "Job Openings and Labor Turnover Survey",
+   "time_et": "10:00",
+   "period": "May 2026",
+   "source": "bls.gov/schedule/2026/06_sched.htm",
+   "verified": true,
+   "impact": "high"
+  },
+  {
+   "date": "2026-07-01",
+   "name": "Metropolitan Area Employment and Unemployment (Monthly)",
+   "time_et": "10:00",
+   "period": "May 2026",
+   "source": "bls.gov/schedule/2026/07_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-07-02",
+   "name": "Employment Situation",
+   "time_et": "08:30",
+   "period": "June 2026",
+   "source": "bls.gov/schedule/2026/07_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-07-02",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-07-09",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-07-14",
+   "name": "Consumer Price Index",
+   "time_et": "08:30",
+   "period": "June 2026",
+   "source": "bls.gov/schedule/2026/07_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-07-14",
+   "name": "Real Earnings",
+   "time_et": "08:30",
+   "period": "June 2026",
+   "source": "bls.gov/schedule/2026/07_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-07-15",
+   "name": "Producer Price Index",
+   "time_et": "08:30",
+   "period": "June 2026",
+   "source": "bls.gov/schedule/2026/07_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-07-16",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-07-17",
+   "name": "U.S. Import and Export Price Indexes",
+   "time_et": "08:30",
+   "period": "June 2026",
+   "source": "bls.gov/schedule/2026/07_sched.htm",
+   "verified": true,
+   "impact": "high"
+  },
+  {
+   "date": "2026-07-21",
+   "name": "State Employment and Unemployment (Monthly)",
+   "time_et": "10:00",
+   "period": "June 2026",
+   "source": "bls.gov/schedule/2026/07_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-07-21",
+   "name": "Usual Weekly Earnings of Wage and Salary Workers",
+   "time_et": "10:00",
+   "period": "Second Quarter 2026",
+   "source": "bls.gov/schedule/2026/07_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-07-22",
+   "name": "State Job Openings and Labor Turnover",
+   "time_et": "10:00",
+   "period": "Annual 2025",
+   "source": "bls.gov/schedule/2026/07_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-07-23",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-07-29",
+   "name": "Metropolitan Area Employment and Unemployment (Monthly)",
+   "time_et": "10:00",
+   "period": "June 2026",
+   "source": "bls.gov/schedule/2026/07_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-07-29",
+   "name": "Quarterly Data Series on Business Employment Dynamics",
+   "time_et": "10:00",
+   "period": "Fourth Quarter 2025",
+   "source": "bls.gov/schedule/2026/07_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-07-29",
+   "name": "FOMC Statement",
+   "time_et": "14:00",
+   "period": "rate decision, day 2 of the meeting",
+   "source": "federalreserve.gov/monetarypolicy/fomccalendars.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-07-30",
+   "name": "GDP",
+   "time_et": "08:30",
+   "period": "GDP (Advance Estimate), 2nd Quarter 2026",
+   "source": "bea.gov/news/schedule",
+   "verified": true,
+   "impact": "high"
+  },
+  {
+   "date": "2026-07-30",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-07-31",
+   "name": "Employment Cost Index",
+   "time_et": "08:30",
+   "period": "Second Quarter 2026",
+   "source": "bls.gov/schedule/2026/07_sched.htm",
+   "verified": true,
+   "impact": "high"
+  },
+  {
+   "date": "2026-07-31",
+   "name": "Consumer Sentiment (Final)",
+   "time_et": "10:00",
+   "period": "",
+   "source": "sca.isr.umich.edu \u2014 10:00 New York time VERIFIED on the official site; date confirmed there but the full-year schedule is not published, so most months are MISSING",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-08-04",
+   "name": "Job Openings and Labor Turnover Survey",
+   "time_et": "10:00",
+   "period": "June 2026",
+   "source": "bls.gov/schedule/2026/08_sched.htm",
+   "verified": true,
+   "impact": "high"
+  },
+  {
+   "date": "2026-08-06",
+   "name": "Productivity and Costs (P)",
+   "time_et": "08:30",
+   "period": "Second Quarter 2026",
+   "source": "bls.gov/schedule/2026/08_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-08-06",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-08-07",
+   "name": "Employment Situation",
+   "time_et": "08:30",
+   "period": "July 2026",
+   "source": "bls.gov/schedule/2026/08_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-08-12",
+   "name": "Consumer Price Index",
+   "time_et": "08:30",
+   "period": "July 2026",
+   "source": "bls.gov/schedule/2026/08_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-08-12",
+   "name": "Real Earnings",
+   "time_et": "08:30",
+   "period": "July 2026",
+   "source": "bls.gov/schedule/2026/08_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-08-13",
+   "name": "Producer Price Index",
+   "time_et": "08:30",
+   "period": "July 2026",
+   "source": "bls.gov/schedule/2026/08_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-08-13",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-08-18",
+   "name": "U.S. Import and Export Price Indexes",
+   "time_et": "08:30",
+   "period": "July 2026",
+   "source": "bls.gov/schedule/2026/08_sched.htm",
+   "verified": true,
+   "impact": "high"
+  },
+  {
+   "date": "2026-08-20",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-08-20",
+   "name": "Summer Youth Labor Force",
+   "time_et": "10:00",
+   "period": "Annual 2026",
+   "source": "bls.gov/schedule/2026/08_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-08-21",
+   "name": "State Employment and Unemployment (Monthly)",
+   "time_et": "10:00",
+   "period": "July 2026",
+   "source": "bls.gov/schedule/2026/08_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-08-26",
+   "name": "Personal Income and Outlays",
+   "time_et": "08:30",
+   "period": "Personal Income and Outlays, July 2026",
+   "source": "bea.gov/news/schedule",
+   "verified": true,
+   "impact": "high"
+  },
+  {
+   "date": "2026-08-26",
+   "name": "Access to and Use of Leave",
+   "time_et": "10:00",
+   "period": "2024-2025",
+   "source": "bls.gov/schedule/2026/08_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-08-27",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-08-27",
+   "name": "Employment Projections and Occupational Outlook Handbook",
+   "time_et": "10:00",
+   "period": "2025-2035",
+   "source": "bls.gov/schedule/2026/08_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-08-27",
+   "name": "Worker Displacement",
+   "time_et": "10:00",
+   "period": "2023-2025",
+   "source": "bls.gov/schedule/2026/08_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-08-28",
+   "name": "County Employment and Wages",
+   "time_et": "10:00",
+   "period": "First Quarter 2026",
+   "source": "bls.gov/schedule/2026/08_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-08-28",
+   "name": "Current Employment Statistics Preliminary Benchmark (National)",
+   "time_et": "10:00",
+   "period": "March 2026",
+   "source": "bls.gov/schedule/2026/08_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-08-28",
+   "name": "Current Employment Statistics Preliminary Benchmark (State and Area)",
+   "time_et": "10:00",
+   "period": "March 2026",
+   "source": "bls.gov/schedule/2026/08_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-09-01",
+   "name": "Job Openings and Labor Turnover Survey",
+   "time_et": "10:00",
+   "period": "July 2026",
+   "source": "bls.gov/schedule/2026/09_sched.htm",
+   "verified": true,
+   "impact": "high"
+  },
+  {
+   "date": "2026-09-02",
+   "name": "Metropolitan Area Employment and Unemployment (Monthly)",
+   "time_et": "10:00",
+   "period": "July 2026",
+   "source": "bls.gov/schedule/2026/09_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-09-03",
+   "name": "Productivity and Costs (R)",
+   "time_et": "08:30",
+   "period": "Second Quarter 2026",
+   "source": "bls.gov/schedule/2026/09_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-09-03",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-09-04",
+   "name": "Employment Situation",
+   "time_et": "08:30",
+   "period": "August 2026",
+   "source": "bls.gov/schedule/2026/09_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-09-09",
+   "name": "Employer Costs for Employee Compensation",
+   "time_et": "10:00",
+   "period": "June 2026",
+   "source": "bls.gov/schedule/2026/09_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-09-10",
+   "name": "Producer Price Index",
+   "time_et": "08:30",
+   "period": "August 2026",
+   "source": "bls.gov/schedule/2026/09_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-09-10",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-09-11",
+   "name": "Consumer Price Index",
+   "time_et": "08:30",
+   "period": "August 2026",
+   "source": "bls.gov/schedule/2026/09_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-09-11",
+   "name": "Real Earnings",
+   "time_et": "08:30",
+   "period": "August 2026",
+   "source": "bls.gov/schedule/2026/09_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-09-16",
+   "name": "U.S. Import and Export Price Indexes",
+   "time_et": "08:30",
+   "period": "August 2026",
+   "source": "bls.gov/schedule/2026/09_sched.htm",
+   "verified": true,
+   "impact": "high"
+  },
+  {
+   "date": "2026-09-16",
+   "name": "FOMC Statement",
+   "time_et": "14:00",
+   "period": "rate decision, day 2 of the meeting",
+   "source": "federalreserve.gov/monetarypolicy/fomccalendars.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-09-17",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-09-18",
+   "name": "State Employment and Unemployment (Monthly)",
+   "time_et": "10:00",
+   "period": "August 2026",
+   "source": "bls.gov/schedule/2026/09_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-09-24",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-09-24",
+   "name": "Employee Tenure",
+   "time_et": "10:00",
+   "period": "Biennial 2026",
+   "source": "bls.gov/schedule/2026/09_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-09-24",
+   "name": "Job Flexibilities and Work Schedules",
+   "time_et": "10:00",
+   "period": "2024-2025",
+   "source": "bls.gov/schedule/2026/09_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-09-25",
+   "name": "Employee Benefits in the United States",
+   "time_et": "10:00",
+   "period": "March 2026",
+   "source": "bls.gov/schedule/2026/09_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-09-29",
+   "name": "Job Openings and Labor Turnover Survey",
+   "time_et": "10:00",
+   "period": "August 2026",
+   "source": "bls.gov/schedule/2026/09_sched.htm",
+   "verified": true,
+   "impact": "high"
+  },
+  {
+   "date": "2026-09-30",
+   "name": "Personal Income and Outlays",
+   "time_et": "08:30",
+   "period": "Personal Income and Outlays, August 2026",
+   "source": "bea.gov/news/schedule",
+   "verified": true,
+   "impact": "high"
+  },
+  {
+   "date": "2026-09-30",
+   "name": "Metropolitan Area Employment and Unemployment (Monthly)",
+   "time_et": "10:00",
+   "period": "August 2026",
+   "source": "bls.gov/schedule/2026/09_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-10-01",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-10-02",
+   "name": "Employment Situation",
+   "time_et": "08:30",
+   "period": "September 2026",
+   "source": "bls.gov/schedule/2026/10_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-10-08",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-10-14",
+   "name": "Consumer Price Index",
+   "time_et": "08:30",
+   "period": "September 2026",
+   "source": "bls.gov/schedule/2026/10_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-10-14",
+   "name": "Real Earnings",
+   "time_et": "08:30",
+   "period": "September 2026",
+   "source": "bls.gov/schedule/2026/10_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-10-15",
+   "name": "Producer Price Index",
+   "time_et": "08:30",
+   "period": "September 2026",
+   "source": "bls.gov/schedule/2026/10_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-10-15",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-10-16",
+   "name": "U.S. Import and Export Price Indexes",
+   "time_et": "08:30",
+   "period": "September 2026",
+   "source": "bls.gov/schedule/2026/10_sched.htm",
+   "verified": true,
+   "impact": "high"
+  },
+  {
+   "date": "2026-10-20",
+   "name": "State Employment and Unemployment (Monthly)",
+   "time_et": "10:00",
+   "period": "September 2026",
+   "source": "bls.gov/schedule/2026/10_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-10-21",
+   "name": "Usual Weekly Earnings of Wage and Salary Workers",
+   "time_et": "10:00",
+   "period": "Third Quarter 2026",
+   "source": "bls.gov/schedule/2026/10_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-10-22",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-10-28",
+   "name": "Metropolitan Area Employment and Unemployment (Monthly)",
+   "time_et": "10:00",
+   "period": "September 2026",
+   "source": "bls.gov/schedule/2026/10_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-10-28",
+   "name": "Quarterly Data Series on Business Employment Dynamics",
+   "time_et": "10:00",
+   "period": "First Quarter 2026",
+   "source": "bls.gov/schedule/2026/10_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-10-28",
+   "name": "FOMC Statement",
+   "time_et": "14:00",
+   "period": "rate decision, day 2 of the meeting",
+   "source": "federalreserve.gov/monetarypolicy/fomccalendars.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-10-29",
+   "name": "Personal Income and Outlays",
+   "time_et": "08:30",
+   "period": "Personal Income and Outlays, September 2026",
+   "source": "bea.gov/news/schedule",
+   "verified": true,
+   "impact": "high"
+  },
+  {
+   "date": "2026-10-29",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-10-29",
+   "name": "Consumer Expenditures",
+   "time_et": "10:00",
+   "period": "Annual 2025",
+   "source": "bls.gov/schedule/2026/10_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-10-30",
+   "name": "Employment Cost Index",
+   "time_et": "08:30",
+   "period": "Third Quarter 2026",
+   "source": "bls.gov/schedule/2026/10_sched.htm",
+   "verified": true,
+   "impact": "high"
+  },
+  {
+   "date": "2026-11-03",
+   "name": "Job Openings and Labor Turnover Survey",
+   "time_et": "10:00",
+   "period": "September 2026",
+   "source": "bls.gov/schedule/2026/11_sched.htm",
+   "verified": true,
+   "impact": "high"
+  },
+  {
+   "date": "2026-11-05",
+   "name": "Productivity and Costs (P)",
+   "time_et": "08:30",
+   "period": "Third Quarter 2026",
+   "source": "bls.gov/schedule/2026/11_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-11-05",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-11-06",
+   "name": "Employment Situation",
+   "time_et": "08:30",
+   "period": "October 2026",
+   "source": "bls.gov/schedule/2026/11_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-11-10",
+   "name": "Consumer Price Index",
+   "time_et": "08:30",
+   "period": "October 2026",
+   "source": "bls.gov/schedule/2026/11_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-11-10",
+   "name": "Real Earnings",
+   "time_et": "08:30",
+   "period": "October 2026",
+   "source": "bls.gov/schedule/2026/11_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-11-12",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-11-13",
+   "name": "Producer Price Index",
+   "time_et": "08:30",
+   "period": "October 2026",
+   "source": "bls.gov/schedule/2026/11_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-11-17",
+   "name": "U.S. Import and Export Price Indexes",
+   "time_et": "08:30",
+   "period": "October 2026",
+   "source": "bls.gov/schedule/2026/11_sched.htm",
+   "verified": true,
+   "impact": "high"
+  },
+  {
+   "date": "2026-11-18",
+   "name": "Employer-Reported Workplace Injuries and Illnesses (Annual)",
+   "time_et": "10:00",
+   "period": "2025",
+   "source": "bls.gov/schedule/2026/11_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-11-19",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-11-20",
+   "name": "State Employment and Unemployment (Monthly)",
+   "time_et": "10:00",
+   "period": "October 2026",
+   "source": "bls.gov/schedule/2026/11_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-11-25",
+   "name": "Personal Income and Outlays",
+   "time_et": "08:30",
+   "period": "Personal Income and Outlays, October 2026",
+   "source": "bea.gov/news/schedule",
+   "verified": true,
+   "impact": "high"
+  },
+  {
+   "date": "2026-12-01",
+   "name": "Job Openings and Labor Turnover Survey",
+   "time_et": "10:00",
+   "period": "October 2026",
+   "source": "bls.gov/schedule/2026/12_sched.htm",
+   "verified": true,
+   "impact": "high"
+  },
+  {
+   "date": "2026-12-02",
+   "name": "County Employment and Wages",
+   "time_et": "10:00",
+   "period": "Second Quarter 2026",
+   "source": "bls.gov/schedule/2026/12_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-12-02",
+   "name": "Metropolitan Area Employment and Unemployment (Monthly)",
+   "time_et": "10:00",
+   "period": "October 2026",
+   "source": "bls.gov/schedule/2026/12_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-12-03",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-12-04",
+   "name": "Employment Situation",
+   "time_et": "08:30",
+   "period": "November 2026",
+   "source": "bls.gov/schedule/2026/12_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-12-08",
+   "name": "Productivity and Costs (R)",
+   "time_et": "08:30",
+   "period": "Third Quarter 2026",
+   "source": "bls.gov/schedule/2026/12_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-12-09",
+   "name": "FOMC Statement",
+   "time_et": "14:00",
+   "period": "rate decision, day 2 of the meeting",
+   "source": "federalreserve.gov/monetarypolicy/fomccalendars.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-12-10",
+   "name": "Consumer Price Index",
+   "time_et": "08:30",
+   "period": "November 2026",
+   "source": "bls.gov/schedule/2026/12_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-12-10",
+   "name": "Real Earnings",
+   "time_et": "08:30",
+   "period": "November 2026",
+   "source": "bls.gov/schedule/2026/12_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-12-10",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-12-15",
+   "name": "Producer Price Index",
+   "time_et": "08:30",
+   "period": "November 2026",
+   "source": "bls.gov/schedule/2026/12_sched.htm",
+   "verified": true,
+   "impact": "day_killer"
+  },
+  {
+   "date": "2026-12-16",
+   "name": "Census of Fatal Occupational Injuries",
+   "time_et": "10:00",
+   "period": "Annual 2025",
+   "source": "bls.gov/schedule/2026/12_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-12-16",
+   "name": "Employer Costs for Employee Compensation",
+   "time_et": "10:00",
+   "period": "September 2026",
+   "source": "bls.gov/schedule/2026/12_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-12-17",
+   "name": "U.S. Import and Export Price Indexes",
+   "time_et": "08:30",
+   "period": "November 2026",
+   "source": "bls.gov/schedule/2026/12_sched.htm",
+   "verified": true,
+   "impact": "high"
+  },
+  {
+   "date": "2026-12-17",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-12-18",
+   "name": "State Employment and Unemployment (Monthly)",
+   "time_et": "10:00",
+   "period": "November 2026",
+   "source": "bls.gov/schedule/2026/12_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-12-18",
+   "name": "Work Experience of the Population (Annual)",
+   "time_et": "10:00",
+   "period": "2025",
+   "source": "bls.gov/schedule/2026/12_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-12-23",
+   "name": "Personal Income and Outlays",
+   "time_et": "08:30",
+   "period": "Personal Income and Outlays, November 2026",
+   "source": "bea.gov/news/schedule",
+   "verified": true,
+   "impact": "high"
+  },
+  {
+   "date": "2026-12-24",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  },
+  {
+   "date": "2026-12-30",
+   "name": "Metropolitan Area Employment and Unemployment (Monthly)",
+   "time_et": "10:00",
+   "period": "November 2026",
+   "source": "bls.gov/schedule/2026/12_sched.htm",
+   "verified": true,
+   "impact": "low"
+  },
+  {
+   "date": "2026-12-31",
+   "name": "Unemployment Insurance Weekly Claims",
+   "time_et": "08:30",
+   "period": "week ending prior Saturday",
+   "source": "DOL published rule: Thursdays 08:30 New York (oui.doleta.gov/unemploy/claims.asp) \u2014 rule verified, individual dates NOT verified per-date",
+   "verified": false,
+   "impact": "high"
+  }
+ ]
+}

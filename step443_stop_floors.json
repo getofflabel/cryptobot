@@ -1,0 +1,92 @@
+{
+  "BTC/USD": {
+    "tightest_stop_pct": 0.0034711652317478527,
+    "median_stop_pct": 0.005887653545123439,
+    "widest_stop_pct": 0.03289933464458778,
+    "setups_measured": 76
+  },
+  "ETH/USD": {
+    "tightest_stop_pct": 0.0039748652172341865,
+    "median_stop_pct": 0.007990864551488357,
+    "widest_stop_pct": 0.032350566784789314,
+    "setups_measured": 69
+  },
+  "SOL/USD": {
+    "tightest_stop_pct": 0.006931894847278672,
+    "median_stop_pct": 0.012745408289828418,
+    "widest_stop_pct": 0.06688201366356533,
+    "setups_measured": 68
+  },
+  "XRP/USD": {
+    "tightest_stop_pct": 0.006227278973042094,
+    "median_stop_pct": 0.011968799526360388,
+    "widest_stop_pct": 0.03551489314895306,
+    "setups_measured": 49
+  },
+  "DOGE/USD": {
+    "tightest_stop_pct": 0.006988561700018214,
+    "median_stop_pct": 0.011333762040535236,
+    "widest_stop_pct": 0.045484038755245905,
+    "setups_measured": 61
+  },
+  "LINK/USD": {
+    "tightest_stop_pct": 0.005260759190654619,
+    "median_stop_pct": 0.009566333463569176,
+    "widest_stop_pct": 0.08436870931140457,
+    "setups_measured": 59
+  },
+  "AVAX/USD": {
+    "tightest_stop_pct": 0.009704187878379324,
+    "median_stop_pct": 0.015455539053844758,
+    "widest_stop_pct": 0.10134939724354848,
+    "setups_measured": 68
+  },
+  "LTC/USD": {
+    "tightest_stop_pct": 0.009441539517082514,
+    "median_stop_pct": 0.014981739432528974,
+    "widest_stop_pct": 0.062278696377733464,
+    "setups_measured": 56
+  },
+  "ADA/USD": {
+    "tightest_stop_pct": 0.008052456181384175,
+    "median_stop_pct": 0.014446082442612578,
+    "widest_stop_pct": 0.1389257350358425,
+    "setups_measured": 71
+  },
+  "DOT/USD": {
+    "tightest_stop_pct": 0.005776190510403474,
+    "median_stop_pct": 0.011499975386211262,
+    "widest_stop_pct": 0.20916345506880907,
+    "setups_measured": 63
+  },
+  "SPY": {
+    "tightest_stop_pct": 0.0020209406268130977,
+    "median_stop_pct": 0.0031159414045668107,
+    "widest_stop_pct": 0.009039785740672277,
+    "setups_measured": 9
+  },
+  "QQQ": {
+    "tightest_stop_pct": 0.003133688506326427,
+    "median_stop_pct": 0.00756511987094764,
+    "widest_stop_pct": 0.01366239960891113,
+    "setups_measured": 13
+  },
+  "GLD": {
+    "tightest_stop_pct": 0.0024494528973923006,
+    "median_stop_pct": 0.0054936039161765145,
+    "widest_stop_pct": 0.010094048186596639,
+    "setups_measured": 5
+  },
+  "GBP/USD": {
+    "tightest_stop_pct": 0.0006079050912649655,
+    "median_stop_pct": 0.0013522390810157773,
+    "widest_stop_pct": 0.003077221981359156,
+    "setups_measured": 5
+  },
+  "GBP/JPY": {
+    "tightest_stop_pct": 0.0006018938663693836,
+    "median_stop_pct": 0.0009425162224683933,
+    "widest_stop_pct": 0.0024258782823934964,
+    "setups_measured": 9
+  }
+}
