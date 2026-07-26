@@ -538,10 +538,38 @@ def entry_message(sigs, account: float, usd_per_quote=None,
             return float(usd_per_quote.get(sym, 1.0))
         return 1.0 if usd_per_quote is None else float(usd_per_quote)
 
-    head = f"{spec['label']} — take this one by hand"
-    if len(sigs) > 1:
-        head = (f"{spec['label']} — {len(sigs)} setups at once, "
-                f"take them by hand")
+    # THE HEADER MUST SAY WHAT ACTUALLY HAPPENED. 2026-07-26.
+    #
+    # This said "take this one by hand" on EVERY message, left over from the
+    # hours when the plan was Wallace executing from alerts. The bot places
+    # its own orders now. On 26 July it opened a DOT short, could not put the
+    # stop on because price had already run past where the stop belonged, so
+    # it correctly closed the position one second later — and then sent a
+    # message headed "take this one by hand". He read that as being told to
+    # go and place a trade the bot had just refused on safety grounds.
+    #
+    # A message that tells him to do something the bot deliberately would not
+    # do is worse than no message. The header is now derived from the order's
+    # real outcome, and only a market HE executes may ever say "by hand".
+    placed = [s.get("placed") or {} for s in sigs]
+    states = {p.get("status") for p in placed}
+    by_hand = any(p.get("human_executes") for p in placed)
+
+    n = len(sigs)
+    many = f"{n} setups at once — " if n > 1 else ""
+
+    if by_hand:
+        what = "take them by hand" if n > 1 else "take this one by hand"
+    elif states and states <= {"unwound"}:
+        what = "OPENED AND CLOSED AGAIN. NOTHING FOR YOU TO DO."
+    elif states and states <= {"not_sent", "rejected", "cannot_send"}:
+        what = "NOT TAKEN. NOTHING FOR YOU TO DO."
+    elif "filled" in states:
+        what = "the bot took them" if n > 1 else "the bot took this one"
+    else:
+        what = "setups found" if n > 1 else "setup found"
+
+    head = f"{spec['label']} — {many}{what}"
 
     body = [head, "=" * 46, ""]
     for i, sig in enumerate(sigs):

@@ -331,7 +331,14 @@ def test_two_symbols_firing_together_are_one_message():
     assert len(d.pushed) == 1, f"his phone buzzed {len(d.pushed)} times for one idea"
     body = d.pushed[0][1]
     assert "BTC/USD" in body and "ETH/USD" in body, "a symbol was dropped"
-    assert "2 setups at once" in body
+    # The header says how many, in whatever wording matches what the bot
+    # actually DID with them. It used to hardcode "take them by hand", which
+    # was wrong once the bot started placing its own orders — see the header
+    # block in tjr_alerts.entry_message.
+    assert "2 setups at once" in body, (
+        f"the message does not say there were two:\n{body[:400]}")
+    assert "by hand" not in body.lower(), (
+        "the bot handles these itself; nothing may tell him to place them")
 
 
 def test_the_same_signal_is_never_sent_twice():
@@ -521,3 +528,27 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+def test_a_refused_trade_never_tells_him_to_place_it_himself():
+    """26 July: the bot opened a DOT short, could not put the stop on because
+    price had already run past where the stop belonged, correctly closed the
+    position one second later — and then messaged him 'take this one by
+    hand'. He read that as being told to go and place a trade the bot had
+    just refused on safety grounds.
+
+    A message that tells him to do something the bot deliberately would NOT
+    do is worse than no message at all."""
+    import tjr_alerts
+
+    for status in ("unwound", "not_sent", "rejected", "cannot_send"):
+        s = sig("crypto", "DOT/USD", -1, 0.824, 0.8405, (0.81, 0.80), 0.0022)
+        s["placed"] = {"status": status,
+                       "reason": "the stop could not be placed"}
+        body = tjr_alerts.entry_message([s], account=2037.0)
+        text = body if isinstance(body, str) else body[1]
+        head = text.splitlines()[0].lower()
+        assert "by hand" not in head, (
+            f"status={status} still tells him to place it himself: {head!r}")
+        assert "nothing for you to do" in head, (
+            f"status={status} does not tell him he is off the hook: {head!r}")
