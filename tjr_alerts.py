@@ -571,10 +571,17 @@ def trade_block(sig: dict, account: float, usd_per_quote: float = 1.0) -> list:
         if units > 0 and i < len(fracs):
             made = units * fracs[i] * d * (usd_per_quote or 1.0)
             running += made
-            share = f"{100.0 * fracs[i]:.0f}%"
+            # NEVER a bare percentage — this one is a share OF THE POSITION,
+            # not a move in the price and not a share of the account. Said
+            # in words where words are clearer than a number.
+            pct = 100.0 * fracs[i]
+            share = {50.0: "half the position",
+                     25.0: "a quarter of the position",
+                     100.0: "the whole position"}.get(
+                         round(pct, 0), f"{pct:.0f}% OF THE POSITION")
             lines.append(
-                f"               if it reaches here you take {share} off for "
-                f"${made:,.2f}"
+                f"               if it reaches here you take {share} off "
+                f"for ${made:,.2f}"
                 + (f", ${running:,.2f} banked in total" if i else ""))
     if not tgts:
         lines.append("Targets        the chart offers nowhere ahead that he "
