@@ -2389,3 +2389,135 @@ from the index onto crypto: it holds on eight more instruments.
 
 **None.** No cell qualified, so the final 20% of the crypto 1-minute window
 is still sealed for this family.
+
+## ROUND 474 — the 1-minute trigger transfers to the index. Round 370 is overturned, and one cell survived the sealed slice. (2026-07-27)
+
+**What was tested.** Queue item 1, exactly as written: replay round 450's arm A
+(5-minute trigger, round 370's construction) against arm B (his 1-minute
+trigger) on SPY and QQQ, nothing re-tuned. Round 370 rejected this shape
+**72 cells out of 72** on 5-minute SPY and closed by naming the reason its
+rejection might be wrong: his confirmation is on the 5-minute and his ENTRY
+TRIGGER is on the 1-MINUTE (step431 §0, step436 §4), and the project held no
+1-minute index bars. We now hold `data_alpaca_SPY_1m.parquet` and
+`data_alpaca_QQQ_1m.parquet`, 2016-2026. No purchase, no new data.
+
+Files: `step474_tjr_index_1m.py`, `step474b_significance.py`.
+Window 2016-01-01 → 2026-07-24, regular hours only, 205k SPY 5-minute and
+1.03M SPY 1-minute session bars. **60/20/20 — choosing ends 2022-05-03,
+middle ends 2024-06-13.**
+
+**Forced by the instrument, all fixed before the run and never swept:**
+regular hours only (market orders are rejected outside them, R360); fill no
+earlier than 09:50 New York (step436 §4), applied to the fill bar and
+verified — zero fills before it; **flat by the close**, every position and
+every pending sweep, verified — every exit lands inside its own session;
+structure read within the session, so the two-candle swing never pairs a
+15:55 bar with the next 09:30 bar. Cost is the index cost, 0.04% of notional
+round trip (R370's headline), 0.02% also carried. Everything else — the
+two-candle swing, the level set, the sweep-then-reaction sequence, the body
+close, the structural stop, the 2-hour pending expiry — is R450's, unchanged.
+
+### The verdict: THE TRIGGER RESOLUTION IS A GENERAL FACT ABOUT HIS METHOD
+
+Choosing slice, gross, one row per distinct entry, **clustered by trading
+day** because eight levels firing inside one session are not eight
+independent draws:
+
+| construction | entries | days | mean gross | t naive | **t by day** | median stop | lev @1% |
+|---|---|---|---|---|---|---|---|
+| 5-minute trigger (R370's) | 12,795 | 1,575 | +0.0055% | 1.13 | 1.81 | 0.283% | 3.5x |
+| **1-MINUTE trigger (his)** | 10,180 | 1,555 | **+0.0654%** | 14.65 | **9.82** | **0.084%** | 12.0x |
+| control, random entry, same machinery | 6,013 | 1,595 | +0.0146% | 2.78 | 2.76 | 0.111% | 9.0x |
+
+Paired on the same trading days:
+- 1-minute minus 5-minute: **+0.0626% of price per day, t = 7.88** over 1,554 shared days
+- 1-minute minus random entry: **+0.0608% of price per day, t = 7.34** over 1,555 shared days
+
+Both assets independently, choosing slice gross: **SPY +0.0599% against
++0.0089%; QQQ +0.0707% against +0.0023%.** The difference is +0.0511% on SPY
+and +0.0685% on QQQ.
+
+**The cleanest form of the result: 23 of the 32 one-minute cells qualify —
+positive net on the choosing AND middle slice AND on both assets — and 0 of
+the 32 five-minute cells do.** Luck alone would hand you about 4 per arm.
+Every survivor in this round is an arm-B cell.
+
+**And it is not one regime.** Gross mean of the 1-minute arm, by year:
+2016 +0.0507%, 2017 +0.0316%, 2018 +0.0779%, 2019 +0.0580%, 2020 +0.0981%,
+2021 +0.0574% (choosing), 2022 +0.0856%, 2023 +0.0649% (middle). Eight of
+eight opened years positive. The five-minute arm over the same years runs
+−0.0427% to +0.0237% and never separates from zero.
+
+**Round 370's 72-of-72 rejection is formally overturned.** It was made with
+the wrong trigger, it said so at the time, and the trigger was the whole
+difference. R450 found the same flip on crypto (BTC, ETH, SOL); this round
+adds SPY and QQQ. Five instruments, two asset classes, same sign — the
+standing transfer rule is satisfied by some distance.
+
+### THE CATCH, AND IT IS THE ONE THAT DECIDES MONEY
+
+The desk sizes by risk: size = risk / stop distance, so the money follows the
+RISK MULTIPLE, not the price move. Pooled across the 1-minute arm on the
+choosing slice: **gross R +0.584, net R −0.238.** At a 0.084% median stop, a
+0.04% round trip is **0.48 of the stop distance**. This is R370's arithmetic
+reappearing: the tighter the stop, the larger the transaction becomes
+relative to the thing it protects. The signal is real in price terms and the
+cheapest-stop cells hand all of it to the cost. Only the wider-stop cells
+clear — which is why the cell that survived below has a 0.150% stop, not a
+0.084% one. Charged for honesty, used to decide nothing (owner rule).
+
+### THE SEALED SLICE — ONE LOOK TAKEN, AND IT SURVIVED
+
+23 cells qualified. The rule fixed before the run allows ONE test look on the
+single best cell by choosing-slice net. That cell is
+**`prev day low → 1m BOS, hold to close`** (choosing net +0.0582%, middle net
++0.0032%, stop 0.150%, 6.7x at 1% risked). Sealed slice opened once:
+
+| | trades | days | gross | net | gross R | net R |
+|---|---|---|---|---|---|---|
+| **sealed 2024-06 → 2026-07** | 371 | 155 | **+0.0726%** (t by day 2.41) | **+0.0326%** | **+0.618** | **+0.132** |
+| SPY | 196 | | +0.0897% | +0.0497% | | |
+| QQQ | 175 | | +0.0535% | +0.0135% | | |
+
+**Positive on all three windows and on both assets. Net R positive after
+costs. This SURVIVES the full gauntlet — AWAITING DEPLOYMENT REVIEW.**
+It is roughly 103 trades a year per asset, exits 67% by stop / 33% at the
+close, wins about a third of the time.
+
+### Honest limits
+
+- **The tightest stops sit at the scale of the spread.** The tested cell's
+  5th-percentile stop is 0.0252% of price, about ten cents on SPY. Fills are
+  modelled as the bar open with a flat 0.04% round trip; that tail is not
+  something this harness can price honestly, and the pooled arm's 0.084%
+  median stop is thinner still. A deployment review should look at the
+  distribution, not the median.
+- **Net R is negative for the arm as a whole.** One cell surviving is not the
+  family surviving. The other 22 qualifiers are unverified out of sample and
+  must stay that way — the family's sealed window is now spent.
+- **QQQ's sealed net is +0.0135%**, a third of SPY's. Both positive, but the
+  second asset is thin, not a strong independent confirmation.
+- 09:50, flat-by-close, the 2-hour expiry and within-session structure are
+  ours. Not swept, and they should not be swept later to improve this.
+
+### The leverage census on the index
+
+Distance from price to the structure that would prove a long wrong, as a
+price move (not a change in the position's value), regular hours:
+
+| symbol | 5m swing | 1m swing | ratio | lev @1% risked, 1m |
+|---|---|---|---|---|
+| SPY | 0.104% | **0.046%** | 0.44 | 21.6x |
+| QQQ | 0.143% | 0.063% | 0.44 | 15.8x |
+
+R370 measured the SPY 5-minute two-candle swing at 0.092%; 0.104% here on a
+longer window and a session-scoped definition. **The 1-minute-to-5-minute
+ratio is 0.44 on both index instruments and was 0.46 on BTC** — the same
+number on three instruments in two asset classes. US law caps leverage at 10x
+regardless of what the structure permits.
+
+### Looks consumed
+
+**ONE.** The final 20% of the SPY/QQQ 1-minute sweep-to-break-of-structure
+family is now spent and must never be re-opened for this family. The crypto
+1-minute family's sealed window (R450) is still untouched.

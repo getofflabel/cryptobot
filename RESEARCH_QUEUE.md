@@ -21,25 +21,16 @@ Rules (non-negotiable, they are why anything here can be trusted):
 
 ## Queue (top = next)
 
-1. **THE 1-MINUTE TRIGGER ON THE INDEX — does R450's finding transfer?**
-   R450 found that moving his entry trigger from the 5-minute bar to the
-   1-minute bar (the resolution he actually specifies) flips the gross sign
-   on crypto: −0.0352% to +0.0551% of price per trade, t = 2.76 for the
-   difference, t = 3.05 against a random control. Round 370 rejected the
-   same shape 72/72 on SPY **with the 5-minute trigger**, and named this
-   exact limit as the reason its rejection might be wrong.
-   **We already hold `data_alpaca_SPY_1m.parquet` and
-   `data_alpaca_QQQ_1m.parquet`. No purchase needed.**
-   Config: replay `step450_tjr_crypto_1m.py` arm A vs arm B unchanged on
-   SPY and QQQ, regular hours only, entry no earlier than 09:50 (step436
-   §4), flat by the close (R370 part 1: a 0.10% stop is gapped through on
-   41.5% of nights). Same levels, same 2-hour pending expiry, same
-   two-candle swing. **Nothing re-tuned. Report the difference between the
-   arms, its t, and the random control — that is the whole question.**
-   If the sign flips on the index too, the trigger resolution is a general
-   fact about his method and round 370's verdict is formally overturned.
-   If it does not, R450's result is crypto-specific and must be said so.
-   Train/val only unless it qualifies.
+0. **⚠️ AWAITING DEPLOYMENT REVIEW — NOT A RESEARCH ITEM. Wallace decides
+   this in an interactive session; the nightly researcher must not touch it.**
+   R474's `prev day low → 1m BOS, hold to close` on SPY + QQQ passed all
+   three windows: choosing net +0.0582%, middle +0.0032%, **sealed +0.0326%
+   of price per trade (net R +0.132), positive on both assets.** ~103 trades
+   a year per asset, stop 0.150% of price = 6.7x at 1% risked, flat by the
+   close, fill no earlier than 09:50. Read the "honest limits" paragraph in
+   RESEARCH_LOG.md R474 before sizing anything: the arm as a whole has
+   NEGATIVE net R, QQQ's sealed net is a third of SPY's, and the tight tail
+   of the stop distribution sits at the scale of the spread.
 
 2. **HIS CONFLUENCES, AS PARTITIONS OF THE POPULATION R450 ALREADY BUILT.**
    R450 tested his ENTRY sequence bare. step432/step436 §1 say the
@@ -96,10 +87,18 @@ use. They are recorded, not deleted, so nobody re-opens them by accident.
   donchian all FAIL train; 15m autopsy closed; weekend liquidity closed).
 - GARCH docket #1 percentile gate: FAIL, belt retained (R31). Docket #2
   storm-veto: FAIL and harmful (R194).
-- **Sweep -> BOS with a 5-MINUTE trigger: dead twice.** 72/72 negative on
-  SPY (R370), and on crypto its gross mean is −0.0352% with t = −1.40,
-  worse than a random control (R450). Do not test this construction again
-  on any instrument. The 1-minute trigger is a different object.
+- **Sweep -> BOS with a 5-MINUTE trigger: dead three times.** 72/72 negative
+  on SPY (R370); on crypto its gross mean is −0.0352%, t = −1.40, worse than
+  a random control (R450); and on SPY + QQQ 2016-2026 it is +0.0055% with
+  t = 1.81 clustered by day and **0 of 32 cells qualify** (R474). Do not
+  test this construction again on any instrument. The 1-minute trigger is a
+  different object and is the opposite result.
+- **SPY/QQQ 1-minute sweep-to-BOS: the sealed 20% is SPENT (R474).** One
+  look, taken on `prev day low → 1m BOS, hold to close`, which survived. The
+  other 22 qualifying cells of that round are unverified out of sample and
+  must stay that way. **Never re-open the SPY/QQQ 1-minute final window for
+  this family.** The crypto 1-minute family's sealed window (R450) is still
+  untouched.
 
 ## Blocked on data (unlock ~2026-08-20, when cryptobot_snap has ~4 weeks)
 - Book-imbalance entries: fade rips when bid-side depth collapses; buy dips
@@ -118,6 +117,15 @@ at 0.077% of price on BTC and 0.16-0.22% on the other seven pairs, which is
 caps it at 10x**, so only BTC's 1-minute structure is tighter than the
 ceiling. The binding constraint is no longer the stop — it is that a round
 trip costs 2.4 stop distances at Alpaca crypto rates. See queue item 4.
+NOTE (R474): on the index the 1-minute swing is **0.046% of price on SPY
+(21.6x at 1% risked) and 0.063% on QQQ (15.8x)** — the tightest structure
+this desk has measured anywhere, and the index costs 0.04% a round trip
+against crypto's 0.50%. **The 1m/5m stop ratio is 0.44 on SPY, 0.44 on QQQ
+and 0.46 on BTC** — the same number on three instruments in two asset
+classes. The catch is the same one in a different place: at a 0.084% stop a
+0.04% round trip is still 0.48 stop distances, so the arm's net risk
+multiple is negative and only the wider-stop cells clear. Wider stop, not
+tighter, is where the money is on the index.
 
 ## STANDING RULE (R89/R100/R170/R190): TRANSFER IS PART OF VALIDATION
 Single-asset sealed tests do not catch asset-specific overfitting. Any
