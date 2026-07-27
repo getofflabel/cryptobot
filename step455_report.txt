@@ -1,0 +1,127 @@
+
+1. THE S&P — SPY and QQQ, one fresh $100,000 a year
+  year  trades  per_week  won_pct  mean_x     net   fall  fall_pct  losing_run
+  ----  ------  --------  -------  ------  ------  -----  --------  ----------
+  2016      55      1.06     38.2   -0.12    -322   7197       7.2           6
+  2017      42      0.81     38.1  -0.167   -3772   7273      7.27           7
+  2018      41      0.77     29.3  -0.221  -10617  20142     20.14          11
+  2019      53       1.0     45.3  -0.079     352   8476      8.48           8
+  2020      46      0.87     43.5  -0.042    4936   9603       9.6           4
+  2021      49      0.94     49.0   0.074    4048   5164      5.16           4
+  2022      45      0.87     40.0   0.093    2950  11109     11.11           5
+  2023      45      0.87     64.4   0.364   22410   8360      8.36           4
+  2024      34      0.64     64.7   0.456   15334   2120      2.12           3
+  2025      29      0.55     44.8   0.095     963   7156      7.16           8
+  2026      28      0.93     60.7   0.177    2245   5170      5.17           3
+
+   the same years against the numbers taken before the sizing was made to match
+   (old = step450_trade_rate_by_year.csv, the bot we were not running)
+   year            trades        a week             won          x risked                 net $
+   --------------------------------------------------------------------------------------------
+   2016       45 ->    55   0.87 -> 1.06    40.0% -> 38.2%   -0.149 ->  -0.120     -3,621 ->      -322
+   2017       34 ->    42   0.65 -> 0.81    41.2% -> 38.1%   -0.106 ->  -0.167     -1,088 ->    -3,772
+   2018       35 ->    41   0.66 -> 0.77    34.3% -> 29.3%   -0.114 ->  -0.221     -3,561 ->   -10,617
+   2019       42 ->    53   0.79 -> 1.00    42.9% -> 45.3%   -0.101 ->  -0.079     -2,634 ->      +352
+   2020       34 ->    46   0.64 -> 0.87    47.1% -> 43.5%   +0.045 ->  -0.042     +4,717 ->    +4,936
+   2021       41 ->    49   0.79 -> 0.94    51.2% -> 49.0%   +0.145 ->  +0.074     +5,542 ->    +4,048
+   2022       38 ->    45   0.73 -> 0.87    42.1% -> 40.0%   +0.019 ->  +0.093       +771 ->    +2,950
+   2023       36 ->    45   0.69 -> 0.87    61.1% -> 64.4%   +0.403 ->  +0.364    +15,974 ->   +22,410
+   2024       26 ->    34   0.49 -> 0.64    61.5% -> 64.7%   +0.316 ->  +0.456     +7,126 ->   +15,334
+   2025       27 ->    29   0.51 -> 0.55    44.4% -> 44.8%   +0.007 ->  +0.095     -1,221 ->      +963
+   2026       22 ->    28   0.73 -> 0.93    54.5% -> 60.7%   +0.157 ->  +0.177     +2,538 ->    +2,245
+   all       380 ->   467                                                    +24,543 ->   +38,527
+
+2. CRYPTO — the eight live pairs pooled, each pair on its own fresh $100,000 a year
+  year  trades  per_week  won_pct  mean_x      net    fall  fall_pct  losing_run
+  ----  ------  --------  -------  ------  -------  ------  --------  ----------
+  2021    1238     23.36     38.7   -0.13  -146833  177961    177.96          19
+  2022    1165     21.98     37.6  -0.381  -134721  142981    142.98          16
+  2023    1354     25.55     38.6  -0.242  -180519  221233    221.23          15
+  2024    1522     28.72     40.8  -0.161  -123344  180268    180.27          14
+  2025    1807     34.09     37.6  -0.227  -264472  282483    282.48          17
+  2026    1053      35.1     41.2  -0.316   -91853  119715    119.71          12
+
+   per pair, over whatever span its own bars cover
+      pair     from       to  trades  per_week  won_pct  mean_x      net    fall  fall_pct  losing_run
+  --------  -------  -------  ------  --------  -------  ------  -------  ------  --------  ----------
+   BTC/USD  2021-01  2026-07    1586      5.38     37.8  -0.382  -207238  229001     229.0          16
+   ETH/USD  2021-01  2026-07    1519      5.15     38.2  -0.211  -147653  175274    175.27          12
+   SOL/USD  2021-01  2026-07    1112      4.71     39.6  -0.135   -98692  139164    139.16          14
+   XRP/USD  2024-01  2026-07     452      3.32     37.4  -0.527   -72950   75318     75.32          11
+  LINK/USD  2021-01  2026-07    1398      4.74     40.3   -0.13  -105606  105606    105.61          13
+   LTC/USD  2021-01  2026-07    1258      4.26     39.3  -0.184  -179282  184897     184.9          12
+   ADA/USD  2026-02  2026-07     111      4.62     50.5  -0.021    19193   11080     11.08           7
+   DOT/USD  2023-08  2026-07     703      4.51     38.5  -0.271  -149514  152738    152.74          15
+
+3. GOLD — GLD, the whole span its 1-minute record covers (2026-03-13 on)
+  year  trades  per_week  won_pct  mean_x  net  fall  fall_pct  losing_run
+  ----  ------  --------  -------  ------  ---  ----  --------  ----------
+  2026       5      0.24     40.0   0.283  732  3042      3.04           2
+
+4. EVERYTHING POOLED, in the order the trades actually closed
+  year  books  trades  per_week  won_pct  mean_x      net    fall  fall_pct  losing_run
+  ----  -----  ------  --------  -------  ------  -------  ------  --------  ----------
+  2016      1      55      1.06     38.2   -0.12     -322    7197       7.2           6
+  2017      1      42      0.81     38.1  -0.167    -3772    7273      7.27           7
+  2018      1      41      0.77     29.3  -0.221   -10617   20142     20.14          11
+  2019      1      53       1.0     45.3  -0.079      352    8476      8.48           8
+  2020      1      46      0.87     43.5  -0.042     4936    9603       9.6           4
+  2021      6    1287     24.28     39.1  -0.122  -142785  171636     28.61          19
+  2022      6    1210     22.83     37.7  -0.364  -131771  142389     23.73          18
+  2023      7    1399      26.4     39.5  -0.222  -158108  210654     30.09          12
+  2024      8    1556     29.36     41.3  -0.147  -108010  166470     20.81          14
+  2025      8    1836     34.64     37.7  -0.222  -263509  281520     35.19          14
+  2026     10    1086      36.2     41.7    -0.3   -88877  119942     11.99          12
+
+   every market, every year, one line
+     trades                    8,611
+     trades a week             15.43
+     won                       39.4%
+     average result            -0.221 times what was risked
+     net                       $-902,483
+     deepest fall from a high  $940,307  (94.03% of the $1,000,000 the 10 separate books started with)
+     longest run of losers     19
+
+     THE DOLLARS ARE 10 PARALLEL BOOKS, NOT ONE ACCOUNT: every market, and
+     every crypto pair inside it, was walked on its own fresh $100,000
+     because tjr_crypto gives each pair its own day budget. The figure that
+     does not depend on that choice is the -0.221 times what was risked.
+
+5. THE DAY-BOUNDARY ARTEFACT ON CRYPTO, measured
+   tjr_bot.run_day closes anything still open when a UTC day's bars run out.
+   The live path does not: manage_step holds through the boundary. So these
+   exits are truncations, and they truncate winners while losers still reach
+   their stops.
+   trades that ended that way   1,762 of 8,139  (21.6%)
+   what they made               $+544,931   (51.6% of them won, average +0.218 times what was risked)
+   crypto as measured            8,139 trades   39.0% won   -0.236x risked  $    -941,743
+   crypto with them removed      6,377 trades   35.5% won   -0.361x risked  $  -1,486,673
+   This is a SENSITIVITY CHECK, not the headline. Removing them drops real
+   trades the bot really took.
+   AND IT DOES NOT POINT THE WAY THE ARTEFACT WAS ASSUMED TO. Those trades were
+   AHEAD at the boundary — 51.6% of them were in profit when the day's bars ran
+   out — so deleting them deletes a winning subset and the result gets WORSE,
+   not better. What the artefact actually does is CAP those winners at whatever
+   they had at 00:00 UTC when the live path would have run them on to a target
+   or a stop. The true cost therefore sits between the two lines above and
+   cannot be settled by deleting anything. Settling it needs a replay that
+   walks through the boundary, which this round was not allowed to build.
+
+6. THE AVERAGE RESULT, CHECKED FOR OUTLIERS
+   A few crypto trades sit on a stop a fraction of a cent wide. The set size
+   then buys an enormous position against a few dollars of intended loss, and
+   the result as a MULTIPLE of that few dollars goes to -225. The dollars are
+   unaffected — it is the ratio that blows up — but the mean multiple is not
+   safe on its own, so here it is beside its median and its 1%-trimmed mean.
+
+   
+  market  trades  mean_x  median_x  trimmed_mean_x      net
+  ------  ------  ------  --------  --------------  -------
+   sp500     467    0.04    -0.176           0.001    38528
+  crypto    8139  -0.236    -1.024          -0.201  -941743
+    gold       5   0.283    -0.405           -0.04      732
+   And the one that matters most on the S&P: of its $+38,528 over eleven
+   years, $+37,744 — 98% of it — is 2023 and 2024. Its 1%-trimmed
+   average trade across all eleven years is +0.001 times what was risked.
+
+written: step455_pooled_by_year.csv, step455_all_trades.csv

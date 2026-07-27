@@ -1,0 +1,211 @@
+/*
+ * panel.css — a heads-up display, not a dashboard.
+ *
+ * It is its own dark card whichever TradingView theme he is on, because it
+ * has to read the same at three in the morning as at nine thirty, and
+ * because a panel that borrows the page's colours starts looking like part
+ * of the page. This is not part of the page. Nothing on it is a control on
+ * his broker.
+ *
+ * The colour rules carry meaning and nothing else uses them:
+ *   green   this number is current
+ *   amber   this number is getting old, or it is a warning about money
+ *   red     this is wrong, missing, or not to be trusted
+ *   grey    stale, and deliberately drained of colour so it cannot read as
+ *           live out of the corner of an eye
+ */
+
+.tc-root {
+  position: fixed;
+  top: 96px;
+  right: 16px;
+  z-index: 2147483000;
+  width: 328px;
+  max-height: 82vh;
+  overflow: hidden auto;
+  background: #14161c;
+  color: #e7e9ee;
+  border: 1px solid #2a2f3a;
+  border-radius: 10px;
+  box-shadow: 0 10px 34px rgba(0, 0, 0, .55);
+  font: 12px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+  scrollbar-width: thin;
+}
+
+.tc-root.tc-stale { border-color: #7f2033; }
+.tc-root.tc-collapsed { max-height: none; }
+.tc-root.tc-collapsed .tc-body { display: none; }
+
+/* ---------------------------------------------------------------- head */
+.tc-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: #1b1e26;
+  border-bottom: 1px solid #2a2f3a;
+  position: sticky;
+  top: 0;
+}
+.tc-name { font-weight: 700; letter-spacing: .09em; font-size: 11px; }
+.tc-dot { width: 8px; height: 8px; border-radius: 50%; background: #555b68; }
+.tc-dot.tc-ok { background: #34d07f; }
+.tc-dot.tc-dead { background: #ef4d5e; }
+.tc-grip {
+  margin-left: auto;
+  color: #6b7280;
+  font-size: 10px;
+  letter-spacing: .06em;
+  cursor: grab;
+  user-select: none;
+  padding: 2px 6px;
+}
+.tc-grip:active { cursor: grabbing; }
+.tc-fold {
+  background: #262b36;
+  color: #c8cdd8;
+  border: 1px solid #333a47;
+  border-radius: 5px;
+  font: inherit;
+  font-size: 10px;
+  padding: 2px 8px;
+  cursor: pointer;
+}
+.tc-fold:hover { background: #2f3542; }
+
+.tc-body { padding: 4px 10px 12px; }
+
+/* -------------------------------------------------------------- pieces */
+.tc-sec {
+  margin: 12px 0 6px;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: .13em;
+  color: #7c8496;
+  border-top: 1px solid #232833;
+  padding-top: 9px;
+}
+.tc-body > .tc-sec:first-child { border-top: 0; padding-top: 4px; }
+
+.tc-row { display: flex; justify-content: space-between; gap: 10px; padding: 1px 0; }
+.tc-k { color: #9aa3b2; }
+.tc-v {
+  font: 12.5px/1.4 ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  font-weight: 600;
+  color: #f2f4f8;
+}
+
+.tc-note { margin: 3px 0 6px; color: #b9c0cd; }
+.tc-note.tc-sub { color: #7b8393; font-size: 11px; margin: 1px 0 6px; }
+.tc-note.tc-quiet { color: #7b8393; }
+/* Which of the two prices does which job. Two numbers a few dollars apart
+   with no label is a question he has to answer mid-trade. */
+.tc-note.tc-role {
+  color: #8b94a5;
+  font-size: 10px;
+  letter-spacing: .03em;
+  margin: 0 0 5px;
+}
+.tc-note.tc-warn {
+  color: #f0b429;
+  background: rgba(240, 180, 41, .08);
+  border-left: 2px solid #f0b429;
+  padding: 5px 8px;
+  border-radius: 3px;
+}
+.tc-note.tc-bad {
+  color: #ff8b95;
+  background: rgba(239, 77, 94, .1);
+  border-left: 2px solid #ef4d5e;
+  padding: 6px 8px;
+  border-radius: 3px;
+  font-weight: 500;
+}
+
+/* --------------------------------------------------------- the signal */
+.tc-trade { margin-bottom: 10px; }
+/* A setup whose moment has passed is dimmed as well as labelled, so it
+   cannot be read as live from the corner of an eye. */
+.tc-trade.tc-gone { opacity: .45; }
+.tc-side {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: .01em;
+  margin-bottom: 5px;
+}
+.tc-side.tc-buy { color: #34d07f; }
+.tc-side.tc-sell { color: #ef4d5e; }
+.tc-when {
+  display: block;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .05em;
+  color: #7b8393;
+  margin-top: 1px;
+}
+.tc-size {
+  margin: 7px 0;
+  padding: 7px 8px;
+  background: #1a1e27;
+  border-radius: 5px;
+  font-size: 11px;
+  color: #c3cad6;
+}
+.tc-size div { padding: 1px 0; }
+.tc-why { margin-top: 6px; color: #aeb6c4; font-size: 11px; }
+.tc-why b { color: #e7e9ee; }
+
+/* ---------------------------------------------------------- the prices */
+.tc-price {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 4px 0 0;
+}
+.tc-big {
+  font: 17px/1.2 ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  font-weight: 700;
+}
+/* The source and the age always sit on their own line under the number,
+   whatever their length, so the two prices line up and can be compared at a
+   glance instead of being read. */
+.tc-src {
+  flex-basis: 100%;
+  font-size: 10px;
+  color: #7b8393;
+  letter-spacing: .02em;
+}
+
+.tc-price.live .tc-big { color: #34d07f; }
+.tc-price.aging .tc-big { color: #f0b429; }
+/* Stale is drained of colour AND dimmed. A grey number cannot be mistaken
+   for a live one at a glance, which is the entire point. */
+.tc-price.dead .tc-big { color: #6f7684; }
+.tc-price.dead .tc-src { color: #ef4d5e; font-weight: 600; }
+
+/* -------------------------------------------------------------- extras */
+.tc-link {
+  background: none;
+  border: 0;
+  border-bottom: 1px dotted #4b5565;
+  color: #8b94a5;
+  font: inherit;
+  font-size: 10.5px;
+  padding: 2px 0;
+  margin-top: 4px;
+  cursor: pointer;
+}
+.tc-link:hover { color: #d5dae3; }
+.tc-msg {
+  margin: 6px 0 0;
+  padding: 8px;
+  background: #0f1116;
+  border: 1px solid #232833;
+  border-radius: 5px;
+  font: 10px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: #b9c0cd;
+  white-space: pre-wrap;
+  max-height: 260px;
+  overflow: auto;
+}

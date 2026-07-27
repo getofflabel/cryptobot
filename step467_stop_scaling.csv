@@ -1,0 +1,4 @@
+bucket,trades,median_stop_move_in_price_pct,median_leverage,stopped_out_pct
+session:asia,416,0.1343,22.3,59.4
+session:london,360,0.1098,27.3,62.8
+session:new_york,342,0.1933,15.5,62.3

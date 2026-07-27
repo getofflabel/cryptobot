@@ -110,6 +110,19 @@ MARKETS = {
 PAIR_SPEC = {
     "GBP/USD": {"pip": 0.0001, "decimals": 5, "base_name": "pounds"},
     "GBP/JPY": {"pip": 0.01, "decimals": 3, "base_name": "pounds"},
+    # Added 2026-07-26 with the OANDA venue. He names EUR/USD and gold in the
+    # same breath as the two above in his pre-market read, so the message
+    # layer has to be able to write about them.
+    #
+    # A PIP IS NOT ONE NUMBER, and that is the whole reason this table
+    # exists. It is 0.0001 on the dollar majors and 0.01 on every yen cross
+    # and on spot gold. Hard-coding either makes the other wrong by a factor
+    # of a hundred. These four agree with what OANDA reports as pipLocation,
+    # and venue.OandaVenue reads that number LIVE for anything it actually
+    # sends — this table is for the message, the broker's own answer is for
+    # the order.
+    "EUR/USD": {"pip": 0.0001, "decimals": 5, "base_name": "euros"},
+    "XAU/USD": {"pip": 0.01, "decimals": 3, "base_name": "ounces of gold"},
 }
 
 STANDARD_LOT = 100_000
@@ -234,7 +247,8 @@ def position_size(market: str, symbol: str, account: float, entry: float,
                   usd_per_quote: float = 1.0, risk_pct: float = 0.01,
                   cap_share: float | None = None,
                   buying_power: float | None = None,
-                  outer_allowance: float | None = None) -> dict:
+                  outer_allowance: float | None = None,
+                  hold_size_still: bool | None = None) -> dict:
     """THE ARITHMETIC HE SHOULD NEVER HAVE TO DO — AND IT IS NOT DONE HERE.
 
     THIS FUNCTION NO LONGER SIZES ANYTHING. It translates a market's units and
@@ -253,11 +267,12 @@ def position_size(market: str, symbol: str, account: float, entry: float,
     `test_tjr_bot.test_the_replay_and_the_live_path_size_identically` fails if
     they can ever drift apart again.
 
-    `risk_pct` is THIS TRADE'S SHARE OF THE DAY'S BUDGET, as a share of the
-    account. One percent when the trade has the day to itself, half of one
-    percent on a news day or a holiday, and half again when a second setup
-    was already forming — the caller reads it off `risk_wanted`, which the
-    bot works out against `tjr_bot.DayBudget`. The double-size tier stays
+    `risk_pct` is WHAT THIS TRADE MAY COST, as a share of the account. step465
+    made that a per-trade number and nothing else: `Config.risk_pct_per_trade`,
+    halved on a news day or a holiday, the same for the day's first trade and
+    its fourth. The caller reads it off `risk_wanted`. (With
+    `size_per_trade=False` it is instead a share of a DAY budget, halved again
+    when a second setup was already forming.) The double-size tier stays
     disabled: he forbids it to anyone without a proven record and we have
     none.
 
@@ -278,12 +293,35 @@ def position_size(market: str, symbol: str, account: float, entry: float,
     cap = max_risk_share() if cap_share is None else float(cap_share or 0.0)
     if outer_allowance is None:
         outer_allowance = cap * account if cap > 0 else None
+    # step465. WHICH OF THE TWO SIZING RULES — AND THE CALLER HAS TO SAY.
+    #
+    # It cannot be read off `tjr_bot.Config()` here, because four books call
+    # this function and they no longer agree: the INDEX book ships per-trade
+    # sizing, while gold, currencies and crypto are each pinned to the old day
+    # budget until their own round measures the change. A default that
+    # followed the index book would silently re-size the other three.
+    #
+    # So the default is the rule that was here before, which is the rule the
+    # three pinned books still run, and `tjr_bot.TjrBot._open` passes the flag
+    # explicitly from its own Config.
+    #
+    # THE ONE OPEN SEAM, STATED RATHER THAN HIDDEN. `tjr_desk._size_for` calls
+    # this without the flag, so an INDEX order re-sized by the desk would use
+    # the held-still rule while the replay used per-trade. It can only ever
+    # come in AT or UNDER the replay's size, never over, because the desk also
+    # forwards `outer_allowance` and per-trade sizing sets that equal to the
+    # allowance itself — `test_the_desk_can_only_ever_under_size` holds that
+    # bound. Closing it properly means the desk forwarding one more field,
+    # which is a change to a file step465 was told not to open.
+    if hold_size_still is None:
+        hold_size_still = True
 
     out = tjr_bot.size_position(
         account=account, entry=entry, stop_distance=stop_distance,
         risk_allowance=float(risk_pct) * float(account),
         tightest_stop_pct=tightest_stop_pct, usd_per_quote=usd_per_quote,
-        buying_power=buying_power, outer_allowance=outer_allowance)
+        buying_power=buying_power, outer_allowance=outer_allowance,
+        hold_size_still=hold_size_still)
     if not out["ok"]:
         return out
     if not out["measured"]:
@@ -540,14 +578,24 @@ def trade_block(sig: dict, account: float, usd_per_quote: float = 1.0) -> list:
     if account > 0 and sig.get("risk_wanted"):
         risk_pct = float(sig["risk_wanted"]) / account
     # THE TWO HALVINGS ARE DIFFERENT THINGS AND MUST NOT BE CONFLATED. One is
-    # the news-day half size, which halves the DAY's whole budget. The other
-    # is Day 8's split, which gives THIS trade half of a full-size day because
-    # a second setup was already forming. Reading the trade's share alone said
-    # "HALF SIZE today — news or a holiday" on an ordinary day with two
-    # setups on it, which is simply false.
+    # the news-day half size. The other is Day 8's split, which gives THIS
+    # trade half of a full-size day because a second setup was already
+    # forming. Reading the trade's share alone said "HALF SIZE today — news or
+    # a holiday" on an ordinary day with two setups on it, which is simply
+    # false.
+    #
+    # step465: the bot now SAYS which it is rather than leaving this to infer
+    # it from a threshold. `derisk` comes straight off the news calendar in
+    # `tjr_bot.live_step`. The old inference is kept only for a signal built
+    # before that key existed, and it was never reliable — it assumed the
+    # full-size number was one per cent, which is no longer true now that the
+    # size is set per trade.
     share = float(sig.get("budget_share") or 1.0)
     day_pct = risk_pct / share if share > 0 else risk_pct
-    half_size_day = day_pct < 0.0075
+    if "derisk" in sig:
+        half_size_day = bool(sig["derisk"])
+    else:
+        half_size_day = day_pct < 0.0075
 
     size = position_size(market, sym, account, entry, dist,
                          float(sig.get("tightest_stop_pct") or 0.0),

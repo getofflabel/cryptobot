@@ -1,0 +1,12 @@
+part,slice,gated_trades,ungated_trades,novel_trades,novel_frac_pct,gated_avg,ungated_avg,lively_n,lively_avg,quiet_n,quiet_avg,gap,shuffle_pctile,matched_legs,immediate_avg,gate_adds,signflip_pctile,legs_gate_better,median_delay_bars,draws,random_avg
+A,train,44.0,55.0,13.0,29.5,17.15,188.63,,,,,,,,,,,,,,
+A,val,14.0,17.0,8.0,57.1,99.37,54.97,,,,,,,,,,,,,,
+B,train,,,,,,,31.0,25.0,24.0,399.99,-374.99,4.5,,,,,,,,
+B,val,,,,,,,6.0,67.67,11.0,48.04,19.62,57.6,,,,,,,,
+B,pooled,,,,,,,37.0,31.92,35.0,289.38,-257.46,7.4,,,,,,,,
+C,train,,,,,27.51,,,,,,,,45.0,214.5,-186.99,0.3,2.0,0.0,,
+C,val,,,,,102.36,,,,,,,,14.0,75.88,26.48,51.5,3.0,2.0,,
+C,pooled,,,,,45.27,,,,,,,,59.0,181.61,-136.34,1.1,5.0,0.0,,
+C,legs_gate_skipped_entirely,,,,,,,,,,,,,14.0,-96.44,,,,,,
+floor,train,,,,,,,,,,,,,,,,,,,100.0,34.83
+floor,val,,,,,,,,,,,,,,,,,,,100.0,4.34

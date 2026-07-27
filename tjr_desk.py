@@ -760,7 +760,15 @@ def _config_for(m: Market):
     if m.name == "gold":
         return tjr_gold.gold_config()
     if m.name == "sp500":
-        return tjr_bot.Config()
+        # STOCKS ONLY: the dial stays at the most aggressive setting Alpaca
+        # can actually deliver. Wallace chose the top of the band (0.03), but
+        # step465 measured it: at 0.03 the bot asks for a median 10.6x
+        # leverage and Alpaca's ceiling is 4x, so 90% of trades came back
+        # truncated and the year lost $9,320. At 0.01 every trade fits under
+        # the ceiling (median 3.6x leverage, range 0.4x-4.2x), July 2026 made
+        # +$1,881 and the year +$1,099. Same trades, same days — only the
+        # size. Crypto keeps 0.03: BloFin's ceiling is not 4x.
+        return tjr_bot.Config(risk_pct_per_trade=0.01)
     return None                      # crypto has no bell and nothing to be flat for
 
 

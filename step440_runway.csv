@@ -1,0 +1,23 @@
+date,symbol,side,what_happened,won,we_made_per_dollar_risked,best_it_showed_before_we_left,exit_at,further_move_pct_of_price,further_move_per_dollar_risked,best_after_exit_per_dollar_risked,orig_stop_touched_after,minutes_held
+2026-01-27,QQQ,long,flat by the close,True,0.069,0.319,15:55,0.0143,0.025,0.1,False,346
+2026-02-17,SPY,short,stopped out,False,-1.004,0.159,11:19,0.067,0.075,-0.925,True,68
+2026-02-23,QQQ,short,flat by the close,True,0.95,1.132,15:55,0.0321,0.046,0.865,False,351
+2026-03-09,SPY,short,stopped out,False,-1.005,0.083,10:47,0.0,0.0,,True,54
+2026-03-24,SPY,short,stopped out,False,-1.017,0.103,10:07,0.0,0.0,,True,2
+2026-03-30,QQQ,short,flat by the close,True,0.87,1.488,15:55,0.1101,0.122,0.997,False,328
+2026-04-07,QQQ,short,stopped out,False,-1.005,0.978,15:45,0.0,0.0,,True,346
+2026-04-09,QQQ,long,stopped out,False,-1.052,0.268,10:00,0.0,0.0,,True,3
+2026-04-15,SPY,long,flat by the close,True,1.782,1.825,15:55,0.0129,0.041,1.834,False,334
+2026-05-06,QQQ,long,flat by the close,True,1.324,1.334,15:55,0.0726,0.131,1.46,False,361
+2026-05-07,SPY,long,all 1 targets reached,True,1.001,1.02,11:00,-0.0177,-0.099,0.921,True,40
+2026-05-14,SPY,long,flat by the close,True,1.485,2.331,15:55,0.0254,0.105,1.604,False,351
+2026-05-26,SPY,long,stopped out,False,-1.011,0.24,11:46,0.0473,0.143,-0.857,True,88
+2026-05-28,QQQ,long,flat by the close,True,0.605,0.835,15:55,0.0653,0.086,0.696,False,326
+2026-06-08,QQQ,short,stopped out,False,-1.004,0.2,10:46,0.0,0.0,,True,49
+2026-06-09,QQQ,short,all 2 targets reached,True,1.412,1.69,11:56,1.9135,1.369,3.024,False,87
+2026-06-18,SPY,short,flat by the close,False,-0.854,0.19,15:55,0.1551,0.32,-0.527,False,361
+2026-06-22,QQQ,long,stopped out,False,-1.007,0.346,10:27,0.0,0.0,,True,30
+2026-07-07,QQQ,short,flat by the close,True,0.218,0.939,15:55,0.055,0.066,0.288,False,352
+2026-07-16,QQQ,short,flat by the close,True,2.906,4.873,15:55,0.0553,0.207,3.503,False,337
+2026-07-20,QQQ,short,flat by the close,True,0.806,0.85,15:55,0.0287,0.036,0.846,False,345
+2026-07-21,SPY,short,stopped out,False,-1.017,0.258,10:27,0.0,0.0,,True,18

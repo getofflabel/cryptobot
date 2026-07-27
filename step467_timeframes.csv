@@ -1,0 +1,5 @@
+timeframe,trades,per_day,won_pct,median_stop_move_in_price_pct,median_leverage,net_dollars,gross_dollars,cost_dollars,mean_r
+5m,414,15.92,12.8,0.3763,8.0,-277018,192830,469848,0.134
+15m,121,4.65,5.0,0.7007,4.3,-148539,-63831,84708,-0.207
+30m,35,1.35,14.3,0.7757,3.9,-8196,15595,23792,0.163
+1h,16,0.62,18.8,1.2148,2.5,-1803,4130,5933,0.094

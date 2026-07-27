@@ -74,8 +74,7 @@ REPO = os.path.dirname(os.path.abspath(__file__))
 #
 # This list is HIS to set. Anything he says has never worked for him comes
 # out, and it does not go back in on the strength of a backtest.
-PAIRS = ["BTC/USD", "ETH/USD", "SOL/USD", "XRP/USD",
-         "LINK/USD", "LTC/USD", "ADA/USD", "DOT/USD"]
+PAIRS = ["BTC/USD", "ETH/USD", "SOL/USD", "XRP/USD", "DOT/USD"]
 
 # Named so the reason survives, and so nothing quietly re-adds them.
 #
@@ -87,6 +86,18 @@ PAIRS = ["BTC/USD", "ETH/USD", "SOL/USD", "XRP/USD",
 RETIRED_PAIRS = {
     "AVAX/USD": "Wallace, 2026-07-25 — never worked for him",
     "DOGE/USD": "Wallace, 2026-07-25 — would not trade it",
+    # Wallace, 2026-07-26: "fuck link and fuck ada and ltc". Measured on
+    # 1-26 July 2026, these three carried 75% of the whole crypto loss:
+    #   LINK  34 trades, 21% won, -$21,261
+    #   ADA   27 trades, 30% won, -$19,142
+    #   LTC   38 trades, 29% won, -$17,079
+    # -$57,482 of a -$76,566 month, from three of eight coins. They are also
+    # the three worst win rates in the book. Note the whole book was measured
+    # with stops far too tight for crypto, so this is not proof the coins are
+    # untradeable — it is his call, and the reason it is an easy one.
+    "LINK/USD": "Wallace, 2026-07-26 — worst win rate in the book, 21%",
+    "ADA/USD":  "Wallace, 2026-07-26 — 30% won, second-largest loser",
+    "LTC/USD":  "Wallace, 2026-07-26 — 29% won, third-largest loser",
 }
 
 
@@ -126,6 +137,42 @@ def cache_name(pair: str, tf: str) -> str:
 # last hour of the previous UTC day, and which days get the extra pool is a
 # consequence of choosing this boundary. It is not an invented session.
 DAY_BOUNDARY_HOUR_UTC = 0
+
+
+# ==================================== STEP466: THE DAY MAY MARK, NEVER CUT
+#
+# WALLACE, 2026-07-26, verbatim and this is the whole instruction:
+#     "crypto runs 24/7, then let it run 24/7. dont cut shit."
+#
+# The session clock was already gone — no 09:50, no 10:30, `past_cutoff`
+# returns False at every hour. What survived the strip was the boundary above,
+# and it was doing two very different jobs under one name:
+#
+#   A LINE ON THE CHART, which is fine. "Yesterday's high" needs a yesterday,
+#   and every crypto chart in the world cuts it at 00:00 UTC, so the level is
+#   a real draw on liquidity because other people defend it. Nothing about a
+#   marked line closes a position.
+#
+#   A BELL, which is not fine and is what he told us to stop. `tjr_bot.run_day`
+#   walks ONE day's bars and force-flats anything still open when they run
+#   out. On a market with a real close that is the close. Here it was an
+#   imaginary bell: every trade that needed longer than the rest of a UTC day
+#   to reach its target was booked at whatever it happened to be worth at
+#   midnight. The asymmetry is the damage — a loser always has time to reach
+#   its stop because the stop is close, a winner needs room and time, so the
+#   bell cut the winners and left the losers whole.
+#
+# WHAT CHANGED HERE: the bell, and only the bell. `_force_flat` is shimmed so
+# that a market with no close closes nothing, and `run_pair` carries the open
+# position forward over the following days' bars until it reaches its stop or
+# its targets — exactly what `manage_step` already does on the live path,
+# which never had this bug. The marked lines, the sweep, the break of
+# structure, equilibrium, the fair value gaps and the stop at chart structure
+# are all untouched.
+#
+# WHAT DID NOT CHANGE, AND IS REPORTED RATHER THAN FIXED: see
+# `where_the_invented_day_still_bites()` below. Picking a smarter hour is
+# still picking, so no hour was picked.
 
 
 def to_utc_frame(rows: list) -> pd.DataFrame:
@@ -344,12 +391,145 @@ def crypto_config(pair: str, spread_pct: float | None = None,
         # See why_no_index_veto() below. This is a decision, not an omission.
         enforce_index_agreement=False,
 
+        # -- SMT DIVERGENCE: OFF, AND HE IS THE ONE WHO SAYS SO ---------------
+        # step456 put SMT divergence into tjr_bot.py. It does not come here,
+        # and the reason is his own words rather than an architectural one.
+        # 044: "unfortunately Forex crypto guys — well crypto, sometimes you
+        # can use this with BTC and ETH but I WOULDN'T NECESSARILY RECOMMEND
+        # IT... I haven't back tested it as much as I have with these
+        # indexes." The five-hour beginner guide is blunter: "if you guys are
+        # trading anything besides the S&P 500 in NASDAQ this is not going to
+        # apply to you... THIS ONLY APPLIES TO INDEXES."
+        #
+        # It is also structurally impossible here and that is worth saying
+        # twice: `run_pair` hands `run_day` ONE pair, and a divergence needs
+        # exactly two charts, so `TjrBot._smt` returns None before the switch
+        # is ever consulted. Pinning it False is belt and braces, and it means
+        # nobody can turn it on for crypto by editing one line somewhere else.
+        #
+        # The same argument that retired the index veto here applies word for
+        # word — see why_no_index_veto(). Bitcoin and Ethereum are not two
+        # views of one market, and picking a partner for each pair would be a
+        # rule of ours filling a slot that only exists because the S&P happens
+        # to have a twin.
+        smt_enabled=False,
+        smt_picks_the_instrument=False,
+        smt_in_confirmation_menu=False,
+        smt_in_continuation_menu_after_2b=False,
+
+        # -- THE 79% EXTENSION AND THE 1-MINUTE GAP: OFF, as everywhere -------
+        # Neither is a clock rule and neither is index-specific, so unlike SMT
+        # there is no reason of his to keep them out. They ship off because
+        # EVERY step456 switch ships off — the before/after has to be able to
+        # produce both halves — and turning them on for crypto is a config
+        # change here, not a code change.
+        extension_79_enabled=False,
+        trigger_menu_1m_gap_inversion=False,
+
+        # -- STEP 2B: OFF, AND IT IS A CLOCK RULE -----------------------------
+        # 112's 2B exists because "when New York market opens, new money is
+        # coming into the market". There is no open on a 24/7 market, so there
+        # is no new money arriving at a time, and there is nothing for the
+        # gate to hang on. It is also inert here anyway: it only fires off the
+        # pre-market carry-forward, which is already False below.
+        require_fresh_5m_sweep_after_open=False,
+        invalidate_on_close_beyond_continuation=False,
+
         # -- THE CLOCK RULE THAT IS A CLOCK RULE ------------------------------
         # "no pre-market rule". There is no pre-market on a 24/7 market, so the
         # carve-out that carries a pre-market sweep across the bell has no bell
         # to carry it across.
         premarket_sweep_carries_forward=False,
     )
+
+
+def where_the_invented_day_still_bites() -> str:
+    """EVERY PLACE THE INVENTED DAY IS STILL LOAD-BEARING, enumerated so the
+    list is a decision and not an oversight. Step466 removed exactly one of
+    them — the bell — because that is the one Wallace named.
+
+    1. THE BELL. FIXED. `run_day` slices the bars to [day, day+24h) and
+       force-flats anything still open at the end. Every crypto trade needing
+       longer than the rest of a UTC day to reach its target was booked at
+       whatever it was worth at midnight, and the asymmetry ran one way: a
+       loser always had time to reach its stop, a winner needed room. See
+       `install()` and `run_pair`. Measured in step466_truncation.py.
+
+    2. THE DAILY BIAS. NOT FIXED, AND NOT PATCHED EITHER. The bias is method —
+       "can we go against daily bias no" — but the twenty-four hours it is
+       measured over are not. `tjr_bot.daily_bars` cuts a crypto daily candle
+       at `t.dt.normalize()`, plain UTC midnight, and note that it does NOT
+       consult `day_boundary_hour` at all when there is no closing bell, so
+       the constant above is not even the thing setting it. `build_context`
+       reads the trend off that stack once, at 00:00, and then forbids the
+       opposite side for the next 24 hours.
+
+       MEASURED, step466_bias_boundary.py, across 11,443 pair-days: the daily
+       trend read agrees with UTC midnight's only 83.5% of the time, all 24
+       possible boundaries agree on just 50.6% of days, and ON 49.4% OF DAYS
+       TWO EQUALLY ARBITRARY BOUNDARIES WOULD TAKE OPPOSITE SIDES. On roughly
+       half of all days the side this bot is permitted to trade is decided by
+       which hour we picked, not by the market.
+
+       NOTHING IS CHANGED ON THE STRENGTH OF THAT. Picking a smarter hour is
+       still picking, and a rule of his is not deleted because a measurement
+       of ours is uncomfortable. It is reported to Wallace and it is his call.
+
+    3. THE MARKED POOL IS FROZEN FOR 24 HOURS. `ctx.levels` is built once, in
+       `build_context`, from bars completed before the boundary, and is never
+       refreshed inside the day. On a 6.5-hour session a level is at worst
+       6.5 hours stale. Here a 1-hour swing that forms at 00:30 UTC is not on
+       the board until 00:00 the next day. FIXING IT MEANS EDITING
+       tjr_bot.py — the refresh would have to happen inside `run_day`'s walk —
+       so it is reported, not done.
+
+    4. THE SEQUENCE RESETS AT MIDNIGHT. `run_day` builds a fresh `SymbolDay`
+       per day with an empty `SeqState`, so a level swept at 23:40 that is
+       waiting for its 5-minute break of structure is thrown away at 00:00 and
+       has to form again from nothing. The 5-minute trend and gap book restart
+       from a 3-day seed and the 1-minute trend from a 90-minute one. THIS
+       HITS THE LIVE PATH TOO: `live_step` calls `run_day` with
+       `day=now.normalize()`, so at 00:05 UTC the live bot is looking at five
+       minutes of chart. Same reason as 3 — it lives in `run_day` — so it is
+       reported, not done.
+
+    5. WEEKS. The losing-streak escalation anchors weeks at Monday 00:00
+       (`refresh_escalation`), and `crypto_session_levels` marks the previous
+       week off the same anchor. A market with no days has no weeks either.
+       The previous-week HIGH AND LOW are marked lines and stay; the
+       escalation clock is the same class of invention as the day and is
+       flagged here rather than moved.
+
+    6. AGE MEASURED IN DAYS. `level_lookback_days=10`, `dir_lookback_days=90`,
+       `seed_days=3`, `gap_max_age_bars=288`, `regime_ma_days=50`. Four of
+       these five are ROLLING DURATIONS — `day - Timedelta(days=N)` — which on
+       a 24/7 market is an honest N x 24 hours and not a cut at all; the only
+       artefact is that the window is re-cut once a day instead of
+       continuously, so a level ages out in 24-hour steps. `regime_ma_days` is
+       the exception: it averages 50 of the arbitrary daily candles from 2.
+
+    7. THE CANDLE GRID. `candle_anchor_hour` is left at its default 0, so the
+       1-hour and 4-hour candles the levels are marked off hang from midnight
+       UTC — the 4-hour grid is 00/04/08/12/16/20. The stock instrument hangs
+       its grid from 17:00 Eastern because that is the futures open and it is
+       the grid his own 4-hour chart is drawn on. Crypto has no such anchor,
+       so this is the same unforced choice as the day boundary, one timeframe
+       down. Stated, not moved.
+
+    8. THE PREVIOUS DAY'S HIGH AND LOW. Left exactly as they are, and this one
+       is deliberate rather than deferred. It is a MARKED LINE, not a bell —
+       nothing about it closes a position — and every crypto exchange's daily
+       candle, every funding interval and every chart a crypto trader opens is
+       cut at 00:00 UTC, so the line is defended by other people's orders.
+       That is the whole reason a previous-day level is a draw on liquidity.
+
+    9. THIS FILE'S OWN `measure_sweep_to_signal`, which sets
+       `sweep_max_age_bars`, rebuilds the level pool once per UTC day and
+       re-seeds its trend tracker at each boundary, so a sweep that crosses
+       midnight is dropped from the median. It biases the measured ceiling
+       slightly short. Small, and named.
+    """
+    return where_the_invented_day_still_bites.__doc__
 
 
 def why_no_index_veto() -> str:
@@ -431,20 +611,45 @@ def crypto_session_levels(d5: pd.DataFrame, day: pd.Timestamp,
 
 
 _ORIGINAL_SESSION_LEVELS = tjr_bot.session_levels
+_ORIGINAL_FORCE_FLAT = tjr_bot.TjrBot._force_flat
 _INSTALLED = False
 
 
+def _force_flat_only_where_there_is_a_close(self, tr, index, budget=None):
+    """A market with no close closes nothing. THE STEP466 CHANGE.
+
+    `TjrBot.run_day` walks one day's bars and calls this on anything still
+    open when they run out. On SPY, on GLD and on forex — every one of which
+    sets `open_t` — that is a real bell and the original runs unchanged. On
+    crypto `open_t` is None, there is no bell, and this returns without
+    touching the trade: it stays open, with its ladder state, its part-filled
+    targets and its stop exactly where they were, and `run_pair` walks it
+    forward over the following days until it reaches its stop or its targets.
+
+    Leaving `tr.outcome` empty is what makes that safe. `run_day` adds
+    `tr.pnl` to the account right after this, and an open trade's pnl is 0.0,
+    so nothing is booked for a position that has not closed. `run_pair` books
+    it at the minute it actually closes, which is also what keeps the account
+    causal: money that has not been made yet cannot size tomorrow's trade.
+    """
+    if self.cfg.instrument.open_t is None:
+        return
+    return _ORIGINAL_FORCE_FLAT(self, tr, index, budget)
+
+
 def install() -> None:
-    """Teach tjr_bot to mark levels the crypto way WITHOUT changing what it
-    does for stocks.
+    """Teach tjr_bot to mark levels the crypto way, and to stop closing crypto
+    positions at a bell it does not have, WITHOUT changing what it does for
+    stocks.
 
     WHY A SHIM AND NOT AN EDIT. tjr_bot.py is being edited by someone else on
-    exit logic right now. This adds one dispatch in front of one function and
-    leaves the file alone. The dispatch branches on `inst.open_t is None`,
-    which is true only for a market with no bell, so the index path takes the
-    original function unchanged. `test_tjr_crypto.py` proves the stock levels
-    are byte-identical with the shim installed. Fold it into tjr_bot.py when
-    that file is free.
+    sizing right now. This adds one dispatch in front of one function and one
+    guard in front of another, and leaves the file alone. Both branch on
+    `inst.open_t is None`, which is true only for a market with no bell, so
+    the index path, the gold path and the forex path all take the original
+    code unchanged. `test_tjr_crypto.py` proves the stock levels are
+    byte-identical with the shim installed and that the stock force-flat still
+    fires. Fold both into tjr_bot.py when that file is free.
     """
     global _INSTALLED
     if _INSTALLED:
@@ -456,6 +661,7 @@ def install() -> None:
         return crypto_session_levels(d5, day, inst)
 
     tjr_bot.session_levels = dispatch
+    tjr_bot.TjrBot._force_flat = _force_flat_only_where_there_is_a_close
     # Higher time frames hold higher power, and the previous week is the
     # highest-power draw on the board. Without a rank it would score 0 and
     # lose to a 1-hour swing when both are taken on the same bar.
@@ -535,49 +741,182 @@ def _reword(why: str) -> str:
     return why.replace(" before 10:30", " at all that day")
 
 
+RAN_OUT = "still open when the record ran out"
+
+
+def _one_minute_trend(d1: pd.DataFrame, day: pd.Timestamp) -> TrendTracker:
+    """The 1-minute trend EXACTLY as `SymbolDay` had it at the end of `day`.
+
+    Reconstructed rather than reached into, because `run_day` does not hand
+    the legs back. `SymbolDay.__init__` seeds `t1` on the 90 minutes before
+    the day starts and `on_1m` then feeds it every 1-minute bar of the day
+    unconditionally, so replaying those same bars into a fresh tracker gives
+    the same object. That matters: the runner comes off on this chart's break
+    of structure, and a carried position must keep reading the same trend it
+    was being managed against a minute earlier rather than a fresh one.
+    """
+    t1 = TrendTracker()
+    lo = day - pd.Timedelta(hours=1, minutes=30)
+    hi = day + pd.Timedelta(days=1)
+    for r in d1[(d1["t"] >= lo) & (d1["t"] < hi)].itertuples():
+        t1.update(Bar(r.t, r.open, r.high, r.low, r.close))
+    return t1
+
+
+class _Carry:
+    """One day's still-open positions and the 1-minute trend they are managed
+    against, carried over the boundary together.
+
+    Nothing here is a new rule. `bot._manage` is the same call `run_day` makes
+    on every bar inside a day — his ladder, the stop to break even after
+    target one, the runner off the 1-minute break of structure. The only thing
+    that changed is that the bars keep coming.
+    """
+
+    def __init__(self, trades: list, t1: TrendTracker):
+        self.trades, self.t1 = list(trades), t1
+
+    def advance(self, bot: TjrBot, bars: pd.DataFrame) -> list:
+        """Walk these bars forward. Returns whatever closed on them."""
+        closed = []
+        for r in bars.itertuples():
+            if not self.trades:
+                break
+            b = Bar(r.t, r.open, r.high, r.low, r.close)
+            bos1 = self.t1.update(b)
+            for tr in list(self.trades):
+                bot._manage(tr, b, None, bos1)
+                if tr.outcome:
+                    self.trades.remove(tr)
+                    closed.append(tr)
+        return closed
+
+
+def _weeks(closed: list) -> dict:
+    """The week ledger the losing-streak rule reads, built only from trades
+    that have actually CLOSED. Same Monday anchor `run_day` uses."""
+    out: dict = {}
+    for tr in closed:
+        d = pd.Timestamp(tr.day)
+        wk = (d - pd.Timedelta(days=d.weekday())).normalize()
+        out[wk] = out.get(wk, 0.0) + tr.pnl
+    return out
+
+
 def run_pair(pair: str, start=None, end=None, cfg: Config | None = None,
-             data: dict | None = None, verbose: bool = False) -> dict:
+             data: dict | None = None, verbose: bool = False,
+             carry_past_the_boundary: bool = True) -> dict:
     """Walk one pair, day by day, strictly forward. Returns the trades, the
     stand-down reasons, and the day count.
 
-    ONE LIMITATION, STATED RATHER THAN HIDDEN. tjr_bot.run_day walks a single
-    day and closes anything still open when that day's bars run out, labelling
-    it "flat by the close". On a 24/7 market there is no close, and the LIVE
-    path does not do this — `manage_step` on the crypto instrument returns
-    "hold" at 23:55 and the position runs to its stop or its targets across
-    the boundary. So a replay outcome of "flat by the close" means only that
-    the UTC day ended, and the replay's outcomes are truncated versions of
-    what would actually have happened.
+    THE LIMITATION THIS USED TO CARRY IS GONE (step466). It used to say:
+    `run_day` closes anything still open when a day's bars run out, so a
+    crypto outcome of "flat by the close" meant only that the UTC day ended
+    and the replay's outcomes were truncated versions of what happened. That
+    was true, it was the biggest thing wrong with this book, and Wallace's
+    instruction was "crypto runs 24/7, then let it run 24/7. dont cut shit."
 
-    It does not touch the one number this replay is for. A setup is counted
-    when the entry fires, which happens before any of this.
+    Now the position runs. `install()` stops `_force_flat` firing on a market
+    with no close, and the loop below walks each still-open trade through the
+    following days' bars with `bot._manage` — the same management call, the
+    same ladder, the same stop — until it reaches its stop or its targets.
+    Only the last positions still open when the DATA runs out are closed, and
+    they are labelled `RAN_OUT` so nobody mistakes the end of the record for
+    the end of a day.
+
+    THE ACCOUNT STAYS CAUSAL. A day sizes off the money already in the
+    account, and a position that is still running has made nothing yet, so its
+    profit is booked at the minute it actually closes and not before. The
+    losing-streak ledger reads the same closed trades. Nothing a day does can
+    see money a later day makes.
+
+    `carry_past_the_boundary=False` restores the old imaginary bell exactly,
+    which is what the before/after in step466 is measured against.
     """
     cfg = cfg or crypto_config(pair)
     data = data or load(pair)
     news = NewsCalendar(rules=False)      # no US news-day blocks. Crypto has no CPI.
     bot = TjrBot(cfg, news)
     days = days_in(data, start, end)
+    d1_all = data["1m"]
     trades, reasons, skipped = [], {}, 0
+    carries: list[_Carry] = []
+    closed: list = []
+    equity = cfg.account_start
+    last_row = None
+
     for day in days:
         day = pd.Timestamp(day)
-        win = slice_for(data, day, cfg)
-        if len(win["1m"][(win["1m"]["t"] >= day) &
-                         (win["1m"]["t"] < day + pd.Timedelta(days=1))]) == 0:
+        session1 = d1_all[(d1_all["t"] >= day) &
+                          (d1_all["t"] < day + pd.Timedelta(days=1))]
+        if len(session1) == 0:
             skipped += 1
-            continue
+            continue          # no price, so nothing moves and nothing closes
+        last_row = session1.iloc[-1]
+        win = slice_for(data, day, cfg)
+
+        # the account this day is allowed to size from, and the week ledger the
+        # losing-streak rule reads: closed trades only, all of them from before
+        # today. This is the whole causality guarantee of the carry.
+        bot.account = equity
+        bot.week_pnl = _weeks(closed)
+
         res = bot.run_day({pair: win}, day)
         trades += res["trades"]
         for why in res["stand_down"].values():
             why = _reword(why)
             reasons[why] = reasons.get(why, 0) + 1
+
+        # 1) positions carried in from earlier days, walked through today
+        for c in list(carries):
+            closed += c.advance(bot, session1)
+            if not c.trades:
+                carries.remove(c)
+
+        # 2) today's own trades. Whatever `run_day` finished stays finished;
+        #    whatever it left open is carried rather than cut.
+        closed += [t for t in res["trades"] if t.outcome]
+        still_open = [t for t in res["trades"] if not t.outcome]
+        if still_open:
+            if carry_past_the_boundary:
+                carries.append(_Carry(still_open, _one_minute_trend(d1_all, day)))
+            else:
+                idx = {r.t: Bar(r.t, r.open, r.high, r.low, r.close)
+                       for r in session1.itertuples()}
+                for tr in still_open:
+                    _ORIGINAL_FORCE_FLAT(bot, tr, idx, None)
+                closed += still_open
+
+        equity = cfg.account_start + sum(t.pnl for t in closed)
         if verbose:
             for tr in res["trades"]:
                 side = "long" if tr.direction > 0 else "short"
                 print(f"  {day:%Y-%m-%d} {pair:9s} {side:5s} off the "
                       f"{tr.level_tf} level at {tr.level_price:,.4f} -> "
-                      f"{tr.outcome}")
+                      f"{tr.outcome or 'still running'}")
+
+    # the RECORD ran out, which is not a bell and is not called one
+    for c in carries:
+        for tr in c.trades:
+            if last_row is None:
+                continue
+            bot._close(tr, float(last_row["close"]), last_row["t"], RAN_OUT, None)
+            closed.append(tr)
+
+    # the equity curve, in the order the money actually landed
+    closed.sort(key=lambda t: pd.Timestamp(t.exit_t))
+    acct = cfg.account_start
+    for tr in closed:
+        acct += tr.pnl
+        tr.account_after = acct
+
+    crossed = sum(1 for t in trades
+                  if t.entry_t is not None and t.exit_t is not None
+                  and pd.Timestamp(t.exit_t).normalize()
+                  > pd.Timestamp(t.entry_t).normalize())
     return {"pair": pair, "days": len(days) - skipped, "trades": trades,
-            "reasons": reasons, "account": bot.account}
+            "reasons": reasons, "account": acct,
+            "crossed_the_boundary": crossed}
 
 
 def setups_per_day(pairs=None, start=None, end=None, verbose: bool = True) -> dict:

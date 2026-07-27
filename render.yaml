@@ -105,6 +105,27 @@ services:
       - key: BLOFIN_DEMO_PASSPHRASE
         sync: false
 
+      # CURRENCIES — OANDA PRACTICE. GBP/JPY, GBP/USD, EUR/USD, XAU/USD.
+      # Added 2026-07-26 when forex came back: it was dropped only because
+      # no venue in this build could send a currency order, and this is that
+      # venue.
+      #
+      # `sync: false` means Render prompts for the value in the dashboard
+      # instead of reading it from this file — a token in a repo is a token
+      # that leaks. Set BOTH of these under the cryptobot-daemon service ->
+      # Environment. Keys that existed only on the laptop have silently
+      # broken this worker twice, and both times it looked exactly like the
+      # strategy deciding not to trade.
+      #
+      # THE SAME TWO NAMES WOULD SERVE A LIVE ACCOUNT. Which host they reach
+      # is decided by the venue name in config, and the live venue refuses
+      # to build at all unless CRYPTOBOT_REAL_MONEY holds the exact
+      # confirmation phrase. Put a PRACTICE token here (account 101-...).
+      - key: OANDA_API_TOKEN
+        sync: false
+      - key: OANDA_ACCOUNT_ID
+        sync: false
+
   - type: web
     name: cryptobot-pnl
     runtime: static

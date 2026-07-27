@@ -175,6 +175,14 @@ def _blofin_demo_factory(**kw):
     return BlofinVenue(**kw)
 
 
+def _oanda_practice_factory(**kw):
+    return OandaVenue(**kw)
+
+
+def _oanda_live_factory(**kw):
+    return OandaLiveVenue(**kw)
+
+
 register("paper", _paper_factory, real_money=False,
          note="our own engine: fills at the far side of the quote, stops fill "
               "at the worst price in the triggering bar, shorts first-class")
@@ -191,10 +199,28 @@ register("blofin-demo", _blofin_demo_factory, real_money=False,
               "margin, market entries, stops resting at the exchange. It can "
               "only ever touch a position it opened itself — see "
               "attribution.py, and BlofinVenue below")
+register("oanda-practice", _oanda_practice_factory, real_money=False,
+         note="OANDA's fxTrade PRACTICE host through oanda_api.py. Currencies "
+              "and spot gold: GBP/JPY, GBP/USD, EUR/USD, XAU/USD. The stop "
+              "rides in with the entry in one request, so a position is "
+              "never unprotected for even a moment, and it can only ever "
+              "touch a trade it opened itself")
+register("oanda-live", _oanda_live_factory, real_money=True,
+         note="OANDA's fxTrade LIVE host. REAL MONEY. Byte-identical to "
+              "oanda-practice except for the host string, which is the "
+              "entire point: going real is a config value, not a rewrite. "
+              "Unreachable without the exact confirmation phrase")
 
 # NOTE FOR WHOEVER ADDS THE FIRST REAL VENUE. Register it with
 # real_money=True. That single word is what forces the confirmation phrase.
 # Do not add a real venue with real_money=False to "make testing easier".
+#
+# THE FIRST ONE IS oanda-live, ABOVE, AND IT IS REGISTERED WITHOUT BEING
+# ARMED. It is here because requirement one of the forex build was that
+# paper -> real be a config change and nothing else, and the only honest way
+# to show that is to register the live venue and let the guard refuse it.
+# Nothing points at it, nothing has ever placed an order through it, and
+# resolve() will not build it without LIVE_CONFIRM_PHRASE typed exactly.
 
 
 # ================================================================= RESOLVING
@@ -1203,6 +1229,790 @@ class BlofinVenue(Venue):
         own: a long list here means the bot is repeatedly finding positions
         it does not own, which is information, not noise."""
         return [o for o in self._orders if o.get("refused_by") == "attribution"]
+
+
+# ======================================================= ADAPTER: OANDA FX
+#
+# WHY THIS EXISTS (2026-07-26)
+#
+# Forex was dropped on 2026-07-25 for one reason, written down at the time:
+# currencies were the only market in this build with no venue behind them, so
+# the output was a message and Wallace placed the trade by hand. He has said
+# dropping it was a mistake. oanda_api.py says why OANDA and not the four
+# alternatives that were checked. This class is the safety.
+#
+# IT IS MARKET PLUMBING AND IT KNOWS NO METHOD. It takes an order and places
+# it. It has no view on which pair, which hour, which session, or what a
+# setup looks like — whatever strategy ends up driving currencies can be
+# swapped out entirely without a line in here moving. If a session rule or
+# the name of a setup ever appears below, the abstraction has been broken.
+#
+# WHAT IS DIFFERENT FROM BLOFIN, AND ONE OF THE TWO DIFFERENCES IS BETTER
+#
+#   BETTER: OANDA identifies every TRADE separately and hands back the client
+#   id we attached to it. So closing our trade cannot touch his trade on the
+#   same pair — we close by trade id, never by instrument. The endpoint that
+#   flattens an instrument is deliberately not wrapped in oanda_api.py at all, so
+#   nobody can reach for it in a hurry.
+#
+#   THE SAME: opening is still dangerous. Unless the account has hedging
+#   turned on, an order in the opposite direction to an existing trade CLOSES
+#   that trade rather than opening beside it — which on his position would be
+#   the exact 2026-07-25 incident again, in a new market. So the rule is
+#   unchanged and unconditional: THE BOT REFUSES TO OPEN ON ANY INSTRUMENT
+#   THAT ALREADY CARRIES A TRADE IT CANNOT PROVE IT OPENED. It does not read
+#   hedgingEnabled and take the softer branch when the flag looks friendly.
+#   "Probably safe" is the shape of reasoning attribution.py exists to forbid.
+#
+# THE STOP RIDES IN WITH THE ENTRY, and here that is not a workaround, it is
+# what the broker offers: `stopLossOnFill` sits inside the order body. There
+# is no code path in this class that opens a position and then goes looking
+# for somewhere to put the stop.
+
+
+class _SealedOandaClient:
+    """The OANDA client with its reducing calls behind a door.
+
+    Reads pass straight through. The three calls that can shrink a position,
+    move its protection, or cancel a resting order only run while `open_for`
+    holds the token that _guarded_reduce created for that one action.
+
+    Same runtime wall as _SealedClient above, and for the same reason: a
+    comment saying "call the guard first" is obeyed right up until somebody
+    is in a hurry.
+    """
+
+    SEALED = ("close_trade", "set_trade_stop", "cancel_order")
+
+    def __init__(self, raw):
+        object.__setattr__(self, "_raw", raw)
+        object.__setattr__(self, "open_for", None)
+
+    def _check(self, what: str) -> None:
+        if object.__getattribute__(self, "open_for") is None:
+            raise NotOurs(
+                f"{what} was called without the attribution guard open. Every "
+                f"close, partial close, or change of stop must go through "
+                f"OandaVenue._guarded_reduce, which proves the trade was "
+                f"opened by this bot before anything touches it.")
+
+    def __getattr__(self, name):
+        raw = object.__getattribute__(self, "_raw")
+        attr = getattr(raw, name)
+        if name in _SealedOandaClient.SEALED:
+            def sealed(*a, **kw):
+                self._check(name)
+                return attr(*a, **kw)
+            return sealed
+        return attr
+
+
+class OandaVenue(Venue):
+    """OANDA's fxTrade PRACTICE host, wearing the interface.
+
+    THE STANDING RULES ON THIS VENUE:
+      - MARKET or LIMIT in, the caller's choice. Both carry the stop in the
+        same request; there is no third way to open a position here.
+      - THE STOP IS ATTACHED TO THE ENTRY, in the same request. Not after.
+      - NO STOP, NO TRADE. An opening order without a stop is not sent.
+      - STOPS REST AT THE BROKER. If this process dies, the stop is still
+        there. That is the entire reason.
+      - THE BOT ONLY EVER TOUCHES A TRADE IT OPENED. Proved per trade from
+        OANDA's own record of the client id we attached.
+      - NO COST FILTERING. The spread is charged and reported so the figures
+        are honest. Nothing declines or ranks a trade on it.
+
+    WHAT `qty` MEANS HERE. Units of the BASE currency, which is what
+    `tjr_alerts.position_size` already returns: 100,000 units of GBP_USD is
+    one standard lot, and XAU_USD is priced in ounces. Positive in a call,
+    signed in a position. NOTHING IN THIS CLASS SIZES ANYTHING — see
+    size_for() below, which forwards to the one sizing function in the
+    project and adds only the yen conversion, which is a venue fact.
+    """
+
+    name = "oanda-practice"
+    is_real_money = False
+    _PRACTICE = True
+
+    # How a pair is spelled by whatever is driving this, and how OANDA spells
+    # it. The translation lives here and in oanda_api.INSTRUMENTS, which is
+    # the only place allowed to know a venue's vocabulary.
+    PAIRS = {
+        "GBP/JPY": "GBP_JPY", "GBP/USD": "GBP_USD",
+        "EUR/USD": "EUR_USD", "XAU/USD": "XAU_USD",
+    }
+
+    def __init__(self, client=None, tag: str = "forex", **_ignored):
+        import blofin_private as bp
+        import oanda_api as ox
+        if client is None:
+            client = ox.from_env(practice=self._PRACTICE)
+            if client is None:
+                missing = ", ".join(ox.missing_keys())
+                raise RuntimeError(
+                    f"OANDA is not configured: {missing} not set. See "
+                    f".env.example for how to create the practice token, and "
+                    f"remember the same values have to go into Render — keys "
+                    f"that exist only on the laptop have silently broken the "
+                    f"cloud bot twice.")
+        # THE HOST AND THE ACCOUNT NUMBER MUST AGREE, and this is checked
+        # before anything can be built, with no network call. A practice
+        # venue holding a live account id does not construct.
+        check = client.environment_check()
+        if not check["agrees"]:
+            raise RuntimeError(
+                f"refusing to build {self.name}: {check['note']} "
+                f"(host says {check['client_says']}, account {check['account_id']} "
+                f"says {check['account_id_says']}).")
+        self._raw = client                       # reads only
+        self._cli = _SealedOandaClient(client)   # everything else
+        self._ox = ox
+        self._bp = bp
+        self._tag = bp.BOOK_TAGS.get(tag, tag)
+        self._orders: list = []
+        self._stops: dict = {}                   # symbol -> the stop we placed
+
+    # ----------------------------------------------------------- symbols
+    def venue_symbol(self, symbol: str) -> str:
+        """"GBP/JPY" -> "GBP_JPY". An unknown symbol is returned unchanged so
+        OANDA's own refusal is what the log records, rather than a guess made
+        here."""
+        return self.PAIRS.get(symbol, symbol)
+
+    def pair_for(self, instrument: str) -> str:
+        for k, v in self.PAIRS.items():
+            if v == instrument:
+                return k
+        return instrument
+
+    def spec(self, symbol: str) -> dict:
+        """pip location, display precision, unit step and minimum size for
+        one instrument, read from OANDA and cached on success only.
+
+        {} MEANS DO NOT TRADE. A pip is 0.0001 on GBP/USD and EUR/USD and
+        0.01 on every yen cross, and gold is different again — assuming one
+        of those makes every stop on the others wrong by a factor of a
+        hundred. So the number comes from the broker or the order is not
+        sent."""
+        try:
+            return self._raw.spec(self.venue_symbol(symbol)) or {}
+        except Exception:                                    # noqa: BLE001
+            return {}
+
+    # ---------------------------------------------------------- reading
+    def account(self) -> dict:
+        try:
+            s = self._raw.summary() or {}
+        except Exception as e:                               # noqa: BLE001
+            return {"venue": self.name, "real_money": self.is_real_money,
+                    "equity": 0.0, "cash": 0.0, "buying_power": 0.0,
+                    "open_risk": None, "error": str(e)[:200]}
+        return {"venue": self.name, "real_money": self.is_real_money,
+                # NAV is balance plus what the open trades are worth right
+                # now. That is the number his OANDA screen calls equity, and
+                # it is the one every size in this project is worked out
+                # against.
+                "equity": float(s.get("NAV") or s.get("balance") or 0.0),
+                "cash": float(s.get("balance") or 0.0),
+                "buying_power": float(s.get("marginAvailable") or 0.0),
+                "currency": s.get("currency"),
+                "open_trade_count": int(s.get("openTradeCount") or 0),
+                "open_risk": self.open_risk(),
+                "open_risk_note": "dollars lost if every stop the BOT placed "
+                                  "filled AT ITS LEVEL. Stops slip, so the "
+                                  "real number is worse. His own trades are "
+                                  "not in it — they are not ours to count.",
+                "raw": s}
+
+    def open_risk(self) -> float:
+        """Dollars lost if every stop THE BOT PLACED filled at its level.
+
+        It walks self._stops rather than every open trade on purpose:
+        account() is polled once a minute per market, and this must not turn
+        into a sweep of the whole book when the answer is almost always zero.
+        His trades cannot appear here at all — the bot never put a stop on
+        one, so one is never in _stops."""
+        if not self._stops:
+            return 0.0
+        risk = 0.0
+        for symbol, level in self._stops.items():
+            pos = self.position(symbol)
+            if not pos or not pos.get("qty"):
+                continue
+            mark = float(pos.get("mark") or 0.0)
+            if mark <= 0:
+                continue
+            per_unit = abs(mark - float(level))
+            risk += abs(float(pos["qty"])) * per_unit * \
+                float(pos.get("usd_per_quote") or 1.0)
+        return risk
+
+    # ------------------------------------------------- THE ATTRIBUTION GATE
+    def _verdict_for_trade(self, trade: dict):
+        """Did the bot open THIS trade.
+
+        On OANDA the proof is direct and per trade: every order this project
+        places carries clientExtensions.id built by
+        blofin_private.make_client_order_id, which always begins "CBOT_", and
+        OANDA hands that string back on the trade. Anything else — an empty
+        id, a missing clientExtensions block, somebody else's string — is
+        his. There is no branch here where "probably ours" becomes "ours".
+
+        No cutover date is applied, and that is deliberate rather than an
+        omission: this account has never had an order placed on it by this
+        program, so every trade that exists today is his by definition and
+        every trade the bot ever opens will carry the tag from its first
+        millisecond.
+        """
+        import attribution
+        inst = str(trade.get("instrument") or "")
+        ext = trade.get("clientExtensions") or {}
+        coid = ext.get("id")
+        if attribution.is_ours_coid(coid):
+            return attribution.Verdict(
+                True, f"opened by this bot: the trade carries our client id "
+                      f"{coid}", inst, attribution.tag_of(coid),
+                {"trade_id": trade.get("id"), "client_id": coid})
+        return attribution.Verdict(
+            False, ("the trade carries no client id of ours, so this bot did "
+                    "not open it and does not touch it"
+                    if not coid else
+                    f"the trade carries the client id {str(coid)[:40]!r}, "
+                    f"which this bot did not build, so it is not ours"),
+            inst, None, {"trade_id": trade.get("id"), "client_id": coid})
+
+    def _our_trades(self, symbol: str | None = None) -> list:
+        """Every OPEN trade the bot opened, optionally on one instrument.
+
+        A FAILED READ RETURNS NOTHING, which means the guard below refuses.
+        A read that did not happen is not evidence that a trade is ours."""
+        inst = self.venue_symbol(symbol) if symbol else None
+        try:
+            trades = self._raw.open_trades() or []
+        except Exception:                                    # noqa: BLE001
+            return []
+        out = []
+        for t in trades:
+            if inst and str(t.get("instrument")) != inst:
+                continue
+            v = self._verdict_for_trade(t)
+            if v.ours:
+                out.append((t, v))
+        return out
+
+    def _foreign_trades(self, symbol: str | None = None) -> list:
+        inst = self.venue_symbol(symbol) if symbol else None
+        try:
+            trades = self._raw.open_trades() or []
+        except Exception as e:                               # noqa: BLE001
+            # AMBIGUITY RESOLVES TO HANDS OFF. A read that failed is reported
+            # as one foreign "trade" so every caller that asks "is anything
+            # here that is not ours" gets a yes.
+            import attribution
+            return [({"instrument": inst or "?", "id": None},
+                     attribution.Verdict(
+                         False, f"the open trades could not be read "
+                                f"({str(e)[:100]}), so nothing on this "
+                                f"instrument can be attributed and all of it "
+                                f"is his", inst or ""))]
+        out = []
+        for t in trades:
+            if inst and str(t.get("instrument")) != inst:
+                continue
+            v = self._verdict_for_trade(t)
+            if not v.ours:
+                out.append((t, v))
+        return out
+
+    def _guarded_reduce(self, symbol: str, what: str, action) -> dict:
+        """THE ONLY DOOR. Every path in this class that closes, part-closes,
+        or changes protection on a trade comes through here, asks
+        attribution, and does nothing at all if the answer is no.
+
+        `action(trades)` runs only when at least one trade on this instrument
+        is provably ours, and only for as long as it takes — the door shuts
+        in the `finally` whether it succeeded, failed, or raised.
+        """
+        ours = self._our_trades(symbol)
+        if not ours:
+            foreign = self._foreign_trades(symbol)
+            why = (foreign[0][1].reason if foreign else
+                   "there is no open trade of ours on this instrument")
+            return self._record({
+                "status": "rejected", "kind": what, "symbol": symbol,
+                "refused_by": "attribution",
+                "reason": f"the bot did not open anything on this "
+                          f"instrument, so it does not touch it. {why}",
+                "foreign_count": len(foreign)})
+        token = object()
+        object.__setattr__(self._cli, "open_for", token)
+        try:
+            return action(ours)
+        finally:
+            object.__setattr__(self._cli, "open_for", None)
+
+    # ---------------------------------------------------------- positions
+    def _aggregate(self, trades: list) -> dict:
+        """Our trades on one instrument, as ONE position in the interface's
+        vocabulary. `qty` is signed units of the base currency; the trade ids
+        ride along because everything that acts here acts per trade."""
+        inst = str(trades[0][0].get("instrument") or "")
+        pair = self.pair_for(inst)
+        units, notional, unreal = 0.0, 0.0, 0.0
+        ids = []
+        for t, _v in trades:
+            u = float(t.get("currentUnits") or 0.0)
+            units += u
+            notional += u * float(t.get("price") or 0.0)
+            unreal += float(t.get("unrealizedPL") or 0.0)
+            ids.append(str(t.get("id")))
+        avg = (notional / units) if units else 0.0
+        mark = 0.0
+        try:
+            px = self._raw.pricing([inst]).get(inst) or {}
+            mark = float(px.get("mid") or 0.0)
+        except Exception:                                    # noqa: BLE001
+            pass
+        return {"symbol": pair, "venue_symbol": inst, "qty": units,
+                "units": units, "trade_ids": ids,
+                "avg_entry": avg, "mark": mark, "unrealised": unreal,
+                "usd_per_quote": self._usd_per_quote(inst),
+                "stop": self._stops.get(pair),
+                "venue": self.name, "attributed_to": self._tag,
+                "raw": [t for t, _ in trades]}
+
+    def positions(self) -> list:
+        """ONLY the trades the bot opened. His are not here — not as a flag,
+        not as a zero, not at all. A position the bot cannot see is a
+        position it cannot reason itself into touching."""
+        by_inst: dict = {}
+        for t, v in self._our_trades():
+            by_inst.setdefault(str(t.get("instrument")), []).append((t, v))
+        return [self._aggregate(v) for v in by_inst.values() if v]
+
+    def foreign_positions(self) -> list:
+        """HIS trades, for saying so in a report and for nothing else.
+        Nothing in the order path reads this."""
+        out = []
+        for t, v in self._foreign_trades():
+            out.append({"symbol": self.pair_for(str(t.get("instrument"))),
+                        "venue_symbol": t.get("instrument"),
+                        "qty": float(t.get("currentUnits") or 0.0),
+                        "avg_entry": float(t.get("price") or 0.0),
+                        "unrealised": float(t.get("unrealizedPL") or 0.0),
+                        "trade_id": t.get("id"), "venue": self.name,
+                        "why_not_ours": v.reason})
+        return out
+
+    def position(self, symbol: str) -> dict | None:
+        ours = self._our_trades(symbol)
+        return self._aggregate(ours) if ours else None
+
+    def _usd_per_quote(self, instrument: str) -> float | None:
+        try:
+            return self._raw.usd_per_quote(instrument)
+        except Exception:                                    # noqa: BLE001
+            return None
+
+    # ---------------------------------------------------------- recording
+    def _record(self, rec: dict) -> dict:
+        rec["venue"] = self.name
+        rec["real_money"] = self.is_real_money
+        self._orders.append(rec)
+        return rec
+
+    # ------------------------------------------------------------ sizing
+    def size_for(self, symbol: str, account: float, entry: float,
+                 stop: float, tightest_stop_pct: float,
+                 risk_pct: float = 0.01, market: str = "currencies",
+                 **kw) -> dict:
+        """THE SIZE, FROM THE ONE SIZING FUNCTION IN THIS PROJECT.
+
+        THERE IS NO ARITHMETIC IN HERE AND THERE MUST NEVER BE. Until
+        2026-07-26 this project had two sizing rules and they disagreed by up
+        to 36 times on a wide-stop instrument, which meant every backtest
+        described a bot nobody was running. There is now one function,
+        `tjr_alerts.position_size`, and it stays one. This method's entire
+        job is to supply the one input that is a VENUE fact rather than a
+        method fact and then get out of the way.
+
+        THAT INPUT IS `usd_per_quote`, AND IT IS THE YEN TRAP. A GBP/JPY
+        trade's profit and its loss both arrive in YEN. Sized as though they
+        arrived in dollars, the position is wrong by the yen rate — a factor
+        of about 145, not a rounding error. It is 1.0 on GBP/USD, EUR/USD and
+        XAU/USD, and it is read live from the broker on GBP/JPY.
+
+        A rate that could not be read refuses rather than falling back to
+        1.0, because falling back to 1.0 on a yen pair is the exact mistake
+        this paragraph exists to prevent.
+
+        `market` is what tjr_alerts writes the MESSAGE in, and it defaults to
+        "currencies" because three of the four instruments here are currency
+        pairs. XAU/USD is the odd one and it is an OPEN GAP, said out loud
+        rather than papered over: spot gold trades in OUNCES on this venue,
+        and tjr_alerts today knows gold only as shares of the GLD fund and
+        currencies only as standard lots. Neither sentence is true of spot
+        gold. The arithmetic below is right for it; the words around the
+        number are not yet, and that belongs to whoever wires the desk.
+        """
+        import tjr_alerts
+        inst = self.venue_symbol(symbol)
+        upq = self._usd_per_quote(inst)
+        if upq is None:
+            return {"ok": False, "units": 0.0,
+                    "why": f"the dollar value of one {inst.split('_')[-1]} "
+                           f"could not be read, so this trade cannot be sized. "
+                           f"Sizing a yen pair as though the money came back "
+                           f"in dollars is wrong by the yen rate, so it is "
+                           f"refused rather than guessed."}
+        return tjr_alerts.position_size(
+            market=market, symbol=symbol, account=account, entry=entry,
+            stop_distance=abs(float(entry) - float(stop)),
+            tightest_stop_pct=tightest_stop_pct, usd_per_quote=upq,
+            risk_pct=risk_pct, **kw)
+
+    # ------------------------------------------------------------ acting
+    def market_order(self, symbol: str, side: str, qty: float, **kw) -> dict:
+        """Open a position WITH ITS STOP ATTACHED, sized in units of the base
+        currency.
+
+        Pass `limit_price` to rest the entry at a price instead of taking it
+        now. Everything else is identical, including the attached stop —
+        there is deliberately no separate limit_order() method on this class,
+        because a second entry path is a second place for a rule to be
+        missing. The interface has one door in and both kinds go through it.
+
+        Every refusal below is safety, not preference, and each one is a bug
+        this project has already shipped once:
+
+          - the instrument spec could not be read, so the pip and the price
+            precision would be a guess. On a yen cross that guess is wrong by
+            a hundred.
+          - the instrument already carries a trade the bot cannot prove is
+            its own. Unless hedging is on, an order the other way CLOSES his
+            trade instead of opening beside ours, and reaching into his
+            position is the worst class of bug this system can have.
+          - there is no stop. An opening order must carry the level that
+            proves the idea wrong or nothing is sent at all. This is the last
+            hole from the 26 July failure: attaching the stop to the entry
+            removed the WINDOW between filling and being protected; this
+            removes the case where there was never a stop to attach.
+          - the stop is on the wrong side of the market, so it would either
+            be refused or close the trade the instant it opened.
+          - the size rounds below what the broker will accept.
+        """
+        reason = kw.get("reason", "")
+        inst = self.venue_symbol(symbol)
+        spec = self.spec(symbol)
+        if not spec:
+            return self._record({
+                "status": "rejected", "symbol": symbol, "side": side,
+                "qty": qty, "reason": "the broker's instrument spec could not "
+                "be read, so the pip size and the price precision for this "
+                "pair would be a guess. A pip is 0.0001 on GBP/USD and 0.01 "
+                "on a yen cross; guessing is wrong by a hundred. Not trading "
+                "on a guess.", "note": reason})
+
+        foreign = self._foreign_trades(symbol)
+        if foreign:
+            return self._record({
+                "status": "rejected", "symbol": symbol, "side": side,
+                "qty": qty, "refused_by": "attribution",
+                "reason": f"there are already {len(foreign)} trade(s) on "
+                          f"{inst} that the bot did not open. Unless this "
+                          f"account has hedging turned on, an order the other "
+                          f"way CLOSES an existing trade rather than opening "
+                          f"beside it — so opening here could take his "
+                          f"position off him. {foreign[0][1].reason}",
+                "note": reason})
+
+        stop = kw.get("stop")
+        ref = kw.get("reference_price")
+        if stop is None:
+            return self._record({
+                "status": "rejected", "symbol": symbol, "side": side,
+                "qty": qty, "refused_by": "no stop",
+                "reason": "an opening order must carry its stop, and this one "
+                          "did not. Nothing was sent.", "note": reason})
+        if ref:
+            wrong = (side == "buy" and float(stop) >= float(ref)) or \
+                    (side == "sell" and float(stop) <= float(ref))
+            if wrong:
+                return self._record({
+                    "status": "rejected", "symbol": symbol, "side": side,
+                    "qty": qty, "refused_by": "stop on the wrong side",
+                    "reason": f"the stop at {float(stop):g} is on the wrong "
+                              f"side of {float(ref):g} for a {side}, so it "
+                              f"would either be refused by the broker or close "
+                              f"the trade the instant it opened. Nothing was "
+                              f"sent.", "note": reason})
+
+        signed = abs(float(qty)) * (1.0 if side == "buy" else -1.0)
+        units = self._ox.fmt_units(signed, spec["units_precision"],
+                                   spec["minimum_units"])
+        if units is None:
+            return self._record({
+                "status": "rejected", "symbol": symbol, "side": side,
+                "qty": qty, "reason": f"the size works out to {abs(qty):g} "
+                f"units and this instrument's smallest tradeable amount is "
+                f"{spec['minimum_units']:g}. Too small to place.",
+                "note": reason})
+        stop_price = self._ox.fmt_price(float(stop), spec["display_precision"])
+        targets = kw.get("targets") or []
+        # THE ATTACHED TAKE PROFIT IS THE LAST TARGET, NOT THE FIRST. A
+        # strategy that takes half off at the first target and lets the rest
+        # run works those staged exits itself, bar by bar; an attached
+        # bracket covers the WHOLE trade and cannot express a partial. So
+        # this one is the "if we lose contact with this entirely, get out
+        # somewhere sensible" order, and nothing else.
+        take_profit = (self._ox.fmt_price(float(targets[-1]),
+                                          spec["display_precision"])
+                       if targets else None)
+
+        limit = kw.get("limit_price")
+        limit_price = (self._ox.fmt_price(float(limit),
+                                          spec["display_precision"])
+                       if limit else None)
+
+        coid = self._bp.make_client_order_id(self._tag)
+        trade_coid = self._bp.make_client_order_id(self._tag)
+        try:
+            send = self._raw.limit_order if limit_price else self._raw.market_order
+            extra = {"limit_price": limit_price} if limit_price else {}
+            r = send(inst, units, client_order_id=coid,
+                     trade_client_order_id=trade_coid, stop_price=stop_price,
+                     take_profit=take_profit, tag=self._tag, **extra)
+        except Exception as e:                               # noqa: BLE001
+            return self._record({"status": "rejected", "symbol": symbol,
+                                 "side": side, "qty": qty,
+                                 "client_order_id": coid,
+                                 "reason": str(e)[:300], "note": reason})
+
+        # OANDA answers a REFUSAL with a 201 and a CANCEL transaction, not an
+        # error status. A refusal read as a fill is how a bot decides it has
+        # a position it does not have, so this is checked rather than assumed.
+        cancel = r.get("orderCancelTransaction")
+        fill = r.get("orderFillTransaction")
+        if cancel:
+            return self._record({
+                "status": "rejected", "symbol": symbol, "side": side,
+                "qty": qty, "client_order_id": coid,
+                "reason": f"the broker refused it: "
+                          f"{cancel.get('reason', 'no reason given')}",
+                "raw": r, "note": reason})
+        if not fill:
+            # A LIMIT that has not filled yet is NOT a rejection and must
+            # never be recorded as one — it is an order resting at the
+            # broker with its stop stored alongside it, and the stop goes on
+            # at the instant it fills whether or not this process is running.
+            # Recording it as filled would be worse still: the bot would
+            # believe it holds a position it does not hold.
+            created = r.get("orderCreateTransaction") or {}
+            if limit_price and created:
+                return self._record({
+                    "status": "resting", "symbol": symbol,
+                    "venue_symbol": inst, "side": side, "qty": abs(float(qty)),
+                    "units": units, "limit_price": float(limit),
+                    "stop": float(stop), "stop_attached_to_entry": True,
+                    "order_id": created.get("id"), "client_order_id": coid,
+                    "trade_client_order_id": trade_coid, "tag": self._tag,
+                    "raw": r, "note": reason})
+            return self._record({
+                "status": "rejected", "symbol": symbol, "side": side,
+                "qty": qty, "client_order_id": coid,
+                "reason": "no fill and no resting order came back from the "
+                          "broker, so what happened is unknown. Treating an "
+                          "unknown as a fill is how a bot ends up managing a "
+                          "position that does not exist.",
+                "raw": r, "note": reason})
+
+        opened = fill.get("tradeOpened") or {}
+        price = float(fill.get("price") or 0.0)
+        filled_units = abs(float(fill.get("units") or units))
+        self._stops[symbol] = float(stop)
+        # LEVERAGE IS AN OUTPUT HERE, NEVER A DIAL. Forex has no leverage
+        # setting per trade — the broker sets a margin rate per instrument
+        # and what you actually used is the notional divided by the account.
+        # It is reported so the number he sees on his screen and the number
+        # in this record are the same number.
+        lev = None
+        try:
+            eq = float((self._raw.summary() or {}).get("NAV") or 0.0)
+            upq = self._usd_per_quote(inst) or 1.0
+            if eq > 0 and price > 0:
+                lev = (filled_units * price * upq) / eq
+        except Exception:                                    # noqa: BLE001
+            pass
+        return self._record({
+            "status": "filled", "symbol": symbol, "venue_symbol": inst,
+            "side": side, "qty": filled_units, "units": units,
+            "price": price, "stop": float(stop),
+            "stop_attached_to_entry": True,
+            "take_profit": float(targets[-1]) if targets else None,
+            "trade_id": opened.get("tradeID"),
+            "id": fill.get("id"), "client_order_id": coid,
+            "trade_client_order_id": trade_coid, "leverage": lev,
+            "leverage_note": ("how many times the account's own money this "
+                              "position controls. It is worked out FROM the "
+                              "size and the stop, never picked."),
+            "tag": self._tag, "raw": r, "note": reason})
+
+    def place_stop(self, symbol: str, level: float, **kw) -> dict:
+        """The stop on a trade the bot opened.
+
+        READ THIS BEFORE ASSUMING IT IS THE FIRST PROTECTION. On this venue
+        it is not. The stop went on WITH the entry, inside the same request,
+        so by the time anything calls this the position has never been
+        unprotected for a millisecond. The desk calls entry-then-stop on
+        every venue and that is correct — here the second call CONFIRMS or
+        MOVES the level rather than creating it.
+
+        It goes through the guard because putting a stop on his trade is
+        touching his trade — it changes what happens to his money — even
+        though it never closes anything by itself.
+        """
+        def action(ours):
+            spec = self.spec(symbol)
+            if not spec:
+                return self._record({"status": "rejected", "kind": "stop",
+                                     "symbol": symbol, "level": level,
+                                     "reason": "the instrument spec could not "
+                                     "be read, so the stop price cannot be "
+                                     "formatted to this pair's own precision"})
+            price = self._ox.fmt_price(float(level), spec["display_precision"])
+            moved, failed = [], []
+            for t, _v in ours:
+                tid = str(t.get("id"))
+                existing = ((t.get("stopLossOrder") or {}).get("price"))
+                if existing is not None and \
+                        abs(float(existing) - float(level)) < spec["pip"] / 10.0:
+                    moved.append({"trade_id": tid, "already_there": True})
+                    continue
+                coid = self._bp.make_client_order_id(self._tag)
+                try:
+                    self._cli.set_trade_stop(tid, price, client_order_id=coid,
+                                             tag=self._tag)
+                    moved.append({"trade_id": tid, "client_order_id": coid})
+                except Exception as e:                       # noqa: BLE001
+                    failed.append({"trade_id": tid, "reason": str(e)[:200]})
+            if failed and not moved:
+                return self._record({"status": "rejected", "kind": "stop",
+                                     "symbol": symbol, "level": level,
+                                     "reason": "; ".join(
+                                         f["reason"] for f in failed)})
+            self._stops[symbol] = float(level)
+            return self._record({
+                "status": "placed", "kind": "stop", "symbol": symbol,
+                "venue_symbol": self.venue_symbol(symbol), "level": level,
+                "trades": moved, "failed": failed,
+                "rests_at_broker": True,
+                "note": "the stop was already on from the entry; this call "
+                        "confirmed or moved it. There was never a moment "
+                        "without one."})
+
+        return self._guarded_reduce(symbol, "stop", action)
+
+    def close_position(self, symbol: str, qty: float | None = None,
+                       **kw) -> dict:
+        """Close all of it, or part of it — on trades the bot opened.
+
+        `qty` is in units of the base currency, like everything else here.
+        Partial is first-class: the method takes half off at the first target
+        and lets the rest run.
+
+        IT CLOSES BY TRADE ID, ONE AT A TIME, NEVER BY INSTRUMENT. OANDA has
+        an endpoint that flattens a whole instrument and it would take his
+        trade on the same pair off with ours. oanda_api.py does not wrap it.
+        """
+        def action(ours):
+            spec = self.spec(symbol)
+            prec = int((spec or {}).get("units_precision") or 0)
+            minimum = float((spec or {}).get("minimum_units") or 0.0)
+            want = None if qty is None else abs(float(qty))
+            closed, failed, done_units = [], [], 0.0
+            for t, _v in ours:
+                tid = str(t.get("id"))
+                have = abs(float(t.get("currentUnits") or 0.0))
+                if have <= 0:
+                    continue
+                if want is None:
+                    amount = "ALL"
+                    take = have
+                else:
+                    left = want - done_units
+                    if left <= 0:
+                        break
+                    take = min(have, left)
+                    if take >= have - 1e-9:
+                        amount, take = "ALL", have
+                    else:
+                        amount = self._ox.fmt_units(take, prec, minimum)
+                        if amount is None:
+                            # What is left to close rounds below what the
+                            # broker accepts. Saying so beats silently
+                            # closing the whole trade instead.
+                            failed.append({"trade_id": tid,
+                                           "reason": f"the amount left to "
+                                           f"close ({take:g} units) rounds "
+                                           f"below this instrument's minimum "
+                                           f"of {minimum:g}"})
+                            continue
+                        amount = amount.lstrip("-")
+                try:
+                    r = self._cli.close_trade(tid, amount)
+                    closed.append({"trade_id": tid, "units": take, "raw": r})
+                    done_units += take
+                except Exception as e:                       # noqa: BLE001
+                    failed.append({"trade_id": tid, "reason": str(e)[:200]})
+            if not closed:
+                return self._record({
+                    "status": "rejected", "kind": "close", "symbol": symbol,
+                    "reason": ("; ".join(f["reason"] for f in failed)
+                               if failed else "no open trade of ours to close")})
+            if qty is None or not self._our_trades(symbol):
+                self._stops.pop(symbol, None)
+            return self._record({
+                "status": "filled", "kind": "close", "symbol": symbol,
+                "venue_symbol": self.venue_symbol(symbol),
+                "qty": done_units, "trades": closed, "failed": failed,
+                "reason": kw.get("reason", "")})
+
+        return self._guarded_reduce(symbol, "close", action)
+
+    # -------------------------------------------------------- audit trail
+    def orders(self) -> list:
+        return list(self._orders)
+
+    def fills(self) -> list:
+        return [o for o in self._orders if o.get("status") == "filled"]
+
+    def refusals(self) -> list:
+        """Every order the attribution rule stopped. Worth reading on its
+        own: a long list here means the bot is repeatedly finding trades it
+        does not own, which is information, not noise."""
+        return [o for o in self._orders if o.get("refused_by") == "attribution"]
+
+
+class OandaLiveVenue(OandaVenue):
+    """THE SAME CLASS, POINTED AT THE LIVE HOST. REAL MONEY.
+
+    Every line of behaviour above is inherited unchanged, and that is the
+    point rather than a convenience: requirement one of this build was that
+    a week on practice is only evidence if THE CODE THAT RUNS ON PRACTICE IS
+    THE CODE THAT RUNS LIVE. Same call sites, same order flow, same stop
+    handling, same attribution gate. Only the host string differs, and it
+    differs in oanda_api.py, in one place, read from `practice`.
+
+    It is registered with real_money=True, so resolve() refuses to build it
+    unless CRYPTOBOT_REAL_MONEY holds the exact confirmation phrase. Nothing
+    in this project points at it and no order has ever been placed through
+    it. It exists so that the switch is a config value today rather than a
+    rewrite later.
+    """
+
+    name = "oanda-live"
+    is_real_money = True
+    _PRACTICE = False
 
 
 if __name__ == "__main__":

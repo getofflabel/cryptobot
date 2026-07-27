@@ -4,9 +4,11 @@ test_news_calendar.py — proves the calendar is real, not invented.
 Two halves.
 
   STRUCTURE (no market data needed)
-    The cache loads, covers the whole of 2026, has the right number of each
-    release, has the right release time on each, refuses to answer about days
-    it does not cover, and never lets an unverified date stand the day down.
+    The cache loads, covers 2016 to 2026 end to end, has the right number of
+    each release in every year, has the right release time on each, refuses
+    to answer about days it does not cover AND says out loud that the refusal
+    is a hole in the data rather than a trading decision, and never lets an
+    unverified date stand the day down.
 
   REALITY (needs data_alpaca_SPY_1m.parquet)
     A date is only worth having if the market agrees something happened on
@@ -17,6 +19,10 @@ Two halves.
     nothing at 08:30. Fed days should stand out at 14:00 New York instead.
     And the nine dates the old invented calendar blocked should look like
     completely ordinary days, which is the whole point.
+
+    The same check for every year 2016 to 2026 lives in
+    step450_news_calendar_history.py, which reads the 5-minute file because
+    that is the one that reaches back to 2016.
 
 Run:  python3 test_news_calendar.py
 """
@@ -35,24 +41,77 @@ WINDOW_END = dt.date(2026, 7, 24)      # last full day in the parquet
 
 
 # --------------------------------------------------------------- structure
-def test_cache_loads_and_covers_2026():
+def test_cache_loads_and_covers_2016_to_2026():
+    """Eleven years, which is every year the 5-minute bar file reaches. The
+    first cut of this cache held 2026 only, and because an uncovered date
+    stood the bot down, running the method over 2024 or 2025 produced zero
+    trades that looked exactly like the method sitting out. That is the bug
+    this window closes."""
     lo, hi = nc.coverage()
-    assert lo == dt.date(2026, 1, 1), lo
+    assert lo == dt.date(2016, 1, 1), lo
     assert hi == dt.date(2026, 12, 31), hi
-    assert nc.covers(dt.date(2026, 7, 14))
+    for d in (dt.date(2016, 1, 4), dt.date(2019, 6, 3), dt.date(2024, 3, 15),
+              dt.date(2026, 7, 14)):
+        assert nc.covers(d), d
+    assert not nc.covers(dt.date(2015, 12, 31))
     assert not nc.covers(dt.date(2027, 1, 4))
 
 
-def test_the_four_day_killers_have_the_right_count():
-    """Twelve consumer-price reports, twelve jobs reports, eight Fed
-    decisions. Thirteen producer-price reports, not twelve, because January
-    2026 carried two of them (November-2025 data on the 14th, December-2025
-    data on the 30th) as the schedule caught up. An invented calendar would
-    never produce that thirteenth one, which is exactly why it matters."""
-    assert len(nc.all_releases("Consumer Price Index")) == 12
-    assert len(nc.all_releases("Employment Situation")) == 12
-    assert len(nc.all_releases("Producer Price Index")) == 13
-    assert len(nc.all_releases("FOMC Statement")) == 8
+def test_the_four_day_killers_have_the_right_count_every_year():
+    """Twelve consumer-price reports, twelve producer-price reports, twelve
+    jobs reports and eight Fed decisions in a normal year. Three years are
+    not normal, and every one of the exceptions is real:
+
+      2020  SEVEN Fed decisions. The 17-18 March meeting was CANCELLED and
+            the cut went out on Sunday 15 March instead.
+      2025  eleven consumer-price reports, ten producer-price reports and
+            eleven jobs reports. The autumn government shutdown killed the
+            October releases outright.
+      2026  THIRTEEN producer-price reports, because January carried two of
+            them (November-2025 data on the 14th, December-2025 data on the
+            30th) as the schedule caught back up.
+
+    A rhythm generator produces 12/12/12/8 every year forever and cannot
+    produce a single one of those, which is the point of reading the
+    agencies' own pages.
+    """
+    want = {y: (12, 12, 12, 8) for y in range(2016, 2027)}
+    want[2020] = (12, 12, 12, 7)
+    want[2025] = (11, 10, 11, 8)
+    want[2026] = (12, 13, 12, 8)
+    for year, (cpi, ppi, es, fed) in want.items():
+        got = tuple(len([r for r in nc.all_releases(n) if r.date.year == year])
+                    for n in ("Consumer Price Index", "Producer Price Index",
+                              "Employment Situation", "FOMC Statement"))
+        assert got == (cpi, ppi, es, fed), (year, got, (cpi, ppi, es, fed))
+
+
+def test_the_2026_totals_are_unchanged_by_the_wider_window():
+    """The 2026 numbers the first version of this file verified must survive
+    the rebuild, or the new full-year parser is reading a different page."""
+    y = [r for r in nc.all_releases() if r.date.year == 2026 and r.verified]
+    assert len([r for r in y if r.name == "Consumer Price Index"]) == 12
+    assert len([r for r in y if r.name == "Producer Price Index"]) == 13
+    assert len([r for r in y if r.name == "Employment Situation"]) == 12
+    assert len([r for r in y if r.name == "FOMC Statement"]) == 8
+    assert len([d for d in nc.holidays() if d.year == 2026]) == 11
+
+
+def test_unscheduled_fed_statements_are_recorded_but_never_block():
+    """2019, 2020 and 2025 carry Fed statements from emergency meetings,
+    notation votes and the framework review. They are facts and they are in
+    the file, but nobody had them on a calendar that morning, so blocking
+    those days would be reading tomorrow's newspaper."""
+    odd = nc.all_releases("FOMC Statement (unscheduled)")
+    dates = {r.date.isoformat() for r in odd}
+    assert "2020-03-15" in dates, sorted(dates)      # the Sunday emergency cut
+    assert "2020-03-03" in dates, sorted(dates)
+    assert "2025-08-22" in dates, sorted(dates)      # framework review
+    for r in odd:
+        assert r.impact != "day_killer", r
+        assert nc.blocking_release(r.date) != r.name
+    # 3 March 2020 was an ordinary trading day as far as the gate is concerned
+    assert not nc.blocks_the_day(dt.date(2020, 3, 3))
 
 
 def test_release_times_are_what_the_agencies_publish():
@@ -123,6 +182,61 @@ def test_outside_coverage_never_answers_quietly():
         pass
     else:
         raise AssertionError("expected CalendarCoverageError from releases_on")
+
+
+def test_a_missing_date_shouts_that_it_is_a_data_hole():
+    """THE FIX. The failure was never the caution — it was that a missing
+    cache and the method choosing to sit out produced the same quiet line in
+    the log, so two years of backtest evaporated and looked like a result.
+    An uncovered date now names itself as a data hole, in words nobody can
+    read as a strategy decision, and it names the window it fell outside."""
+    gap = nc.coverage_gap(dt.date(2015, 6, 1))
+    assert gap is not None
+    assert "CALENDAR GAP" in gap, gap
+    assert "2016-01-01..2026-12-31" in gap, gap
+    assert "2015-06-01" in gap, gap
+    assert nc.coverage_gap(dt.date(2019, 6, 3)) is None
+
+
+def test_stand_down_reason_separates_the_method_from_the_data():
+    """Two stand-downs that look identical in a count are not the same thing.
+    One is his rule working. The other is a broken file."""
+    kind, why = nc.stand_down_reason(dt.date(2026, 7, 14))
+    assert kind == "release" and why == "Consumer Price Index"
+    kind, why = nc.stand_down_reason(dt.date(2015, 6, 1))
+    assert kind == "calendar_gap" and "CALENDAR GAP" in why
+    # a covered day with nothing red on it is an ordinary trading day
+    assert nc.stand_down_reason(dt.date(2024, 3, 15)) is None
+
+
+def test_a_covered_day_with_nothing_on_it_trades():
+    """His rule, in his words: the yellow-folder releases 'don't really
+    affect the market... so I get rid of those'. Only the four red ones stand
+    a day down. There is no rule anywhere that says an ordinary day sits
+    out. Sample the whole window and prove most weekdays are tradeable."""
+    lo, hi = nc.coverage()
+    end = min(hi, dt.date(2026, 7, 24))
+    weekdays = blocked = 0
+    d = lo
+    while d <= end:
+        if d.weekday() < 5:
+            weekdays += 1
+            blocked += bool(nc.blocks_the_day(d))
+        d += dt.timedelta(days=1)
+    share = 100.0 * blocked / weekdays
+    print(f"   {blocked} of {weekdays} weekdays blocked by the four "
+          f"({share:.1f}% of weekdays)")
+    assert 10 < share < 25, share      # roughly 44 days a year out of ~252
+
+
+def test_every_year_has_the_four_and_none_is_empty():
+    """No year may be silently empty. That is the shape the 2026-only cache
+    had for 2016-2025 and it is what nobody noticed."""
+    for year in range(2016, 2027):
+        rs = [r for r in nc.all_releases() if r.date.year == year]
+        killers = [r for r in rs if r.impact == "day_killer"]
+        assert len(rs) > 100, (year, len(rs))
+        assert len(killers) >= 39, (year, len(killers))
 
 
 def test_unverified_entries_exist_and_are_harmless():

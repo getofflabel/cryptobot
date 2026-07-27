@@ -1,0 +1,7 @@
+pair,year,days,trades,truncated,truncated_share_pct,cut_at_midnight_dollars,allowed_to_run_dollars,difference_dollars,book_cut_dollars,book_run_dollars,median_hours_held_cut,median_hours_held_run,still_open_when_record_ended
+BTC/USD,2021,365,1232,219,17.8,37059,-7254,-44314,-85555,-129869,2.8,7.3,1
+BTC/USD,2022,365,1103,198,18.0,-1407,5061,6469,-78738,-72269,3.2,10.3,1
+BTC/USD,2023,365,800,241,30.1,-550,766,1316,-67234,-65918,3.7,12.3,0
+BTC/USD,2024,366,702,185,26.4,20186,240550,220364,-62848,157516,4.3,12.7,4
+BTC/USD,2025,365,596,205,34.4,21588,-13236,-34824,-62781,-97605,4.5,12.8,3
+BTC/USD,2026,207,529,149,28.2,12346,-20098,-32444,-59297,-91741,4.2,11.2,2

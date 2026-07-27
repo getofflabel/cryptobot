@@ -1,0 +1,1890 @@
+[youtube:tab] Extracting URL: https://www.youtube.com/@fxalexg__/videos
+[youtube:tab] @fxalexg__/videos: Downloading webpage
+[download] Downloading playlist: fxalexg  - Videos
+[youtube:tab] Sleeping 1.0 seconds ...
+[youtube:tab] UCgPeeHdxYRal0HTNeAkjqLg page 1: Downloading API JSON
+[youtube:tab] Sleeping 1.0 seconds ...
+[youtube:tab] UCgPeeHdxYRal0HTNeAkjqLg page 2: Downloading API JSON
+[youtube:tab] Sleeping 1.0 seconds ...
+[youtube:tab] UCgPeeHdxYRal0HTNeAkjqLg page 3: Downloading API JSON
+[youtube:tab] Sleeping 1.0 seconds ...
+[youtube:tab] UCgPeeHdxYRal0HTNeAkjqLg page 4: Downloading API JSON
+[youtube:tab] Sleeping 1.0 seconds ...
+[youtube:tab] UCgPeeHdxYRal0HTNeAkjqLg page 5: Downloading API JSON
+[youtube:tab] Sleeping 1.0 seconds ...
+[youtube:tab] UCgPeeHdxYRal0HTNeAkjqLg page 6: Downloading API JSON
+[youtube:tab] Playlist fxalexg  - Videos: Downloading 200 items of 200
+[download] Downloading item 1 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=hb7ot1_szWI
+[youtube] Sleeping 1.0 seconds ...
+[youtube] hb7ot1_szWI: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] hb7ot1_szWI: Downloading android vr player API JSON
+[info] hb7ot1_szWI: Downloading subtitles: en
+[info] hb7ot1_szWI: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: hb7ot1_szWI.en.vtt
+[download] Destination: hb7ot1_szWI.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  Unknown B/s (00:00:00)[download]   15.00KiB at  Unknown B/s (00:00:00)[download]   31.00KiB at  699.46KiB/s (00:00:00)[download]   63.00KiB at  825.07KiB/s (00:00:00)[download]  127.00KiB at 1018.24KiB/s (00:00:00)[download]  255.00KiB at    1.46MiB/s (00:00:00)[download]  364.72KiB at    1.77MiB/s (00:00:00)[download] 100% of  364.72KiB in 00:00:00 at 777.57KiB/s
+[download] Downloading item 2 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=lHGkup8CoTE
+[youtube] Sleeping 1.0 seconds ...
+[youtube] lHGkup8CoTE: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] lHGkup8CoTE: Downloading android vr player API JSON
+[info] lHGkup8CoTE: Downloading subtitles: en
+[info] lHGkup8CoTE: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: lHGkup8CoTE.en.vtt
+[download] Destination: lHGkup8CoTE.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at    3.05MiB/s (00:00:00)[download]   15.00KiB at    1.40MiB/s (00:00:00)[download]   31.00KiB at  795.71KiB/s (00:00:00)[download]   63.00KiB at  414.22KiB/s (00:00:00)[download]  127.00KiB at  822.84KiB/s (00:00:00)[download]  255.00KiB at    1.04MiB/s (00:00:00)[download]  360.82KiB at    1.30MiB/s (00:00:00)[download] 100% of  360.82KiB in 00:00:00 at 782.97KiB/s
+[download] Downloading item 3 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=DejB31rwv8c
+[youtube] Sleeping 1.0 seconds ...
+[youtube] DejB31rwv8c: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] DejB31rwv8c: Downloading android vr player API JSON
+[info] DejB31rwv8c: Downloading subtitles: en
+[info] DejB31rwv8c: Downloading 1 format(s): 401+251
+[info] Writing video subtitles to: DejB31rwv8c.en.vtt
+[download] Destination: DejB31rwv8c.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  Unknown B/s (00:00:00)[download]   15.00KiB at  Unknown B/s (00:00:00)[download]   31.00KiB at  702.09KiB/s (00:00:00)[download]   63.00KiB at  856.41KiB/s (00:00:00)[download]  127.00KiB at    1.04MiB/s (00:00:00)[download]  255.00KiB at    1.57MiB/s (00:00:00)[download]  511.00KiB at    2.44MiB/s (00:00:00)[download]  637.31KiB at    2.88MiB/s (00:00:00)[download] 100% of  637.31KiB in 00:00:00 at 1.32MiB/s
+[download] Downloading item 4 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=MhWSZp4yS2c
+[youtube] Sleeping 1.0 seconds ...
+[youtube] MhWSZp4yS2c: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] MhWSZp4yS2c: Downloading android vr player API JSON
+[info] MhWSZp4yS2c: Downloading subtitles: en
+[info] MhWSZp4yS2c: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: MhWSZp4yS2c.en.vtt
+[download] Destination: MhWSZp4yS2c.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at    1.85MiB/s (00:00:00)[download]   15.00KiB at    1.28MiB/s (00:00:00)[download]   31.00KiB at  717.53KiB/s (00:00:00)[download]   63.00KiB at  871.19KiB/s (00:00:00)[download]  127.00KiB at    1.13MiB/s (00:00:00)[download]  255.00KiB at    1.69MiB/s (00:00:00)[download]  511.00KiB at    2.70MiB/s (00:00:00)[download]  730.50KiB at    3.43MiB/s (00:00:00)[download] 100% of  730.50KiB in 00:00:00 at 1.43MiB/s
+[download] Downloading item 5 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=DsPLtzjTONI
+[youtube] Sleeping 1.0 seconds ...
+[youtube] DsPLtzjTONI: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] DsPLtzjTONI: Downloading android vr player API JSON
+[info] DsPLtzjTONI: Downloading subtitles: en
+[info] DsPLtzjTONI: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: DsPLtzjTONI.en.vtt
+[download] Destination: DsPLtzjTONI.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.23MiB/s (00:00:00)[download]    7.00KiB at  648.70KiB/s (00:00:00)[download]   15.00KiB at    1.01MiB/s (00:00:00)[download]   31.00KiB at  257.84KiB/s (00:00:00)[download]   63.00KiB at  392.92KiB/s (00:00:00)[download]  127.00KiB at  603.04KiB/s (00:00:00)[download]  255.00KiB at  959.68KiB/s (00:00:00)[download]  264.58KiB at  970.85KiB/s (00:00:00)[download] 100% of  264.58KiB in 00:00:00 at 575.59KiB/s
+[download] Downloading item 6 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=KPVVOa6c6dY
+[youtube] Sleeping 1.0 seconds ...
+[youtube] KPVVOa6c6dY: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] KPVVOa6c6dY: Downloading android vr player API JSON
+[info] KPVVOa6c6dY: Downloading subtitles: en
+[info] KPVVOa6c6dY: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: KPVVOa6c6dY.en.vtt
+[download] Destination: KPVVOa6c6dY.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at    2.27MiB/s (00:00:00)[download]   15.00KiB at    1.38MiB/s (00:00:00)[download]   31.00KiB at  774.24KiB/s (00:00:00)[download]   63.00KiB at  910.71KiB/s (00:00:00)[download]  127.00KiB at    1.17MiB/s (00:00:00)[download]  255.00KiB at    1.70MiB/s (00:00:00)[download]  283.99KiB at    1.81MiB/s (00:00:00)[download] 100% of  283.99KiB in 00:00:00 at 626.62KiB/s
+[download] Downloading item 7 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=WEyJ-zKAEoA
+[youtube] Sleeping 1.0 seconds ...
+[youtube] WEyJ-zKAEoA: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] WEyJ-zKAEoA: Downloading android vr player API JSON
+[info] WEyJ-zKAEoA: Downloading subtitles: en
+[info] WEyJ-zKAEoA: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: WEyJ-zKAEoA.en.vtt
+[download] Destination: WEyJ-zKAEoA.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.53MiB/s (00:00:00)[download]    7.00KiB at  959.58KiB/s (00:00:00)[download]   15.00KiB at  994.04KiB/s (00:00:00)[download]   31.00KiB at  722.16KiB/s (00:00:00)[download]   63.00KiB at  858.66KiB/s (00:00:00)[download]  127.00KiB at  726.74KiB/s (00:00:00)[download]  251.66KiB at    1.04MiB/s (00:00:00)[download] 100% of  251.66KiB in 00:00:00 at 588.92KiB/s
+[download] Downloading item 8 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=Rua24ytuHuY
+[youtube] Sleeping 1.0 seconds ...
+[youtube] Rua24ytuHuY: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] Rua24ytuHuY: Downloading android vr player API JSON
+[info] Rua24ytuHuY: Downloading subtitles: en
+[info] Rua24ytuHuY: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: Rua24ytuHuY.en.vtt
+[download] Destination: Rua24ytuHuY.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  Unknown B/s (00:00:00)[download]   15.00KiB at  417.60KiB/s (00:00:00)[download]   31.00KiB at  629.94KiB/s (00:00:00)[download]   63.00KiB at  756.24KiB/s (00:00:00)[download]  127.00KiB at 1010.45KiB/s (00:00:00)[download]  189.85KiB at    1.26MiB/s (00:00:00)[download] 100% of  189.85KiB in 00:00:00 at 549.13KiB/s
+[download] Downloading item 9 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=1dL3xmxA2e0
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 1dL3xmxA2e0: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 1dL3xmxA2e0: Downloading android vr player API JSON
+[info] 1dL3xmxA2e0: Downloading subtitles: en
+[info] 1dL3xmxA2e0: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: 1dL3xmxA2e0.en.vtt
+[download] Destination: 1dL3xmxA2e0.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at    2.77MiB/s (00:00:00)[download]   15.00KiB at    1.47MiB/s (00:00:00)[download]   31.00KiB at  714.30KiB/s (00:00:00)[download]   63.00KiB at  855.74KiB/s (00:00:00)[download]  127.00KiB at    1.11MiB/s (00:00:00)[download]  255.00KiB at    1.74MiB/s (00:00:00)[download]  280.24KiB at    1.77MiB/s (00:00:00)[download] 100% of  280.24KiB in 00:00:00 at 648.99KiB/s
+[download] Downloading item 10 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=ithXhNOITTA
+[youtube] Sleeping 1.0 seconds ...
+[youtube] ithXhNOITTA: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] ithXhNOITTA: Downloading android vr player API JSON
+[info] ithXhNOITTA: Downloading subtitles: en
+[info] ithXhNOITTA: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: ithXhNOITTA.en.vtt
+[download] Destination: ithXhNOITTA.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at    4.06MiB/s (00:00:00)[download]   15.00KiB at    1.38MiB/s (00:00:00)[download]   31.00KiB at  269.46KiB/s (00:00:00)[download]   63.00KiB at  544.61KiB/s (00:00:00)[download]  127.00KiB at  624.04KiB/s (00:00:00)[download]  255.00KiB at  987.14KiB/s (00:00:00)[download]  258.70KiB at  996.84KiB/s (00:00:00)[download] 100% of  258.70KiB in 00:00:00 at 529.93KiB/s
+[download] Downloading item 11 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=6E99Y-c-BjE
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 6E99Y-c-BjE: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 6E99Y-c-BjE: Downloading android vr player API JSON
+[info] 6E99Y-c-BjE: Downloading subtitles: en
+[info] 6E99Y-c-BjE: Downloading 1 format(s): 401+251
+[info] Writing video subtitles to: 6E99Y-c-BjE.en.vtt
+[download] Destination: 6E99Y-c-BjE.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  394.89KiB/s (00:00:00)[download]    7.00KiB at  367.86KiB/s (00:00:00)[download]   15.00KiB at  424.73KiB/s (00:00:00)[download]   31.00KiB at  490.75KiB/s (00:00:00)[download]   63.00KiB at  665.13KiB/s (00:00:00)[download]  127.00KiB at  953.86KiB/s (00:00:00)[download]  255.00KiB at    1.47MiB/s (00:00:00)[download]  394.55KiB at    1.98MiB/s (00:00:00)[download] 100% of  394.55KiB in 00:00:00 at 866.53KiB/s
+[download] Downloading item 12 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=0cHV5LFvcXo
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 0cHV5LFvcXo: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 0cHV5LFvcXo: Downloading android vr player API JSON
+[youtube] 0cHV5LFvcXo: This video is age-restricted; some formats may be missing without authentication. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 0cHV5LFvcXo: Downloading web embedded client config
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 0cHV5LFvcXo: Downloading player 7a7969c2-main
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 0cHV5LFvcXo: Downloading web embedded player API JSON
+ERROR: [youtube] 0cHV5LFvcXo: Sign in to confirm your age. This video may be inappropriate for some users. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[download] Downloading item 13 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=1fGzVHI7rN0
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 1fGzVHI7rN0: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 1fGzVHI7rN0: Downloading android vr player API JSON
+[info] 1fGzVHI7rN0: Downloading subtitles: en
+[info] 1fGzVHI7rN0: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: 1fGzVHI7rN0.en.vtt
+[download] Destination: 1fGzVHI7rN0.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.28MiB/s (00:00:00)[download]    7.00KiB at    1.06MiB/s (00:00:00)[download]   15.00KiB at    1.00MiB/s (00:00:00)[download]   31.00KiB at  695.21KiB/s (00:00:00)[download]   63.00KiB at  835.30KiB/s (00:00:00)[download]  127.00KiB at    1.14MiB/s (00:00:00)[download]  221.73KiB at    1.58MiB/s (00:00:00)[download] 100% of  221.73KiB in 00:00:00 at 685.21KiB/s
+[download] Downloading item 14 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=BcWxqfcjk9A
+[youtube] Sleeping 1.0 seconds ...
+[youtube] BcWxqfcjk9A: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] BcWxqfcjk9A: Downloading android vr player API JSON
+[info] BcWxqfcjk9A: Downloading subtitles: en
+[info] BcWxqfcjk9A: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: BcWxqfcjk9A.en.vtt
+[download] Destination: BcWxqfcjk9A.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.47MiB/s (00:00:00)[download]    7.00KiB at    1.14MiB/s (00:00:00)[download]   15.00KiB at    1.02MiB/s (00:00:00)[download]   31.00KiB at  751.28KiB/s (00:00:00)[download]   63.00KiB at  842.14KiB/s (00:00:00)[download]  127.00KiB at    1.14MiB/s (00:00:00)[download]  229.96KiB at    1.63MiB/s (00:00:00)[download] 100% of  229.96KiB in 00:00:00 at 688.30KiB/s
+[download] Downloading item 15 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=M8wDlKjaQRk
+[youtube] Sleeping 1.0 seconds ...
+[youtube] M8wDlKjaQRk: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] M8wDlKjaQRk: Downloading android vr player API JSON
+[info] M8wDlKjaQRk: Downloading subtitles: en
+[info] M8wDlKjaQRk: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: M8wDlKjaQRk.en.vtt
+[download] Destination: M8wDlKjaQRk.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  717.94KiB/s (00:00:00)[download]   15.00KiB at  869.91KiB/s (00:00:00)[download]   31.00KiB at  723.84KiB/s (00:00:00)[download]   63.00KiB at  778.70KiB/s (00:00:00)[download]  127.00KiB at    1.10MiB/s (00:00:00)[download]  195.56KiB at    1.38MiB/s (00:00:00)[download] 100% of  195.56KiB in 00:00:00 at 501.64KiB/s
+[download] Downloading item 16 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=MMRGV6Isxu8
+[youtube] Sleeping 1.0 seconds ...
+[youtube] MMRGV6Isxu8: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] MMRGV6Isxu8: Downloading android vr player API JSON
+[info] MMRGV6Isxu8: Downloading subtitles: en
+[info] MMRGV6Isxu8: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: MMRGV6Isxu8.en.vtt
+[download] Destination: MMRGV6Isxu8.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.13MiB/s (00:00:00)[download]    7.00KiB at    1.02MiB/s (00:00:00)[download]   15.00KiB at  967.99KiB/s (00:00:00)[download]   31.00KiB at  713.79KiB/s (00:00:00)[download]   63.00KiB at  820.03KiB/s (00:00:00)[download]  127.00KiB at    1.15MiB/s (00:00:00)[download]  184.74KiB at    1.42MiB/s (00:00:00)[download] 100% of  184.74KiB in 00:00:00 at 377.03KiB/s
+[download] Downloading item 17 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=PwHaMVHD9oQ
+[youtube] Sleeping 1.0 seconds ...
+[youtube] PwHaMVHD9oQ: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] PwHaMVHD9oQ: Downloading android vr player API JSON
+[info] PwHaMVHD9oQ: Downloading subtitles: en
+[info] PwHaMVHD9oQ: Downloading 1 format(s): 401+251
+[info] Writing video subtitles to: PwHaMVHD9oQ.en.vtt
+[download] Destination: PwHaMVHD9oQ.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  Unknown B/s (00:00:00)[download]   15.00KiB at  Unknown B/s (00:00:00)[download]   31.00KiB at  745.55KiB/s (00:00:00)[download]   63.00KiB at  812.43KiB/s (00:00:00)[download]  127.00KiB at    1.05MiB/s (00:00:00)[download]  255.00KiB at    1.54MiB/s (00:00:00)[download]  373.39KiB at    1.91MiB/s (00:00:00)[download] 100% of  373.39KiB in 00:00:00 at 687.39KiB/s
+[download] Downloading item 18 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=LwMsai2ppKc
+[youtube] Sleeping 1.0 seconds ...
+[youtube] LwMsai2ppKc: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] LwMsai2ppKc: Downloading android vr player API JSON
+[info] LwMsai2ppKc: Downloading subtitles: en
+[info] LwMsai2ppKc: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: LwMsai2ppKc.en.vtt
+[download] Destination: LwMsai2ppKc.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  Unknown B/s (00:00:00)[download]   15.00KiB at  395.96KiB/s (00:00:00)[download]   31.00KiB at  584.82KiB/s (00:00:00)[download]   63.00KiB at  732.92KiB/s (00:00:00)[download]  127.00KiB at 1008.46KiB/s (00:00:00)[download]  255.00KiB at    1.48MiB/s (00:00:00)[download]  496.81KiB at    2.25MiB/s (00:00:00)[download] 100% of  496.81KiB in 00:00:00 at 1.09MiB/s
+[download] Downloading item 19 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=_ZVPrCyojrI
+[youtube] Sleeping 1.0 seconds ...
+[youtube] _ZVPrCyojrI: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] _ZVPrCyojrI: Downloading android vr player API JSON
+[info] _ZVPrCyojrI: Downloading subtitles: en
+[info] _ZVPrCyojrI: Downloading 1 format(s): 401+251
+[info] Writing video subtitles to: _ZVPrCyojrI.en.vtt
+[download] Destination: _ZVPrCyojrI.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  571.33KiB/s (00:00:00)[download]    7.00KiB at  421.41KiB/s (00:00:00)[download]   15.00KiB at  460.72KiB/s (00:00:00)[download]   31.00KiB at  509.30KiB/s (00:00:00)[download]   63.00KiB at  708.54KiB/s (00:00:00)[download]  127.00KiB at 1022.15KiB/s (00:00:00)[download]  255.00KiB at    1.53MiB/s (00:00:00)[download]  301.42KiB at    1.70MiB/s (00:00:00)[download] 100% of  301.42KiB in 00:00:00 at 610.56KiB/s
+[download] Downloading item 20 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=pD1vAUMbSjw
+[youtube] Sleeping 1.0 seconds ...
+[youtube] pD1vAUMbSjw: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] pD1vAUMbSjw: Downloading android vr player API JSON
+[info] pD1vAUMbSjw: Downloading subtitles: en
+[info] pD1vAUMbSjw: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: pD1vAUMbSjw.en.vtt
+[download] Destination: pD1vAUMbSjw.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at    1.23MiB/s (00:00:00)[download]   15.00KiB at    1.12MiB/s (00:00:00)[download]   31.00KiB at  695.82KiB/s (00:00:00)[download]   63.00KiB at  877.67KiB/s (00:00:00)[download]  127.00KiB at    1.16MiB/s (00:00:00)[download]  255.00KiB at    1.77MiB/s (00:00:00)[download]  329.56KiB at    1.35MiB/s (00:00:00)[download] 100% of  329.56KiB in 00:00:00 at 731.11KiB/s
+[download] Downloading item 21 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=noHsKFy7NgY
+[youtube] Sleeping 1.0 seconds ...
+[youtube] noHsKFy7NgY: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] noHsKFy7NgY: Downloading android vr player API JSON
+[info] noHsKFy7NgY: Downloading subtitles: en
+[info] noHsKFy7NgY: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: noHsKFy7NgY.en.vtt
+[download] Destination: noHsKFy7NgY.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at    1.76MiB/s (00:00:00)[download]   15.00KiB at  431.59KiB/s (00:00:00)[download]   31.00KiB at  659.38KiB/s (00:00:00)[download]   63.00KiB at  698.70KiB/s (00:00:00)[download]  127.00KiB at    1.01MiB/s (00:00:00)[download]  255.00KiB at    1.49MiB/s (00:00:00)[download]  511.00KiB at    2.37MiB/s (00:00:00)[download]  729.21KiB at    3.11MiB/s (00:00:00)[download] 100% of  729.21KiB in 00:00:00 at 1.57MiB/s
+[download] Downloading item 22 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=1F6G_R0pCi4
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 1F6G_R0pCi4: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 1F6G_R0pCi4: Downloading android vr player API JSON
+[info] 1F6G_R0pCi4: Downloading subtitles: en
+[info] 1F6G_R0pCi4: Downloading 1 format(s): 401+251
+[info] Writing video subtitles to: 1F6G_R0pCi4.en.vtt
+[download] Destination: 1F6G_R0pCi4.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at    2.84MiB/s (00:00:00)[download]   15.00KiB at    1.35MiB/s (00:00:00)[download]   31.00KiB at  799.67KiB/s (00:00:00)[download]   63.00KiB at  909.75KiB/s (00:00:00)[download]  127.00KiB at    1.19MiB/s (00:00:00)[download]  255.00KiB at    1.75MiB/s (00:00:00)[download]  370.71KiB at    2.25MiB/s (00:00:00)[download] 100% of  370.71KiB in 00:00:00 at 914.64KiB/s
+[download] Downloading item 23 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=ffcWRgTXb14
+[youtube] Sleeping 1.0 seconds ...
+[youtube] ffcWRgTXb14: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] ffcWRgTXb14: Downloading android vr player API JSON
+[info] ffcWRgTXb14: Downloading subtitles: en
+[info] ffcWRgTXb14: Downloading 1 format(s): 401+251
+[info] Writing video subtitles to: ffcWRgTXb14.en.vtt
+[download] Destination: ffcWRgTXb14.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.22MiB/s (00:00:00)[download]    7.00KiB at    1.07MiB/s (00:00:00)[download]   15.00KiB at 1002.81KiB/s (00:00:00)[download]   31.00KiB at  754.41KiB/s (00:00:00)[download]   63.00KiB at  883.74KiB/s (00:00:00)[download]  127.00KiB at  693.42KiB/s (00:00:00)[download]  242.21KiB at    1.03MiB/s (00:00:00)[download] 100% of  242.21KiB in 00:00:00 at 588.70KiB/s
+[download] Downloading item 24 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=zFNE2v5z1kQ
+[youtube] Sleeping 1.0 seconds ...
+[youtube] zFNE2v5z1kQ: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] zFNE2v5z1kQ: Downloading android vr player API JSON
+[youtube] zFNE2v5z1kQ: This video is age-restricted; some formats may be missing without authentication. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Sleeping 1.0 seconds ...
+[youtube] zFNE2v5z1kQ: Downloading web embedded client config
+[youtube] Sleeping 1.0 seconds ...
+[youtube] zFNE2v5z1kQ: Downloading web embedded player API JSON
+ERROR: [youtube] zFNE2v5z1kQ: Sign in to confirm your age. This video may be inappropriate for some users. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[download] Downloading item 25 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=EEpfmQo2Ars
+[youtube] Sleeping 1.0 seconds ...
+[youtube] EEpfmQo2Ars: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] EEpfmQo2Ars: Downloading android vr player API JSON
+[info] EEpfmQo2Ars: Downloading subtitles: en
+[info] EEpfmQo2Ars: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: EEpfmQo2Ars.en.vtt
+[download] Destination: EEpfmQo2Ars.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  Unknown B/s (00:00:00)[download]   15.00KiB at  395.83KiB/s (00:00:00)[download]   31.00KiB at  639.60KiB/s (00:00:00)[download]   63.00KiB at  707.83KiB/s (00:00:00)[download]  127.00KiB at 1011.19KiB/s (00:00:00)[download]  243.03KiB at    1.45MiB/s (00:00:00)[download] 100% of  243.03KiB in 00:00:00 at 657.74KiB/s
+[download] Downloading item 26 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=M5vbWrlyj00
+[youtube] Sleeping 1.0 seconds ...
+[youtube] M5vbWrlyj00: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] M5vbWrlyj00: Downloading android vr player API JSON
+[info] M5vbWrlyj00: Downloading subtitles: en
+[info] M5vbWrlyj00: Downloading 1 format(s): 401+251
+[info] Writing video subtitles to: M5vbWrlyj00.en.vtt
+[download] Destination: M5vbWrlyj00.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  764.35KiB/s (00:00:00)[download]   15.00KiB at  611.92KiB/s (00:00:00)[download]   31.00KiB at  587.99KiB/s (00:00:00)[download]   63.00KiB at  705.43KiB/s (00:00:00)[download]  127.00KiB at 1010.57KiB/s (00:00:00)[download]  255.00KiB at    1.50MiB/s (00:00:00)[download]  438.15KiB at    2.23MiB/s (00:00:00)[download] 100% of  438.15KiB in 00:00:00 at 877.11KiB/s
+[download] Downloading item 27 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=bGpZ1QhOJQI
+[youtube] Sleeping 1.0 seconds ...
+[youtube] bGpZ1QhOJQI: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] bGpZ1QhOJQI: Downloading android vr player API JSON
+[info] bGpZ1QhOJQI: Downloading subtitles: en
+[info] bGpZ1QhOJQI: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: bGpZ1QhOJQI.en.vtt
+[download] Destination: bGpZ1QhOJQI.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  210.47KiB/s (00:00:00)[download]    7.00KiB at  476.16KiB/s (00:00:00)[download]   15.00KiB at 1003.29KiB/s (00:00:00)[download]   31.00KiB at    1.98MiB/s (00:00:00)[download]   63.00KiB at  599.09KiB/s (00:00:00)[download]  127.00KiB at  865.70KiB/s (00:00:00)[download]  255.00KiB at    1.17MiB/s (00:00:00)[download]  511.00KiB at    1.87MiB/s (00:00:00)[download] 1023.00KiB at    3.05MiB/s (00:00:00)[download]    1.08MiB at    3.27MiB/s (00:00:00)[download] 100% of    1.08MiB in 00:00:00 at 1.63MiB/s
+[download] Downloading item 28 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=ig6Z2Gbk_LE
+[youtube] Sleeping 1.0 seconds ...
+[youtube] ig6Z2Gbk_LE: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] ig6Z2Gbk_LE: Downloading android vr player API JSON
+[info] ig6Z2Gbk_LE: Downloading subtitles: en
+[info] ig6Z2Gbk_LE: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: ig6Z2Gbk_LE.en.vtt
+[download] Destination: ig6Z2Gbk_LE.en.vtt
+[download]    1.00KiB at  922.64KiB/s (00:00:00)[download]    3.00KiB at    1.08MiB/s (00:00:00)[download]    7.00KiB at    1.43MiB/s (00:00:00)[download]   15.00KiB at    1.24MiB/s (00:00:00)[download]   31.00KiB at  703.99KiB/s (00:00:00)[download]   63.00KiB at  467.46KiB/s (00:00:00)[download]  127.00KiB at  659.54KiB/s (00:00:00)[download]  242.66KiB at  957.32KiB/s (00:00:00)[download] 100% of  242.66KiB in 00:00:00 at 531.53KiB/s
+[download] Downloading item 29 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=A8ncoQCPjF8
+[youtube] Sleeping 1.0 seconds ...
+[youtube] A8ncoQCPjF8: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] A8ncoQCPjF8: Downloading android vr player API JSON
+[info] A8ncoQCPjF8: Downloading subtitles: en
+[info] A8ncoQCPjF8: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: A8ncoQCPjF8.en.vtt
+[download] Destination: A8ncoQCPjF8.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.91MiB/s (00:00:00)[download]    7.00KiB at  918.25KiB/s (00:00:00)[download]   15.00KiB at  872.35KiB/s (00:00:00)[download]   31.00KiB at  661.13KiB/s (00:00:00)[download]   63.00KiB at  800.80KiB/s (00:00:00)[download]  127.00KiB at    1.07MiB/s (00:00:00)[download]  250.94KiB at    1.60MiB/s (00:00:00)[download] 100% of  250.94KiB in 00:00:00 at 518.34KiB/s
+[download] Downloading item 30 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=v3aPSZkVQYA
+[youtube] Sleeping 1.0 seconds ...
+[youtube] v3aPSZkVQYA: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] v3aPSZkVQYA: Downloading android vr player API JSON
+[info] v3aPSZkVQYA: Downloading subtitles: en
+[info] v3aPSZkVQYA: Downloading 1 format(s): 401+251
+[info] Writing video subtitles to: v3aPSZkVQYA.en.vtt
+[download] Destination: v3aPSZkVQYA.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.46MiB/s (00:00:00)[download]    7.00KiB at  804.52KiB/s (00:00:00)[download]   15.00KiB at    1.01MiB/s (00:00:00)[download]   31.00KiB at  669.74KiB/s (00:00:00)[download]   63.00KiB at  819.84KiB/s (00:00:00)[download]  127.00KiB at  675.51KiB/s (00:00:00)[download]  255.00KiB at    1.08MiB/s (00:00:00)[download]  511.00KiB at    1.68MiB/s (00:00:00)[download]  536.98KiB at    1.75MiB/s (00:00:00)[download] 100% of  536.98KiB in 00:00:00 at 1009.47KiB/s
+[download] Downloading item 31 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=8rqdN1FnY4s
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 8rqdN1FnY4s: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 8rqdN1FnY4s: Downloading android vr player API JSON
+[info] 8rqdN1FnY4s: Downloading subtitles: en
+[info] 8rqdN1FnY4s: Downloading 1 format(s): 271+251
+[info] Writing video subtitles to: 8rqdN1FnY4s.en.vtt
+[download] Destination: 8rqdN1FnY4s.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  905.51KiB/s (00:00:00)[download]    7.00KiB at  935.96KiB/s (00:00:00)[download]   15.00KiB at  967.11KiB/s (00:00:00)[download]   31.00KiB at  690.16KiB/s (00:00:00)[download]   63.00KiB at  878.41KiB/s (00:00:00)[download]  127.00KiB at    1.17MiB/s (00:00:00)[download]  255.00KiB at    1.76MiB/s (00:00:00)[download]  511.00KiB at    2.76MiB/s (00:00:00)[download]  764.74KiB at    3.61MiB/s (00:00:00)[download] 100% of  764.74KiB in 00:00:00 at 1.54MiB/s
+[download] Downloading item 32 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=Jg3hYJ3JOTA
+[youtube] Sleeping 1.0 seconds ...
+[youtube] Jg3hYJ3JOTA: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] Jg3hYJ3JOTA: Downloading android vr player API JSON
+[info] Jg3hYJ3JOTA: Downloading subtitles: en
+[info] Jg3hYJ3JOTA: Downloading 1 format(s): 401+251
+[info] Writing video subtitles to: Jg3hYJ3JOTA.en.vtt
+[download] Destination: Jg3hYJ3JOTA.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.26MiB/s (00:00:00)[download]    7.00KiB at  989.42KiB/s (00:00:00)[download]   15.00KiB at    1.01MiB/s (00:00:00)[download]   31.00KiB at  273.10KiB/s (00:00:00)[download]   63.00KiB at  416.05KiB/s (00:00:00)[download]  127.00KiB at  618.26KiB/s (00:00:00)[download]  255.00KiB at  968.94KiB/s (00:00:00)[download]  511.00KiB at    1.60MiB/s (00:00:00)[download]  684.14KiB at    2.02MiB/s (00:00:00)[download] 100% of  684.14KiB in 00:00:00 at 1.19MiB/s
+[download] Downloading item 33 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=grw58BIzotU
+[youtube] Sleeping 1.0 seconds ...
+[youtube] grw58BIzotU: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] grw58BIzotU: Downloading android vr player API JSON
+[info] grw58BIzotU: Downloading subtitles: en
+[info] grw58BIzotU: Downloading 1 format(s): 399+251
+Deleting existing file grw58BIzotU.en.vtt
+[info] Writing video subtitles to: grw58BIzotU.en.vtt
+[download] Destination: grw58BIzotU.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  475.89KiB/s (00:00:00)[download]    7.00KiB at    1.03MiB/s (00:00:00)[download]   15.00KiB at    1.04MiB/s (00:00:00)[download]   31.00KiB at  666.42KiB/s (00:00:00)[download]   63.00KiB at  774.34KiB/s (00:00:00)[download]  127.00KiB at    1.09MiB/s (00:00:00)[download]  255.00KiB at    1.64MiB/s (00:00:00)[download]  511.00KiB at    2.66MiB/s (00:00:00)[download] 1023.00KiB at    3.16MiB/s (00:00:01)[download]    2.00MiB at    5.48MiB/s (00:00:01)[download]    4.00MiB at    9.01MiB/s (00:00:01)[download]    6.07MiB at   12.32MiB/s (00:00:01)[download] 100% of    6.07MiB in 00:00:01 at 4.73MiB/s
+[download] Downloading item 34 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=m884pbQ7QA0
+[youtube] Sleeping 1.0 seconds ...
+[youtube] m884pbQ7QA0: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] m884pbQ7QA0: Downloading android vr player API JSON
+[info] m884pbQ7QA0: Downloading subtitles: en
+[info] m884pbQ7QA0: Downloading 1 format(s): 401+251
+[info] Writing video subtitles to: m884pbQ7QA0.en.vtt
+[download] Destination: m884pbQ7QA0.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    2.38MiB/s (00:00:00)[download]    7.00KiB at    1.01MiB/s (00:00:00)[download]   15.00KiB at    1.00MiB/s (00:00:00)[download]   31.00KiB at  726.03KiB/s (00:00:00)[download]   63.00KiB at  767.34KiB/s (00:00:00)[download]  127.00KiB at    1.17MiB/s (00:00:00)[download]  255.00KiB at    1.69MiB/s (00:00:00)[download]  456.05KiB at    2.42MiB/s (00:00:00)[download] 100% of  456.05KiB in 00:00:00 at 966.22KiB/s
+[download] Downloading item 35 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=hJyYxKtys04
+[youtube] Sleeping 1.0 seconds ...
+[youtube] hJyYxKtys04: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] hJyYxKtys04: Downloading android vr player API JSON
+[info] hJyYxKtys04: Downloading subtitles: en
+[info] hJyYxKtys04: Downloading 1 format(s): 399+251
+Deleting existing file hJyYxKtys04.en.vtt
+[info] Writing video subtitles to: hJyYxKtys04.en.vtt
+[download] Destination: hJyYxKtys04.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.40MiB/s (00:00:00)[download]    7.00KiB at  918.77KiB/s (00:00:00)[download]   15.00KiB at  644.91KiB/s (00:00:00)[download]   31.00KiB at  580.68KiB/s (00:00:00)[download]   63.00KiB at  739.39KiB/s (00:00:00)[download]  127.00KiB at    1.02MiB/s (00:00:00)[download]  255.00KiB at    1.50MiB/s (00:00:00)[download]  511.00KiB at    2.49MiB/s (00:00:00)[download]  612.82KiB at    2.81MiB/s (00:00:00)[download] 100% of  612.82KiB in 00:00:00 at 1.19MiB/s
+[download] Downloading item 36 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=eZ3zGasWTTY
+[youtube] Sleeping 1.0 seconds ...
+[youtube] eZ3zGasWTTY: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] eZ3zGasWTTY: Downloading android vr player API JSON
+[info] eZ3zGasWTTY: Downloading 1 format(s): 401+251
+[info] There are no subtitles for the requested languages
+[download] Downloading item 37 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=iCU1EJMrEZ0
+[youtube] Sleeping 1.0 seconds ...
+[youtube] iCU1EJMrEZ0: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] iCU1EJMrEZ0: Downloading android vr player API JSON
+[info] iCU1EJMrEZ0: Downloading subtitles: en
+[info] iCU1EJMrEZ0: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: iCU1EJMrEZ0.en.vtt
+[download] Destination: iCU1EJMrEZ0.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at    2.50MiB/s (00:00:00)[download]   15.00KiB at    1.68MiB/s (00:00:00)[download]   31.00KiB at  716.20KiB/s (00:00:00)[download]   63.00KiB at  882.03KiB/s (00:00:00)[download]  127.00KiB at    1.07MiB/s (00:00:00)[download]  219.17KiB at    1.46MiB/s (00:00:00)[download] 100% of  219.17KiB in 00:00:00 at 525.47KiB/s
+[download] Downloading item 38 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=1nVgxuG97wU
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 1nVgxuG97wU: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 1nVgxuG97wU: Downloading android vr player API JSON
+[info] 1nVgxuG97wU: Downloading subtitles: en
+[info] 1nVgxuG97wU: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: 1nVgxuG97wU.en.vtt
+[download] Destination: 1nVgxuG97wU.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.16MiB/s (00:00:00)[download]    7.00KiB at  908.14KiB/s (00:00:00)[download]   15.00KiB at  909.47KiB/s (00:00:00)[download]   31.00KiB at  737.96KiB/s (00:00:00)[download]   63.00KiB at  802.33KiB/s (00:00:00)[download]  127.00KiB at    1.15MiB/s (00:00:00)[download]  178.27KiB at    1.38MiB/s (00:00:00)[download] 100% of  178.27KiB in 00:00:00 at 409.59KiB/s
+[download] Downloading item 39 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=ClwWG0SydYg
+[youtube] Sleeping 1.0 seconds ...
+[youtube] ClwWG0SydYg: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] ClwWG0SydYg: Downloading android vr player API JSON
+[info] ClwWG0SydYg: Downloading subtitles: en
+[info] ClwWG0SydYg: Downloading 1 format(s): 401+251
+[info] Writing video subtitles to: ClwWG0SydYg.en.vtt
+[download] Destination: ClwWG0SydYg.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at    1.37MiB/s (00:00:00)[download]   15.00KiB at  893.91KiB/s (00:00:00)[download]   31.00KiB at  658.17KiB/s (00:00:00)[download]   63.00KiB at  836.88KiB/s (00:00:00)[download]  127.00KiB at    1.13MiB/s (00:00:00)[download]  255.00KiB at    1.68MiB/s (00:00:00)[download]  511.00KiB at    2.70MiB/s (00:00:00)[download]  600.51KiB at    3.01MiB/s (00:00:00)[download] 100% of  600.51KiB in 00:00:00 at 1.19MiB/s
+[download] Downloading item 40 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=NQppFY_9YgY
+[youtube] Sleeping 1.0 seconds ...
+[youtube] NQppFY_9YgY: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] NQppFY_9YgY: Downloading android vr player API JSON
+[info] NQppFY_9YgY: Downloading subtitles: en
+[info] NQppFY_9YgY: Downloading 1 format(s): 401+251
+[info] Writing video subtitles to: NQppFY_9YgY.en.vtt
+[download] Destination: NQppFY_9YgY.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  Unknown B/s (00:00:00)[download]   15.00KiB at  Unknown B/s (00:00:00)[download]   31.00KiB at  678.75KiB/s (00:00:00)[download]   63.00KiB at  821.24KiB/s (00:00:00)[download]  127.00KiB at 1023.49KiB/s (00:00:00)[download]  216.03KiB at    1.34MiB/s (00:00:00)[download] 100% of  216.03KiB in 00:00:00 at 546.17KiB/s
+[download] Downloading item 41 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=UlATmH-ux3I
+[youtube] Sleeping 1.0 seconds ...
+[youtube] UlATmH-ux3I: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] UlATmH-ux3I: Downloading android vr player API JSON
+[info] UlATmH-ux3I: Downloading subtitles: en
+[info] UlATmH-ux3I: Downloading 1 format(s): 401+251
+[info] Writing video subtitles to: UlATmH-ux3I.en.vtt
+[download] Destination: UlATmH-ux3I.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  Unknown B/s (00:00:00)[download]   15.00KiB at    1.65MiB/s (00:00:00)[download]   31.00KiB at  699.05KiB/s (00:00:00)[download]   63.00KiB at  878.92KiB/s (00:00:00)[download]  127.00KiB at    1.10MiB/s (00:00:00)[download]  255.00KiB at    1.70MiB/s (00:00:00)[download]  511.00KiB at    1.76MiB/s (00:00:00)[download]  662.41KiB at    2.24MiB/s (00:00:00)[download] 100% of  662.41KiB in 00:00:00 at 1.13MiB/s
+[download] Downloading item 42 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=aEBpEMkx3jE
+[youtube] Sleeping 1.0 seconds ...
+[youtube] aEBpEMkx3jE: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] aEBpEMkx3jE: Downloading android vr player API JSON
+[info] aEBpEMkx3jE: Downloading subtitles: en
+[info] aEBpEMkx3jE: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: aEBpEMkx3jE.en.vtt
+[download] Destination: aEBpEMkx3jE.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  Unknown B/s (00:00:00)[download]   15.00KiB at  Unknown B/s (00:00:00)[download]   31.00KiB at  756.98KiB/s (00:00:00)[download]   63.00KiB at  892.91KiB/s (00:00:00)[download]  127.00KiB at    1.07MiB/s (00:00:00)[download]  255.00KiB at    1.59MiB/s (00:00:00)[download]  511.00KiB at    2.41MiB/s (00:00:00)[download]  649.05KiB at    2.91MiB/s (00:00:00)[download] 100% of  649.05KiB in 00:00:00 at 1.36MiB/s
+[download] Downloading item 43 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=E3lYZsy8nYE
+[youtube] Sleeping 1.0 seconds ...
+[youtube] E3lYZsy8nYE: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] E3lYZsy8nYE: Downloading android vr player API JSON
+[info] E3lYZsy8nYE: Downloading subtitles: en
+[info] E3lYZsy8nYE: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: E3lYZsy8nYE.en.vtt
+[download] Destination: E3lYZsy8nYE.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  Unknown B/s (00:00:00)[download]   15.00KiB at  Unknown B/s (00:00:00)[download]   31.00KiB at  714.60KiB/s (00:00:00)[download]   63.00KiB at  832.05KiB/s (00:00:00)[download]  127.00KiB at 1013.16KiB/s (00:00:00)[download]  255.00KiB at    1.45MiB/s (00:00:00)[download]  255.47KiB at    1.44MiB/s (00:00:00)[download] 100% of  255.47KiB in 00:00:00 at 538.07KiB/s
+[download] Downloading item 44 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=svOKoo3CY0c
+[youtube] Sleeping 1.0 seconds ...
+[youtube] svOKoo3CY0c: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] svOKoo3CY0c: Downloading android vr player API JSON
+[info] svOKoo3CY0c: Downloading subtitles: en
+[info] svOKoo3CY0c: Downloading 1 format(s): 401+251
+[info] Writing video subtitles to: svOKoo3CY0c.en.vtt
+[download] Destination: svOKoo3CY0c.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.79MiB/s (00:00:00)[download]    7.00KiB at    1.07MiB/s (00:00:00)[download]   15.00KiB at    1.04MiB/s (00:00:00)[download]   31.00KiB at  685.40KiB/s (00:00:00)[download]   63.00KiB at  807.43KiB/s (00:00:00)[download]  127.00KiB at    1.09MiB/s (00:00:00)[download]  240.39KiB at    1.59MiB/s (00:00:00)[download] 100% of  240.39KiB in 00:00:00 at 621.11KiB/s
+[download] Downloading item 45 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=dsohnQdm9Qs
+[youtube] Sleeping 1.0 seconds ...
+[youtube] dsohnQdm9Qs: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] dsohnQdm9Qs: Downloading android vr player API JSON
+[info] dsohnQdm9Qs: Downloading subtitles: en
+[info] dsohnQdm9Qs: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: dsohnQdm9Qs.en.vtt
+[download] Destination: dsohnQdm9Qs.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.90MiB/s (00:00:00)[download]    7.00KiB at    1.01MiB/s (00:00:00)[download]   15.00KiB at  146.50KiB/s (00:00:00)[download]   31.00KiB at  301.47KiB/s (00:00:00)[download]   63.00KiB at  411.70KiB/s (00:00:00)[download]  127.00KiB at  593.69KiB/s (00:00:00)[download]  255.00KiB at  981.27KiB/s (00:00:00)[download]  316.45KiB at    1.12MiB/s (00:00:00)[download] 100% of  316.45KiB in 00:00:00 at 610.84KiB/s
+[download] Downloading item 46 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=BvSC5htaRUw
+[youtube] Sleeping 1.0 seconds ...
+[youtube] BvSC5htaRUw: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] BvSC5htaRUw: Downloading android vr player API JSON
+[info] BvSC5htaRUw: Downloading subtitles: en
+[info] BvSC5htaRUw: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: BvSC5htaRUw.en.vtt
+[download] Destination: BvSC5htaRUw.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.21MiB/s (00:00:00)[download]    7.00KiB at  689.51KiB/s (00:00:00)[download]   15.00KiB at  917.32KiB/s (00:00:00)[download]   31.00KiB at  695.47KiB/s (00:00:00)[download]   63.00KiB at  823.35KiB/s (00:00:00)[download]  127.00KiB at    1.11MiB/s (00:00:00)[download]  131.08KiB at    1.13MiB/s (00:00:00)[download] 100% of  131.08KiB in 00:00:00 at 347.30KiB/s
+[download] Downloading item 47 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=ny7zRePso_U
+[youtube] Sleeping 1.0 seconds ...
+[youtube] ny7zRePso_U: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] ny7zRePso_U: Downloading android vr player API JSON
+[info] ny7zRePso_U: Downloading subtitles: en
+[info] ny7zRePso_U: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: ny7zRePso_U.en.vtt
+[download] Destination: ny7zRePso_U.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    2.06MiB/s (00:00:00)[download]    7.00KiB at    1.10MiB/s (00:00:00)[download]   15.00KiB at    1.01MiB/s (00:00:00)[download]   31.00KiB at  684.51KiB/s (00:00:00)[download]   63.00KiB at  800.20KiB/s (00:00:00)[download]  127.00KiB at    1.09MiB/s (00:00:00)[download]  147.28KiB at    1.21MiB/s (00:00:00)[download] 100% of  147.28KiB in 00:00:00 at 312.58KiB/s
+[download] Downloading item 48 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=6pdOyBmOlf8
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 6pdOyBmOlf8: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 6pdOyBmOlf8: Downloading android vr player API JSON
+[info] 6pdOyBmOlf8: Downloading subtitles: en
+[info] 6pdOyBmOlf8: Downloading 1 format(s): 401+251
+[info] Writing video subtitles to: 6pdOyBmOlf8.en.vtt
+[download] Destination: 6pdOyBmOlf8.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  863.86KiB/s (00:00:00)[download]    7.00KiB at  818.54KiB/s (00:00:00)[download]   15.00KiB at  859.21KiB/s (00:00:00)[download]   31.00KiB at  677.20KiB/s (00:00:00)[download]   63.00KiB at  458.10KiB/s (00:00:00)[download]  127.00KiB at  645.76KiB/s (00:00:00)[download]  165.94KiB at  757.17KiB/s (00:00:00)[download] 100% of  165.94KiB in 00:00:00 at 376.43KiB/s
+[download] Downloading item 49 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=5J01qKDAziM
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 5J01qKDAziM: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 5J01qKDAziM: Downloading android vr player API JSON
+[info] 5J01qKDAziM: Downloading subtitles: en
+[info] 5J01qKDAziM: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: 5J01qKDAziM.en.vtt
+[download] Destination: 5J01qKDAziM.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at    1.32MiB/s (00:00:00)[download]   15.00KiB at    1.19MiB/s (00:00:00)[download]   31.00KiB at  662.88KiB/s (00:00:00)[download]   63.00KiB at  727.79KiB/s (00:00:00)[download]  127.00KiB at    1.05MiB/s (00:00:00)[download]  255.00KiB at    1.57MiB/s (00:00:00)[download]  289.25KiB at    1.72MiB/s (00:00:00)[download] 100% of  289.25KiB in 00:00:00 at 805.99KiB/s
+[download] Downloading item 50 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=zzQXJJrIc5Q
+[youtube] Sleeping 1.0 seconds ...
+[youtube] zzQXJJrIc5Q: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] zzQXJJrIc5Q: Downloading android vr player API JSON
+[info] zzQXJJrIc5Q: Downloading subtitles: en
+[info] zzQXJJrIc5Q: Downloading 1 format(s): 401+251
+[info] Writing video subtitles to: zzQXJJrIc5Q.en.vtt
+[download] Destination: zzQXJJrIc5Q.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at    2.18MiB/s (00:00:00)[download]   15.00KiB at  367.36KiB/s (00:00:00)[download]   31.00KiB at  606.17KiB/s (00:00:00)[download]   63.00KiB at  676.59KiB/s (00:00:00)[download]  127.00KiB at  980.48KiB/s (00:00:00)[download]  255.00KiB at    1.44MiB/s (00:00:00)[download]  354.56KiB at    1.80MiB/s (00:00:00)[download] 100% of  354.56KiB in 00:00:00 at 935.37KiB/s
+[download] Downloading item 51 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=yFkNBR1gZnI
+[youtube] Sleeping 1.0 seconds ...
+[youtube] yFkNBR1gZnI: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] yFkNBR1gZnI: Downloading android vr player API JSON
+[info] yFkNBR1gZnI: Downloading subtitles: en
+[info] yFkNBR1gZnI: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: yFkNBR1gZnI.en.vtt
+[download] Destination: yFkNBR1gZnI.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  944.59KiB/s (00:00:00)[download]    7.00KiB at    1.15MiB/s (00:00:00)[download]   15.00KiB at 1011.05KiB/s (00:00:00)[download]   31.00KiB at  658.30KiB/s (00:00:00)[download]   63.00KiB at  430.76KiB/s (00:00:00)[download]  127.00KiB at  641.04KiB/s (00:00:00)[download]  255.00KiB at  979.88KiB/s (00:00:00)[download]  511.00KiB at    1.60MiB/s (00:00:00)[download]  527.55KiB at    1.64MiB/s (00:00:00)[download] 100% of  527.55KiB in 00:00:00 at 828.78KiB/s
+[download] Downloading item 52 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=OwQTxsUu53U
+[youtube] Sleeping 1.0 seconds ...
+[youtube] OwQTxsUu53U: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] OwQTxsUu53U: Downloading android vr player API JSON
+[info] OwQTxsUu53U: Downloading subtitles: en
+[info] OwQTxsUu53U: Downloading 1 format(s): 401+251
+[info] Writing video subtitles to: OwQTxsUu53U.en.vtt
+[download] Destination: OwQTxsUu53U.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  Unknown B/s (00:00:00)[download]   15.00KiB at  424.31KiB/s (00:00:00)[download]   31.00KiB at  649.52KiB/s (00:00:00)[download]   63.00KiB at  753.96KiB/s (00:00:00)[download]  127.00KiB at    1.00MiB/s (00:00:00)[download]  165.38KiB at    1.14MiB/s (00:00:00)[download] 100% of  165.38KiB in 00:00:00 at 465.14KiB/s
+[download] Downloading item 53 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=nOUJcxt9Ugk
+[youtube] Sleeping 1.0 seconds ...
+[youtube] nOUJcxt9Ugk: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] nOUJcxt9Ugk: Downloading android vr player API JSON
+[info] nOUJcxt9Ugk: Downloading subtitles: en
+[info] nOUJcxt9Ugk: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: nOUJcxt9Ugk.en.vtt
+[download] Destination: nOUJcxt9Ugk.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.34MiB/s (00:00:00)[download]    7.00KiB at  942.75KiB/s (00:00:00)[download]   15.00KiB at    1.01MiB/s (00:00:00)[download]   31.00KiB at  703.01KiB/s (00:00:00)[download]   63.00KiB at  879.95KiB/s (00:00:00)[download]  127.00KiB at    1.19MiB/s (00:00:00)[download]  255.00KiB at    1.76MiB/s (00:00:00)[download]  511.00KiB at    2.79MiB/s (00:00:00)[download]  511.62KiB at    2.78MiB/s (00:00:00)[download] 100% of  511.62KiB in 00:00:00 at 1.15MiB/s
+[download] Downloading item 54 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=G3Cj4K8STNo
+[youtube] Sleeping 1.0 seconds ...
+[youtube] G3Cj4K8STNo: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] G3Cj4K8STNo: Downloading android vr player API JSON
+[info] G3Cj4K8STNo: Downloading subtitles: en
+[info] G3Cj4K8STNo: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: G3Cj4K8STNo.en.vtt
+[download] Destination: G3Cj4K8STNo.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at    2.09MiB/s (00:00:00)[download]   15.00KiB at    1.33MiB/s (00:00:00)[download]   31.00KiB at  680.28KiB/s (00:00:00)[download]   63.00KiB at  836.89KiB/s (00:00:00)[download]  127.00KiB at  722.06KiB/s (00:00:00)[download]  255.00KiB at    1.05MiB/s (00:00:00)[download]  333.16KiB at    1.26MiB/s (00:00:00)[download] 100% of  333.16KiB in 00:00:00 at 743.93KiB/s
+[download] Downloading item 55 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=sZAE_lqdeno
+[youtube] Sleeping 1.0 seconds ...
+[youtube] sZAE_lqdeno: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] sZAE_lqdeno: Downloading android vr player API JSON
+[info] sZAE_lqdeno: Downloading subtitles: en
+[info] sZAE_lqdeno: Downloading 1 format(s): 399+251
+Deleting existing file sZAE_lqdeno.en.vtt
+[info] Writing video subtitles to: sZAE_lqdeno.en.vtt
+[download] Destination: sZAE_lqdeno.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  Unknown B/s (00:00:00)[download]   15.00KiB at  Unknown B/s (00:00:00)[download]   31.00KiB at  740.44KiB/s (00:00:00)[download]   63.00KiB at  806.45KiB/s (00:00:00)[download]  127.00KiB at    1.01MiB/s (00:00:00)[download]  179.16KiB at    1.17MiB/s (00:00:00)[download] 100% of  179.16KiB in 00:00:00 at 449.16KiB/s
+[download] Downloading item 56 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=zX3t7-TDTCI
+[youtube] Sleeping 1.0 seconds ...
+[youtube] zX3t7-TDTCI: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] zX3t7-TDTCI: Downloading android vr player API JSON
+[info] zX3t7-TDTCI: Downloading subtitles: en
+[info] zX3t7-TDTCI: Downloading 1 format(s): 401+251
+[info] Writing video subtitles to: zX3t7-TDTCI.en.vtt
+[download] Destination: zX3t7-TDTCI.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  Unknown B/s (00:00:00)[download]   15.00KiB at  Unknown B/s (00:00:00)[download]   31.00KiB at  731.10KiB/s (00:00:00)[download]   63.00KiB at  846.09KiB/s (00:00:00)[download]  127.00KiB at    1.04MiB/s (00:00:00)[download]  185.88KiB at    1.27MiB/s (00:00:00)[download] 100% of  185.88KiB in 00:00:00 at 482.30KiB/s
+[download] Downloading item 57 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=2pEtH0g0z1o
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 2pEtH0g0z1o: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 2pEtH0g0z1o: Downloading android vr player API JSON
+[info] 2pEtH0g0z1o: Downloading subtitles: en
+[info] 2pEtH0g0z1o: Downloading 1 format(s): 399+251
+Deleting existing file 2pEtH0g0z1o.en.vtt
+[info] Writing video subtitles to: 2pEtH0g0z1o.en.vtt
+[download] Destination: 2pEtH0g0z1o.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  Unknown B/s (00:00:00)[download]   15.00KiB at  Unknown B/s (00:00:00)[download]   31.00KiB at  742.02KiB/s (00:00:00)[download]   63.00KiB at  849.55KiB/s (00:00:00)[download]  127.00KiB at    1.06MiB/s (00:00:00)[download]  255.00KiB at    1.52MiB/s (00:00:00)[download]  302.47KiB at    1.73MiB/s (00:00:00)[download] 100% of  302.47KiB in 00:00:00 at 726.23KiB/s
+[download] Downloading item 58 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=McRKOYBcAiI
+[youtube] Sleeping 1.0 seconds ...
+[youtube] McRKOYBcAiI: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] McRKOYBcAiI: Downloading android vr player API JSON
+[info] McRKOYBcAiI: Downloading subtitles: en
+[info] McRKOYBcAiI: Downloading 1 format(s): 399+251
+Deleting existing file McRKOYBcAiI.en.vtt
+[info] Writing video subtitles to: McRKOYBcAiI.en.vtt
+[download] Destination: McRKOYBcAiI.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  588.15KiB/s (00:00:00)[download]    7.00KiB at  667.25KiB/s (00:00:00)[download]   15.00KiB at  549.03KiB/s (00:00:00)[download]   31.00KiB at  512.16KiB/s (00:00:00)[download]   63.00KiB at  685.98KiB/s (00:00:00)[download]  127.00KiB at  965.69KiB/s (00:00:00)[download]  191.37KiB at    1.25MiB/s (00:00:00)[download] 100% of  191.37KiB in 00:00:00 at 435.27KiB/s
+[download] Downloading item 59 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=e7yVRB0f4xY
+[youtube] Sleeping 1.0 seconds ...
+[youtube] e7yVRB0f4xY: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] e7yVRB0f4xY: Downloading android vr player API JSON
+[info] e7yVRB0f4xY: Downloading subtitles: en
+[info] e7yVRB0f4xY: Downloading 1 format(s): 401+251
+[info] Writing video subtitles to: e7yVRB0f4xY.en.vtt
+[download] Destination: e7yVRB0f4xY.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at 1014.59KiB/s (00:00:00)[download]    7.00KiB at  887.09KiB/s (00:00:00)[download]   15.00KiB at    1.06MiB/s (00:00:00)[download]   31.00KiB at  723.02KiB/s (00:00:00)[download]   63.00KiB at  858.94KiB/s (00:00:00)[download]  127.00KiB at    1.17MiB/s (00:00:00)[download]  248.90KiB at    1.75MiB/s (00:00:00)[download] 100% of  248.90KiB in 00:00:00 at 579.92KiB/s
+[download] Downloading item 60 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=wVmNxcrCF78
+[youtube] Sleeping 1.0 seconds ...
+[youtube] wVmNxcrCF78: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] wVmNxcrCF78: Downloading android vr player API JSON
+[info] wVmNxcrCF78: Downloading subtitles: en
+[info] wVmNxcrCF78: Downloading 1 format(s): 401+251
+[info] Writing video subtitles to: wVmNxcrCF78.en.vtt
+[download] Destination: wVmNxcrCF78.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    2.30MiB/s (00:00:00)[download]    7.00KiB at    1.09MiB/s (00:00:00)[download]   15.00KiB at    1.05MiB/s (00:00:00)[download]   31.00KiB at  646.24KiB/s (00:00:00)[download]   63.00KiB at  833.33KiB/s (00:00:00)[download]  127.00KiB at  715.54KiB/s (00:00:00)[download]  215.84KiB at  972.19KiB/s (00:00:00)[download] 100% of  215.84KiB in 00:00:00 at 532.78KiB/s
+[download] Downloading item 61 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=Is_8UamxEOk
+[youtube] Sleeping 1.0 seconds ...
+[youtube] Is_8UamxEOk: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] Is_8UamxEOk: Downloading android vr player API JSON
+[info] Is_8UamxEOk: Downloading subtitles: en
+[info] Is_8UamxEOk: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: Is_8UamxEOk.en.vtt
+[download] Destination: Is_8UamxEOk.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.52MiB/s (00:00:00)[download]    7.00KiB at  888.44KiB/s (00:00:00)[download]   15.00KiB at  479.21KiB/s (00:00:00)[download]   31.00KiB at  734.92KiB/s (00:00:00)[download]   63.00KiB at  766.49KiB/s (00:00:00)[download]  127.00KiB at    1.01MiB/s (00:00:00)[download]  255.00KiB at    1.54MiB/s (00:00:00)[download]  259.90KiB at    1.56MiB/s (00:00:00)[download] 100% of  259.90KiB in 00:00:00 at 722.49KiB/s
+[download] Downloading item 62 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=xAJT6cmJ5gs
+[youtube] Sleeping 1.0 seconds ...
+[youtube] xAJT6cmJ5gs: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] xAJT6cmJ5gs: Downloading android vr player API JSON
+[info] xAJT6cmJ5gs: Downloading subtitles: en
+[info] xAJT6cmJ5gs: Downloading 1 format(s): 401+251
+[info] Writing video subtitles to: xAJT6cmJ5gs.en.vtt
+[download] Destination: xAJT6cmJ5gs.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    2.77MiB/s (00:00:00)[download]    7.00KiB at    1.37MiB/s (00:00:00)[download]   15.00KiB at    1.20MiB/s (00:00:00)[download]   31.00KiB at  762.61KiB/s (00:00:00)[download]   63.00KiB at  893.16KiB/s (00:00:00)[download]  127.00KiB at    1.18MiB/s (00:00:00)[download]  255.00KiB at    1.09MiB/s (00:00:00)[download]  511.00KiB at    1.84MiB/s (00:00:00)[download]  928.79KiB at    2.80MiB/s (00:00:00)[download] 100% of  928.79KiB in 00:00:00 at 1.28MiB/s
+[download] Downloading item 63 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=a03Vmo_d9Tk
+[youtube] Sleeping 1.0 seconds ...
+[youtube] a03Vmo_d9Tk: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] a03Vmo_d9Tk: Downloading android vr player API JSON
+[info] a03Vmo_d9Tk: Downloading subtitles: en
+[info] a03Vmo_d9Tk: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: a03Vmo_d9Tk.en.vtt
+[download] Destination: a03Vmo_d9Tk.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  Unknown B/s (00:00:00)[download]   15.00KiB at  Unknown B/s (00:00:00)[download]   31.00KiB at  674.45KiB/s (00:00:00)[download]   63.00KiB at  825.18KiB/s (00:00:00)[download]  127.00KiB at    1.02MiB/s (00:00:00)[download]  255.00KiB at    1.44MiB/s (00:00:00)[download]  486.02KiB at    2.18MiB/s (00:00:00)[download] 100% of  486.02KiB in 00:00:00 at 1.01MiB/s
+[download] Downloading item 64 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=AgOgdLow6Ow
+[youtube] Sleeping 1.0 seconds ...
+[youtube] AgOgdLow6Ow: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] AgOgdLow6Ow: Downloading android vr player API JSON
+[info] AgOgdLow6Ow: Downloading subtitles: en
+[info] AgOgdLow6Ow: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: AgOgdLow6Ow.en.vtt
+[download] Destination: AgOgdLow6Ow.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  658.07KiB/s (00:00:00)[download]    7.00KiB at  399.34KiB/s (00:00:00)[download]   15.00KiB at  432.39KiB/s (00:00:00)[download]   31.00KiB at  495.76KiB/s (00:00:00)[download]   63.00KiB at  658.09KiB/s (00:00:00)[download]  127.00KiB at  961.63KiB/s (00:00:00)[download]  255.00KiB at    1.45MiB/s (00:00:00)[download]  369.80KiB at    1.89MiB/s (00:00:00)[download] 100% of  369.80KiB in 00:00:00 at 772.57KiB/s
+[download] Downloading item 65 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=qGNeo8RvV50
+[youtube] Sleeping 1.0 seconds ...
+[youtube] qGNeo8RvV50: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] qGNeo8RvV50: Downloading android vr player API JSON
+[info] qGNeo8RvV50: Downloading subtitles: en
+[info] qGNeo8RvV50: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: qGNeo8RvV50.en.vtt
+[download] Destination: qGNeo8RvV50.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.17MiB/s (00:00:00)[download]    7.00KiB at  863.99KiB/s (00:00:00)[download]   15.00KiB at  996.22KiB/s (00:00:00)[download]   31.00KiB at  699.62KiB/s (00:00:00)[download]   63.00KiB at  863.47KiB/s (00:00:00)[download]  127.00KiB at    1.14MiB/s (00:00:00)[download]  255.00KiB at    1.73MiB/s (00:00:00)[download]  499.60KiB at    1.91MiB/s (00:00:00)[download] 100% of  499.60KiB in 00:00:00 at 1.06MiB/s
+[download] Downloading item 66 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=f0Us3YBL1tg
+[youtube] Sleeping 1.0 seconds ...
+[youtube] f0Us3YBL1tg: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] f0Us3YBL1tg: Downloading android vr player API JSON
+[info] f0Us3YBL1tg: Downloading subtitles: en
+[info] f0Us3YBL1tg: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: f0Us3YBL1tg.en.vtt
+[download] Destination: f0Us3YBL1tg.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.23MiB/s (00:00:00)[download]    7.00KiB at  989.39KiB/s (00:00:00)[download]   15.00KiB at  142.68KiB/s (00:00:00)[download]   31.00KiB at  294.33KiB/s (00:00:00)[download]   63.00KiB at  402.00KiB/s (00:00:00)[download]  127.00KiB at  579.78KiB/s (00:00:00)[download]  255.00KiB at  960.12KiB/s (00:00:00)[download]  511.00KiB at    1.54MiB/s (00:00:00)[download]  540.87KiB at    1.60MiB/s (00:00:00)[download] 100% of  540.87KiB in 00:00:00 at 898.49KiB/s
+[download] Downloading item 67 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=yGkd32dirJ8
+[youtube] Sleeping 1.0 seconds ...
+[youtube] yGkd32dirJ8: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] yGkd32dirJ8: Downloading android vr player API JSON
+[info] yGkd32dirJ8: Downloading subtitles: en
+[info] yGkd32dirJ8: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: yGkd32dirJ8.en.vtt
+[download] Destination: yGkd32dirJ8.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  585.58KiB/s (00:00:00)[download]    7.00KiB at  756.53KiB/s (00:00:00)[download]   15.00KiB at  665.80KiB/s (00:00:00)[download]   31.00KiB at  652.29KiB/s (00:00:00)[download]   63.00KiB at  782.09KiB/s (00:00:00)[download]  127.00KiB at    1.10MiB/s (00:00:00)[download]  255.00KiB at    1.63MiB/s (00:00:00)[download]  511.00KiB at    2.65MiB/s (00:00:00)[download]  614.36KiB at    2.98MiB/s (00:00:00)[download] 100% of  614.36KiB in 00:00:00 at 1.15MiB/s
+[download] Downloading item 68 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=hiad0PbI47o
+[youtube] Sleeping 1.0 seconds ...
+[youtube] hiad0PbI47o: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] hiad0PbI47o: Downloading android vr player API JSON
+[info] hiad0PbI47o: Downloading subtitles: en
+[info] hiad0PbI47o: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: hiad0PbI47o.en.vtt
+[download] Destination: hiad0PbI47o.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at    2.21MiB/s (00:00:00)[download]   15.00KiB at    1.34MiB/s (00:00:00)[download]   31.00KiB at  731.31KiB/s (00:00:00)[download]   63.00KiB at  901.99KiB/s (00:00:00)[download]  127.00KiB at  771.19KiB/s (00:00:00)[download]  255.00KiB at    1.02MiB/s (00:00:00)[download]  373.45KiB at    1.28MiB/s (00:00:00)[download] 100% of  373.45KiB in 00:00:00 at 758.25KiB/s
+[download] Downloading item 69 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=JiEJMpdraG4
+[youtube] Sleeping 1.0 seconds ...
+[youtube] JiEJMpdraG4: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] JiEJMpdraG4: Downloading android vr player API JSON
+[info] JiEJMpdraG4: Downloading subtitles: en
+[info] JiEJMpdraG4: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: JiEJMpdraG4.en.vtt
+[download] Destination: JiEJMpdraG4.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.67MiB/s (00:00:00)[download]    7.00KiB at    1.04MiB/s (00:00:00)[download]   15.00KiB at    1.01MiB/s (00:00:00)[download]   31.00KiB at  695.94KiB/s (00:00:00)[download]   63.00KiB at  825.11KiB/s (00:00:00)[download]  127.00KiB at    1.13MiB/s (00:00:00)[download]  255.00KiB at    1.71MiB/s (00:00:00)[download]  461.16KiB at    2.49MiB/s (00:00:00)[download] 100% of  461.16KiB in 00:00:00 at 1009.73KiB/s
+[download] Downloading item 70 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=oJvao6Ca4aA
+[youtube] Sleeping 1.0 seconds ...
+[youtube] oJvao6Ca4aA: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] oJvao6Ca4aA: Downloading android vr player API JSON
+[info] oJvao6Ca4aA: Downloading subtitles: en
+[info] oJvao6Ca4aA: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: oJvao6Ca4aA.en.vtt
+[download] Destination: oJvao6Ca4aA.en.vtt
+[download]    1.00KiB at  896.03KiB/s (00:00:00)[download]    3.00KiB at    1.12MiB/s (00:00:00)[download]    7.00KiB at  880.42KiB/s (00:00:00)[download]   15.00KiB at  950.80KiB/s (00:00:00)[download]   31.00KiB at  243.57KiB/s (00:00:00)[download]   63.00KiB at  483.96KiB/s (00:00:00)[download]  127.00KiB at  657.78KiB/s (00:00:00)[download]  255.00KiB at 1017.69KiB/s (00:00:00)[download]  511.00KiB at    1.68MiB/s (00:00:00)[download]  706.23KiB at    2.09MiB/s (00:00:00)[download] 100% of  706.23KiB in 00:00:00 at 1.07MiB/s
+[download] Downloading item 71 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=iFs8BmHYnks
+[youtube] Sleeping 1.0 seconds ...
+[youtube] iFs8BmHYnks: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] iFs8BmHYnks: Downloading android vr player API JSON
+[info] iFs8BmHYnks: Downloading subtitles: en
+[info] iFs8BmHYnks: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: iFs8BmHYnks.en.vtt
+[download] Destination: iFs8BmHYnks.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.67MiB/s (00:00:00)[download]    7.00KiB at    2.58MiB/s (00:00:00)[download]   15.00KiB at    1.60MiB/s (00:00:00)[download]   31.00KiB at  678.34KiB/s (00:00:00)[download]   63.00KiB at  856.52KiB/s (00:00:00)[download]  127.00KiB at    1.13MiB/s (00:00:00)[download]  255.00KiB at    1.69MiB/s (00:00:00)[download]  511.00KiB at    2.64MiB/s (00:00:00)[download]  638.31KiB at    2.19MiB/s (00:00:00)[download] 100% of  638.31KiB in 00:00:00 at 1.14MiB/s
+[download] Downloading item 72 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=ILJ5_ZbB5r0
+[youtube] Sleeping 1.0 seconds ...
+[youtube] ILJ5_ZbB5r0: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] ILJ5_ZbB5r0: Downloading android vr player API JSON
+[info] ILJ5_ZbB5r0: Downloading subtitles: en
+[info] ILJ5_ZbB5r0: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: ILJ5_ZbB5r0.en.vtt
+[download] Destination: ILJ5_ZbB5r0.en.vtt
+[download]    1.00KiB at  999.12KiB/s (00:00:00)[download]    3.00KiB at    1.46MiB/s (00:00:00)[download]    7.00KiB at    2.67MiB/s (00:00:00)[download]   15.00KiB at    5.10MiB/s (00:00:00)[download]   31.00KiB at  720.30KiB/s (00:00:00)[download]   63.00KiB at  769.05KiB/s (00:00:00)[download]  127.00KiB at 1000.31KiB/s (00:00:00)[download]  255.00KiB at    1.44MiB/s (00:00:00)[download]  511.00KiB at    2.25MiB/s (00:00:00)[download]  626.34KiB at    2.38MiB/s (00:00:00)[download] 100% of  626.34KiB in 00:00:00 at 1.12MiB/s
+[download] Downloading item 73 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=njvjjOgiLKo
+[youtube] Sleeping 1.0 seconds ...
+[youtube] njvjjOgiLKo: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] njvjjOgiLKo: Downloading android vr player API JSON
+[info] njvjjOgiLKo: Downloading subtitles: en
+[info] njvjjOgiLKo: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: njvjjOgiLKo.en.vtt
+[download] Destination: njvjjOgiLKo.en.vtt
+[download]    1.00KiB at  591.75KiB/s (00:00:00)[download]    3.00KiB at    1.07MiB/s (00:00:00)[download]    7.00KiB at  982.44KiB/s (00:00:00)[download]   15.00KiB at    1.10MiB/s (00:00:00)[download]   31.00KiB at  706.20KiB/s (00:00:00)[download]   63.00KiB at  863.65KiB/s (00:00:00)[download]  127.00KiB at    1.15MiB/s (00:00:00)[download]  255.00KiB at    1.75MiB/s (00:00:00)[download]  460.34KiB at    1.71MiB/s (00:00:00)[download] 100% of  460.34KiB in 00:00:00 at 783.72KiB/s
+[download] Downloading item 74 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=f-7_8hmb0M0
+[youtube] Sleeping 1.0 seconds ...
+[youtube] f-7_8hmb0M0: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] f-7_8hmb0M0: Downloading android vr player API JSON
+[info] f-7_8hmb0M0: Downloading subtitles: en
+[info] f-7_8hmb0M0: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: f-7_8hmb0M0.en.vtt
+[download] Destination: f-7_8hmb0M0.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.67MiB/s (00:00:00)[download]    7.00KiB at    1.60MiB/s (00:00:00)[download]   15.00KiB at    1.13MiB/s (00:00:00)[download]   31.00KiB at  721.22KiB/s (00:00:00)[download]   63.00KiB at  887.56KiB/s (00:00:00)[download]  127.00KiB at    1.09MiB/s (00:00:00)[download]  255.00KiB at    1.70MiB/s (00:00:00)[download]  422.20KiB at    2.26MiB/s (00:00:00)[download] 100% of  422.20KiB in 00:00:00 at 976.52KiB/s
+[download] Downloading item 75 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=b80QhvUHHoU
+[youtube] Sleeping 1.0 seconds ...
+[youtube] b80QhvUHHoU: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] b80QhvUHHoU: Downloading android vr player API JSON
+[info] b80QhvUHHoU: Downloading subtitles: en
+[info] b80QhvUHHoU: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: b80QhvUHHoU.en.vtt
+[download] Destination: b80QhvUHHoU.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    2.04MiB/s (00:00:00)[download]    7.00KiB at    3.09MiB/s (00:00:00)[download]   15.00KiB at    1.72MiB/s (00:00:00)[download]   31.00KiB at  728.86KiB/s (00:00:00)[download]   63.00KiB at  896.67KiB/s (00:00:00)[download]  127.00KiB at    1.15MiB/s (00:00:00)[download]  131.84KiB at    1.15MiB/s (00:00:00)[download] 100% of  131.84KiB in 00:00:00 at 398.14KiB/s
+[download] Downloading item 76 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=cOml55gLPl0
+[youtube] Sleeping 1.0 seconds ...
+[youtube] cOml55gLPl0: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] cOml55gLPl0: Downloading android vr player API JSON
+[info] cOml55gLPl0: Downloading subtitles: en
+[info] cOml55gLPl0: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: cOml55gLPl0.en.vtt
+[download] Destination: cOml55gLPl0.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  559.79KiB/s (00:00:00)[download]    7.00KiB at  460.16KiB/s (00:00:00)[download]   15.00KiB at  469.88KiB/s (00:00:00)[download]   31.00KiB at  539.53KiB/s (00:00:00)[download]   63.00KiB at  699.59KiB/s (00:00:00)[download]  127.00KiB at  984.48KiB/s (00:00:00)[download]  139.09KiB at 1002.10KiB/s (00:00:00)[download] 100% of  139.09KiB in 00:00:00 at 341.17KiB/s
+[download] Downloading item 77 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=mBFVeLagITA
+[youtube] Sleeping 1.0 seconds ...
+[youtube] mBFVeLagITA: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] mBFVeLagITA: Downloading android vr player API JSON
+[info] mBFVeLagITA: Downloading subtitles: en
+[info] mBFVeLagITA: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: mBFVeLagITA.en.vtt
+[download] Destination: mBFVeLagITA.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  490.10KiB/s (00:00:00)[download]    7.00KiB at  312.57KiB/s (00:00:00)[download]   15.00KiB at  663.45KiB/s (00:00:00)[download]   31.00KiB at  495.06KiB/s (00:00:00)[download]   63.00KiB at  739.24KiB/s (00:00:00)[download]  127.00KiB at    1.00MiB/s (00:00:00)[download]  163.96KiB at    1.18MiB/s (00:00:00)[download] 100% of  163.96KiB in 00:00:00 at 367.78KiB/s
+[download] Downloading item 78 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=QU65j9eQobc
+[youtube] Sleeping 1.0 seconds ...
+[youtube] QU65j9eQobc: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] QU65j9eQobc: Downloading android vr player API JSON
+[info] QU65j9eQobc: Downloading subtitles: en
+[info] QU65j9eQobc: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: QU65j9eQobc.en.vtt
+[download] Destination: QU65j9eQobc.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.79MiB/s (00:00:00)[download]    7.00KiB at  850.57KiB/s (00:00:00)[download]   15.00KiB at    1.05MiB/s (00:00:00)[download]   31.00KiB at  254.91KiB/s (00:00:00)[download]   63.00KiB at  394.56KiB/s (00:00:00)[download]  127.00KiB at  590.55KiB/s (00:00:00)[download]  146.82KiB at  630.84KiB/s (00:00:00)[download] 100% of  146.82KiB in 00:00:00 at 348.55KiB/s
+[download] Downloading item 79 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=sIeOLHTFET0
+[youtube] Sleeping 1.0 seconds ...
+[youtube] sIeOLHTFET0: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] sIeOLHTFET0: Downloading android vr player API JSON
+[info] sIeOLHTFET0: Downloading subtitles: en
+[info] sIeOLHTFET0: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: sIeOLHTFET0.en.vtt
+[download] Destination: sIeOLHTFET0.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  Unknown B/s (00:00:00)[download]   15.00KiB at  Unknown B/s (00:00:00)[download]   31.00KiB at  719.87KiB/s (00:00:00)[download]   63.00KiB at  802.93KiB/s (00:00:00)[download]  127.00KiB at  980.10KiB/s (00:00:00)[download]  174.90KiB at    1.13MiB/s (00:00:00)[download] 100% of  174.90KiB in 00:00:00 at 426.83KiB/s
+[download] Downloading item 80 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=FmKJDOSUAUY
+[youtube] Sleeping 1.0 seconds ...
+[youtube] FmKJDOSUAUY: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] FmKJDOSUAUY: Downloading android vr player API JSON
+[info] FmKJDOSUAUY: Downloading subtitles: en
+[info] FmKJDOSUAUY: Downloading 1 format(s): 399+251
+Deleting existing file FmKJDOSUAUY.en.vtt
+[info] Writing video subtitles to: FmKJDOSUAUY.en.vtt
+[download] Destination: FmKJDOSUAUY.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  Unknown B/s (00:00:00)[download]   15.00KiB at  Unknown B/s (00:00:00)[download]   31.00KiB at  763.21KiB/s (00:00:00)[download]   63.00KiB at  868.58KiB/s (00:00:00)[download]  127.00KiB at 1004.90KiB/s (00:00:00)[download]  255.00KiB at    1.41MiB/s (00:00:00)[download]  258.12KiB at    1.42MiB/s (00:00:00)[download] 100% of  258.12KiB in 00:00:00 at 586.34KiB/s
+[download] Downloading item 81 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=tQ7pUImfYlY
+[youtube] Sleeping 1.0 seconds ...
+[youtube] tQ7pUImfYlY: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] tQ7pUImfYlY: Downloading android vr player API JSON
+[info] tQ7pUImfYlY: Downloading subtitles: en
+[info] tQ7pUImfYlY: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: tQ7pUImfYlY.en.vtt
+[download] Destination: tQ7pUImfYlY.en.vtt
+[download]    1.00KiB at  939.79KiB/s (00:00:00)[download]    3.00KiB at    1.59MiB/s (00:00:00)[download]    7.00KiB at    1.36MiB/s (00:00:00)[download]   15.00KiB at 1014.34KiB/s (00:00:00)[download]   31.00KiB at  734.25KiB/s (00:00:00)[download]   63.00KiB at  863.26KiB/s (00:00:00)[download]  127.00KiB at    1.20MiB/s (00:00:00)[download]  255.00KiB at    1.76MiB/s (00:00:00)[download]  288.82KiB at    1.87MiB/s (00:00:00)[download] 100% of  288.82KiB in 00:00:00 at 624.99KiB/s
+[download] Downloading item 82 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=lNPRb2GPOwI
+[youtube] Sleeping 1.0 seconds ...
+[youtube] lNPRb2GPOwI: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] lNPRb2GPOwI: Downloading android vr player API JSON
+[info] lNPRb2GPOwI: Downloading subtitles: en
+[info] lNPRb2GPOwI: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: lNPRb2GPOwI.en.vtt
+[download] Destination: lNPRb2GPOwI.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.40MiB/s (00:00:00)[download]    7.00KiB at    1.28MiB/s (00:00:00)[download]   15.00KiB at    1.09MiB/s (00:00:00)[download]   31.00KiB at  689.39KiB/s (00:00:00)[download]   63.00KiB at  856.12KiB/s (00:00:00)[download]  127.00KiB at    1.12MiB/s (00:00:00)[download]  255.00KiB at    1.69MiB/s (00:00:00)[download]  453.33KiB at    1.67MiB/s (00:00:00)[download] 100% of  453.33KiB in 00:00:00 at 966.74KiB/s
+[download] Downloading item 83 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=ah_0uzLr5yo
+[youtube] Sleeping 1.0 seconds ...
+[youtube] ah_0uzLr5yo: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] ah_0uzLr5yo: Downloading android vr player API JSON
+[info] ah_0uzLr5yo: Downloading subtitles: en
+[info] ah_0uzLr5yo: Downloading 1 format(s): 400+251
+[info] Writing video subtitles to: ah_0uzLr5yo.en.vtt
+[download] Destination: ah_0uzLr5yo.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at    2.54MiB/s (00:00:00)[download]   15.00KiB at    1.32MiB/s (00:00:00)[download]   31.00KiB at  238.02KiB/s (00:00:00)[download]   63.00KiB at  482.09KiB/s (00:00:00)[download]  127.00KiB at  652.68KiB/s (00:00:00)[download]  255.00KiB at 1010.99KiB/s (00:00:00)[download]  511.00KiB at    1.64MiB/s (00:00:00)[download]  547.53KiB at    1.73MiB/s (00:00:00)[download] 100% of  547.53KiB in 00:00:00 at 1.00MiB/s
+[download] Downloading item 84 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=oC-nXDUMkTw
+[youtube] Sleeping 1.0 seconds ...
+[youtube] oC-nXDUMkTw: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] oC-nXDUMkTw: Downloading android vr player API JSON
+[info] oC-nXDUMkTw: Downloading subtitles: en
+[info] oC-nXDUMkTw: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: oC-nXDUMkTw.en.vtt
+[download] Destination: oC-nXDUMkTw.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    2.05MiB/s (00:00:00)[download]    7.00KiB at  939.61KiB/s (00:00:00)[download]   15.00KiB at    1.05MiB/s (00:00:00)[download]   31.00KiB at  724.71KiB/s (00:00:00)[download]   63.00KiB at  816.97KiB/s (00:00:00)[download]  127.00KiB at    1.14MiB/s (00:00:00)[download]  197.14KiB at    1.15MiB/s (00:00:00)[download] 100% of  197.14KiB in 00:00:00 at 410.75KiB/s
+[download] Downloading item 85 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=bYROdw0xJdc
+[youtube] Sleeping 1.0 seconds ...
+[youtube] bYROdw0xJdc: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] bYROdw0xJdc: Downloading android vr player API JSON
+[info] bYROdw0xJdc: Downloading subtitles: en
+[info] bYROdw0xJdc: Downloading 1 format(s): 399+251
+Deleting existing file bYROdw0xJdc.en.vtt
+[info] Writing video subtitles to: bYROdw0xJdc.en.vtt
+[download] Destination: bYROdw0xJdc.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at    2.77MiB/s (00:00:00)[download]   15.00KiB at    1.48MiB/s (00:00:00)[download]   31.00KiB at  718.84KiB/s (00:00:00)[download]   63.00KiB at  842.46KiB/s (00:00:00)[download]  127.00KiB at    1.10MiB/s (00:00:00)[download]  255.00KiB at    1.70MiB/s (00:00:00)[download]  276.38KiB at    1.76MiB/s (00:00:00)[download] 100% of  276.38KiB in 00:00:00 at 675.77KiB/s
+[download] Downloading item 86 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=phphBbRex1M
+[youtube] Sleeping 1.0 seconds ...
+[youtube] phphBbRex1M: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] phphBbRex1M: Downloading android vr player API JSON
+[info] phphBbRex1M: Downloading subtitles: en
+[info] phphBbRex1M: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: phphBbRex1M.en.vtt
+[download] Destination: phphBbRex1M.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    2.28MiB/s (00:00:00)[download]    7.00KiB at  748.26KiB/s (00:00:00)[download]   15.00KiB at  684.83KiB/s (00:00:00)[download]   31.00KiB at  607.98KiB/s (00:00:00)[download]   63.00KiB at  777.34KiB/s (00:00:00)[download]  127.00KiB at    1.09MiB/s (00:00:00)[download]  228.75KiB at    1.03MiB/s (00:00:00)[download] 100% of  228.75KiB in 00:00:00 at 525.70KiB/s
+[download] Downloading item 87 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=YjMH8zaqkkA
+[youtube] Sleeping 1.0 seconds ...
+[youtube] YjMH8zaqkkA: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] YjMH8zaqkkA: Downloading android vr player API JSON
+[info] YjMH8zaqkkA: Downloading subtitles: en
+[info] YjMH8zaqkkA: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: YjMH8zaqkkA.en.vtt
+[download] Destination: YjMH8zaqkkA.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at    1.26MiB/s (00:00:00)[download]   15.00KiB at    1.15MiB/s (00:00:00)[download]   31.00KiB at  733.39KiB/s (00:00:00)[download]   63.00KiB at  868.01KiB/s (00:00:00)[download]  127.00KiB at    1.15MiB/s (00:00:00)[download]  255.00KiB at    1.68MiB/s (00:00:00)[download]  286.80KiB at    1.82MiB/s (00:00:00)[download] 100% of  286.80KiB in 00:00:00 at 604.10KiB/s
+[download] Downloading item 88 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=-fJ3X8xSXL4
+[youtube] Sleeping 1.0 seconds ...
+[youtube] -fJ3X8xSXL4: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] -fJ3X8xSXL4: Downloading android vr player API JSON
+[info] -fJ3X8xSXL4: Downloading subtitles: en
+[info] -fJ3X8xSXL4: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: -fJ3X8xSXL4.en.vtt
+[download] Destination: -fJ3X8xSXL4.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at    1.39MiB/s (00:00:00)[download]   15.00KiB at    1.30MiB/s (00:00:00)[download]   31.00KiB at  709.32KiB/s (00:00:00)[download]   63.00KiB at  878.13KiB/s (00:00:00)[download]  127.00KiB at    1.10MiB/s (00:00:00)[download]  188.74KiB at    1.42MiB/s (00:00:00)[download] 100% of  188.74KiB in 00:00:00 at 526.20KiB/s
+[download] Downloading item 89 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=H4BUyvFYcgc
+[youtube] Sleeping 1.0 seconds ...
+[youtube] H4BUyvFYcgc: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] H4BUyvFYcgc: Downloading android vr player API JSON
+[info] H4BUyvFYcgc: Downloading subtitles: en
+[info] H4BUyvFYcgc: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: H4BUyvFYcgc.en.vtt
+[download] Destination: H4BUyvFYcgc.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at    2.18MiB/s (00:00:00)[download]   15.00KiB at    1.30MiB/s (00:00:00)[download]   31.00KiB at  732.03KiB/s (00:00:00)[download]   63.00KiB at  877.84KiB/s (00:00:00)[download]  127.00KiB at    1.15MiB/s (00:00:00)[download]  169.74KiB at    1.33MiB/s (00:00:00)[download] 100% of  169.74KiB in 00:00:00 at 490.44KiB/s
+[download] Downloading item 90 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=bx4pIv4Wtck
+[youtube] Sleeping 1.0 seconds ...
+[youtube] bx4pIv4Wtck: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] bx4pIv4Wtck: Downloading android vr player API JSON
+[info] bx4pIv4Wtck: Downloading subtitles: en
+[info] bx4pIv4Wtck: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: bx4pIv4Wtck.en.vtt
+[download] Destination: bx4pIv4Wtck.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at 1014.83KiB/s (00:00:00)[download]    7.00KiB at  866.98KiB/s (00:00:00)[download]   15.00KiB at    1.01MiB/s (00:00:00)[download]   31.00KiB at  726.64KiB/s (00:00:00)[download]   63.00KiB at  869.81KiB/s (00:00:00)[download]  116.64KiB at  621.48KiB/s (00:00:00)[download] 100% of  116.64KiB in 00:00:00 at 310.46KiB/s
+[download] Downloading item 91 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=XGfP3v5KOyY
+[youtube] Sleeping 1.0 seconds ...
+[youtube] XGfP3v5KOyY: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] XGfP3v5KOyY: Downloading android vr player API JSON
+[info] XGfP3v5KOyY: Downloading subtitles: en
+[info] XGfP3v5KOyY: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: XGfP3v5KOyY.en.vtt
+[download] Destination: XGfP3v5KOyY.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.17MiB/s (00:00:00)[download]    7.00KiB at  905.34KiB/s (00:00:00)[download]   15.00KiB at 1008.42KiB/s (00:00:00)[download]   31.00KiB at  261.82KiB/s (00:00:00)[download]   63.00KiB at  413.89KiB/s (00:00:00)[download]   93.32KiB at  524.99KiB/s (00:00:00)[download] 100% of   93.32KiB in 00:00:00 at 236.50KiB/s
+[download] Downloading item 92 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=kLLMCoPb6h0
+[youtube] Sleeping 1.0 seconds ...
+[youtube] kLLMCoPb6h0: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] kLLMCoPb6h0: Downloading android vr player API JSON
+[info] kLLMCoPb6h0: Downloading subtitles: en
+[info] kLLMCoPb6h0: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: kLLMCoPb6h0.en.vtt
+[download] Destination: kLLMCoPb6h0.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  Unknown B/s (00:00:00)[download]   15.00KiB at  Unknown B/s (00:00:00)[download]   31.00KiB at  686.57KiB/s (00:00:00)[download]   63.00KiB at  770.89KiB/s (00:00:00)[download]  127.00KiB at  969.79KiB/s (00:00:00)[download]  255.00KiB at    1.40MiB/s (00:00:00)[download]  319.52KiB at    1.61MiB/s (00:00:00)[download] 100% of  319.52KiB in 00:00:00 at 600.16KiB/s
+[download] Downloading item 93 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=apR0C9pLDgg
+[youtube] Sleeping 1.0 seconds ...
+[youtube] apR0C9pLDgg: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] apR0C9pLDgg: Downloading android vr player API JSON
+[info] apR0C9pLDgg: Downloading subtitles: en
+[info] apR0C9pLDgg: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: apR0C9pLDgg.en.vtt
+[download] Destination: apR0C9pLDgg.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  962.47KiB/s (00:00:00)[download]   15.00KiB at    1.01MiB/s (00:00:00)[download]   31.00KiB at  739.68KiB/s (00:00:00)[download]   63.00KiB at  815.90KiB/s (00:00:00)[download]   94.24KiB at 1004.55KiB/s (00:00:00)[download] 100% of   94.24KiB in 00:00:00 at 230.46KiB/s
+[download] Downloading item 94 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=63v9VXxyjUw
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 63v9VXxyjUw: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 63v9VXxyjUw: Downloading android vr player API JSON
+[info] 63v9VXxyjUw: Downloading subtitles: en
+[info] 63v9VXxyjUw: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: 63v9VXxyjUw.en.vtt
+[download] Destination: 63v9VXxyjUw.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  Unknown B/s (00:00:00)[download]   15.00KiB at  398.09KiB/s (00:00:00)[download]   31.00KiB at  633.43KiB/s (00:00:00)[download]   63.00KiB at  742.20KiB/s (00:00:00)[download]  127.00KiB at  978.99KiB/s (00:00:00)[download]  234.11KiB at    1.35MiB/s (00:00:00)[download] 100% of  234.11KiB in 00:00:00 at 592.63KiB/s
+[download] Downloading item 95 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=cjJB9uGmuuk
+[youtube] Sleeping 1.0 seconds ...
+[youtube] cjJB9uGmuuk: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] cjJB9uGmuuk: Downloading android vr player API JSON
+[info] cjJB9uGmuuk: Downloading subtitles: en
+[info] cjJB9uGmuuk: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: cjJB9uGmuuk.en.vtt
+[download] Destination: cjJB9uGmuuk.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  Unknown B/s (00:00:00)[download]   15.00KiB at  Unknown B/s (00:00:00)[download]   31.00KiB at  709.48KiB/s (00:00:00)[download]   63.00KiB at  816.94KiB/s (00:00:00)[download]  127.00KiB at 1022.83KiB/s (00:00:00)[download]  169.59KiB at    1.16MiB/s (00:00:00)[download] 100% of  169.59KiB in 00:00:00 at 404.19KiB/s
+[download] Downloading item 96 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=f7R-V1I1reQ
+[youtube] Sleeping 1.0 seconds ...
+[youtube] f7R-V1I1reQ: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] f7R-V1I1reQ: Downloading android vr player API JSON
+[info] f7R-V1I1reQ: Downloading subtitles: en
+[info] f7R-V1I1reQ: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: f7R-V1I1reQ.en.vtt
+[download] Destination: f7R-V1I1reQ.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.82MiB/s (00:00:00)[download]    7.00KiB at  886.05KiB/s (00:00:00)[download]   15.00KiB at  990.55KiB/s (00:00:00)[download]   31.00KiB at  710.58KiB/s (00:00:00)[download]   63.00KiB at  797.54KiB/s (00:00:00)[download]   97.53KiB at 1007.84KiB/s (00:00:00)[download] 100% of   97.53KiB in 00:00:00 at 229.05KiB/s
+[download] Downloading item 97 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=4Fb9aVn_gXo
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 4Fb9aVn_gXo: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 4Fb9aVn_gXo: Downloading android vr player API JSON
+[info] 4Fb9aVn_gXo: Downloading subtitles: en
+[info] 4Fb9aVn_gXo: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: 4Fb9aVn_gXo.en.vtt
+[download] Destination: 4Fb9aVn_gXo.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.96MiB/s (00:00:00)[download]    7.00KiB at  927.62KiB/s (00:00:00)[download]   15.00KiB at    1.04MiB/s (00:00:00)[download]   31.00KiB at  678.43KiB/s (00:00:00)[download]   63.00KiB at  784.04KiB/s (00:00:00)[download]  127.00KiB at    1.11MiB/s (00:00:00)[download]  169.50KiB at  841.93KiB/s (00:00:00)[download] 100% of  169.50KiB in 00:00:00 at 448.54KiB/s
+[download] Downloading item 98 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=JA4N8nlycXY
+[youtube] Sleeping 1.0 seconds ...
+[youtube] JA4N8nlycXY: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] JA4N8nlycXY: Downloading android vr player API JSON
+[info] JA4N8nlycXY: Downloading subtitles: en
+[info] JA4N8nlycXY: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: JA4N8nlycXY.en.vtt
+[download] Destination: JA4N8nlycXY.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    2.27MiB/s (00:00:00)[download]    7.00KiB at    1.13MiB/s (00:00:00)[download]   15.00KiB at 1002.02KiB/s (00:00:00)[download]   31.00KiB at  701.58KiB/s (00:00:00)[download]   63.00KiB at  845.51KiB/s (00:00:00)[download]  127.00KiB at  671.31KiB/s (00:00:00)[download]  136.04KiB at  715.16KiB/s (00:00:00)[download] 100% of  136.04KiB in 00:00:00 at 362.52KiB/s
+[download] Downloading item 99 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=kg-rOo9_xjU
+[youtube] Sleeping 1.0 seconds ...
+[youtube] kg-rOo9_xjU: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] kg-rOo9_xjU: Downloading android vr player API JSON
+[info] kg-rOo9_xjU: Downloading subtitles: en
+[info] kg-rOo9_xjU: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: kg-rOo9_xjU.en.vtt
+[download] Destination: kg-rOo9_xjU.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    2.09MiB/s (00:00:00)[download]    7.00KiB at    1.05MiB/s (00:00:00)[download]   15.00KiB at    1.04MiB/s (00:00:00)[download]   31.00KiB at  732.84KiB/s (00:00:00)[download]   63.00KiB at  396.17KiB/s (00:00:00)[download]  120.14KiB at  746.35KiB/s (00:00:00)[download] 100% of  120.14KiB in 00:00:00 at 354.67KiB/s
+[download] Downloading item 100 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=VzMlFZbWA0Y
+[youtube] Sleeping 1.0 seconds ...
+[youtube] VzMlFZbWA0Y: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] VzMlFZbWA0Y: Downloading android vr player API JSON
+[info] VzMlFZbWA0Y: Downloading subtitles: en
+[info] VzMlFZbWA0Y: Downloading 1 format(s): 399+251
+Deleting existing file VzMlFZbWA0Y.en.vtt
+[info] Writing video subtitles to: VzMlFZbWA0Y.en.vtt
+[download] Destination: VzMlFZbWA0Y.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  Unknown B/s (00:00:00)[download]   15.00KiB at  406.66KiB/s (00:00:00)[download]   31.00KiB at  637.77KiB/s (00:00:00)[download]   63.00KiB at  774.74KiB/s (00:00:00)[download]  127.00KiB at    1.01MiB/s (00:00:00)[download]  129.64KiB at    1.02MiB/s (00:00:00)[download] 100% of  129.64KiB in 00:00:00 at 392.81KiB/s
+[download] Downloading item 101 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=X0Ua4XeA2Xo
+[youtube] Sleeping 1.0 seconds ...
+[youtube] X0Ua4XeA2Xo: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] X0Ua4XeA2Xo: Downloading android vr player API JSON
+[info] X0Ua4XeA2Xo: Downloading subtitles: en
+[info] X0Ua4XeA2Xo: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: X0Ua4XeA2Xo.en.vtt
+[download] Destination: X0Ua4XeA2Xo.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    2.18MiB/s (00:00:00)[download]    7.00KiB at    1.02MiB/s (00:00:00)[download]   15.00KiB at    1.07MiB/s (00:00:00)[download]   31.00KiB at  702.20KiB/s (00:00:00)[download]   63.00KiB at  459.99KiB/s (00:00:00)[download]  127.00KiB at  651.30KiB/s (00:00:00)[download]  191.59KiB at  825.68KiB/s (00:00:00)[download] 100% of  191.59KiB in 00:00:00 at 459.97KiB/s
+[download] Downloading item 102 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=7otxB9VIiDs
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 7otxB9VIiDs: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 7otxB9VIiDs: Downloading android vr player API JSON
+[info] 7otxB9VIiDs: Downloading subtitles: en
+[info] 7otxB9VIiDs: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: 7otxB9VIiDs.en.vtt
+[download] Destination: 7otxB9VIiDs.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at    1.27MiB/s (00:00:00)[download]   15.00KiB at  968.07KiB/s (00:00:00)[download]   31.00KiB at  664.30KiB/s (00:00:00)[download]   63.00KiB at  422.78KiB/s (00:00:00)[download]  107.04KiB at  709.69KiB/s (00:00:00)[download] 100% of  107.04KiB in 00:00:00 at 288.69KiB/s
+[download] Downloading item 103 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=SvJ1ZmZKfc0
+[youtube] Sleeping 1.0 seconds ...
+[youtube] SvJ1ZmZKfc0: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] SvJ1ZmZKfc0: Downloading android vr player API JSON
+[info] SvJ1ZmZKfc0: Downloading subtitles: en
+[info] SvJ1ZmZKfc0: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: SvJ1ZmZKfc0.en.vtt
+[download] Destination: SvJ1ZmZKfc0.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  Unknown B/s (00:00:00)[download]   15.00KiB at  Unknown B/s (00:00:00)[download]   31.00KiB at  683.72KiB/s (00:00:00)[download]   63.00KiB at  824.33KiB/s (00:00:00)[download]  127.00KiB at 1012.93KiB/s (00:00:00)[download]  147.75KiB at    1.04MiB/s (00:00:00)[download] 100% of  147.75KiB in 00:00:00 at 395.70KiB/s
+[download] Downloading item 104 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=vjlttwZOBMo
+[youtube] Sleeping 1.0 seconds ...
+[youtube] vjlttwZOBMo: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] vjlttwZOBMo: Downloading android vr player API JSON
+[info] vjlttwZOBMo: Downloading subtitles: en
+[info] vjlttwZOBMo: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: vjlttwZOBMo.en.vtt
+[download] Destination: vjlttwZOBMo.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at    2.79MiB/s (00:00:00)[download]   15.00KiB at    1.42MiB/s (00:00:00)[download]   31.00KiB at  258.86KiB/s (00:00:00)[download]   63.00KiB at  406.63KiB/s (00:00:00)[download]  117.33KiB at  578.73KiB/s (00:00:00)[download] 100% of  117.33KiB in 00:00:00 at 299.87KiB/s
+[download] Downloading item 105 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=KnZ03FjD-i0
+[youtube] Sleeping 1.0 seconds ...
+[youtube] KnZ03FjD-i0: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] KnZ03FjD-i0: Downloading android vr player API JSON
+[info] KnZ03FjD-i0: Downloading subtitles: en
+[info] KnZ03FjD-i0: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: KnZ03FjD-i0.en.vtt
+[download] Destination: KnZ03FjD-i0.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  898.14KiB/s (00:00:00)[download]    7.00KiB at  645.80KiB/s (00:00:00)[download]   15.00KiB at  703.20KiB/s (00:00:00)[download]   31.00KiB at  686.33KiB/s (00:00:00)[download]   63.00KiB at  804.07KiB/s (00:00:00)[download]  127.00KiB at    1.12MiB/s (00:00:00)[download]  163.73KiB at    1.27MiB/s (00:00:00)[download] 100% of  163.73KiB in 00:00:00 at 429.57KiB/s
+[download] Downloading item 106 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=7KedELXv68I
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 7KedELXv68I: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 7KedELXv68I: Downloading android vr player API JSON
+[info] 7KedELXv68I: Downloading subtitles: en
+[info] 7KedELXv68I: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: 7KedELXv68I.en.vtt
+[download] Destination: 7KedELXv68I.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at    1.65MiB/s (00:00:00)[download]   15.00KiB at    1.31MiB/s (00:00:00)[download]   31.00KiB at  683.48KiB/s (00:00:00)[download]   63.00KiB at  784.66KiB/s (00:00:00)[download]  127.00KiB at    1.09MiB/s (00:00:00)[download]  200.63KiB at    1.42MiB/s (00:00:00)[download] 100% of  200.63KiB in 00:00:00 at 481.58KiB/s
+[download] Downloading item 107 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=Yv04PBna-Dk
+[youtube] Sleeping 1.0 seconds ...
+[youtube] Yv04PBna-Dk: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] Yv04PBna-Dk: Downloading android vr player API JSON
+[info] Yv04PBna-Dk: Downloading subtitles: en
+[info] Yv04PBna-Dk: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: Yv04PBna-Dk.en.vtt
+[download] Destination: Yv04PBna-Dk.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.46MiB/s (00:00:00)[download]    7.00KiB at    1.91MiB/s (00:00:00)[download]   15.00KiB at    1.28MiB/s (00:00:00)[download]   31.00KiB at  241.87KiB/s (00:00:00)[download]   63.00KiB at  488.89KiB/s (00:00:00)[download]  127.00KiB at  646.46KiB/s (00:00:00)[download]  161.05KiB at  727.54KiB/s (00:00:00)[download] 100% of  161.05KiB in 00:00:00 at 351.56KiB/s
+[download] Downloading item 108 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=Vjda5pI5vKQ
+[youtube] Sleeping 1.0 seconds ...
+[youtube] Vjda5pI5vKQ: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] Vjda5pI5vKQ: Downloading android vr player API JSON
+[info] Vjda5pI5vKQ: Downloading subtitles: en
+[info] Vjda5pI5vKQ: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: Vjda5pI5vKQ.en.vtt
+[download] Destination: Vjda5pI5vKQ.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    2.77MiB/s (00:00:00)[download]    7.00KiB at    1.13MiB/s (00:00:00)[download]   15.00KiB at 1005.15KiB/s (00:00:00)[download]   31.00KiB at  251.25KiB/s (00:00:00)[download]   63.00KiB at  423.46KiB/s (00:00:00)[download]  127.00KiB at  599.04KiB/s (00:00:00)[download]  245.62KiB at  933.03KiB/s (00:00:00)[download] 100% of  245.62KiB in 00:00:00 at 539.16KiB/s
+[download] Downloading item 109 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=NFb0rX2LOp0
+[youtube] Sleeping 1.0 seconds ...
+[youtube] NFb0rX2LOp0: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] NFb0rX2LOp0: Downloading android vr player API JSON
+[info] NFb0rX2LOp0: Downloading subtitles: en
+[info] NFb0rX2LOp0: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: NFb0rX2LOp0.en.vtt
+[download] Destination: NFb0rX2LOp0.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.07MiB/s (00:00:00)[download]    7.00KiB at  613.07KiB/s (00:00:00)[download]   15.00KiB at  921.72KiB/s (00:00:00)[download]   31.00KiB at  664.03KiB/s (00:00:00)[download]   63.00KiB at  842.98KiB/s (00:00:00)[download]  127.00KiB at    1.11MiB/s (00:00:00)[download]  255.00KiB at    1.69MiB/s (00:00:00)[download]  511.00KiB at    2.65MiB/s (00:00:00)[download]  608.72KiB at    3.01MiB/s (00:00:00)[download] 100% of  608.72KiB in 00:00:00 at 1.21MiB/s
+[download] Downloading item 110 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=XJ6lNP_Ihkg
+[youtube] Sleeping 1.0 seconds ...
+[youtube] XJ6lNP_Ihkg: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] XJ6lNP_Ihkg: Downloading android vr player API JSON
+[info] XJ6lNP_Ihkg: Downloading subtitles: en
+[info] XJ6lNP_Ihkg: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: XJ6lNP_Ihkg.en.vtt
+[download] Destination: XJ6lNP_Ihkg.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    2.06MiB/s (00:00:00)[download]    7.00KiB at    1.01MiB/s (00:00:00)[download]   15.00KiB at 1015.50KiB/s (00:00:00)[download]   31.00KiB at  693.76KiB/s (00:00:00)[download]   63.00KiB at  475.46KiB/s (00:00:00)[download]  109.86KiB at  581.57KiB/s (00:00:00)[download] 100% of  109.86KiB in 00:00:00 at 257.65KiB/s
+[download] Downloading item 111 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=WjsSd5Owf9A
+[youtube] Sleeping 1.0 seconds ...
+[youtube] WjsSd5Owf9A: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] WjsSd5Owf9A: Downloading android vr player API JSON
+[info] WjsSd5Owf9A: Downloading subtitles: en
+[info] WjsSd5Owf9A: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: WjsSd5Owf9A.en.vtt
+[download] Destination: WjsSd5Owf9A.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  Unknown B/s (00:00:00)[download]   15.00KiB at  Unknown B/s (00:00:00)[download]   31.00KiB at  709.81KiB/s (00:00:00)[download]   63.00KiB at  795.43KiB/s (00:00:00)[download]  127.00KiB at 1018.29KiB/s (00:00:00)[download]  204.78KiB at    1.22MiB/s (00:00:00)[download] 100% of  204.78KiB in 00:00:00 at 427.22KiB/s
+[download] Downloading item 112 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=1ufBfxizmds
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 1ufBfxizmds: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 1ufBfxizmds: Downloading android vr player API JSON
+[info] 1ufBfxizmds: Downloading subtitles: en
+[info] 1ufBfxizmds: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: 1ufBfxizmds.en.vtt
+[download] Destination: 1ufBfxizmds.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    2.06MiB/s (00:00:00)[download]    7.00KiB at  730.08KiB/s (00:00:00)[download]   15.00KiB at  623.23KiB/s (00:00:00)[download]   31.00KiB at  656.93KiB/s (00:00:00)[download]   63.00KiB at  740.03KiB/s (00:00:00)[download]  127.00KiB at    1.05MiB/s (00:00:00)[download]  155.11KiB at    1.16MiB/s (00:00:00)[download] 100% of  155.11KiB in 00:00:00 at 373.74KiB/s
+[download] Downloading item 113 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=4NBUlfnETBY
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 4NBUlfnETBY: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 4NBUlfnETBY: Downloading android vr player API JSON
+[info] 4NBUlfnETBY: Downloading subtitles: en
+[info] 4NBUlfnETBY: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: 4NBUlfnETBY.en.vtt
+[download] Destination: 4NBUlfnETBY.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.44MiB/s (00:00:00)[download]    7.00KiB at  986.60KiB/s (00:00:00)[download]   15.00KiB at    1.05MiB/s (00:00:00)[download]   31.00KiB at  253.95KiB/s (00:00:00)[download]   63.00KiB at  393.93KiB/s (00:00:00)[download]  127.00KiB at  598.07KiB/s (00:00:00)[download]  255.00KiB at  948.95KiB/s (00:00:00)[download]  504.88KiB at    1.53MiB/s (00:00:00)[download] 100% of  504.88KiB in 00:00:00 at 907.31KiB/s
+[download] Downloading item 114 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=x7Ki7QV7USU
+[youtube] Sleeping 1.0 seconds ...
+[youtube] x7Ki7QV7USU: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] x7Ki7QV7USU: Downloading android vr player API JSON
+[info] x7Ki7QV7USU: Downloading subtitles: en
+[info] x7Ki7QV7USU: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: x7Ki7QV7USU.en.vtt
+[download] Destination: x7Ki7QV7USU.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  Unknown B/s (00:00:00)[download]   15.00KiB at  364.15KiB/s (00:00:00)[download]   31.00KiB at  605.55KiB/s (00:00:00)[download]   63.00KiB at  693.83KiB/s (00:00:00)[download]   76.71KiB at  759.31KiB/s (00:00:00)[download] 100% of   76.71KiB in 00:00:00 at 250.66KiB/s
+[download] Downloading item 115 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=iKKyxN9IIKg
+[youtube] Sleeping 1.0 seconds ...
+[youtube] iKKyxN9IIKg: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] iKKyxN9IIKg: Downloading android vr player API JSON
+[info] iKKyxN9IIKg: Downloading subtitles: en
+[info] iKKyxN9IIKg: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: iKKyxN9IIKg.en.vtt
+[download] Destination: iKKyxN9IIKg.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  Unknown B/s (00:00:00)[download]   15.00KiB at  Unknown B/s (00:00:00)[download]   31.00KiB at  707.02KiB/s (00:00:00)[download]   63.00KiB at  826.48KiB/s (00:00:00)[download]  105.94KiB at  937.20KiB/s (00:00:00)[download] 100% of  105.94KiB in 00:00:00 at 314.56KiB/s
+[download] Downloading item 116 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=DZ9l_dpmbyM
+[youtube] Sleeping 1.0 seconds ...
+[youtube] DZ9l_dpmbyM: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] DZ9l_dpmbyM: Downloading android vr player API JSON
+[info] DZ9l_dpmbyM: Downloading subtitles: en
+[info] DZ9l_dpmbyM: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: DZ9l_dpmbyM.en.vtt
+[download] Destination: DZ9l_dpmbyM.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    2.39MiB/s (00:00:00)[download]    7.00KiB at    1.09MiB/s (00:00:00)[download]   15.00KiB at    1.13MiB/s (00:00:00)[download]   31.00KiB at  710.32KiB/s (00:00:00)[download]   63.00KiB at  845.17KiB/s (00:00:00)[download]  127.00KiB at    1.12MiB/s (00:00:00)[download]  255.00KiB at    1.72MiB/s (00:00:00)[download]  352.37KiB at    2.05MiB/s (00:00:00)[download] 100% of  352.37KiB in 00:00:00 at 731.95KiB/s
+[download] Downloading item 117 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=kb3t0xHbpGQ
+[youtube] Sleeping 1.0 seconds ...
+[youtube] kb3t0xHbpGQ: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] kb3t0xHbpGQ: Downloading android vr player API JSON
+[info] kb3t0xHbpGQ: Downloading subtitles: en
+[info] kb3t0xHbpGQ: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: kb3t0xHbpGQ.en.vtt
+[download] Destination: kb3t0xHbpGQ.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at    1.55MiB/s (00:00:00)[download]   15.00KiB at    1.27MiB/s (00:00:00)[download]   31.00KiB at  757.63KiB/s (00:00:00)[download]   63.00KiB at  866.75KiB/s (00:00:00)[download]  127.00KiB at    1.17MiB/s (00:00:00)[download]  247.46KiB at    1.77MiB/s (00:00:00)[download] 100% of  247.46KiB in 00:00:00 at 646.37KiB/s
+[download] Downloading item 118 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=HmlA-Ro_k9k
+[youtube] Sleeping 1.0 seconds ...
+[youtube] HmlA-Ro_k9k: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] HmlA-Ro_k9k: Downloading android vr player API JSON
+[info] HmlA-Ro_k9k: Downloading subtitles: en
+[info] HmlA-Ro_k9k: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: HmlA-Ro_k9k.en.vtt
+[download] Destination: HmlA-Ro_k9k.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.92MiB/s (00:00:00)[download]    7.00KiB at  967.48KiB/s (00:00:00)[download]   15.00KiB at    1.09MiB/s (00:00:00)[download]   31.00KiB at  686.93KiB/s (00:00:00)[download]   63.00KiB at  826.28KiB/s (00:00:00)[download]  127.00KiB at  631.13KiB/s (00:00:00)[download]  255.00KiB at    1.04MiB/s (00:00:00)[download]  465.38KiB at    1.58MiB/s (00:00:00)[download] 100% of  465.38KiB in 00:00:00 at 824.78KiB/s
+[download] Downloading item 119 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=7dcJ2WZYDDQ
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 7dcJ2WZYDDQ: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 7dcJ2WZYDDQ: Downloading android vr player API JSON
+[info] 7dcJ2WZYDDQ: Downloading subtitles: en
+[info] 7dcJ2WZYDDQ: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: 7dcJ2WZYDDQ.en.vtt
+[download] Destination: 7dcJ2WZYDDQ.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  Unknown B/s (00:00:00)[download]   15.00KiB at  Unknown B/s (00:00:00)[download]   31.00KiB at  729.34KiB/s (00:00:00)[download]   63.00KiB at  846.86KiB/s (00:00:00)[download]  127.00KiB at    1.07MiB/s (00:00:00)[download]  255.00KiB at    1.54MiB/s (00:00:00)[download]  393.32KiB at    1.96MiB/s (00:00:00)[download] 100% of  393.32KiB in 00:00:00 at 698.55KiB/s
+[download] Downloading item 120 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=ibgnOrk9MLo
+[youtube] Sleeping 1.0 seconds ...
+[youtube] ibgnOrk9MLo: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] ibgnOrk9MLo: Downloading android vr player API JSON
+[info] ibgnOrk9MLo: Downloading subtitles: en
+[info] ibgnOrk9MLo: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: ibgnOrk9MLo.en.vtt
+[download] Destination: ibgnOrk9MLo.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  Unknown B/s (00:00:00)[download]   15.00KiB at  Unknown B/s (00:00:00)[download]   31.00KiB at  709.75KiB/s (00:00:00)[download]   63.00KiB at  834.60KiB/s (00:00:00)[download]   96.87KiB at  910.94KiB/s (00:00:00)[download] 100% of   96.87KiB in 00:00:00 at 271.46KiB/s
+[download] Downloading item 121 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=7kOPNrRw0jM
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 7kOPNrRw0jM: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] 7kOPNrRw0jM: Downloading android vr player API JSON
+[info] 7kOPNrRw0jM: Downloading subtitles: en
+[info] 7kOPNrRw0jM: Downloading 1 format(s): 248+251
+[info] Writing video subtitles to: 7kOPNrRw0jM.en.vtt
+[download] Destination: 7kOPNrRw0jM.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  Unknown B/s (00:00:00)[download]   15.00KiB at  Unknown B/s (00:00:00)[download]   31.00KiB at  743.17KiB/s (00:00:00)[download]   63.00KiB at  813.03KiB/s (00:00:00)[download]  127.00KiB at 1008.92KiB/s (00:00:00)[download]  255.00KiB at    1.43MiB/s (00:00:00)[download]  342.88KiB at    1.67MiB/s (00:00:00)[download] 100% of  342.88KiB in 00:00:00 at 689.61KiB/s
+[download] Downloading item 122 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=EzABRvWTIBo
+[youtube] Sleeping 1.0 seconds ...
+[youtube] EzABRvWTIBo: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] EzABRvWTIBo: Downloading android vr player API JSON
+[info] EzABRvWTIBo: Downloading subtitles: en
+[info] EzABRvWTIBo: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: EzABRvWTIBo.en.vtt
+[download] Destination: EzABRvWTIBo.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at    2.76MiB/s (00:00:00)[download]   15.00KiB at    1.40MiB/s (00:00:00)[download]   31.00KiB at  687.06KiB/s (00:00:00)[download]   63.00KiB at  874.87KiB/s (00:00:00)[download]  127.00KiB at    1.17MiB/s (00:00:00)[download]  255.00KiB at    1.18MiB/s (00:00:00)[download]  309.54KiB at    1.43MiB/s (00:00:00)[download] 100% of  309.54KiB in 00:00:00 at 656.68KiB/s
+[download] Downloading item 123 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=vtuW1XIgixI
+[youtube] Sleeping 1.0 seconds ...
+[youtube] vtuW1XIgixI: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] vtuW1XIgixI: Downloading android vr player API JSON
+[info] vtuW1XIgixI: Downloading subtitles: en
+[info] vtuW1XIgixI: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: vtuW1XIgixI.en.vtt
+[download] Destination: vtuW1XIgixI.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.82MiB/s (00:00:00)[download]    7.00KiB at    1.04MiB/s (00:00:00)[download]   15.00KiB at  952.26KiB/s (00:00:00)[download]   31.00KiB at  263.22KiB/s (00:00:00)[download]   63.00KiB at  403.73KiB/s (00:00:00)[download]   63.70KiB at  405.81KiB/s (00:00:00)[download] 100% of   63.70KiB in 00:00:00 at 195.08KiB/s
+[download] Downloading item 124 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=DqI1BpWtf7c
+[youtube] Sleeping 1.0 seconds ...
+[youtube] DqI1BpWtf7c: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] DqI1BpWtf7c: Downloading android vr player API JSON
+[info] DqI1BpWtf7c: Downloading subtitles: en
+[info] DqI1BpWtf7c: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: DqI1BpWtf7c.en.vtt
+[download] Destination: DqI1BpWtf7c.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  730.75KiB/s (00:00:00)[download]   15.00KiB at    1.09MiB/s (00:00:00)[download]   31.00KiB at  737.79KiB/s (00:00:00)[download]   63.00KiB at  821.21KiB/s (00:00:00)[download]  127.00KiB at    1.11MiB/s (00:00:00)[download]  255.00KiB at    1.70MiB/s (00:00:00)[download]  395.79KiB at    2.24MiB/s (00:00:00)[download] 100% of  395.79KiB in 00:00:00 at 911.03KiB/s
+[download] Downloading item 125 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=OyfI83yU0KM
+[youtube] Sleeping 1.0 seconds ...
+[youtube] OyfI83yU0KM: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] OyfI83yU0KM: Downloading android vr player API JSON
+[info] OyfI83yU0KM: Downloading subtitles: en
+[info] OyfI83yU0KM: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: OyfI83yU0KM.en.vtt
+[download] Destination: OyfI83yU0KM.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    2.21MiB/s (00:00:00)[download]    7.00KiB at    1.10MiB/s (00:00:00)[download]   15.00KiB at    1.07MiB/s (00:00:00)[download]   31.00KiB at  746.97KiB/s (00:00:00)[download]   63.00KiB at  836.52KiB/s (00:00:00)[download]  127.00KiB at    1.17MiB/s (00:00:00)[download]  255.00KiB at    1.78MiB/s (00:00:00)[download]  399.86KiB at    1.67MiB/s (00:00:00)[download] 100% of  399.86KiB in 00:00:00 at 846.95KiB/s
+[download] Downloading item 126 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=uOtKqV9HQss
+[youtube] Sleeping 1.0 seconds ...
+[youtube] uOtKqV9HQss: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] uOtKqV9HQss: Downloading android vr player API JSON
+[info] uOtKqV9HQss: Downloading subtitles: en
+[info] uOtKqV9HQss: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: uOtKqV9HQss.en.vtt
+[download] Destination: uOtKqV9HQss.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    2.48MiB/s (00:00:00)[download]    7.00KiB at  874.13KiB/s (00:00:00)[download]   15.00KiB at    1.06MiB/s (00:00:00)[download]   31.00KiB at  656.30KiB/s (00:00:00)[download]   63.00KiB at  771.34KiB/s (00:00:00)[download]  127.00KiB at    1.08MiB/s (00:00:00)[download]  255.00KiB at    1.60MiB/s (00:00:00)[download]  393.21KiB at    2.15MiB/s (00:00:00)[download] 100% of  393.21KiB in 00:00:00 at 851.71KiB/s
+[download] Downloading item 127 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=okx_3_Uxht0
+[youtube] Sleeping 1.0 seconds ...
+[youtube] okx_3_Uxht0: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] okx_3_Uxht0: Downloading android vr player API JSON
+[info] okx_3_Uxht0: Downloading subtitles: en
+[info] okx_3_Uxht0: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: okx_3_Uxht0.en.vtt
+[download] Destination: okx_3_Uxht0.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  Unknown B/s (00:00:00)[download]   15.00KiB at    1.16MiB/s (00:00:00)[download]   31.00KiB at  721.33KiB/s (00:00:00)[download]   63.00KiB at  825.89KiB/s (00:00:00)[download]  127.00KiB at    1.05MiB/s (00:00:00)[download]  255.00KiB at    1.61MiB/s (00:00:00)[download]  396.67KiB at    2.19MiB/s (00:00:00)[download] 100% of  396.67KiB in 00:00:00 at 813.55KiB/s
+[download] Downloading item 128 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=M8OcMuD_eEQ
+[youtube] Sleeping 1.0 seconds ...
+[youtube] M8OcMuD_eEQ: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] M8OcMuD_eEQ: Downloading android vr player API JSON
+[info] M8OcMuD_eEQ: Downloading subtitles: en
+[info] M8OcMuD_eEQ: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: M8OcMuD_eEQ.en.vtt
+[download] Destination: M8OcMuD_eEQ.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  623.04KiB/s (00:00:00)[download]    7.00KiB at  431.84KiB/s (00:00:00)[download]   15.00KiB at  490.66KiB/s (00:00:00)[download]   31.00KiB at  511.64KiB/s (00:00:00)[download]   63.00KiB at  709.03KiB/s (00:00:00)[download]  127.00KiB at  995.80KiB/s (00:00:00)[download]  255.00KiB at    1.49MiB/s (00:00:00)[download]  483.88KiB at    2.38MiB/s (00:00:00)[download] 100% of  483.88KiB in 00:00:00 at 984.81KiB/s
+[download] Downloading item 129 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=dVCbyu6kDm0
+[youtube] Sleeping 1.0 seconds ...
+[youtube] dVCbyu6kDm0: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] dVCbyu6kDm0: Downloading android vr player API JSON
+[info] dVCbyu6kDm0: Downloading subtitles: en
+[info] dVCbyu6kDm0: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: dVCbyu6kDm0.en.vtt
+[download] Destination: dVCbyu6kDm0.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  976.25KiB/s (00:00:00)[download]    7.00KiB at  684.19KiB/s (00:00:00)[download]   15.00KiB at  921.72KiB/s (00:00:00)[download]   31.00KiB at  730.74KiB/s (00:00:00)[download]   63.00KiB at  384.69KiB/s (00:00:00)[download]  127.00KiB at  766.06KiB/s (00:00:00)[download]  255.00KiB at    1.01MiB/s (00:00:00)[download]  279.22KiB at    1.06MiB/s (00:00:00)[download] 100% of  279.22KiB in 00:00:00 at 617.38KiB/s
+[download] Downloading item 130 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=_MB8eXLyV2Q
+[youtube] Sleeping 1.0 seconds ...
+[youtube] _MB8eXLyV2Q: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] _MB8eXLyV2Q: Downloading android vr player API JSON
+[info] _MB8eXLyV2Q: Downloading subtitles: en
+[info] _MB8eXLyV2Q: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: _MB8eXLyV2Q.en.vtt
+[download] Destination: _MB8eXLyV2Q.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at   32.95KiB/s (00:00:00)[download]    7.00KiB at   76.60KiB/s (00:00:00)[download]   10.93KiB at  118.47KiB/s (00:00:00)[download] 100% of   10.93KiB in 00:00:00 at 39.46KiB/s
+[download] Downloading item 131 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=_mYKZ0Il0ZI
+[youtube] Sleeping 1.0 seconds ...
+[youtube] _mYKZ0Il0ZI: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] _mYKZ0Il0ZI: Downloading android vr player API JSON
+[info] _mYKZ0Il0ZI: Downloading subtitles: en
+[info] _mYKZ0Il0ZI: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: _mYKZ0Il0ZI.en.vtt
+[download] Destination: _mYKZ0Il0ZI.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.57MiB/s (00:00:00)[download]    7.00KiB at    1.00MiB/s (00:00:00)[download]   15.00KiB at    1.08MiB/s (00:00:00)[download]   31.00KiB at  243.93KiB/s (00:00:00)[download]   63.00KiB at  406.07KiB/s (00:00:00)[download]  108.37KiB at  548.30KiB/s (00:00:00)[download] 100% of  108.37KiB in 00:00:00 at 286.49KiB/s
+[download] Downloading item 132 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=Y6xyQRDbJvU
+[youtube] Sleeping 1.0 seconds ...
+[youtube] Y6xyQRDbJvU: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] Y6xyQRDbJvU: Downloading android vr player API JSON
+[info] Y6xyQRDbJvU: Downloading subtitles: en
+[info] Y6xyQRDbJvU: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: Y6xyQRDbJvU.en.vtt
+[download] Destination: Y6xyQRDbJvU.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  599.07KiB/s (00:00:00)[download]    7.00KiB at  504.80KiB/s (00:00:00)[download]   15.00KiB at  539.65KiB/s (00:00:00)[download]   31.00KiB at  584.20KiB/s (00:00:00)[download]   63.00KiB at  722.30KiB/s (00:00:00)[download]  127.00KiB at    1.03MiB/s (00:00:00)[download]  255.00KiB at    1.62MiB/s (00:00:00)[download]  280.70KiB at    1.70MiB/s (00:00:00)[download] 100% of  280.70KiB in 00:00:00 at 378.78KiB/s
+[download] Downloading item 133 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=HYCdwPCLc8U
+[youtube] Sleeping 1.0 seconds ...
+[youtube] HYCdwPCLc8U: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] HYCdwPCLc8U: Downloading android vr player API JSON
+[info] HYCdwPCLc8U: Downloading subtitles: en
+[info] HYCdwPCLc8U: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: HYCdwPCLc8U.en.vtt
+[download] Destination: HYCdwPCLc8U.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.47MiB/s (00:00:00)[download]    7.00KiB at    1.01MiB/s (00:00:00)[download]   15.00KiB at 1008.49KiB/s (00:00:00)[download]   31.00KiB at  688.43KiB/s (00:00:00)[download]   63.00KiB at  781.46KiB/s (00:00:00)[download]  127.00KiB at  643.14KiB/s (00:00:00)[download]  177.35KiB at  888.78KiB/s (00:00:00)[download] 100% of  177.35KiB in 00:00:00 at 468.63KiB/s
+[download] Downloading item 134 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=gbzqdgoCA98
+[youtube] Sleeping 1.0 seconds ...
+[youtube] gbzqdgoCA98: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] gbzqdgoCA98: Downloading android vr player API JSON
+[info] gbzqdgoCA98: Downloading subtitles: en
+[info] gbzqdgoCA98: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: gbzqdgoCA98.en.vtt
+[download] Destination: gbzqdgoCA98.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.16MiB/s (00:00:00)[download]    7.00KiB at  934.32KiB/s (00:00:00)[download]   15.00KiB at  973.91KiB/s (00:00:00)[download]   31.00KiB at  296.68KiB/s (00:00:00)[download]   63.00KiB at  429.97KiB/s (00:00:00)[download]  127.00KiB at  639.40KiB/s (00:00:00)[download]  255.00KiB at 1009.51KiB/s (00:00:00)[download]  368.30KiB at    1.24MiB/s (00:00:00)[download] 100% of  368.30KiB in 00:00:00 at 693.62KiB/s
+[download] Downloading item 135 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=ia8dP44BnFI
+[youtube] Sleeping 1.0 seconds ...
+[youtube] ia8dP44BnFI: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] ia8dP44BnFI: Downloading android vr player API JSON
+[info] ia8dP44BnFI: Downloading subtitles: en
+[info] ia8dP44BnFI: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: ia8dP44BnFI.en.vtt
+[download] Destination: ia8dP44BnFI.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at    1.11MiB/s (00:00:00)[download]   15.00KiB at    1.03MiB/s (00:00:00)[download]   31.00KiB at  713.49KiB/s (00:00:00)[download]   63.00KiB at  855.20KiB/s (00:00:00)[download]   83.68KiB at  981.76KiB/s (00:00:00)[download] 100% of   83.68KiB in 00:00:00 at 220.31KiB/s
+[download] Downloading item 136 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=jU_1mBDh_sc
+[youtube] Sleeping 1.0 seconds ...
+[youtube] jU_1mBDh_sc: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] jU_1mBDh_sc: Downloading android vr player API JSON
+[info] jU_1mBDh_sc: Downloading subtitles: en
+[info] jU_1mBDh_sc: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: jU_1mBDh_sc.en.vtt
+[download] Destination: jU_1mBDh_sc.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.91MiB/s (00:00:00)[download]    7.00KiB at    1.05MiB/s (00:00:00)[download]   15.00KiB at    1.01MiB/s (00:00:00)[download]   31.00KiB at  712.15KiB/s (00:00:00)[download]   63.00KiB at  850.36KiB/s (00:00:00)[download]  123.26KiB at    1.14MiB/s (00:00:00)[download] 100% of  123.26KiB in 00:00:00 at 389.67KiB/s
+[download] Downloading item 137 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=KNFmPcFqPn8
+[youtube] Sleeping 1.0 seconds ...
+[youtube] KNFmPcFqPn8: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] KNFmPcFqPn8: Downloading android vr player API JSON
+[info] KNFmPcFqPn8: Downloading subtitles: en
+[info] KNFmPcFqPn8: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: KNFmPcFqPn8.en.vtt
+[download] Destination: KNFmPcFqPn8.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at    1.98MiB/s (00:00:00)[download]   15.00KiB at    1.29MiB/s (00:00:00)[download]   31.00KiB at  704.43KiB/s (00:00:00)[download]   63.00KiB at  891.35KiB/s (00:00:00)[download]  127.00KiB at    1.12MiB/s (00:00:00)[download]  148.40KiB at    1.23MiB/s (00:00:00)[download] 100% of  148.40KiB in 00:00:00 at 396.40KiB/s
+[download] Downloading item 138 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=gOyS4aQ8j-U
+[youtube] Sleeping 1.0 seconds ...
+[youtube] gOyS4aQ8j-U: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] gOyS4aQ8j-U: Downloading android vr player API JSON
+[info] gOyS4aQ8j-U: Downloading subtitles: en
+[info] gOyS4aQ8j-U: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: gOyS4aQ8j-U.en.vtt
+[download] Destination: gOyS4aQ8j-U.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at    1.23MiB/s (00:00:00)[download]   15.00KiB at    1.11MiB/s (00:00:00)[download]   31.00KiB at  714.14KiB/s (00:00:00)[download]   63.00KiB at  442.66KiB/s (00:00:00)[download]  121.60KiB at  636.36KiB/s (00:00:00)[download] 100% of  121.60KiB in 00:00:00 at 296.54KiB/s
+[download] Downloading item 139 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=c8iof-3bU10
+[youtube] Sleeping 1.0 seconds ...
+[youtube] c8iof-3bU10: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] c8iof-3bU10: Downloading android vr player API JSON
+[info] c8iof-3bU10: Downloading subtitles: en
+[info] c8iof-3bU10: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: c8iof-3bU10.en.vtt
+[download] Destination: c8iof-3bU10.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  Unknown B/s (00:00:00)[download]   15.00KiB at  Unknown B/s (00:00:00)[download]   31.00KiB at  745.18KiB/s (00:00:00)[download]   63.00KiB at  856.78KiB/s (00:00:00)[download]   96.11KiB at  915.95KiB/s (00:00:00)[download] 100% of   96.11KiB in 00:00:00 at 230.12KiB/s
+[download] Downloading item 140 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=iNfYt0eIoqI
+[youtube] Sleeping 1.0 seconds ...
+[youtube] iNfYt0eIoqI: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] iNfYt0eIoqI: Downloading android vr player API JSON
+[info] iNfYt0eIoqI: Downloading subtitles: en
+[info] iNfYt0eIoqI: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: iNfYt0eIoqI.en.vtt
+[download] Destination: iNfYt0eIoqI.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at    1.65MiB/s (00:00:00)[download]   15.00KiB at    1.18MiB/s (00:00:00)[download]   31.00KiB at  751.75KiB/s (00:00:00)[download]   63.00KiB at  982.76KiB/s (00:00:00)[download]  127.00KiB at    1.21MiB/s (00:00:00)[download]  242.39KiB at    1.75MiB/s (00:00:00)[download] 100% of  242.39KiB in 00:00:00 at 650.18KiB/s
+[download] Downloading item 141 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=o1T6dLoywTw
+[youtube] Sleeping 1.0 seconds ...
+[youtube] o1T6dLoywTw: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] o1T6dLoywTw: Downloading android vr player API JSON
+[info] o1T6dLoywTw: Downloading subtitles: en
+[info] o1T6dLoywTw: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: o1T6dLoywTw.en.vtt
+[download] Destination: o1T6dLoywTw.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at    1.08MiB/s (00:00:00)[download]   15.00KiB at    1.04MiB/s (00:00:00)[download]   31.00KiB at  673.09KiB/s (00:00:00)[download]   63.00KiB at  891.50KiB/s (00:00:00)[download]   99.56KiB at    1.02MiB/s (00:00:00)[download] 100% of   99.56KiB in 00:00:00 at 292.15KiB/s
+[download] Downloading item 142 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=Vg7iYXDR0Do
+[youtube] Sleeping 1.0 seconds ...
+[youtube] Vg7iYXDR0Do: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] Vg7iYXDR0Do: Downloading android vr player API JSON
+[info] Vg7iYXDR0Do: Downloading subtitles: en
+[info] Vg7iYXDR0Do: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: Vg7iYXDR0Do.en.vtt
+[download] Destination: Vg7iYXDR0Do.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  Unknown B/s (00:00:00)[download]   15.00KiB at  Unknown B/s (00:00:00)[download]   31.00KiB at  771.80KiB/s (00:00:00)[download]   63.00KiB at  859.75KiB/s (00:00:00)[download]  127.00KiB at    1.03MiB/s (00:00:00)[download]  132.41KiB at    1.04MiB/s (00:00:00)[download] 100% of  132.41KiB in 00:00:00 at 308.88KiB/s
+[download] Downloading item 143 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=DpC9A20ZrkU
+[youtube] Sleeping 1.0 seconds ...
+[youtube] DpC9A20ZrkU: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] DpC9A20ZrkU: Downloading android vr player API JSON
+[info] DpC9A20ZrkU: Downloading subtitles: en
+[info] DpC9A20ZrkU: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: DpC9A20ZrkU.en.vtt
+[download] Destination: DpC9A20ZrkU.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  Unknown B/s (00:00:00)[download]   15.00KiB at  Unknown B/s (00:00:00)[download]   31.00KiB at  740.28KiB/s (00:00:00)[download]   63.00KiB at  863.82KiB/s (00:00:00)[download]  112.57KiB at  965.39KiB/s (00:00:00)[download] 100% of  112.57KiB in 00:00:00 at 264.64KiB/s
+[download] Downloading item 144 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=W0KdS8Kcv-g
+[youtube] Sleeping 1.0 seconds ...
+[youtube] W0KdS8Kcv-g: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] W0KdS8Kcv-g: Downloading android vr player API JSON
+[info] W0KdS8Kcv-g: Downloading subtitles: en
+[info] W0KdS8Kcv-g: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: W0KdS8Kcv-g.en.vtt
+[download] Destination: W0KdS8Kcv-g.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at    1.08MiB/s (00:00:00)[download]   15.00KiB at    1.15MiB/s (00:00:00)[download]   31.00KiB at  724.30KiB/s (00:00:00)[download]   63.00KiB at  877.03KiB/s (00:00:00)[download]   78.51KiB at  963.66KiB/s (00:00:00)[download] 100% of   78.51KiB in 00:00:00 at 184.38KiB/s
+[download] Downloading item 145 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=toCzE2VLrQE
+[youtube] Sleeping 1.0 seconds ...
+[youtube] toCzE2VLrQE: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] toCzE2VLrQE: Downloading android vr player API JSON
+[info] toCzE2VLrQE: Downloading subtitles: en
+[info] toCzE2VLrQE: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: toCzE2VLrQE.en.vtt
+[download] Destination: toCzE2VLrQE.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.68MiB/s (00:00:00)[download]    7.00KiB at  998.88KiB/s (00:00:00)[download]   15.00KiB at  785.30KiB/s (00:00:00)[download]   31.00KiB at  726.25KiB/s (00:00:00)[download]   63.00KiB at  810.35KiB/s (00:00:00)[download]   78.47KiB at  899.42KiB/s (00:00:00)[download] 100% of   78.47KiB in 00:00:00 at 250.10KiB/s
+[download] Downloading item 146 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=WlGy0TLuSSs
+[youtube] Sleeping 1.0 seconds ...
+[youtube] WlGy0TLuSSs: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] WlGy0TLuSSs: Downloading android vr player API JSON
+[info] WlGy0TLuSSs: Downloading subtitles: en
+[info] WlGy0TLuSSs: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: WlGy0TLuSSs.en.vtt
+[download] Destination: WlGy0TLuSSs.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.04MiB/s (00:00:00)[download]    7.00KiB at  883.28KiB/s (00:00:00)[download]   15.00KiB at  965.45KiB/s (00:00:00)[download]   31.00KiB at  703.36KiB/s (00:00:00)[download]   63.00KiB at  802.86KiB/s (00:00:00)[download]  127.00KiB at    1.12MiB/s (00:00:00)[download]  127.03KiB at    1.10MiB/s (00:00:00)[download] 100% of  127.03KiB in 00:00:00 at 308.05KiB/s
+[download] Downloading item 147 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=rlmN6sOPUr0
+[youtube] Sleeping 1.0 seconds ...
+[youtube] rlmN6sOPUr0: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] rlmN6sOPUr0: Downloading android vr player API JSON
+[info] rlmN6sOPUr0: Downloading subtitles: en
+[info] rlmN6sOPUr0: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: rlmN6sOPUr0.en.vtt
+[download] Destination: rlmN6sOPUr0.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.79MiB/s (00:00:00)[download]    7.00KiB at  772.29KiB/s (00:00:00)[download]   15.00KiB at  869.57KiB/s (00:00:00)[download]   31.00KiB at  697.79KiB/s (00:00:00)[download]   63.00KiB at  838.12KiB/s (00:00:00)[download]   70.05KiB at  883.70KiB/s (00:00:00)[download] 100% of   70.05KiB in 00:00:00 at 177.34KiB/s
+[download] Downloading item 148 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=urX1iWvHc5g
+[youtube] Sleeping 1.0 seconds ...
+[youtube] urX1iWvHc5g: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] urX1iWvHc5g: Downloading android vr player API JSON
+[info] urX1iWvHc5g: Downloading subtitles: en
+[info] urX1iWvHc5g: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: urX1iWvHc5g.en.vtt
+[download] Destination: urX1iWvHc5g.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at    1.20MiB/s (00:00:00)[download]   15.00KiB at    1.07MiB/s (00:00:00)[download]   31.00KiB at  659.81KiB/s (00:00:00)[download]   63.00KiB at  836.72KiB/s (00:00:00)[download]   94.80KiB at 1018.35KiB/s (00:00:00)[download] 100% of   94.80KiB in 00:00:00 at 333.73KiB/s
+[download] Downloading item 149 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=pFcOnuksC4Y
+[youtube] Sleeping 1.0 seconds ...
+[youtube] pFcOnuksC4Y: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] pFcOnuksC4Y: Downloading android vr player API JSON
+[info] pFcOnuksC4Y: Downloading subtitles: en
+[info] pFcOnuksC4Y: Downloading 1 format(s): 400+251
+[info] Writing video subtitles to: pFcOnuksC4Y.en.vtt
+[download] Destination: pFcOnuksC4Y.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at    1.27MiB/s (00:00:00)[download]   15.00KiB at    1.09MiB/s (00:00:00)[download]   31.00KiB at  290.37KiB/s (00:00:00)[download]   63.00KiB at  432.66KiB/s (00:00:00)[download]  100.72KiB at  559.10KiB/s (00:00:00)[download] 100% of  100.72KiB in 00:00:00 at 233.57KiB/s
+[download] Downloading item 150 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=VljTH-yqQow
+[youtube] Sleeping 1.0 seconds ...
+[youtube] VljTH-yqQow: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] VljTH-yqQow: Downloading android vr player API JSON
+[info] VljTH-yqQow: Downloading subtitles: en
+[info] VljTH-yqQow: Downloading 1 format(s): 248+251
+[info] Writing video subtitles to: VljTH-yqQow.en.vtt
+[download] Destination: VljTH-yqQow.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.38MiB/s (00:00:00)[download]    7.00KiB at    1.63MiB/s (00:00:00)[download]   15.00KiB at    1.17MiB/s (00:00:00)[download]   31.00KiB at  286.34KiB/s (00:00:00)[download]   63.00KiB at  436.97KiB/s (00:00:00)[download]  127.00KiB at  656.91KiB/s (00:00:00)[download]  130.17KiB at  664.15KiB/s (00:00:00)[download] 100% of  130.17KiB in 00:00:00 at 337.01KiB/s
+[download] Downloading item 151 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=xQDOeXy7Fgg
+[youtube] Sleeping 1.0 seconds ...
+[youtube] xQDOeXy7Fgg: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] xQDOeXy7Fgg: Downloading android vr player API JSON
+[info] xQDOeXy7Fgg: Downloading subtitles: en
+[info] xQDOeXy7Fgg: Downloading 1 format(s): 401+251
+[info] Writing video subtitles to: xQDOeXy7Fgg.en.vtt
+[download] Destination: xQDOeXy7Fgg.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.07MiB/s (00:00:00)[download]    7.00KiB at    1.03MiB/s (00:00:00)[download]   15.00KiB at 1016.49KiB/s (00:00:00)[download]   31.00KiB at  586.24KiB/s (00:00:00)[download]   63.00KiB at  740.06KiB/s (00:00:00)[download]  127.00KiB at    1.02MiB/s (00:00:00)[download]  255.00KiB at    1.58MiB/s (00:00:00)[download]  345.47KiB at    1.92MiB/s (00:00:00)[download] 100% of  345.47KiB in 00:00:00 at 634.28KiB/s
+[download] Downloading item 152 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=rQGKjTc5zoc
+[youtube] Sleeping 1.0 seconds ...
+[youtube] rQGKjTc5zoc: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] rQGKjTc5zoc: Downloading android vr player API JSON
+[info] rQGKjTc5zoc: Downloading subtitles: en
+[info] rQGKjTc5zoc: Downloading 1 format(s): 401+251
+[info] Writing video subtitles to: rQGKjTc5zoc.en.vtt
+[download] Destination: rQGKjTc5zoc.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  804.12KiB/s (00:00:00)[download]    7.00KiB at  860.90KiB/s (00:00:00)[download]   15.00KiB at  947.34KiB/s (00:00:00)[download]   31.00KiB at  700.89KiB/s (00:00:00)[download]   63.00KiB at  825.97KiB/s (00:00:00)[download]  127.00KiB at    1.11MiB/s (00:00:00)[download]  255.00KiB at    1.60MiB/s (00:00:00)[download]  320.41KiB at    1.90MiB/s (00:00:00)[download] 100% of  320.41KiB in 00:00:00 at 675.23KiB/s
+[download] Downloading item 153 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=MrJKB4DQgOo
+[youtube] Sleeping 1.0 seconds ...
+[youtube] MrJKB4DQgOo: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] MrJKB4DQgOo: Downloading android vr player API JSON
+[info] MrJKB4DQgOo: Downloading subtitles: en
+[info] MrJKB4DQgOo: Downloading 1 format(s): 313+251
+[info] Writing video subtitles to: MrJKB4DQgOo.en.vtt
+[download] Destination: MrJKB4DQgOo.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  Unknown B/s (00:00:00)[download]   15.00KiB at   14.07MiB/s (00:00:00)[download]   31.00KiB at  677.90KiB/s (00:00:00)[download]   63.00KiB at  796.23KiB/s (00:00:00)[download]  127.00KiB at    1.02MiB/s (00:00:00)[download]  157.20KiB at    1.15MiB/s (00:00:00)[download] 100% of  157.20KiB in 00:00:00 at 357.55KiB/s
+[download] Downloading item 154 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=Z4BQm4Yx0cM
+[youtube] Sleeping 1.0 seconds ...
+[youtube] Z4BQm4Yx0cM: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] Z4BQm4Yx0cM: Downloading android vr player API JSON
+[info] Z4BQm4Yx0cM: Downloading subtitles: en
+[info] Z4BQm4Yx0cM: Downloading 1 format(s): 401+251
+[info] Writing video subtitles to: Z4BQm4Yx0cM.en.vtt
+[download] Destination: Z4BQm4Yx0cM.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.05MiB/s (00:00:00)[download]    7.00KiB at  943.15KiB/s (00:00:00)[download]   15.00KiB at  997.87KiB/s (00:00:00)[download]   31.00KiB at  720.58KiB/s (00:00:00)[download]   63.00KiB at  870.65KiB/s (00:00:00)[download]  127.00KiB at    1.11MiB/s (00:00:00)[download]  216.37KiB at    1.55MiB/s (00:00:00)[download] 100% of  216.37KiB in 00:00:00 at 530.55KiB/s
+[download] Downloading item 155 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=D0oVtdqhWH8
+[youtube] Sleeping 1.0 seconds ...
+[youtube] D0oVtdqhWH8: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] D0oVtdqhWH8: Downloading android vr player API JSON
+[info] D0oVtdqhWH8: Downloading subtitles: en
+[info] D0oVtdqhWH8: Downloading 1 format(s): 401+251
+[info] Writing video subtitles to: D0oVtdqhWH8.en.vtt
+[download] Destination: D0oVtdqhWH8.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at    1.22MiB/s (00:00:00)[download]   15.00KiB at    1.20MiB/s (00:00:00)[download]   31.00KiB at  695.08KiB/s (00:00:00)[download]   63.00KiB at  823.24KiB/s (00:00:00)[download]  127.00KiB at    1.13MiB/s (00:00:00)[download]  255.00KiB at    1.13MiB/s (00:00:00)[download]  498.92KiB at    1.78MiB/s (00:00:00)[download] 100% of  498.92KiB in 00:00:00 at 965.53KiB/s
+[download] Downloading item 156 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=WvDg8jILTok
+[youtube] Sleeping 1.0 seconds ...
+[youtube] WvDg8jILTok: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] WvDg8jILTok: Downloading android vr player API JSON
+[info] WvDg8jILTok: Downloading subtitles: en
+[info] WvDg8jILTok: Downloading 1 format(s): 401+251
+[info] Writing video subtitles to: WvDg8jILTok.en.vtt
+[download] Destination: WvDg8jILTok.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  Unknown B/s (00:00:00)[download]   15.00KiB at   12.79MiB/s (00:00:00)[download]   31.00KiB at  441.93KiB/s (00:00:00)[download]   63.00KiB at  567.95KiB/s (00:00:00)[download]  127.00KiB at  812.82KiB/s (00:00:00)[download]  147.58KiB at  892.05KiB/s (00:00:00)[download] 100% of  147.58KiB in 00:00:00 at 359.87KiB/s
+[download] Downloading item 157 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=Nf1MCSw9AdM
+[youtube] Sleeping 1.0 seconds ...
+[youtube] Nf1MCSw9AdM: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] Nf1MCSw9AdM: Downloading android vr player API JSON
+[info] Nf1MCSw9AdM: Downloading subtitles: en
+[info] Nf1MCSw9AdM: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: Nf1MCSw9AdM.en.vtt
+[download] Destination: Nf1MCSw9AdM.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  832.86KiB/s (00:00:00)[download]    7.00KiB at  997.42KiB/s (00:00:00)[download]   15.00KiB at    1.05MiB/s (00:00:00)[download]   31.00KiB at  688.18KiB/s (00:00:00)[download]   63.00KiB at  775.34KiB/s (00:00:00)[download]  127.00KiB at    1.07MiB/s (00:00:00)[download]  255.00KiB at    1.61MiB/s (00:00:00)[download]  376.38KiB at    2.08MiB/s (00:00:00)[download] 100% of  376.38KiB in 00:00:00 at 894.14KiB/s
+[download] Downloading item 158 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=Uf7Wm1hhuJo
+[youtube] Sleeping 1.0 seconds ...
+[youtube] Uf7Wm1hhuJo: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] Uf7Wm1hhuJo: Downloading android vr player API JSON
+[info] Uf7Wm1hhuJo: Downloading subtitles: en
+[info] Uf7Wm1hhuJo: Downloading 1 format(s): 401+251
+[info] Writing video subtitles to: Uf7Wm1hhuJo.en.vtt
+[download] Destination: Uf7Wm1hhuJo.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    2.19MiB/s (00:00:00)[download]    7.00KiB at    1.10MiB/s (00:00:00)[download]   15.00KiB at    1.11MiB/s (00:00:00)[download]   31.00KiB at  699.52KiB/s (00:00:00)[download]   63.00KiB at  846.85KiB/s (00:00:00)[download]  108.54KiB at    1.03MiB/s (00:00:00)[download] 100% of  108.54KiB in 00:00:00 at 378.92KiB/s
+[download] Downloading item 159 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=YbnlGA1nTb4
+[youtube] Sleeping 1.0 seconds ...
+[youtube] YbnlGA1nTb4: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] YbnlGA1nTb4: Downloading android vr player API JSON
+[info] YbnlGA1nTb4: Downloading subtitles: en
+[info] YbnlGA1nTb4: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: YbnlGA1nTb4.en.vtt
+[download] Destination: YbnlGA1nTb4.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at    3.52MiB/s (00:00:00)[download]   15.00KiB at    1.38MiB/s (00:00:00)[download]   31.00KiB at  257.05KiB/s (00:00:00)[download]   63.00KiB at  398.72KiB/s (00:00:00)[download]  127.00KiB at  602.09KiB/s (00:00:00)[download]  159.56KiB at  667.86KiB/s (00:00:00)[download] 100% of  159.56KiB in 00:00:00 at 323.71KiB/s
+[download] Downloading item 160 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=RxCwQusClKE
+[youtube] Sleeping 1.0 seconds ...
+[youtube] RxCwQusClKE: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] RxCwQusClKE: Downloading android vr player API JSON
+[info] RxCwQusClKE: Downloading subtitles: en
+[info] RxCwQusClKE: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: RxCwQusClKE.en.vtt
+[download] Destination: RxCwQusClKE.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.70MiB/s (00:00:00)[download]    7.00KiB at  918.28KiB/s (00:00:00)[download]   15.00KiB at  945.30KiB/s (00:00:00)[download]   31.00KiB at  688.95KiB/s (00:00:00)[download]   63.00KiB at  816.82KiB/s (00:00:00)[download]  127.00KiB at  666.88KiB/s (00:00:00)[download]  255.00KiB at    1.07MiB/s (00:00:00)[download]  428.23KiB at    1.55MiB/s (00:00:00)[download] 100% of  428.23KiB in 00:00:00 at 547.36KiB/s
+[download] Downloading item 161 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=_KSjBauVHT8
+[youtube] Sleeping 1.0 seconds ...
+[youtube] _KSjBauVHT8: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] _KSjBauVHT8: Downloading android vr player API JSON
+[info] _KSjBauVHT8: Downloading subtitles: en
+[info] _KSjBauVHT8: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: _KSjBauVHT8.en.vtt
+[download] Destination: _KSjBauVHT8.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  877.52KiB/s (00:00:00)[download]   15.00KiB at  564.74KiB/s (00:00:00)[download]   31.00KiB at  568.93KiB/s (00:00:00)[download]   63.00KiB at  734.05KiB/s (00:00:00)[download]  118.45KiB at  986.32KiB/s (00:00:00)[download] 100% of  118.45KiB in 00:00:00 at 297.43KiB/s
+[download] Downloading item 162 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=lcfyxUtYVSk
+[youtube] Sleeping 1.0 seconds ...
+[youtube] lcfyxUtYVSk: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] lcfyxUtYVSk: Downloading android vr player API JSON
+[info] lcfyxUtYVSk: Downloading subtitles: en
+[info] lcfyxUtYVSk: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: lcfyxUtYVSk.en.vtt
+[download] Destination: lcfyxUtYVSk.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    2.55MiB/s (00:00:00)[download]    7.00KiB at    1.33MiB/s (00:00:00)[download]   15.00KiB at    1.14MiB/s (00:00:00)[download]   31.00KiB at  717.01KiB/s (00:00:00)[download]   63.00KiB at  874.91KiB/s (00:00:00)[download]  127.00KiB at    1.15MiB/s (00:00:00)[download]  165.97KiB at    1.30MiB/s (00:00:00)[download] 100% of  165.97KiB in 00:00:00 at 420.22KiB/s
+[download] Downloading item 163 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=P4pHJaDGkHU
+[youtube] Sleeping 1.0 seconds ...
+[youtube] P4pHJaDGkHU: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] P4pHJaDGkHU: Downloading android vr player API JSON
+[info] P4pHJaDGkHU: Downloading subtitles: en
+[info] P4pHJaDGkHU: Downloading 1 format(s): 399+251
+[info] Writing video subtitles to: P4pHJaDGkHU.en.vtt
+[download] Destination: P4pHJaDGkHU.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.28MiB/s (00:00:00)[download]    7.00KiB at  775.72KiB/s (00:00:00)[download]   15.00KiB at  894.84KiB/s (00:00:00)[download]   31.00KiB at  723.61KiB/s (00:00:00)[download]   63.00KiB at  804.31KiB/s (00:00:00)[download]  127.00KiB at    1.12MiB/s (00:00:00)[download]  133.78KiB at    1.16MiB/s (00:00:00)[download] 100% of  133.78KiB in 00:00:00 at 394.04KiB/s
+[download] Downloading item 164 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=yPi6xWI-kuE
+[youtube] Sleeping 1.0 seconds ...
+[youtube] yPi6xWI-kuE: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] yPi6xWI-kuE: Downloading android vr player API JSON
+[info] yPi6xWI-kuE: Downloading subtitles: en
+[info] yPi6xWI-kuE: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: yPi6xWI-kuE.en.vtt
+[download] Destination: yPi6xWI-kuE.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.32MiB/s (00:00:00)[download]    7.00KiB at  916.02KiB/s (00:00:00)[download]   15.00KiB at  976.83KiB/s (00:00:00)[download]   31.00KiB at  716.47KiB/s (00:00:00)[download]   63.00KiB at  863.96KiB/s (00:00:00)[download]  127.00KiB at    1.14MiB/s (00:00:00)[download]  149.86KiB at    1.27MiB/s (00:00:00)[download] 100% of  149.86KiB in 00:00:00 at 437.34KiB/s
+[download] Downloading item 165 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=eqBrwOZf904
+[youtube] Sleeping 1.0 seconds ...
+[youtube] eqBrwOZf904: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] eqBrwOZf904: Downloading android vr player API JSON
+[info] eqBrwOZf904: Downloading subtitles: en
+[info] eqBrwOZf904: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: eqBrwOZf904.en.vtt
+[download] Destination: eqBrwOZf904.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.44MiB/s (00:00:00)[download]    7.00KiB at    1.32MiB/s (00:00:00)[download]   15.00KiB at    1.14MiB/s (00:00:00)[download]   31.00KiB at  671.69KiB/s (00:00:00)[download]   48.85KiB at  792.30KiB/s (00:00:00)[download] 100% of   48.85KiB in 00:00:00 at 143.07KiB/s
+[download] Downloading item 166 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=XUc0hMGF0JY
+[youtube] Sleeping 1.0 seconds ...
+[youtube] XUc0hMGF0JY: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] XUc0hMGF0JY: Downloading android vr player API JSON
+[info] XUc0hMGF0JY: Downloading subtitles: en
+[info] XUc0hMGF0JY: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: XUc0hMGF0JY.en.vtt
+[download] Destination: XUc0hMGF0JY.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.42MiB/s (00:00:00)[download]    7.00KiB at  960.08KiB/s (00:00:00)[download]   15.00KiB at  998.20KiB/s (00:00:00)[download]   31.00KiB at  728.88KiB/s (00:00:00)[download]   63.00KiB at  841.11KiB/s (00:00:00)[download]  127.00KiB at    1.19MiB/s (00:00:00)[download]  255.00KiB at    1.77MiB/s (00:00:00)[download]  511.00KiB at    2.72MiB/s (00:00:00)[download]  681.38KiB at    3.28MiB/s (00:00:00)[download] 100% of  681.38KiB in 00:00:00 at 1.33MiB/s
+[download] Downloading item 167 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=tyw7MoLTL58
+[youtube] Sleeping 1.0 seconds ...
+[youtube] tyw7MoLTL58: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] tyw7MoLTL58: Downloading android vr player API JSON
+[info] tyw7MoLTL58: Downloading subtitles: en
+[info] tyw7MoLTL58: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: tyw7MoLTL58.en.vtt
+[download] Destination: tyw7MoLTL58.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  956.95KiB/s (00:00:00)[download]    7.00KiB at  724.03KiB/s (00:00:00)[download]   15.00KiB at  881.42KiB/s (00:00:00)[download]   31.00KiB at  716.81KiB/s (00:00:00)[download]   63.00KiB at  846.63KiB/s (00:00:00)[download]  127.00KiB at    1.12MiB/s (00:00:00)[download]  151.20KiB at    1.23MiB/s (00:00:00)[download] 100% of  151.20KiB in 00:00:00 at 439.01KiB/s
+[download] Downloading item 168 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=LxUbtGZ1Z3U
+[youtube] Sleeping 1.0 seconds ...
+[youtube] LxUbtGZ1Z3U: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] LxUbtGZ1Z3U: Downloading android vr player API JSON
+[info] LxUbtGZ1Z3U: Downloading subtitles: en
+[info] LxUbtGZ1Z3U: Downloading 1 format(s): 401+251
+[info] Writing video subtitles to: LxUbtGZ1Z3U.en.vtt
+[download] Destination: LxUbtGZ1Z3U.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at  Unknown B/s (00:00:00)[download]    7.00KiB at  Unknown B/s (00:00:00)[download]   15.00KiB at  Unknown B/s (00:00:00)[download]   31.00KiB at  561.20KiB/s (00:00:00)[download]   63.00KiB at  776.04KiB/s (00:00:00)[download]  127.00KiB at  936.44KiB/s (00:00:00)[download]  255.00KiB at    1.38MiB/s (00:00:00)[download]  384.35KiB at    1.82MiB/s (00:00:00)[download] 100% of  384.35KiB in 00:00:00 at 706.09KiB/s
+[download] Downloading item 169 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=P3XoDm0wswc
+[youtube] Sleeping 1.0 seconds ...
+[youtube] P3XoDm0wswc: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] P3XoDm0wswc: Downloading android vr player API JSON
+[info] P3XoDm0wswc: Downloading subtitles: en
+[info] P3XoDm0wswc: Downloading 1 format(s): 137+251
+[info] Writing video subtitles to: P3XoDm0wswc.en.vtt
+[download] Destination: P3XoDm0wswc.en.vtt
+[download]    1.00KiB at  Unknown B/s (00:00:00)[download]    3.00KiB at    1.18MiB/s (00:00:00)[download]    7.00KiB at  849.00KiB/s (00:00:00)[download]   15.00KiB at  928.72KiB/s (00:00:00)[download]   31.00KiB at  700.80KiB/s (00:00:00)[download]   63.00KiB at  834.16KiB/s (00:00:00)[download]  127.00KiB at    1.12MiB/s (00:00:00)[download]  186.48KiB at    1.39MiB/s (00:00:00)[download] 100% of  186.48KiB in 00:00:00 at 390.65KiB/s
+[download] Downloading item 170 of 200
+[youtube] Extracting URL: https://www.youtube.com/watch?v=mK5CBCUMRq0
+[youtube] Sleeping 1.0 seconds ...
+[youtube] mK5CBCUMRq0: Downloading webpage
+[youtube] Sleeping 1.0 seconds ...
+[youtube] mK5CBCUMRq0: Downloading android vr player API JSON

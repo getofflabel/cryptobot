@@ -765,6 +765,27 @@ def forex_config(pair: str, spread_pct: float | None = None,
         instrument=forex_instrument(pair, float(spread_pct)),
         account_start=account_start,
 
+        # -- step461: THE 10:30 CUT-OFF STAYS ON FOR CURRENCIES ----------
+        # `entries_run_to_the_close` now ships True in `Config` because
+        # Wallace removed the cut-off for the INDEX book, on index evidence:
+        # step459's 73 dated recaps are him trading ES and NQ, and 31 of its
+        # 51 missed days died on the clock. None of that evidence is about
+        # currencies, and 2026-01-11 excludes them from the divergence read
+        # this project leans on for the indexes by name. Letting a default
+        # move change a second book's behaviour unmeasured is not a decision
+        # anybody made, so this pins currencies to the clock they have always
+        # run and the change gets its own round if it is wanted.
+        entries_run_to_the_close=False,
+
+        # -- step465: CURRENCIES KEEP THE DAY BUDGET, same reasoning -----
+        # `size_per_trade` now ships True in `Config` because Wallace moved
+        # the INDEX book onto his per-trade band. step465 measured that on SPY
+        # and QQQ over 251 sessions and nowhere else, and the venue ceiling
+        # that turned out to dominate the result is Alpaca's 4x day-trade
+        # buying power on shares — a currencies broker's is a different number
+        # entirely. So currencies stay on the ledger they have always run.
+        size_per_trade=False,
+
         # -- RE-DERIVED #1: the stop buffer ------------------------------
         # HIS rule: clear your broker's spread. The stock config carries
         # 0.0001 because that is SPY's spread. This pair's spread is its own

@@ -172,3 +172,69 @@ without producing a new tradeable signal themselves. ETH has NOT yet
 produced a single validated edge of its own beyond the pre-existing
 amplifier — reported plainly, per the standing rule that negative results
 are wins.
+
+## ROUND 320 — five surviving shapes from other markets, every dial re-derived (2026-07-25)
+Full detail: step320_results.md / step320_table.csv / step320_derivation_table.csv /
+step322_eth_shape_tests.py / step324_eth_gate_ladder.py. 49 unique cells,
+market orders both ways, per-trade chart stops from exits.py, size =
+dollars risked / stop distance so leverage is an output, 60/20/20, final
+untouched slice never loaded.
+
+19. **A — volatility-gated trend rule (Bitcoin's shape, Ethereum's gate)**
+    — REJECTED ON THICKNESS. Ethereum's gate re-derived to 1.80% of price
+    on 4h (matching Bitcoin's own first-60% selectivity of 63.2% of bars;
+    copying 1.50% would have opened the gate on 76.4% of Ethereum's 4h
+    bars). Pre-registered pick 4h 20/100: first 60% 33 trades +$13.12/t,
+    middle 20% 12 trades +$6.40/t — positive both windows but only 0.97x
+    the cost of trading, under the 5x bar. Chart stop sat a median 11.00%
+    from entry, so the risk formula produced only 0.2x leverage. Second-
+    best-on-train cell (4h 10/50, same gate) went 74t +$3.08 / 25t +$37.01
+    at 7.45x cost — NOT the pick, logged as a replication candidate only.
+20. **A2 — which of Bitcoin's OWN selectivities to match** — resolved and
+    reported as a correction. Bitcoin's 1.50% gate was open on 63.2% of
+    its first-60% bars, 53.5% of its middle 20%, 24.3% of its final fifth;
+    round 170's notes say 18.7%, which matches none of them. All four
+    rungs tested on Ethereum 4h and 1h with 20/100 and 10/50 pairs. The
+    pickier gates still cannot reach 8 trades in the middle 20% even with
+    the faster pair — **this closes round 170's flagged follow-up.** Every
+    1h cell in the ladder is negative on the first 60%.
+21. **B — donchian channel breakout (gold's shape, Ethereum's length)** —
+    DIES. Ethereum's channel re-derived to 15 bars on daily/4h and 10 on
+    1h (the lengths that hold a position 34.2% of the time, matching
+    gold's own). Pick 4h 20-bar channel: 125t +$29.64 / 43t -$10.60.
+    Daily cells all NOT ENOUGH TRADES. The one positive-both-windows cell
+    (4h 55-bar, 7.61x cost) was the longer control, not the pick.
+22. **C — short-lookback RSI dip-buy (the S&P's shape, Ethereum's
+    percentile)** — DIES on the first 60% already. Trigger re-derived to
+    RSI(2) below 4.01 on 4h (the level that fires on 5.05% of Ethereum's
+    own bars, matching the S&P's rate for "below 5"); trend filter
+    re-derived to 50 bars on 4h because Ethereum sits above its own
+    200-bar average only 45.7% of the time against the S&P's 66.2%. Best
+    cell 68t -$5.43 / 25t -$32.95. Ported and re-derived versions both
+    lose. This is the third independent kill of the RSI-washout shape on
+    Ethereum (round 170 edge 4, round 171 items 8-10, now this).
+23. **D — flag touch (Bitcoin's live tactical trigger)** — DIES. First
+    transfer test this shape has ever had and its first test at
+    market-order costs (it was sealed on limit orders that wait). Best
+    cell 4h 80-hour trend line: 138t -$0.51 / 43t -$35.27. All six cells
+    across 1h and 4h negative on the middle 20%.
+24. **E — turn of the month (the S&P's shape, Ethereum's calendar)** —
+    DIES, and the underlying tendency INVERTS. First 60%: days inside a
+    3-either-side window averaged +0.743% price move against -0.027%
+    outside, t = 3.01. Middle 20%: -0.766% inside against +0.160%
+    outside, t = -2.10. Not a costing failure; the effect reverses sign.
+25. **Ethereum's relative strength versus Bitcoin as a regime switch** —
+    HYPOTHESIS, NOT A FINDING. Splitting family A's 4h entries by whether
+    Ethereum outperformed Bitcoin over a trailing window: 7-day t = 1.39,
+    30-day t = 0.19, 90-day t = -1.56. Sign flips with lookback, nothing
+    significant. Measured on the first 60% only; no cell was selected
+    using it.
+
+**ROUND 320 CHANCE ACCOUNTING — the headline.** 30 random-timing draws
+per exit shape gave both-windows-positive on 30% of draws for the 4h
+trend shape, 0% for the 1h dip/flag shape, 20% for the daily calendar
+shape. Applied cell by cell across this grid, **luck alone would produce
+about 7.8 winners. The grid produced 4.** The round came in BELOW chance.
+
+**RUNNING TOTAL, rounds 170-320: 25 families mapped on Ethereum, zero
+validated edges of its own beyond the pre-existing amplifier.**

@@ -1,0 +1,7 @@
+TRUNCATION TEST - can every signal be produced without any price
+that had not printed yet?
+
+SPY: rebuilt 40 signals from truncated history - 40 identical, 0 different
+   every signal reproduced exactly, same bar, same side, same stop -> no price from the future is being used
+BTCUSDT: rebuilt 40 signals from truncated history - 40 identical, 0 different
+   every signal reproduced exactly, same bar, same side, same stop -> no price from the future is being used

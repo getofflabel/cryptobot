@@ -1,0 +1,7 @@
+# Nothing in here belongs in the repo.
+#
+# It holds the balance, the signal journal, and — most importantly — the
+# Chrome profile that carries his logged-in TradingView SESSION. Committing
+# that would put a live login in the history.
+*
+!.gitignore

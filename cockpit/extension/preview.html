@@ -1,0 +1,58 @@
+<!doctype html>
+<!--
+  preview.html — the panel, on a stand-in for the chart.
+
+  WHAT IT IS FOR
+    TradingView's own security policy will not let a page load scripts from
+    anywhere else, so the panel cannot be poked at on the real chart without
+    installing the extension. This page loads the SAME content.js and the
+    SAME panel.css against the SAME live cockpit service, with a page title
+    shaped exactly the way TradingView writes one — so what you see here is
+    what the extension draws, fed by real data.
+
+    It is a bench, not the product. The extension itself never loads this.
+
+  HOW
+    cd ~/cryptobot && python3 -m cockpit.service
+    then open cockpit/extension/preview.html in Chrome.
+-->
+<meta charset="utf-8">
+<title>BTCUSDT 64,393.01 ▲ +0.39%</title>
+<style>
+  html, body { height: 100%; margin: 0; background: #131722; }
+  .bench {
+    color: #4a5262; font: 12px system-ui, sans-serif;
+    padding: 14px 18px;
+  }
+</style>
+<body>
+<div class="bench">
+  a stand-in for the chart &mdash; the panel on the right is the real one,
+  reading the real cockpit service. The page title above is written the way
+  TradingView writes it, which is where the panel reads the symbol and the
+  on-screen price from.
+</div>
+<script>
+  // The two extension APIs the panel uses, stood in for so it runs on a
+  // plain page. The extension itself uses the real ones.
+  const mem = {};
+  window.chrome = {
+    storage: { local: { get: (k, cb) => cb(mem), set: (o) => Object.assign(mem, o) } },
+    runtime: {
+      lastError: null,
+      sendMessage: async (msg, cb) => {
+        try {
+          const r = await fetch(
+            "http://127.0.0.1:8787/cockpit?symbol=" + encodeURIComponent(msg.symbol || ""),
+            { cache: "no-store" });
+          cb({ ok: true, data: await r.json(), receivedAt: Date.now() / 1000 });
+        } catch (e) {
+          cb({ ok: false, why: "the cockpit service is not running. In a terminal:  cd ~/cryptobot && python3 -m cockpit.service" });
+        }
+      }
+    }
+  };
+</script>
+<link rel="stylesheet" href="panel.css">
+<script src="content.js"></script>
+</body>

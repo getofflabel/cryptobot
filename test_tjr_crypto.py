@@ -264,13 +264,26 @@ def test_the_stop_sits_on_the_sweep_and_never_on_a_percentage():
 
 
 def test_size_falls_out_of_the_stop():
-    """position = dollars risked / stop distance, and 1% of equity is the
-    dollars, unless the venue's cash clamps it."""
+    """Shares x stop distance IS what is at risk, and the size is HIS SET
+    SIZE — worked out off the tightest stop the pair normally gives, so a
+    wider stop today costs proportionally more, unless the venue's cash
+    clamps it or the day's outer limit cuts it.
+
+    "that means I'm going to be risking one percent if price hits stop right
+    here. That also means I'll be risking two percent of my account if we
+    have a larger stop loss." It used to assert a flat 1% on every unclamped
+    trade, which was the replay's own rule and not the one the orders used."""
     r = replay()
     for tr in r["trades"]:
         assert abs(tr.shares * tr.risk_per_share - tr.risk_dollars) < 1e-6
-        if not tr.clamped:
-            assert abs(tr.risk_pct_used - 0.01) < 1e-6, tr.risk_pct_used
+        assert tr.risk_wanted > 0
+        if tr.clamped:
+            continue
+        floor = tjr_bot.tightest_stop(tr.symbol) * tr.entry
+        assert floor > 0, f"{tr.symbol} has no measured tightest stop"
+        want = tr.risk_wanted * tr.risk_per_share / floor
+        assert tr.risk_dollars <= want + 1e-6, (
+            "risked more than the set size asked for")
 
 
 def test_buying_power_is_cash_not_four_times_equity():
@@ -371,7 +384,12 @@ def test_no_pair_is_preferred_for_having_a_tighter_spread():
     """PAIRS is Wallace's stated order, not a spread ranking, every pair is
     walked, and no comparison anywhere in the module reads a cost."""
     assert PAIRS[:2] == ["BTC/USD", "ETH/USD"], "the pair order was re-sorted"
-    assert len(PAIRS) == 10
+    # ten as first named, less the ones HE retired — AVAX and DOGE, on his own
+    # call, 2026-07-25. The count is his to set and this only checks that
+    # nothing was dropped for a reason of ours.
+    assert len(PAIRS) + len(tjr_crypto.RETIRED_PAIRS) == 10, (
+        f"{len(PAIRS)} pairs and {len(tjr_crypto.RETIRED_PAIRS)} retired — a "
+        f"pair went missing without a reason being written down")
     # the widest-spread pair must still be in the list and not last-resorted
     spreads = {p: (tjr_crypto.load_derived().get(p) or {}).get("spread_pct")
                for p in PAIRS}
@@ -642,6 +660,276 @@ def test_a_gap_is_never_formed_across_a_missing_bar():
     book.update(Bar(base + pd.Timedelta(minutes=5), 100, 100.5, 99.5, 100))
     book.update(Bar(base + pd.Timedelta(minutes=30), 105, 106, 104, 105))
     assert not book.gaps, "a gap was invented across a hole in the data"
+
+
+# ============================= step456: SMT DIVERGENCE DOES NOT COME HERE
+def test_smt_divergence_is_off_for_crypto_and_he_is_the_one_who_says_so():
+    """044: "crypto, sometimes you can use this with BTC and ETH but I
+    WOULDN'T NECESSARILY RECOMMEND IT." The five-hour beginner guide: "if you
+    guys are trading anything besides the S&P 500 in NASDAQ this is not going
+    to apply to you... THIS ONLY APPLIES TO INDEXES." """
+    c = cfg()
+    for name in ("smt_enabled", "smt_picks_the_instrument",
+                 "smt_in_confirmation_menu",
+                 "smt_in_continuation_menu_after_2b"):
+        assert getattr(c, name) is False, f"{name} is on for crypto"
+    src = inspect.getsource(tjr_crypto.crypto_config)
+    assert "smt_enabled=False" in src, (
+        "SMT is off for crypto by default rather than by decision — pin it "
+        "and write down whose rule it is")
+
+
+def test_a_divergence_is_structurally_impossible_on_a_crypto_run():
+    """`run_pair` hands `run_day` ONE pair, and a divergence needs exactly
+    two charts, so it cannot form here even with the switch forced on."""
+    bot = tjr_bot.TjrBot(cfg(), tjr_bot.NewsCalendar(rules=False))
+    bot.cfg.smt_enabled = True
+    assert bot._smt({}, [PAIR], 5) is None
+    src = inspect.getsource(tjr_crypto.run_pair)
+    assert "{pair: win}" in src, (
+        "run_pair no longer hands run_day exactly one pair — a divergence "
+        "could now form between two assets he never paired")
+
+
+def test_step_2b_is_a_clock_rule_and_stays_out():
+    """112's 2B exists because "when New York market opens, NEW MONEY is
+    coming into the market". There is no open here."""
+    c = cfg()
+    assert c.require_fresh_5m_sweep_after_open is False
+    assert c.premarket_sweep_carries_forward is False, (
+        "there is no pre-market on a 24/7 market for 2B to hang on")
+
+
+def test_the_crypto_switches_ship_off_like_every_other_one():
+    c = cfg()
+    for name in ("extension_79_enabled", "trigger_menu_1m_gap_inversion",
+                 "invalidate_on_close_beyond_continuation"):
+        assert getattr(c, name) is False, f"{name} is on for crypto"
+
+
+def test_the_crypto_setup_count_is_the_recorded_one():
+    """The number this file exists to produce, and the two things that moved
+    it, each named so neither can be blamed on the other.
+
+    55 (BTC) / 41 (ETH) was recorded 2026-07-26 against the binary as it stood
+    before step456. Every step456 switch ships off, and step456 did not move
+    it. Two later rounds did:
+
+      step465, NOT THIS ROUND. Sizing went per trade, which retired the day
+      risk budget as a gate, and the budget running out was the thing that
+      used to end a crypto day. 55 -> 162 on BTC. That change lives in
+      tjr_bot.py and is not ours.
+
+      step466, THIS ROUND. With the imaginary midnight bell gone the losing
+      weeks are the honest ones, so the losing-streak filter escalates on days
+      it used to sail through and fewer setups clear the tighter bar.
+      162 -> 140 on BTC. That is the escalation doing exactly its job on real
+      numbers instead of truncated ones.
+
+    Re-record with a reason, never silently.
+    """
+    was = {"BTC/USD": 140, "ETH/USD": 90}
+    for pair, want in was.items():
+        r = tjr_crypto.run_pair(pair, "2026-06-01", "2026-07-24",
+                                cfg=tjr_crypto.crypto_config(pair))
+        assert r["days"] == 54, f"{pair}: {r['days']} sessions, expected 54"
+        assert len(r["trades"]) == want, (
+            f"{pair} took {len(r['trades'])} setups, {want} was recorded")
+
+
+# ================================ 8. step466: THE DAY MAY MARK, NEVER CUT
+#
+# Wallace: "crypto runs 24/7, then let it run 24/7. dont cut shit."
+#
+# The clock was already gone. What survived was a BELL — `run_day` closed
+# anything still open when a UTC day's bars ran out — and these are the tests
+# that it cannot come back, that removing it did not touch the stock path, and
+# that nothing about the method or the causality moved with it.
+
+def _long_replay(pair: str = PAIR, carry: bool = True):
+    key = (pair, "step466", carry)
+    if key not in _REPLAY:
+        _REPLAY[key] = tjr_crypto.run_pair(pair, "2026-04-01", "2026-07-20",
+                                           cfg=cfg(pair), data=frames(pair),
+                                           carry_past_the_boundary=carry)
+    return _REPLAY[key]
+
+
+def test_no_crypto_trade_is_ever_booked_flat_by_the_close():
+    """There is no close. A trade ends at its stop or at its targets."""
+    r = _long_replay()
+    bad = [t for t in r["trades"] if t.outcome == "flat by the close"]
+    assert not bad, (f"{len(bad)} crypto trades were closed at a bell this "
+                     f"market does not have")
+
+
+def test_every_crypto_outcome_is_a_real_reason():
+    allowed = {"stopped out", "stopped at break even", tjr_crypto.RAN_OUT,
+               "the 1-minute broke structure against the trade — the rest "
+               "closed by hand"}
+    r = _long_replay()
+    for t in r["trades"]:
+        assert t.outcome in allowed or t.outcome.startswith("all "), t.outcome
+
+
+def test_a_trade_is_allowed_to_run_past_midnight():
+    """The whole point. Some trades need longer than the rest of a UTC day."""
+    r = _long_replay()
+    assert r["crossed_the_boundary"] > 0, "not one trade ran past a boundary"
+    for t in r["trades"]:
+        if t.exit_t is None:
+            continue
+        # nothing is cut AT the boundary: an exit landing exactly on the last
+        # minute of a day is what the bell used to produce
+        pass
+    late = [t for t in r["trades"]
+            if t.exit_t is not None
+            and pd.Timestamp(t.exit_t).normalize()
+            > pd.Timestamp(t.entry_t).normalize()]
+    assert len(late) >= 5, f"only {len(late)} trades ever crossed a boundary"
+
+
+def test_turning_the_carry_off_brings_the_imaginary_bell_straight_back():
+    """The before/after in step466 has to be able to produce both halves, and
+    this is the proof that the OFF half really is the old behaviour."""
+    r = _long_replay(carry=False)
+    cut = [t for t in r["trades"] if t.outcome == "flat by the close"]
+    assert cut, "carry off produced no bell at all — the switch does nothing"
+    assert r["crossed_the_boundary"] == 0, \
+        "carry off let a trade cross the boundary anyway"
+
+
+def test_the_carry_never_widens_a_stop_adds_size_or_moves_a_target():
+    """Running longer is the ONLY thing that changed. A carried position keeps
+    the size it was filled at, the targets it was given and a stop that only
+    ever moves to break even."""
+    r = _long_replay()
+    for t in r["trades"]:
+        if t.exit_t is None or pd.Timestamp(t.exit_t).normalize() \
+                <= pd.Timestamp(t.entry_t).normalize():
+            continue
+        assert t.shares > 0 and t.notional > 0
+        stop_now = getattr(t, "_stop_now", t.stop)
+        if t.direction > 0:
+            assert stop_now >= t.stop - 1e-9, "a long's stop was widened"
+            assert stop_now <= t.entry + 1e-9, "a long's stop went past entry"
+        else:
+            assert stop_now <= t.stop + 1e-9, "a short's stop was widened"
+            assert stop_now >= t.entry - 1e-9, "a short's stop went past entry"
+        assert t.targets_filled <= len(t.targets)
+
+
+def test_the_account_cannot_size_a_trade_off_money_that_is_still_open():
+    """CAUSALITY, and it is the risk the carry creates. A position that has
+    not closed has made nothing, so no later trade may be sized off it."""
+    r = _long_replay()
+    ts = [t for t in r["trades"] if t.exit_t is not None]
+    start = cfg().account_start
+    for t in ts:
+        day = pd.Timestamp(t.day)
+        banked = sum(x.pnl for x in ts
+                     if pd.Timestamp(x.exit_t) < day)
+        want = start + banked
+        assert abs(t.sizing_account - want) < 1e-6, (
+            f"{t.entry_t} sized off {t.sizing_account:,.2f} when only "
+            f"{want:,.2f} had actually been banked")
+
+
+def test_the_equity_curve_is_in_the_order_the_money_landed():
+    r = _long_replay()
+    ts = sorted([t for t in r["trades"] if t.exit_t is not None],
+                key=lambda t: pd.Timestamp(t.exit_t))
+    acct = cfg().account_start
+    for t in ts:
+        acct += t.pnl
+        assert abs(t.account_after - acct) < 1e-6, \
+            f"{t.exit_t} stamped {t.account_after:,.2f}, running total {acct:,.2f}"
+    assert abs(r["account"] - acct) < 1e-6
+
+
+def test_the_stock_path_still_closes_at_its_bell():
+    """The shim must not have taken the real bell off a market that has one.
+    SPY, GLD and forex all set `open_t`; crypto is the only one that does
+    not, and that is the only thing either shim branches on."""
+    assert tjr_bot.US_INDEX_ETF.open_t is not None
+    assert tjr_bot.TjrBot._force_flat is \
+        tjr_crypto._force_flat_only_where_there_is_a_close
+
+    c = tjr_bot.Config()                       # the stock instrument
+    bot = TjrBot(c, NewsCalendar(rules=False))
+    tr = tjr_bot.Trade(
+        symbol="SPY", day=pd.Timestamp("2026-06-10"), direction=+1,
+        level_price=500.0, level_tf="1h", swept_at=None, confirm_kind="bos",
+        confirmed_at=None, pullback_kind="midpoint",
+        entry_t=pd.Timestamp("2026-06-10 10:00"), entry=500.0, stop=499.0,
+        stop_anchor="", risk_per_share=1.0, shares=10.0, notional=5000.0,
+        risk_dollars=10.0, risk_wanted=10.0, risk_pct_used=0.0001,
+        clamped=False, targets=[505.0], target_srcs=["1h"], escalated=False,
+        regime="no trend")
+    last = pd.Timestamp("2026-06-10 15:55")
+    bot._force_flat(tr, {last: Bar(last, 501, 501, 501, 501)})
+    assert tr.outcome == "flat by the close", \
+        f"the stock bell stopped firing: {tr.outcome!r}"
+
+
+def test_a_crypto_position_is_left_open_rather_than_closed():
+    """The same call, on a market with no bell, must do nothing at all."""
+    c = cfg()
+    bot = TjrBot(c, NewsCalendar(rules=False))
+    tr = tjr_bot.Trade(
+        symbol=PAIR, day=pd.Timestamp("2026-06-10"), direction=+1,
+        level_price=100.0, level_tf="1h", swept_at=None, confirm_kind="bos",
+        confirmed_at=None, pullback_kind="midpoint",
+        entry_t=pd.Timestamp("2026-06-10 23:50"), entry=100.0, stop=99.0,
+        stop_anchor="", risk_per_share=1.0, shares=1.0, notional=100.0,
+        risk_dollars=1.0, risk_wanted=1.0, risk_pct_used=0.00001,
+        clamped=False, targets=[105.0], target_srcs=["1h"], escalated=False,
+        regime="no trend")
+    last = pd.Timestamp("2026-06-10 23:59")
+    bot._force_flat(tr, {last: Bar(last, 101, 101, 101, 101)})
+    assert tr.outcome == "", "a crypto position was closed at midnight"
+    assert tr.pnl == 0.0, "a crypto position booked money without closing"
+
+
+def test_the_one_minute_trend_the_carry_reads_is_the_one_it_was_managed_on():
+    """The runner comes off the 1-minute break of structure. A carried
+    position must keep reading the same tracker `SymbolDay` had, or the rule
+    changes at the boundary."""
+    d1 = frames()["1m"]
+    day = pd.Timestamp("2026-06-10")
+    mine = tjr_crypto._one_minute_trend(d1, day)
+
+    c = cfg()
+    win = window(day)
+    leg = tjr_bot.SymbolDay(PAIR, win["5m"], win["1m"], day, c,
+                            NewsCalendar(rules=False), False)
+    open_t = tjr_bot.session_start(day, c.instrument)
+    sess = win["1m"][(win["1m"]["t"] >= open_t) &
+                     (win["1m"]["t"] < day + pd.Timedelta(days=1))]
+    for r in sess.itertuples():
+        leg.on_1m(Bar(r.t, r.open, r.high, r.low, r.close))
+    assert leg.t1.state == mine.state, "the carried trend is a different read"
+    assert leg.t1.mrh == mine.mrh and leg.t1.mrl == mine.mrl
+
+
+def test_every_place_the_invented_day_still_bites_is_written_down():
+    """A list of what was NOT fixed is worth more than a claim that it was."""
+    doc = tjr_crypto.where_the_invented_day_still_bites()
+    for must in ("THE BELL. FIXED", "THE DAILY BIAS", "MARKED POOL IS FROZEN",
+                 "SEQUENCE RESETS AT MIDNIGHT", "WEEKS",
+                 "AGE MEASURED IN DAYS", "CANDLE GRID",
+                 "PREVIOUS DAY'S HIGH AND LOW"):
+        assert must in doc, f"the enumeration lost: {must}"
+
+
+def test_the_setup_count_is_still_the_thing_the_replay_claims():
+    """step466 changed an EXIT. A setup is counted when the entry fires, which
+    happens before any of it, so `setups_per_day` still reports the same kind
+    of number and nothing here claims a profit."""
+    src = inspect.getsource(tjr_crypto.setups_per_day)
+    assert "no profit claim" in src
+    r = _long_replay()
+    assert len(r["trades"]) > 0 and r["days"] > 0
 
 
 TESTS = [(k, v) for k, v in sorted(globals().items())

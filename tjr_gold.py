@@ -184,6 +184,26 @@ def gold_config(account_start: float = 100_000.0,
         instrument=inst,
         account_start=account_start,
 
+        # -- step461: THE 10:30 CUT-OFF STAYS ON FOR GOLD -----------------
+        # `entries_run_to_the_close` now ships True in `Config` because
+        # Wallace removed the cut-off for the INDEX book, on the index
+        # evidence: step459 graded that book against 73 dated recaps of him
+        # trading ES and NQ, and 31 of its 51 missed days died on the clock.
+        # None of that evidence is about gold. Removing the cut-off here as a
+        # side effect of a default moving would be changing a second book's
+        # behaviour without measuring it, so this pins gold to the clock it
+        # has always run and the change gets its own round if it is wanted.
+        entries_run_to_the_close=False,
+
+        # -- step465: GOLD KEEPS THE DAY BUDGET, for the same reason --------
+        # `size_per_trade` now ships True in `Config` because Wallace moved
+        # the INDEX book onto his per-trade band. step465 measured that change
+        # on SPY and QQQ over 251 sessions and nowhere else. Letting a moved
+        # default re-size gold as a side effect would be changing a second
+        # book's behaviour without measuring it, so gold stays on the ledger
+        # it has always run and the change gets its own measured round.
+        size_per_trade=False,
+
         # -- RE-DERIVED #1: the stop buffer ------------------------------
         # HIS rule: clear your broker's spread. The stock config carries
         # 0.0001 because that is SPY's spread. Gold's measured spread is its

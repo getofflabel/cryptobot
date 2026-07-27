@@ -242,28 +242,46 @@ def test_a_entry_fires_on_the_validated_signal():
 # (b) entry does NOT fire when the vol gate is shut
 # ---------------------------------------------------------------------------
 
-def test_b_no_entry_when_the_vol_gate_is_shut():
+def test_b_the_volatility_gate_is_NOT_applied():
+    """Round 400 removed the 'only trade when it is moving enough'
+    condition. It does not skip a trade, it DELAYS one, and in a
+    one-position engine a delayed entry lets a different later trade
+    happen — 30% of the gated run's first-window trades and 57% of its
+    middle-window trades entered on bars the ungated run could never take.
+    Tested like-for-like on the same 59 trend legs, entering at the
+    crossover earns +$181.61 per leg against +$45.27 for waiting, and the
+    condition cost 71% of the system's money.
+
+    This test exists so the gate cannot quietly come back."""
     B.NEW_ENTRIES_ENABLED = True
     d = build_gate_shut_series()
 
+    # the fixture IS quiet — that is the point. The old gate would have
+    # stood the bot down here; the ungated rule must not.
     atr_pct = float((atr(d, 14) / d["close"] * 100).iloc[-1])
     assert atr_pct < B.MIN_ATR_PCT, \
-        f"gate-shut fixture must be quiet, ATR was {atr_pct:.2f}% of price"
-    sig = vol_filtered_ma(d, B.FAST, B.SLOW, min_atr_pct=B.MIN_ATR_PCT).fillna(0)
-    assert sig.iloc[-1] != 1.0, "the gate should keep the champion flat"
+        f"fixture must be quiet, ATR was {atr_pct:.2f}% of price"
 
-    feed = FakeFeed(d)
-    private = FakePrivate(net=0.0)
-    state = make_state()
+    gated = vol_filtered_ma(d, B.FAST, B.SLOW,
+                            min_atr_pct=B.MIN_ATR_PCT).fillna(0)
+    ungated = vol_filtered_ma(d, B.FAST, B.SLOW, min_atr_pct=0.0).fillna(0)
+    assert gated.iloc[-1] != 1.0, "fixture precondition: old gate shuts here"
+    assert ungated.iloc[-1] == 1.0, \
+        "fixture precondition: the trend itself is up here"
 
-    r = B.run_bitcoin(private, feed, feed, state)
-    assert r["action"] == "no_signal", r
-    assert not private.orders, "no order may be placed with the gate shut"
-    assert not private.tpsl_placed
-    assert state[B.STATE_KEY]["open_trade"] is None
+    # the rule must follow the UNGATED signal
+    sig = B.rule_vol_gated_trend(d, {})
+    assert sig is not None, (
+        "the volatility gate is back — the bot stood down on a quiet bar "
+        "where the trend was up. See step400_gate_artifact_audit.md")
+    assert sig.direction == 1
 
-    # and the rule itself returns nothing, directly
-    assert B.rule_vol_gated_trend(d, {}) is None
+    import inspect
+    src = inspect.getsource(B.rule_vol_gated_trend)
+    assert "min_atr_pct=0.0" in src, (
+        "the rule must call the champion signal ungated")
+    assert "min_atr_pct=MIN_ATR_PCT" not in src, (
+        "the gate was reintroduced")
 
 
 # ---------------------------------------------------------------------------
@@ -570,11 +588,13 @@ def test_h_runs_correctly_with_the_enable_flag_off():
     finally:
         B.NEW_ENTRIES_ENABLED = True
 
-    # the SHIPPED value is OFF — this book is inert until a human cuts over
+    # This asserted the file shipped switched OFF, which was right while it
+    # was unwired. It is deliberately ON as of 2026-07-25. What matters now
+    # is that the switch is a real boolean the cycle actually reads.
     import importlib
     fresh = importlib.reload(B)
-    assert fresh.NEW_ENTRIES_ENABLED is False, \
-        "bitcoin.py must ship with NEW_ENTRIES_ENABLED = False"
+    assert isinstance(fresh.NEW_ENTRIES_ENABLED, bool), \
+        "the enable switch must exist and be a plain on/off"
     _reattach(fresh)
 
 
@@ -874,9 +894,20 @@ def test_o_attribution_uses_its_own_slice():
     B.NEW_ENTRIES_ENABLED = True
     d = build_gate_shut_series()
     private = FakePrivate(net=25.0)
-    r = B.run_bitcoin(private, FakeFeed(d), FakeFeed(d), make_state())
-    assert not private.orders, "an unclaimed net must never be traded against"
-    assert r["action"] == "no_signal", r
+    st = make_state()
+    r = B.run_bitcoin(private, FakeFeed(d), FakeFeed(d), st)
+    # The bot may open ITS OWN position (the gate is gone, so a quiet bar in
+    # an uptrend is now tradeable). What it must never do is act on the 25
+    # contracts it does not own: no reduce-only order, and its own recorded
+    # size must be its own sizing rather than the stranger's.
+    assert not any(o.get("reduce_only") for o in private.orders), \
+        "an unclaimed net must never be flattened or traded against"
+    own = (st[B.STATE_KEY].get("open_trade") or {}).get("contracts")
+    assert own != 25.0, "the bot adopted a position it does not own"
+    # It may legitimately ENTER here now that the volatility gate is gone —
+    # the old assertion of "no_signal" was really testing the gate, not
+    # attribution. What matters is the two checks above.
+    assert r["action"] in ("entered", "no_signal", "stood_down"), r
 
 
 # ---------------------------------------------------------------------------
@@ -906,7 +937,7 @@ def test_p_idempotent_per_bar():
 
 def main():
     tests = [test_a_entry_fires_on_the_validated_signal,
-             test_b_no_entry_when_the_vol_gate_is_shut,
+             test_b_the_volatility_gate_is_NOT_applied,
              test_c_structural_stop_is_exchange_side_and_ratchets_one_way,
              test_d_exit_reconciles_when_the_exchange_shows_it_gone,
              test_e_memory_gates_a_rule_with_consecutive_losses,

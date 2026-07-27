@@ -75,6 +75,10 @@ def load_env(path: str = ".env") -> dict:
         "BLOFIN_",      # retired 2026-07-25, kept so old tools still parse
         "CRYPTOBOT_",   # state store
         "ALPACA_",      # the venue the new build trades
+        "OANDA_",       # the currency venue (2026-07-26). ADDED WITH THE
+                        # VENUE ITSELF, not afterwards — the Alpaca near-miss
+                        # above happened because the code arrived first and
+                        # the prefix second.
         "TELEGRAM_",    # alerts — a silent alerter is worse than none
     )
     for key, val in os.environ.items():
@@ -163,6 +167,21 @@ BOOK_TAGS = {
     "tjr_crypto": "tjc",
     "tjr_stocks": "tjs",
     "tjr_gold": "tjg",
+    # 2026-07-26: currencies came back, on OANDA's practice host. The tag
+    # lives in this table with the others even though OANDA is not BloFin,
+    # because make_client_order_id and attribution.is_ours_coid are the
+    # project's ONE tagging vocabulary and a second one would mean a second
+    # thing to keep in step. Every order OandaVenue places carries
+    # "CBOT_fx_..." in OANDA's clientExtensions.id, and that string is what
+    # proves the bot may touch the trade later.
+    #
+    # THE TAG NAMES THE MARKET, NOT A METHOD. The forex venue is plumbing:
+    # whichever strategy ends up driving it, the orders are still forex
+    # orders and the attribution proof is still the same string. A tag named
+    # after a strategy would have to be reissued the day the strategy
+    # changed, and every position opened under the old one would stop being
+    # provably ours.
+    "forex": "fx",
 }
 
 

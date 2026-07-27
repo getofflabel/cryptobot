@@ -1,0 +1,98 @@
+
+============================================================================
+SPY (alpaca)   5-minute bars 487,235   2015-12-31 .. 2026-07-24
+  a level is followed for 5 days (631 five-minute bars) and then written off
+  measured on the first 80% of the data only; the last 20% (2024-07-08 onward) is not opened
+============================================================================
+
+A. WHAT HAPPENS TO A LEVEL ONCE IT FORMS
+   level kind           formed   /week   swept  broken  untouched  sweeps/wk  median hrs
+   5-minute swing      167,092   379.1   76.0%   20.4%       3.6%      288.0         0.3
+   15-minute swing      62,665   142.2   72.3%   21.4%       6.2%      102.8         0.8
+   1-hour swing         16,121    36.6   64.4%   22.7%      12.9%       23.6         2.2
+   4-hour swing          4,368     9.9   55.5%   20.4%      24.1%        5.5         5.2
+   asia session          3,489     7.9   53.7%   38.1%       8.3%        4.2         5.0
+   london session        3,533     8.0   69.3%   18.8%      11.9%        5.6         6.5
+   ny session            3,662     8.3   56.2%   23.1%      20.7%        4.7        15.4
+   prior day             4,254     9.7   46.9%   21.9%      31.2%        4.5         7.7
+
+B + C. DISTANCES, in percent of PRICE (a price move, not a
+       change in position value).  'risk' is the distance from
+       the fill to the swept extreme - the stop.  'nearest
+       unswept' and 'nearest stacked pool' are what the chart
+       offers ahead of the fill at the moment it confirms.
+   level kind          sweeps  conf%  risk med   risk p25-p75   wait  unswept med  as xrisk  stack med  as xrisk  has stack
+   5-minute swing      92,314  33.3%    0.216%  0.126-0.381       6b       0.078%     0.36x     0.210%     1.06x      75.4%
+   15-minute swing     36,116  35.0%    0.223%  0.128-0.398       6b       0.119%     0.55x     0.310%     1.64x      61.5%
+   1-hour swing         9,367  38.0%    0.259%  0.150-0.459       6b       0.264%     1.10x     0.449%     2.23x      29.8%
+   4-hour swing         2,393  39.4%    0.282%  0.159-0.511       6b       0.646%     2.60x     0.510%     2.52x       7.8%
+   asia session         1,898  40.5%    0.250%  0.145-0.493       7b       0.247%     1.24x       nan%      nanx       0.0%
+   london session       2,528  37.4%    0.286%  0.158-0.486       6b       0.387%     1.63x     0.287%     1.52x       0.6%
+   ny session           2,035  42.1%    0.230%  0.130-0.436       6b       0.649%     2.95x     0.520%     3.72x       7.2%
+   prior day            1,952  38.3%    0.254%  0.148-0.446       6b       0.904%     3.87x     0.816%     5.38x       7.8%
+
+============================================================================
+QQQ (alpaca)   5-minute bars 471,857   2015-12-31 .. 2026-07-24
+  a level is followed for 5 days (611 five-minute bars) and then written off
+  measured on the first 80% of the data only; the last 20% (2024-08-02 onward) is not opened
+============================================================================
+
+A. WHAT HAPPENS TO A LEVEL ONCE IT FORMS
+   level kind           formed   /week   swept  broken  untouched  sweeps/wk  median hrs
+   5-minute swing      159,437   361.7   75.2%   20.9%       3.8%      272.2         0.3
+   15-minute swing      59,701   135.4   71.3%   22.2%       6.5%       96.6         0.8
+   1-hour swing         16,019    36.3   63.5%   23.5%      13.0%       23.1         2.3
+   4-hour swing          4,259     9.7   53.6%   21.8%      24.6%        5.2         5.1
+   asia session          3,426     7.8   52.7%   39.4%       7.8%        4.1         4.8
+   london session        3,594     8.2   68.8%   19.8%      11.4%        5.6         6.5
+   ny session            3,716     8.4   53.9%   24.4%      21.7%        4.5        15.1
+   prior day             4,217     9.6   45.9%   22.1%      32.0%        4.4         7.3
+
+B + C. DISTANCES, in percent of PRICE (a price move, not a
+       change in position value).  'risk' is the distance from
+       the fill to the swept extreme - the stop.  'nearest
+       unswept' and 'nearest stacked pool' are what the chart
+       offers ahead of the fill at the moment it confirms.
+   level kind          sweeps  conf%  risk med   risk p25-p75   wait  unswept med  as xrisk  stack med  as xrisk  has stack
+   5-minute swing      87,589  33.8%    0.293%  0.167-0.512       6b       0.103%     0.36x     0.306%     1.16x      70.0%
+   15-minute swing     33,955  35.3%    0.308%  0.175-0.548       6b       0.165%     0.56x     0.458%     1.76x      51.7%
+   1-hour swing         9,172  38.2%    0.371%  0.211-0.638       6b       0.381%     1.11x     0.655%     2.38x      24.3%
+   4-hour swing         2,266  37.9%    0.406%  0.243-0.678       6b       0.866%     2.27x     0.833%     2.13x       4.8%
+   asia session         1,857  41.1%    0.381%  0.213-0.675       7b       0.257%     1.02x       nan%      nanx       0.0%
+   london session       2,546  37.9%    0.403%  0.231-0.661       6b       0.528%     1.51x     0.312%     0.87x       0.7%
+   ny session           1,980  43.6%    0.331%  0.175-0.603       7b       0.851%     2.76x     0.770%     3.73x       5.6%
+   prior day            1,904  37.5%    0.354%  0.200-0.586       6b       1.211%     3.56x     1.260%     4.62x       7.0%
+
+============================================================================
+BTCUSDT (bybit)   5-minute bars 663,999   2020-03-30 .. 2026-07-22
+  a level is followed for 5 days (1,440 five-minute bars) and then written off
+  measured on the first 80% of the data only; the last 20% (2025-04-17 onward) is not opened
+============================================================================
+
+A. WHAT HAPPENS TO A LEVEL ONCE IT FORMS
+   level kind           formed   /week   swept  broken  untouched  sweeps/wk  median hrs
+   5-minute swing      266,159  1010.4   78.8%   18.5%       2.7%      796.0         0.4
+   15-minute swing      92,245   350.2   76.6%   18.8%       4.6%      268.1         1.1
+   1-hour swing         23,467    89.1   70.7%   19.6%       9.7%       63.0         3.4
+   4-hour swing          6,023    22.9   60.3%   20.4%      19.3%       13.8         9.9
+   asia session          3,681    14.0   65.5%   18.4%      16.1%        9.2        15.5
+   london session        2,706    10.3   80.0%   13.5%       6.5%        8.2         6.9
+   ny session            2,765    10.5   72.8%   15.8%      11.4%        7.6        14.2
+   prior day             3,654    13.9   51.2%   19.5%      29.3%        7.1        16.8
+
+B + C. DISTANCES, in percent of PRICE (a price move, not a
+       change in position value).  'risk' is the distance from
+       the fill to the swept extreme - the stop.  'nearest
+       unswept' and 'nearest stacked pool' are what the chart
+       offers ahead of the fill at the moment it confirms.
+   level kind          sweeps  conf%  risk med   risk p25-p75   wait  unswept med  as xrisk  stack med  as xrisk  has stack
+   5-minute swing     143,261  37.9%    0.516%  0.316-0.843       6b       0.158%     0.31x     0.594%     1.24x      79.2%
+   15-minute swing     53,537  39.8%    0.534%  0.326-0.879       6b       0.257%     0.50x     1.023%     2.10x      57.0%
+   1-hour swing        13,932  42.0%    0.642%  0.393-1.029       6b       0.657%     1.09x     1.450%     2.83x      24.3%
+   4-hour swing         3,298  45.3%    0.848%  0.550-1.362       6b       1.787%     2.21x     2.158%     3.30x       6.2%
+   asia session         2,405  44.6%    0.788%  0.498-1.279       6b       1.633%     2.32x     1.917%     2.55x       0.2%
+   london session       2,178  46.0%    0.743%  0.479-1.239       6b       1.616%     2.53x     0.582%     2.88x       0.1%
+   ny session           1,953  47.5%    0.847%  0.536-1.290       6b       2.248%     2.93x     1.335%     3.36x       0.6%
+   prior day            1,763  45.1%    1.012%  0.676-1.493       6b       3.383%     3.46x     2.005%     3.60x       2.8%
+
+wrote step430_level_frequency.csv and step430_level_distances.csv

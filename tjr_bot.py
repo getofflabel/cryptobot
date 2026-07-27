@@ -45,19 +45,22 @@ SIZING, AND THERE IS EXACTLY ONE OF IT (step452 item 3 and item 8)
     actually went out used his set size capped at 3% — so every backtest
     number this project had ever produced described a bot nobody was running.
 
-    THE RULE ITSELF IS HIS: the size is worked out once, off the TIGHTEST
-    stop the instrument normally gives, so that stop would cost the trade's
-    share of the day's budget. It is then held still, and a wider stop today
-    costs proportionally more. That is where his one-to-three-percent band
-    comes from — it is an output of holding the size still, never a dial.
+THE BUDGET IS THE TRADE'S (step465, and it is his own sentence)
+    "Me personally I'm risking anywhere from 1 to 3% of my account per trade."
+    ONE DIAL, `Config.risk_pct_per_trade`, ships at 0.03. Every trade puts
+    that share of the ACCOUNT behind its stop — halved on a news day — and it
+    does not move for anything else that traded the same session. The size is
+    worked out off TODAY's stop so the allowance is spent exactly.
 
-THE BUDGET IS THE DAY'S, NOT THE TRADE'S (step452 item 3, Boot Camp 2.0)
-    "I only lost 50 percent of what I was willing to risk on the day, that's
-    better than a full you know like one percent down on the day two percent
-    down or three percent down on the day." Every one of those numbers is
-    attached to THE DAY. So `DayBudget` holds 1% of the account (0.5% on a
-    news day), trades draw shares of it, and the 3% is the outer limit the
-    whole day may reach, not a ceiling one trade may spend on its own.
+    WHAT THIS REPLACED, AND IT WAS OURS. `DayBudget` held 1% of the account
+    for the whole DAY and trades drew shares of it, with the set size held
+    still off the tightest stop so a wider stop cost proportionally more.
+    Between them those two made the dollars behind a trade swing 140-fold on
+    a fixed account, with the biggest positions landing on the widest stops —
+    which are structurally the lowest-reward trades, because the targets are
+    drawn levels that do not move further away when the stop widens. A book
+    with a positive sum of R lost money that way. `size_per_trade=False`
+    restores all of it and is how the recorded baseline is reproduced.
 
 COSTS ARE CHARGED, NEVER CONSULTED
     The measured 0.0035% round trip is subtracted so the money is honest.
@@ -163,6 +166,51 @@ class Config:
 
     # --- sizing (step433 section 2, step436 section 7, step452 item 3) ----
     #
+    # ===================================================================
+    # STEP465. THE UNIT IS BACK ON THE TRADE, AND IT IS HIS OWN WORDS.
+    # ===================================================================
+    #
+    # THE DIAL. This is the whole of Wallace's decision and the only number
+    # anyone has to touch to change how hard the bot is trading:
+    #
+    #     risk_pct_per_trade = 0.03
+    #
+    # Read it as: every trade puts three per cent of the ACCOUNT behind its
+    # stop. Not three per cent of the margin, not a three-per-cent move in
+    # the price — three per cent of the whole account, on that one trade.
+    #
+    # WHY PER TRADE. Three separate statements, and every one of them attaches
+    # the number to a TRADE:
+    #   "Me personally I'm risking anywhere from 1 to 3% of my account per
+    #    trade."
+    #   "What I typically like to say for regular traders, I'll say risk 1 to
+    #    2% of your account per trade."
+    #   "1 to 3% of my account per trade, that's for higher risk traders that
+    #    have a high win rate and a low risk reward. For the high risk-reward
+    #    and the lower win rate people, you guys are probably going to want to
+    #    be risking 0.25 to 1%."
+    # Nowhere does he describe a budget for the DAY that several trades split
+    # between them. That machinery was OURS. It is switched off below and the
+    # fields it used are kept only so `size_per_trade=False` still reproduces
+    # the old binary exactly.
+    #
+    # THE CAVEAT, WHICH WALLACE HAS BEEN GIVEN AND OVERRULED. By his own
+    # sentence the 1-3% band is for a HIGH win rate with a LOW reward-to-risk.
+    # This bot wins about 39-46% and lets winners run, which is the other
+    # group in that same sentence — the one he puts at 0.25 to 1%. Three per
+    # cent is the aggressive end of a band he did not aim at this kind of
+    # book. It is on paper money and it is Wallace's call, made knowing that.
+    # step465 reports 0.5% and 1% beside it so the road not taken is visible.
+    size_per_trade: bool = True
+    risk_pct_per_trade: float = 0.03
+    # HIS: half size when the calendar is against you. The day-budget path
+    # spells the same halving out as risk_pct_derisk; per trade it is a ratio
+    # so there is still only ONE dial above.
+    news_day_halves_the_trade: bool = True
+
+    # ---- the OLD day-budget path. Reached only with size_per_trade=False,
+    # ---- which is how the recorded baseline is reproduced.
+    #
     # THE UNIT CHANGED ON 2026-07-26 AND THE NUMBERS DID NOT. These were read
     # as a per-TRADE risk. Boot Camp 2.0 Day 8 attaches every one of them to
     # "on the day": "I only lost 50 percent of what I was willing to risk on
@@ -178,6 +226,11 @@ class Config:
     # which let a single position spend the whole outer limit — the exact
     # mistake Day 8 and Day 9 are warning against.
     max_day_risk_share: float = 0.03
+
+    # STEP457, FROM THE FRAMES: refuse a trade with no building block
+    # ahead of it. OFF by default so a before/after is possible; the
+    # reasoning and what it costs are at the use site in run_day.
+    refuse_when_nowhere_to_go: bool = False
     # HIS, Day 8: "I'm going to go in with like half of what I would want to
     # risk on the day knowing damn well that I'm probably going to take a
     # second trade."
@@ -285,6 +338,270 @@ class Config:
     # The reaction is the discriminator: reacted -> that is the day's sweep;
     # not reacted -> step434's "wait for another form of manipulation".
     premarket_sweep_carries_forward: bool = True
+
+    # =============================================== step456: THE NEWEST HIM
+    #
+    # EVERY SWITCH IN THIS BLOCK SHIPS OFF, AND THAT IS THE POINT. Wallace
+    # asked for "a before and after of that playlist ran on the past year", so
+    # one binary has to be able to produce both halves. With all of them False
+    # this file decides exactly what it decided on 2026-07-26 — trade for
+    # trade, field for field, which `step456_baseline.json` and
+    # `test_everything_off_reproduces_the_recorded_baseline` hold it to.
+    # `Config.newest_teaching()` turns the lot on in one call.
+    #
+    # The rules come from `step454_newest_corpus_delta.md`, which dates his
+    # videos by playlist position: a higher number is newer teaching and under
+    # the standing rule in step436 it governs.
+
+    # ---- 1. SMT divergence (115, 120, 112, 103, 100, 044) ---------------
+    # 115, the fifth-newest video in the corpus, titled "$1,000,000+ From One
+    # Simple Confluence": "This is going to be the only SMT divergence video
+    # that you guys will ever need. This has been one of the key confluences
+    # to help me make seven figures over the past couple years trading."
+    # step436 item 12 had it as "dropped from the current strategy". It was
+    # never dropped; it is the organising logic of every live session.
+    #
+    # WHAT IT IS FOR, and it is not a trigger. 120: "SMT divergence just
+    # strengthens our bias... me personally I use it to determine what index I
+    # should take the trade off of... It doesn't tell me to take a trade. It
+    # doesn't tell me to execute. It just helps strengthen my bias." So this
+    # first switch only computes it and lets it count as a confluence.
+    smt_enabled: bool = False
+    # Its second job, and 120's own words above: it picks WHICH of the two
+    # correlated charts gets the order. 100, dating his own change of mind:
+    # "That's why we always take the leading index. Before I used to take the
+    # lagging index, but I changed that around like when was that like two and
+    # a half to three months ago." A filter that only ever REMOVES a trade —
+    # it refuses the lagging chart, it never opens anything new.
+    smt_picks_the_instrument: bool = False
+    # Its third job, which belongs to the six-step menu below rather than to
+    # the bias read: 112 lists "a 5minute SMT divergence" as one of four
+    # interchangeable step-2 confirmation confluences, and 103 takes an entry
+    # off a 1-minute one: "why did I go short before seeing a one minute
+    # inverse for value gap or a one minute break of structure to the
+    # downside? Because we had this one minute bearish SMT." Kept separate
+    # from the two above so "bias input" and "menu option" can be measured
+    # apart, which is what 120 and 112 respectively describe.
+    smt_in_confirmation_menu: bool = False
+    # 112's one conditional: the continuation stage is "equilibrium fair value
+    # gaps or if 2B happens then an SMT divergence. And that's only if 2B
+    # happens." Needs require_fresh_5m_sweep_after_open to mean anything.
+    smt_in_continuation_menu_after_2b: bool = False
+    # OURS, NOT HIS, and it is a guess. He times the two swings to the same
+    # bar — "it's literally happening at the exact same time 935 935" — and
+    # says "during the same point in time". Our two-candle swing is stamped on
+    # the SECOND candle of a pair, so a single doji on one chart and not the
+    # other moves the stamp by one bar; two bars of tolerance absorbs that at
+    # both ends of the comparison. Set it to 0 for his literal words.
+    smt_alignment_bars: int = 2
+
+    # ---- 2. the 79% extension (066, 099, 082, 112, 106, 110) ------------
+    # step436 item 12 also had this "dropped". It appears in fourteen files
+    # from 066 through 112, it is in 112's current cheat sheet, and in 106 its
+    # ABSENCE is the stated reason he took no trade: "we didn't close
+    # underneath the 79% extension... I think that I'm just going to call it
+    # here." A fourth route into the confirmed state and a fourth 1-minute
+    # trigger. It only ever ADDS trades.
+    extension_79_enabled: bool = False
+    # HIS number, and there is only ever one of it. Every variant was searched
+    # for across the whole transcript tree — 78.6, 70.5, 61.8, 0.79 — and none
+    # occurs. It is always "79%".
+    extension_79_ratio: float = 0.79
+
+    # ---- 3. his current entry is SIX steps, not four (112) --------------
+    # 112 is taught as current ("if you guys are new here"), promotes a live
+    # event on "November 8th, 9th, and 10th" and looks ahead to "going into
+    # 2026". step434 filed it as superseded; it sits at position 112 of 120.
+    #
+    # The full step-2 / 1-minute menu, verbatim: "break of structure inverse
+    # for value gap, a 79% extension closure, and a 5minute SMT divergence"
+    # and it is an OR — "we don't need every single one of these to happen. We
+    # just need one because each one of these confluences signifies the same
+    # thing that we swept liquidity." The 1-minute stage is "the same exact
+    # confirmation confluence that we had had before". We accept two of the
+    # four on the 5-minute and only ONE on the 1-minute. The 79% and the SMT
+    # are switched above; this is the third thing we never computed — the
+    # inverse fair value gap on the 1-MINUTE chart.
+    trigger_menu_1m_gap_inversion: bool = False
+    # Step 2B, the one step of his six we have no counterpart for at all.
+    # "if we get an hourly sweep and then a change in direction before New
+    # York market opens, that's great. Step one and step two have been checked
+    # off. But if that happens, we have to wait for a low time frame
+    # manipulation on the 5minut time frame when New York market opens."
+    # His reason: "when New York market opens, new money is coming into the
+    # market. And when new money comes into the market, there's almost always
+    # going to be some form of manipulation." This only ever REMOVES trades —
+    # it puts an extra gate in front of the pre-market carry-forward.
+    require_fresh_5m_sweep_after_open: bool = False
+    # 112, walking a worked example: "Price comes into equilibrium. Okay,
+    # we're looking for a break of structure to the downside. Oh, wait. It's
+    # going higher. It's going higher and we close above equilibrium. Oh, so
+    # that invalidates step number three." The continuation confluence is a
+    # level that has to HOLD on a closing basis, not just a zone to touch.
+    # Only ever removes trades.
+    invalidate_on_close_beyond_continuation: bool = False
+
+    # ============================== step461: THE BIAS IS A LEAN, NOT A VETO
+    #
+    # ONE SWITCH, THREE PARTS, AND IT SHIPS OFF for the same reason every
+    # step456 switch does: with it False this file decides exactly what it
+    # decided on 2026-07-26, trade for trade, and the before/after can be
+    # measured. `step456_baseline.json` and the step461 control run over the
+    # 73 recap days both hold it to that.
+    #
+    # WHY. step459 graded this bot against 73 dated recaps in which he says
+    # what he did. He traded and we stood down on 51 days; we traded and he
+    # stood down on none. The single largest cause is this gate — 22 of the
+    # 51 — and ten of those are one repeated trade: he sells a sweep of the
+    # highs inside a standing higher-timeframe uptrend, and our gate forbids a
+    # short all day, on both charts.
+    #
+    # The gate is NOT wrong. On the 35 days it agreed with him he won or
+    # partialled 26 against 12; on the 22 it blocked he still went 15 against
+    # 12. It picks his better days. So this does not delete it — it turns it
+    # from a veto into a lean that a specific, named signal can overrule, and
+    # gives it the one way he says it can flip outright.
+    #
+    # Source is the January 2026 course, which the dated index in step460
+    # establishes is 2 years 5 months NEWER than the Boot Camp material the
+    # current veto came from (Day 49/53/54, 2023-06/07).
+    #
+    #   1. A daily/4-hour/1-hour disagreement stops standing the day down.
+    #      How To Find Daily Bias, 2026-01-14, hitting exactly that conflict:
+    #      "high time frame, what are we in? We are in an uptrend, believe it
+    #      or not, right? ... And you're probably saying, 'Oh, well, no, we
+    #      made a lower low.' Well, that is the case. We did make a lower low.
+    #      However, this low is actually coming down and it's sweeping out
+    #      this low right here. And on top of that, WE ARE YET TO BREAK
+    #      STRUCTURE TO THE DOWNSIDE." He resolves it to the higher-timeframe
+    #      trend and carries on. He does not stand down.
+    #
+    #   2. The lean YIELDS for one setup when the two indexes disagree on the
+    #      sweep and the order flow then changes against it. The capstone,
+    #      TJR's Strategy Explained, 2026-01-17, is this trade end to end:
+    #      "Even though we are in bullish market structure on the 4-hour time
+    #      frame and we're respecting bullish market structure and I probably
+    #      want these highs, what do I have to consider?" ... "even though
+    #      we're making a bearish SMT divergence, I WANT TO SEE A CHANGE IN
+    #      ORDER FLOW ... just cuz we have two legs down doesn't mean that all
+    #      of these sell orders were filled ... we need to continue to be
+    #      patient." ... "we had a bearish SMT divergence, SO THAT STRENGTHENS
+    #      MY BEARISH BIAS." ... "I did have a bullish bias today, but what
+    #      did the market do? THE MARKET PROVED ME WRONG ... We can let the
+    #      market prove us wrong and we can still make money."
+    #      The divergence is what makes it a lean rather than a deletion: a
+    #      counter-lean sweep with the two charts AGREEING is refused exactly
+    #      as it is today.
+    #
+    #   3. The lean FLIPS for the rest of the day when the higher-timeframe
+    #      gap holding the trend is closed through. 2026-01-14: "we disrespect
+    #      this fair value gap, which means to me, hey, we're probably no
+    #      longer going to be in bearish price action ... It closed above this
+    #      gap, signaling to me, hey, price wants to go higher." And the
+    #      targets move with it: "if price invalidates this gap, what then am
+    #      I going to be targeting for the day? I'm going to be targeting this
+    #      low, this low, this low, right? EVEN THOUGH MY BIAS IS BULLISH."
+    #
+    # Nothing downstream is softened. An overruled or flipped setup still owes
+    # the continuation confluence, the both-indexes-agree veto, the 1-minute
+    # trigger, the 09:50-10:30 window and the day's budget.
+    bias_revisable_intraday: bool = False
+    # The same three parts individually, so a part that costs money is visible
+    # rather than averaged into the pile — the shape step456's before/after
+    # already uses. `bias_revisable_intraday` is the whole teaching and turns
+    # on all three; these three exist to take it apart. All four ship OFF.
+    bias_holds_on_a_split_read: bool = False          # part 1
+    bias_yields_to_a_divergence: bool = False         # part 2
+    bias_flips_on_a_gap_invalidation: bool = False    # part 3
+    # WHICH higher timeframe carries part 3's gap. HIS: every worked example
+    # in the 2026-01-14 lesson is hourly or 4-hour, and the hourly is the one
+    # he names most — "on the hourly time frame, we were coming into this
+    # hourly fair value gap." Picking the hourly of the two is OURS.
+    bias_flip_gap_minutes: int = 60
+
+    # ================== step461: THE INTRADAY ENTRY CUT-OFF, AND IT SHIPS ON
+    #
+    # WALLACE'S CALL, 2026-07-26, verbatim: "man [expletive] the 10:30 cut off
+    # then, if you clearly see him trade after then the 10:30 that's probably
+    # for his fans who have emotional issues." This is the only switch in this
+    # file that ships True, and it ships True because it is his decision
+    # rather than a hypothesis of ours that has to earn its way in. The switch
+    # exists so the before/after is still measurable, not so the default can
+    # be argued with.
+    #
+    # THE EVIDENCE. step459 graded this bot against 73 dated recaps. 31 of the
+    # 51 days where he traded and we stood down carry "before 10:30" in the
+    # bot's own reason — the sequence had started and the clock ran out on it
+    # — and every one of the nine trades the bot took across ten months of
+    # recap days entered inside one 25-minute band, 09:55 to 10:20. His
+    # 2024-05-23 entry, read off his own chart, sits at roughly 12:00: "during
+    # the kick stream I couldn't find a trade, didn't see anything that I
+    # liked, BUT AFTER HOURS I WAS ABLE TO FIND STUFF THAT I LIKED." Three
+    # shorts, three winners, ninety minutes past our cut-off.
+    #
+    # THE CONTRADICTION IS INSIDE HIS OWN MATERIAL and the newer half is the
+    # cut-off, not the late trade — Time Theory 2026-01-12, "if I can't find a
+    # trade by 10:30, I'm done for the day, because that's when the market
+    # tends to slow down", repeated verbatim in the 82,772-word tutorial of
+    # 2026-05-07 and again on 2026-06-05, "By 10:30, I'm done for the freaking
+    # day." That is recorded because it is true, not because it decides this.
+    #
+    # NO REPLACEMENT HOUR IS INVENTED. Picking 11:30 or 12:30 would be us
+    # writing our own rule. The boundary becomes the one his method already
+    # implies and which this file already enforces: he is an intraday trader
+    # and he goes home flat, so entries run through the session and stop at
+    # `flat_t`, the same instant an open position is closed out. On a market
+    # with no bell there is no boundary at either end, which is what
+    # `tjr_crypto` already has.
+    #
+    # 09:30-09:50 is untouched. `manip_end_t` still bars an entry before
+    # 09:50. Only the closing boundary moves.
+    entries_run_to_the_close: bool = True
+
+    def trade_risk_share(self, derisk: bool) -> float:
+        """What ONE trade puts behind its stop, as a share of the ACCOUNT.
+
+        step465, and it is the whole of the per-trade rule. `risk_pct_per_trade`
+        is the dial; a news day or a holiday halves it, which is the same
+        halving the day-budget path spelled out as `risk_pct_derisk`.
+        """
+        pct = float(self.risk_pct_per_trade)
+        if derisk and self.news_day_halves_the_trade:
+            pct *= 0.5
+        return pct
+
+    @property
+    def lean_part1(self) -> bool:
+        return self.bias_revisable_intraday or self.bias_holds_on_a_split_read
+
+    @property
+    def lean_part2(self) -> bool:
+        return self.bias_revisable_intraday or self.bias_yields_to_a_divergence
+
+    @property
+    def lean_part3(self) -> bool:
+        return (self.bias_revisable_intraday
+                or self.bias_flips_on_a_gap_invalidation)
+
+    @classmethod
+    def newest_teaching(cls, **kw):
+        """Every step456 switch ON — the "after" half of the before/after.
+
+        Nothing else moves. The levels, the stops, the sizing, the day budget
+        and the both-indexes-agree veto are exactly what `Config()` carries;
+        step454 checked the veto specifically and it survives, because SMT and
+        the agreement gate measure different things — the gate is about the two
+        charts' 5-minute TREND STATE, SMT is about a single swing point taken
+        on one chart and not the other.
+        """
+        return cls(smt_enabled=True,
+                   smt_picks_the_instrument=True,
+                   smt_in_confirmation_menu=True,
+                   smt_in_continuation_menu_after_2b=True,
+                   extension_79_enabled=True,
+                   trigger_menu_1m_gap_inversion=True,
+                   require_fresh_5m_sweep_after_open=True,
+                   invalidate_on_close_beyond_continuation=True, **kw)
 
 
 # ------------------------------------------------------- higher timeframes
@@ -515,6 +832,255 @@ class GapBook:
         return [g for g in self.gaps if g.direction == direction]
 
 
+# ================================================ step456: SMT DIVERGENCE
+#
+# WHAT IT IS, from 115, the video he titles "$1,000,000+ From One Simple
+# Confluence" and opens by calling "the only SMT divergence video that you
+# guys will ever need":
+#
+#     "a bearish SMT divergence is formed when we are in an uptrend and one
+#      index forms a high then a LOWER high. Okay, and the other index forms a
+#      high then a HIGHER high."
+#     "It's when one index makes a low, then a lower low, and the other index
+#      makes a low, then a higher low."
+#     "it's just comparing and contrasting highs and lows between these two
+#      indexes."
+#
+# WHICH TWO INSTRUMENTS. Exactly two positively correlated ones, and he names
+# them and rejects the alternatives himself (115): "we are using the S&P 500
+# and the NASDAQ... I know that some people use EuroUSD and GBPUSD... I know
+# sometimes people use gold and silver. I haven't seen as much correlation
+# between those commodity and those currency pairs than I've seen when using
+# indexes." And flatly, in the five-hour beginner guide: "if you guys are
+# trading anything besides the S&P 500 in NASDAQ this is not going to apply to
+# you... this only applies to indexes." On crypto specifically (044):
+# "crypto sometimes you can use this with BTC and eth but I WOULDN'T
+# NECESSARILY RECOMMEND IT."
+#
+# So `smt_between` takes exactly two symbols and nothing else. A run with one
+# symbol — which is every crypto run, one pair per `run_day` call — can never
+# produce a divergence at all. That is structural, not a switch.
+#
+# WHICH SWING PAIRS GET COMPARED. Both pairs have to line up in time, and he
+# says so twice: "this high was formed at the same time that this one was, but
+# then this one forms a higher high at the same time that this lower high was
+# getting formed", and with the clock on the screen, "it's literally happening
+# at the exact same time 935 935".
+#
+# ONLY ONE SIDE AT A TIME: "When we're looking for bullish SMT, we're only
+# using the lows. And when we're looking for bearish SMT, we're only looking
+# for highs."
+#
+# WHICH ONE IS LEADING — and this is the part step454 filed as NEEDS VIDEO.
+# It is stated, mechanically, in 115 and again in SMT_Divergence_Explained:
+#     "Why is this index the leading index? Because this index is telling us
+#      the future of what this index is eventually going to do... This is the
+#      LAGGING index because it's CONTINUING the current trend that it was in."
+#     "it's the leading index in the downward move BECAUSE IT'S MAKING A LOWER
+#      HIGH... Why is it lagging? because it's continuing the uptrend."
+# Leading = the chart whose second swing BROKE the trend. Lagging = the one
+# that carried it on. That is the same comparison the divergence itself is,
+# so it costs nothing extra to compute and it is not a judgement call.
+
+
+@dataclass
+class Swing:
+    """One two-candle swing, stamped when its second candle closed."""
+    price: float
+    t: object
+    side: int                 # +1 a high, -1 a low
+    extreme_since: float      # the furthest price has gone THROUGH it since
+
+
+class SwingLog:
+    """Every two-candle swing one chart has stamped, newest last.
+
+    Separate from `TrendTracker`, which keeps only the MOST RECENT swing on
+    each side because that is all trend state and equilibrium need. A
+    divergence needs the most recent TWO, on both charts, with the times they
+    were stamped — so this keeps a short history instead.
+
+    Causal by construction: fed one CLOSED bar at a time, forward only, and a
+    swing is stamped on the second candle of its pair using that candle's own
+    wick. `extreme_since` is what lets `completion_target` skip a draw that
+    has already been taken out, which is his own refinement.
+    """
+
+    def __init__(self, minutes: int, keep: int = 40):
+        self.minutes = minutes
+        self.keep = keep
+        self.highs: list[Swing] = []
+        self.lows: list[Swing] = []
+        self.prev: Bar | None = None
+
+    def update(self, bar: Bar) -> None:
+        # Feeding the same bar twice is a no-op, so `run_day` can advance the
+        # log BEFORE the decision code runs — the divergence has to be current
+        # on the bar being decided, not one bar stale — and `on_5m` / `on_1m`
+        # can still call it for anyone driving them directly.
+        if self.prev is not None and bar.t <= self.prev.t:
+            return
+        for sw in self.highs:
+            if bar.h > sw.extreme_since:
+                sw.extreme_since = bar.h
+        for sw in self.lows:
+            if bar.l < sw.extreme_since:
+                sw.extreme_since = bar.l
+        if self.prev is not None:
+            if self.prev.c > self.prev.o and bar.c < bar.o:
+                self.highs.append(Swing(max(self.prev.h, bar.h), bar.t, +1, bar.h))
+                del self.highs[:-self.keep]
+            if self.prev.c < self.prev.o and bar.c > bar.o:
+                self.lows.append(Swing(min(self.prev.l, bar.l), bar.t, -1, bar.l))
+                del self.lows[:-self.keep]
+        self.prev = bar
+
+    def completion_target(self, direction: int, before) -> float | None:
+        """The draw the divergence is expected to push into, per 115.
+
+            "We look for the lows that are attached to the highs that are
+             formed on the SMT divergence. And in order for the SMT divergence
+             to be completed, we need to take out the lows that are attached
+             to the highs."
+            "this high has already been taken out. So it would be this high
+             right here."
+
+        So: for a BEARISH divergence the target is a LOW, for a bullish one a
+        HIGH; it is the most recent one stamped before the divergence swing,
+        stepping back past any that price has already traded through.
+
+        RECORDED, NEVER TRADED ON. It is not fed to `build_targets` — the exit
+        ladder was rebuilt in step453 and nothing here touches it.
+        """
+        pool = self.lows if direction < 0 else self.highs
+        for sw in reversed(pool):
+            if before is not None and sw.t > before:
+                continue
+            taken = (sw.extreme_since < sw.price if direction < 0
+                     else sw.extreme_since > sw.price)
+            if not taken:
+                return sw.price
+        return None
+
+
+@dataclass
+class Smt:
+    """One divergence between the two charts, as it stands right now."""
+    direction: int        # -1 bearish (compares highs), +1 bullish (compares lows)
+    leading: str          # the chart that already turned — the one he trades
+    lagging: str          # the chart still pushing — watched, never traded
+    formed_at: object     # when the NEWER pair of swings was stamped
+    minutes: int          # which chart it was read on
+    leading_prev: float
+    leading_now: float
+    lagging_prev: float
+    lagging_now: float
+    completion: float | None = None
+
+    def describe(self) -> str:
+        word = "bearish" if self.direction < 0 else "bullish"
+        return (f"a {self.minutes}-minute {word} SMT divergence — "
+                f"{self.leading} led and {self.lagging} lagged")
+
+
+def smt_between(a_sym: str, a_log: SwingLog, b_sym: str, b_log: SwingLog,
+                alignment_bars: int, minutes: int) -> Smt | None:
+    """The divergence between two correlated charts, or None.
+
+    Both charts' most recent TWO swings on the side being tested must have
+    been stamped at the same time as each other, within `alignment_bars`.
+    Then exactly one of them must have broken its trend: a lower high while
+    the other made a higher high (bearish), or a higher low while the other
+    made a lower low (bullish). If both did the same thing there is no
+    divergence — the two charts agree, which is the ordinary case.
+
+    Reads nothing but already-stamped swings, so it is as causal as the logs
+    that feed it.
+    """
+    if a_log is None or b_log is None:
+        return None
+    tol = pd.Timedelta(minutes=max(0, alignment_bars) * minutes)
+    for direction in (-1, +1):
+        A = a_log.highs if direction < 0 else a_log.lows
+        B = b_log.highs if direction < 0 else b_log.lows
+        if len(A) < 2 or len(B) < 2:
+            continue
+        a2, a1, b2, b1 = A[-1], A[-2], B[-1], B[-2]
+        if abs(a2.t - b2.t) > tol or abs(a1.t - b1.t) > tol:
+            continue
+        if direction < 0:                       # comparing highs
+            a_broke = a2.price < a1.price       # a lower high breaks an uptrend
+            b_broke = b2.price < b1.price
+        else:                                   # comparing lows
+            a_broke = a2.price > a1.price       # a higher low breaks a downtrend
+            b_broke = b2.price > b1.price
+        if a_broke == b_broke:
+            continue
+        if a_broke:
+            lead_sym, lead_log, lead2, lead1 = a_sym, a_log, a2, a1
+            lag_sym, lag2, lag1 = b_sym, b2, b1
+        else:
+            lead_sym, lead_log, lead2, lead1 = b_sym, b_log, b2, b1
+            lag_sym, lag2, lag1 = a_sym, a2, a1
+        return Smt(direction=direction, leading=lead_sym, lagging=lag_sym,
+                   formed_at=max(a2.t, b2.t), minutes=minutes,
+                   leading_prev=lead1.price, leading_now=lead2.price,
+                   lagging_prev=lag1.price, lagging_now=lag2.price,
+                   completion=lead_log.completion_target(direction, lead2.t))
+    return None
+
+
+# ============================================ step456: THE 79% EXTENSION
+def extension_79_level(origin: float, extreme: float, trade_dir: int,
+                       ratio: float = 0.79) -> float | None:
+    """The level a candle has to CLOSE past for the fourth confirmation.
+
+    HOW IT IS DRAWN, 099, on the bearish case: "we take it from the LOW UP TO
+    THE HIGH and we just wait for a candlestick closure UNDERNEATH the 79%
+    extension." And the bullish mirror, same video: "Take it from this HIGH
+    DOWN TO THIS LOW. Did we close ABOVE the 79% extension?"
+
+    WHICH TOOL, and this is what fixes the arithmetic. 082: "you pretty much
+    draw it just like a regular Fibonacci. So you take it from the high down
+    to the low AS IF YOU GUYS ARE DRAWING A EQUILIBRIUM." 066: "all we do is we
+    draw it out JUST LIKE WE WERE TO DRAW OUT EQUILIBRIUM." Equilibrium is the
+    50% of that same leg, so the 79% is 79% of the same leg — a deep
+    retracement INSIDE it, not a projection past either end. He calls the
+    triggering candle "such a DEEP close" (099), and with price near the top
+    of an up-leg he says the level is a long way off: "Still pretty far from
+    the 79% extension. I think we can move higher" (110). Both only make sense
+    inside the leg.
+
+    So the level sits 79% of the way back from `extreme` toward `origin`,
+    which is 21% of the leg away from `origin`.
+
+    `origin`  where the leg started — the low of an up-leg, the high of a down-leg
+    `extreme` where it ended — the swept high, or the swept low
+    `trade_dir` -1 short (leg ran up, we want a close down through the level)
+
+    NOT AN INVENTED PRICE and not a multiple of anything risked: it is a
+    fraction of a leg both of whose ends are chart prices.
+    """
+    if origin is None or extreme is None or trade_dir == 0:
+        return None
+    span = abs(extreme - origin)
+    if span <= 0:
+        return None
+    return float(extreme) + trade_dir * float(ratio) * span
+
+
+def closed_past_79(bar: Bar, level: float | None, trade_dir: int) -> bool:
+    """A candle BODY CLOSE past the level. A wick is not enough, and he is
+    unusually explicit about it, 080: "We POKED underneath the 79% extension.
+    I would love to see NASDAQ CLOSE underneath that... I want to see it FULLY
+    CLOSE underneath here." And 106: "we need this to close underneath the 79%
+    extension or else we're going to have to wait another freaking five
+    minutes... we didn't close underneath the 79% extension." """
+    if level is None or trade_dir == 0:
+        return False
+    return (bar.c < level) if trade_dir < 0 else (bar.c > level)
+
+
 # ------------------------------------------------------------ the levels
 # Higher time frames hold higher power, so when two levels are taken on the
 # same bar the higher-ranked one is the setup.
@@ -689,6 +1255,30 @@ def time_to_be_flat(t, inst: Instrument) -> bool:
     return inst.flat_t is not None and t.time() >= inst.flat_t
 
 
+def entry_window_closed(t, inst: Instrument, cfg=None) -> bool:
+    """Is it too late to LOOK for a new entry?
+
+    Two answers, and which one applies is `entries_run_to_the_close`. With it
+    off — his stated 10:30, the rule this bot ran until step461. With it on,
+    which is the shipped default and Wallace's call, the boundary is the same
+    one that closes an open position: he is intraday and he goes home flat.
+    Nothing between the two is invented.
+
+    A market with no bell has neither time and is bounded at neither end.
+    """
+    if cfg is not None and cfg.entries_run_to_the_close:
+        return time_to_be_flat(t, inst)
+    return past_cutoff(t, inst)
+
+
+def entry_window_label(inst: Instrument, cfg=None) -> str:
+    """How the stand-down reasons say when the looking stopped, so a reason
+    string never claims a boundary the run was not actually using."""
+    end = (inst.flat_t if cfg is not None and cfg.entries_run_to_the_close
+           else inst.cutoff_t)
+    return f"before {end:%H:%M}" if end is not None else "all session"
+
+
 def classify_regime(daily: pd.DataFrame, daily_dir: int, cfg) -> str:
     """Which regime the day opened in, from CLOSED daily bars only.
 
@@ -734,6 +1324,16 @@ class DayContext:
     # levels taken between 08:30 and 09:30, as (level, furthest price reached)
     premarket_swept: list = field(default_factory=list)
     stand_down: str | None = None
+    # step461: with `bias_revisable_intraday` on, `bias_dir` is no longer
+    # fixed for the session, so what it was AT THE BELL is kept beside it and
+    # every revision writes a line saying what moved it and why.
+    bias_open_dir: int = 0
+    bias_notes: list = field(default_factory=list)
+    # The higher-timeframe gap book and trend the flip test reads, carried
+    # across the bell so the session keeps asking the same question of the
+    # same gaps that build_context was asking before it.
+    flip_gaps: object = None
+    flip_trend: object = None
 
 
 def london_profile(d5: pd.DataFrame, day: pd.Timestamp,
@@ -818,18 +1418,85 @@ def build_context(symbol: str, d5_hist: pd.DataFrame, day: pd.Timestamp,
             with_daily = [tf for tf, d in (("4-hour", ctx.h4_dir),
                                            ("1-hour", ctx.h1_dir))
                           if d == ctx.daily_dir]
-            if not with_daily:
+            if not with_daily and not cfg.lean_part1:
                 ctx.stand_down = ("the daily stands alone — the 4-hour and the "
                                   "1-hour are both against it")
                 return ctx
+            if not with_daily:
+                # step461 PART 1. The 2023 course sends this day to the bottom
+                # of the list. The 2026-01-14 lesson hits exactly this conflict
+                # and resolves it instead: "high time frame, what are we in? We
+                # are in an uptrend, believe it or not, right? ... And you're
+                # probably saying, 'Oh, well, no, we made a lower low.' Well,
+                # that is the case. We did make a lower low. However, this low
+                # is actually coming down and it's sweeping out this low right
+                # here. And on top of that, WE ARE YET TO BREAK STRUCTURE TO
+                # THE DOWNSIDE." A lower low that swept a low is a liquidity
+                # event, not a trend change, and the high-timeframe read
+                # stands. 7 of the 22 bias stand-downs in step459 are this day.
+                ctx.bias_notes.append(
+                    "the 4-hour and the 1-hour are both against the daily; "
+                    "2026-01-14 resolves that to the high-timeframe trend "
+                    "rather than standing the day down")
         else:
-            if ctx.h4_dir == 0:
+            if ctx.h4_dir == 0 and not cfg.lean_part1:
                 ctx.stand_down = "the 4-hour direction is not yet established"
                 return ctx
-            if ctx.daily_dir != ctx.h4_dir:
+            if ctx.daily_dir != ctx.h4_dir and not cfg.lean_part1:
                 ctx.stand_down = "the daily and the 4-hour disagree"
                 return ctx
     ctx.bias_dir = ctx.daily_dir      # the daily wins when they conflict
+    ctx.bias_open_dir = ctx.bias_dir
+
+    # -- step461 PART 3: the higher-timeframe gap the trend has to respect -
+    #
+    # 2026-01-14, marking it: "on the hourly time frame, we were coming into
+    # this hourly fair value gap. So, awesome. If this is going to continue
+    # being a downtrend, I am going to safely assume — or WE NEED TO SEE PRICE
+    # COME INTO THIS FAIR VALUE GAP AND RESPECT IT."
+    #
+    # and reading the answer, on the same chart, before the bell: "we
+    # disrespect this fair value gap, which means to me, hey, we're probably
+    # no longer going to be in bearish price action. Because if we were going
+    # to be in bearish price action, we would have respected this gap and we
+    # would have continued lower ... IT CLOSED ABOVE THIS GAP, SIGNALLING TO
+    # ME, HEY, PRICE WANTS TO GO HIGHER."
+    #
+    # WHICH gap of a stack is his too, said twice. 2026-01-14: "just because
+    # we close underneath this gap doesn't mean that this entire uptrend is
+    # invalidated because we have another gap right here ... for this entire
+    # trend to get invalidated, we would have to invalidate this gap down
+    # here." Capstone 2026-01-17: "we actually disrespect this gap. However,
+    # there's one gap underneath it, so it's not a full-fledged disrespect of
+    # the bullish order flow that we're in." `GapBook` already answers exactly
+    # that question — only the bottom gap of a bullish stack, or the top gap
+    # of a bearish one, returns an inversion.
+    #
+    # HOW FAR BACK an invalidation still counts is HIS DAY BOUNDARY, not a
+    # number of ours: 2026-01-08, "the daily candle closed right here at 1700
+    # and then the new day candle opened up here at 1800." Only a disrespect
+    # inside the current trading day speaks to today's bias, and his own
+    # worked example is exactly that — a pre-market one.
+    if cfg.lean_part3 and ctx.bias_dir:
+        gh = GapBook(cfg.bias_flip_gap_minutes, cfg.gap_max_age_bars)
+        th = TrendTracker()
+        since = (day - pd.Timedelta(days=1)
+                 + pd.Timedelta(hours=inst.day_boundary_hour))
+        for r in completed_before(
+                resample_tf(d_lev, cfg.bias_flip_gap_minutes,
+                            inst.candle_anchor_hour), open_t).itertuples():
+            b = Bar(r.t, r.open, r.high, r.low, r.close)
+            inv = gh.update(b)
+            bos = th.update(b)
+            if bos:
+                gh.on_break_of_structure(bos, th.last_bos_level)
+            if inv and inv == -ctx.bias_dir and r.t >= since:
+                ctx.bias_dir = inv
+                ctx.bias_notes.append(
+                    f"{r.t:%H:%M} the {cfg.bias_flip_gap_minutes}-minute gap "
+                    f"holding the trend was closed through — the lean flips "
+                    f"to {'long' if inv > 0 else 'short'}")
+        ctx.flip_gaps, ctx.flip_trend = gh, th
 
     # -- mark the levels --------------------------------------------------
     levels = list(session_levels(d_lev, day, inst))
@@ -917,6 +1584,18 @@ class SeqState:
     pullback_kind: str | None = None
     pullback_at: object = None
     counter_bos: bool = False
+    # step456: WHICH of 112's four 1-minute confluences actually fired. Before
+    # this round there was only ever one of them, so it was not worth
+    # recording; with the menu open it is the difference between two trades
+    # that look identical in the log.
+    trigger_kind: str | None = None
+    # step461: this setup runs AGAINST the day's lean. It is held to a
+    # stricter confirmation than a with-the-lean setup — see
+    # `_overrule_refused` — and `overrule_kind` records what bought it the
+    # exemption, which on his own worked example is the divergence between
+    # the two indexes.
+    against_bias: bool = False
+    overrule_kind: str | None = None
 
 
 @dataclass
@@ -950,6 +1629,20 @@ class Trade:
     budget_share: float = 1.0
     second_setup_expected: bool = False
     size_basis: str = ""
+    # step456: which of 112's four 1-minute confluences fired, whether a
+    # divergence was doing anything at the time and what job it was doing, and
+    # the draw that divergence would be completed by (115). All three are
+    # RECORDED ONLY — none of them reaches a size, a stop or a target.
+    trigger_kind: str = ""
+    smt: str = ""
+    smt_role: str = ""
+    smt_completion: float = float("nan")
+    # step461: what the day's lean was at the bell, what it is now, whether
+    # this trade ran against it and what bought the exemption. RECORDED ONLY.
+    bias_at_open: int = 0
+    bias_now: int = 0
+    against_bias: bool = False
+    overrule_kind: str = ""
     # the exact inputs the size was worked out from, kept so the live path
     # can be asked for a size on the same inputs and be held to the same
     # answer. See test_the_replay_and_the_live_path_size_identically.
@@ -1001,27 +1694,88 @@ class SymbolDay:
         self.d5_hist = d5_hist
         self.last_bos1 = 0          # the 1-minute's most recent break, if any
 
+        # ------------------------------------------------ step456 state
+        # The divergence read across BOTH charts, handed in from `run_day`
+        # once per closed bar — the same shape as `check_index_gate`, because
+        # it is the same kind of thing: something one chart cannot know on its
+        # own. Never computed in here.
+        self.smt5: Smt | None = None
+        self.smt1: Smt | None = None
+        self.smt_used: str | None = None    # what an SMT actually did, for the note
+        # 112's step 2B: a sweep that happened before the bell still needs a
+        # fresh 5-minute one after it. Set below, once the carve-out is known.
+        self.needs_2b = False
+        self.saw_2b = False
+
+        # ------------------------------------------------ step461 state
+        # The part of the higher-timeframe candle that had already printed
+        # when the bell went, so the candle this session completes is the
+        # whole candle and not just its post-open half.
+        self._htf_key = None
+        self._htf_buf: list[Bar] = []
+        for line in self.ctx.bias_notes:
+            self.notes.append(line)
+
         open_t = session_start(day, cfg.instrument)
         # warm the 5-minute trend and gap book on bars that had ALL closed
         # before the open. Nothing after 09:30 is touched in here.
         self.t5 = TrendTracker()
         self.g5 = GapBook(cfg.instrument.working_minutes, cfg.gap_max_age_bars)
+        # step456: only built when something is going to read it, so a run
+        # with every switch off does not merely ignore the new machinery, it
+        # never runs it. Same for `sw1` and `g1` below.
+        # step461 needs the same cross-chart read for its own, narrower job —
+        # deciding whether the two indexes diverged on a sweep that runs
+        # against the day's lean — so the log is built for it too. Nothing
+        # else changes: every step456 consumer of a divergence goes through
+        # `smt_live`, which is hard-gated on `smt_enabled` and returns False
+        # while that is off. Merely computing it cannot move a trade.
+        self.sw5 = (SwingLog(cfg.instrument.working_minutes)
+                    if (cfg.smt_enabled or cfg.lean_part2) else None)
         warm5 = d5_hist[(d5_hist["t"] >= day - pd.Timedelta(days=cfg.seed_days)) &
                         (d5_hist["t"] < open_t)]
         for r in warm5.itertuples():
             b = Bar(r.t, r.open, r.high, r.low, r.close)
             bos = self.t5.update(b)
             self.g5.update(b)
+            if self.sw5 is not None:
+                self.sw5.update(b)
             if bos:
                 self.g5.on_break_of_structure(bos, self.t5.last_bos_level)
+
+        # step461 part 3: `build_context` consumed every higher-timeframe
+        # candle that had CLOSED before the bell. The one still forming at the
+        # bell is picked up here from the same pre-market bars, so that when
+        # it closes during the session it closes as the whole candle.
+        if self.ctx.flip_gaps is not None:
+            m = cfg.bias_flip_gap_minutes
+            off = pd.Timedelta(hours=cfg.instrument.candle_anchor_hour)
+            key = (open_t - off).floor(f"{m}min") + off
+            self._htf_key = key
+            self._htf_buf = [Bar(r.t, r.open, r.high, r.low, r.close)
+                             for r in warm5[warm5["t"] >= key].itertuples()]
 
         # the 1-minute tracker starts in pre-market: that price action counts
         # even though an order can never be placed in it
         self.t1 = TrendTracker()
+        self.sw1 = SwingLog(cfg.instrument.trigger_minutes) if cfg.smt_enabled else None
+        # step456: the 1-minute inverse fair value gap. 112 puts it on the
+        # 1-minute trigger menu — "the same exact confirmation confluence that
+        # we had had before" — and we had never computed a gap on the trigger
+        # chart at all.
+        self.g1 = (GapBook(cfg.instrument.trigger_minutes, cfg.gap_max_age_bars)
+                   if cfg.trigger_menu_1m_gap_inversion else None)
         warm1 = d1_hist[(d1_hist["t"] >= open_t - pd.Timedelta(hours=1, minutes=30)) &
                         (d1_hist["t"] < open_t)]
         for r in warm1.itertuples():
-            self.t1.update(Bar(r.t, r.open, r.high, r.low, r.close))
+            b = Bar(r.t, r.open, r.high, r.low, r.close)
+            bos1 = self.t1.update(b)
+            if self.sw1 is not None:
+                self.sw1.update(b)
+            if self.g1 is not None:
+                self.g1.update(b)
+                if bos1:
+                    self.g1.on_break_of_structure(bos1, self.t1.last_bos_level)
 
         # THE PRE-MARKET CARVE-OUT, his step 7 (step431 12.2), decided here
         # because it needs the 5-minute trend as it stood at the bell and
@@ -1062,6 +1816,111 @@ class SymbolDay:
                     f"{lv.price:.2f} and the 5-minute already turned against "
                     f"it — that is the day's sweep")
 
+        # 112 STEP 2B, and it applies to exactly this case: steps 1 and 2 were
+        # checked off before the bell, so a fresh 5-minute manipulation after
+        # the open is still owed. "if we get an hourly sweep and then a change
+        # in direction before New York market opens, that's great. Step one
+        # and step two have been checked off. But if that happens, we have to
+        # wait for a low time frame manipulation on the 5minut time frame when
+        # New York market opens."
+        self.needs_2b = bool(self.premarket_setup
+                             and cfg.require_fresh_5m_sweep_after_open)
+
+    # ------------------------------------------------------ step456: SMT
+    def smt_for(self, minutes: int) -> Smt | None:
+        return self.smt5 if minutes != self.cfg.instrument.trigger_minutes \
+            else self.smt1
+
+    def smt_live(self, smt: Smt | None) -> bool:
+        """Is this divergence one he would be counting RIGHT NOW?
+
+        Three gates, all his, and none of them is an entry decision:
+
+        1. IT HAS TO POINT THE WAY THE DAY'S BIAS POINTS. 044: "let's say our
+           daily bias is bullish but we see a bearish smt Divergence are we
+           going to want to take that? NO because our overall bias is bullish."
+           And in the nine-hour guide: "find your bias because if you don't
+           have a bias, then you'll be finding SMT divergences that are
+           conflicting."
+        2. IT HAS TO SIT ON A SWEEP. SMT_Divergence_Explained: "It's
+           specifically going to be useful when we are actively sweeping out
+           draws and liquidity... OUTSIDE of sweeping out draws and liquidity,
+           THESE THINGS WILL SHOW UP ALL THE TIME AND WILL BE PRETTY MUCH LIKE
+           USELESS TO US." So the sequence has to have registered a sweep, and
+           the divergence has to have formed no earlier than that sweep, give
+           or take the same alignment tolerance the pairing itself uses.
+        3. IT HAS TO POINT THE WAY THIS SETUP IS FACING.
+        """
+        cfg, s = self.cfg, self.seq
+        if smt is None or not cfg.smt_enabled:
+            return False
+        if self.ctx.bias_dir and smt.direction != self.ctx.bias_dir:
+            return False
+        if s.stage == "waiting_for_sweep" or s.swept_at is None or s.trade_dir == 0:
+            return False
+        if smt.direction != s.trade_dir:
+            return False
+        tol = pd.Timedelta(minutes=max(0, cfg.smt_alignment_bars) * smt.minutes)
+        return smt.formed_at >= s.swept_at - tol
+
+    def smt_forbids_this_chart(self) -> str | None:
+        """His instrument chooser, and it is the whole of what 120 says SMT is
+        for beyond strengthening a bias: "me personally I use it to determine
+        WHAT INDEX I SHOULD TAKE THE TRADE OFF OF."
+
+        100, dating his own reversal: "That's why we always take the LEADING
+        index. BEFORE I USED TO TAKE THE LAGGING INDEX, but I changed that
+        around like when was that like two and a half to three months ago."
+        112, live: "we don't want to be trading on NASDAQ because NASDAQ is
+        the lagging index." 120, coaching: "I would much rather you take the
+        trade on ES just because it's the more bearish index. This is the
+        leading index on the bearish side." 103 is the counter-example, and he
+        names it as the mistake: "we kind of should have taken the trade on
+        ES. I was just panicking a little bit."
+
+        Returns a sentence when this chart is the LAGGING one, else None. It
+        can only ever refuse; it never opens anything.
+
+        THE LAGGING CHART IS STILL WATCHED, it is simply not traded — 101: "I
+        wasn't willing to take the trade entry because ES was still down here
+        and didn't give us confirmation to the upside yet." That watching is
+        `enforce_index_agreement`, which step454 checked and which stays on;
+        the two tests measure different things and neither replaces the other.
+        """
+        if not self.cfg.smt_picks_the_instrument:
+            return None
+        for smt in (self.smt5, self.smt1):
+            if not self.smt_live(smt):
+                continue
+            if smt.lagging == self.symbol:
+                return (f"{smt.describe()} — this is the lagging chart and he "
+                        f"takes the trade on the leading one")
+        return None
+
+    def _ext79_5m(self) -> float | None:
+        """The 79% of the leg that made the sweep. `leg_origin` is where that
+        leg started and `sweep_extreme` is how far it ran, which is exactly
+        his "from these lows up to these highs" (110) — and it moves as the
+        sweep extends, which is why he re-reads it live: "Still pretty far
+        from the 79% extension. I think we can move higher." """
+        s = self.seq
+        return extension_79_level(s.leg_origin, s.sweep_extreme, s.trade_dir,
+                                  self.cfg.extension_79_ratio)
+
+    def _ext79_1m(self) -> float | None:
+        """The 79% on the trigger chart. Anchored on the 1-minute's own two
+        most recent swings — the same two points its equilibrium uses — which
+        is his instruction twice over: "draw it out just like we were to draw
+        out equilibrium" (066), "as if you guys are drawing a equilibrium"
+        (082)."""
+        s, t = self.seq, self.t1
+        if t.mrh is None or t.mrl is None or s.trade_dir == 0:
+            return None
+        extreme = t.mrh if s.trade_dir < 0 else t.mrl
+        origin = t.mrl if s.trade_dir < 0 else t.mrh
+        return extension_79_level(origin, extreme, s.trade_dir,
+                                  self.cfg.extension_79_ratio)
+
     def _pool(self):
         """A continuation day still needs a smaller-timeframe push-through,
         and so does a day whose marked level was already taken pre-market."""
@@ -1092,11 +1951,139 @@ class SymbolDay:
             return trade_dir == self.ctx.continuation_dir
         return True
 
+    # ------------------------------------------- step461: the lean can yield
+    def _lean_may_yield(self, trade_dir: int) -> bool:
+        """May a sequence even START against the day's lean?
+
+        Only when the switch is on, and only when it is the LEAN that refused.
+        `_direction_allowed` refuses on two separate grounds and step461
+        touches exactly one of them: a continuation day still only trades the
+        way London turned, because that direction comes from the session
+        profile rather than from the bias, and nothing in the January course
+        speaks to it.
+
+        Starting is not permission. The setup is marked `against_bias`, it is
+        outranked by any with-the-lean setup on the same bar, and it still has
+        to clear `_overrule_refused` before it can confirm.
+        """
+        if not self.cfg.lean_part2:
+            return False
+        if not (self.cfg.enforce_daily_bias_side and self.ctx.bias_dir
+                and trade_dir != self.ctx.bias_dir):
+            return False
+        if (self.ctx.profile == "manipulation_reversal"
+                and trade_dir != self.ctx.continuation_dir):
+            return False
+        return True
+
+    # The change in order flow he will accept against his own bias, and there
+    # are two of them. Capstone 2026-01-17: "the change in order flow or the
+    # change in structure could have been seen in two ways, EITHER VIA BREAK
+    # OF STRUCTURE OR AN INVERSE FAIR VALUE GAP." The third string is our own
+    # re-anchored break of structure from step457 — the same test measured off
+    # the line he draws fresh after a sweep, which is why it is included; that
+    # reading is OURS, NOT HIS, and if it is wrong the effect is that this
+    # path accepts slightly more than he named.
+    _OVERRULE_CONFIRMATIONS = (
+        "5-minute break of structure",
+        "5-minute gap inversion",
+        "5-minute close back through the price the sweep leg started from",
+    )
+
+    def _overrule_refused(self) -> str | None:
+        """A setup running against the lean has just produced a confirmation.
+        Does the lean yield to it? A sentence if not, None if it does.
+
+        HIS SEQUENCE, in his order, from the capstone — the trade he takes
+        against his own stated bullish bias:
+
+        1. The draw the bias was pointing AT gets swept. "we just pushed up
+           above this Friday's high." That is automatic here: the only level
+           whose sweep produces a counter-lean trade is one sitting on the
+           lean's own side.
+        2. THE TWO INDEXES DISAGREE ON IT. "we might be potentially sweeping
+           out these orders right here, missing these orders right here, and
+           forming an SMT divergence" ... "we had a bearish SMT divergence, SO
+           THAT STRENGTHENS MY BEARISH BIAS." This is the whole difference
+           between a lean and no lean at all: a counter-lean sweep on which
+           the two charts AGREE is refused here exactly as it is refused
+           today. He also requires a divergence to sit on a sweep at all —
+           2026-01-11, "outside of sweeping out draws and liquidity, these
+           things will show up all the time and will be pretty much like
+           useless to us" — which is the timing test below.
+        3. HE REFUSES TO ACT ON THE SWEEP ALONE. "even though we're making a
+           bearish SMT divergence, I WANT TO SEE A CHANGE IN ORDER FLOW. Okay?
+           I want to see a change in structure because it's one thing for us to
+           again sweep out have the orders the potential to get orders filled,
+           but just cuz we have two legs down doesn't mean that all of these
+           sell orders were filled for us to reverse this ... So, right now we
+           could just be retracing to move higher to target these highs, right?
+           So, WE NEED TO CONTINUE TO BE PATIENT."
+
+        Everything after this point is untouched: the continuation confluence,
+        the both-indexes-agree veto, the 1-minute trigger, 09:50-10:30 and the
+        day's budget all still have to be satisfied.
+        """
+        s, cfg = self.seq, self.cfg
+        kind = str(s.confirm_kind or "")
+        if kind not in self._OVERRULE_CONFIRMATIONS:
+            return (f"the day's lean was the other way and the change in order "
+                    f"flow was {kind} — against his own bias he names only a "
+                    f"break of structure or an inverse fair value gap")
+        smt = self.smt5
+        tol = pd.Timedelta(minutes=max(0, cfg.smt_alignment_bars)
+                           * cfg.instrument.working_minutes)
+        if not (smt is not None and smt.direction == s.trade_dir
+                and s.swept_at is not None
+                and smt.formed_at >= s.swept_at - tol):
+            return ("the day's lean was the other way and the two indexes did "
+                    "not diverge on the sweep — the lean holds")
+        s.overrule_kind = smt.describe()
+        return None
+
+    def _roll_higher_timeframe(self, bar: Bar) -> None:
+        """step461 part 3, live. Roll closed working-chart bars up into the
+        higher-timeframe candle the flip test watches, and read that candle
+        the instant it CLOSES and not a moment before. Same gap book and same
+        trend `build_context` was feeding before the bell, so the stack it is
+        reasoning about is continuous across the open."""
+        cfg = self.cfg
+        m = cfg.bias_flip_gap_minutes
+        off = pd.Timedelta(hours=cfg.instrument.candle_anchor_hour)
+        key = (bar.t - off).floor(f"{m}min") + off
+        if self._htf_key is None or key != self._htf_key:
+            self._htf_key, self._htf_buf = key, []
+        self._htf_buf.append(bar)
+        if (bar.t + pd.Timedelta(minutes=cfg.instrument.working_minutes)
+                < key + pd.Timedelta(minutes=m)):
+            return                       # the candle has not closed yet
+        buf, self._htf_buf, self._htf_key = self._htf_buf, [], None
+        hb = Bar(key, buf[0].o, max(b.h for b in buf), min(b.l for b in buf),
+                 buf[-1].c)
+        inv = self.ctx.flip_gaps.update(hb)
+        bos = self.ctx.flip_trend.update(hb)
+        if bos:
+            self.ctx.flip_gaps.on_break_of_structure(
+                bos, self.ctx.flip_trend.last_bos_level)
+        if inv and self.ctx.bias_dir and inv == -self.ctx.bias_dir:
+            self.ctx.bias_dir = inv
+            self.notes.append(
+                f"{key + pd.Timedelta(minutes=m):%H:%M} the {m}-minute gap "
+                f"holding the trend was closed through — the lean flips to "
+                f"{'long' if inv > 0 else 'short'}")
+
     def on_5m(self, bar: Bar) -> None:
         bos = self.t5.update(bar)
         inv = self.g5.update(bar)
+        if self.sw5 is not None:
+            self.sw5.update(bar)        # a no-op if run_day already fed it
         if bos:
             self.g5.on_break_of_structure(bos, self.t5.last_bos_level)
+        # step461 part 3: this bar may complete a higher-timeframe candle, and
+        # if that candle closed through the gap holding the trend the lean has
+        # already flipped by the time the sweep test below reads it.
+        if self.ctx.flip_gaps is not None:
+            self._roll_higher_timeframe(bar)
         s, t = self.seq, bar.t
 
         if s.stage == "waiting_for_sweep":
@@ -1108,20 +2095,32 @@ class SymbolDay:
                     d = lv.price - bar.l
                 else:
                     continue
+                against = False
                 if not self._direction_allowed(-lv.side):
-                    self.blocked_by_direction = True
-                    self.notes.append(
-                        f"{t:%H:%M} a {lv.tf} level was pushed through, but a "
-                        f"trade off it would run against the day's bias")
-                    continue
+                    # step461 part 2: the lean may yield, but only to a setup
+                    # that goes on to earn it. Everything about this branch is
+                    # unreachable with the switch off.
+                    if not self._lean_may_yield(-lv.side):
+                        self.blocked_by_direction = True
+                        self.notes.append(
+                            f"{t:%H:%M} a {lv.tf} level was pushed through, but a "
+                            f"trade off it would run against the day's bias")
+                        continue
+                    against = True
                 # higher time frames hold higher power: when several levels
                 # are taken on one bar, the highest-timeframe one is the
-                # setup and the 15-minute pool only fills in behind it
+                # setup and the 15-minute pool only fills in behind it.
+                # step461 puts one test in front of that one: a setup running
+                # WITH the lean outranks one running against it whatever the
+                # timeframe, so the lean keeps first refusal on the single
+                # sequence slot. With the switch off `against` is always False
+                # and the key orders exactly as the old (rank, d) pair did.
                 rank = LEVEL_RANK.get(lv.tf, 0)
-                if best is None or (rank, d) > (LEVEL_RANK.get(best[0].tf, 0), best[1]):
-                    best = (lv, d)
+                key = (0 if against else 1, rank, d)
+                if best is None or key > best[0]:
+                    best = (key, lv, d, against)
             if best:
-                lv = best[0]
+                lv, s.against_bias = best[1], best[3]
                 s.stage, s.level, s.trade_dir = "swept", lv, -lv.side
                 s.sweep_extreme = bar.h if lv.side > 0 else bar.l
                 # and the OTHER end of the same leg — the high price made
@@ -1137,6 +2136,9 @@ class SymbolDay:
                     s.leg_origin = min(bar.l, self.t5.mrl if self.t5.mrl
                                        is not None else bar.l)
                 s.swept_at, s.sweep_age = t, 0
+                # a fresh setup starts with no divergence having done anything
+                # yet: `smt_used` describes THIS setup, not the day
+                self.smt_used = None
             return
 
         if s.stage == "swept":
@@ -1175,6 +2177,38 @@ class SymbolDay:
                                   "sweep leg started from")
             elif inv == s.trade_dir:
                 s.confirm_kind = "5-minute gap inversion"
+            # ---- step456: the other two thirds of 112's step-2 menu -------
+            # "this comes in the form of break of structure inverse for value
+            # gap, a 79% extension closure, and a 5minute SMT divergence" —
+            # and it is an OR: "we don't need every single one of these to
+            # happen. We just need one because each one of these confluences
+            # signifies the same thing that we swept liquidity."
+            #
+            # They are tested LAST so that on a bar where an old route and a
+            # new one both fire, the old label wins and a run with the
+            # switches off is untouched. The 79% level always sits between the
+            # sweep extreme and the leg origin, so any bar that closes through
+            # the leg origin has closed through the 79% too — on the same bar
+            # the older, deeper route is the honest description.
+            elif self.cfg.extension_79_enabled and closed_past_79(
+                    bar, self._ext79_5m(), s.trade_dir):
+                s.confirm_kind = "5-minute close beyond the 79% extension"
+            elif (self.cfg.smt_in_confirmation_menu
+                  and self.smt_live(self.smt5)):
+                s.confirm_kind = self.smt5.describe()
+                self.smt_used = "confirmation"
+            if s.confirm_kind and s.against_bias:
+                # step461 part 2: the change in order flow has arrived and the
+                # lean is the other way. This is the moment his capstone is
+                # deciding at, and the moment the lean either yields or holds.
+                why = self._overrule_refused()
+                if why:
+                    self.notes.append(f"{t:%H:%M} {why}")
+                    self.seq = SeqState()
+                    return
+                self.notes.append(
+                    f"{t:%H:%M} {s.overrule_kind} — the lean was the other way "
+                    f"and the market proved it wrong; the trade stands")
             if s.confirm_kind:
                 s.stage, s.confirmed_at = "confirmed", t
             return
@@ -1183,6 +2217,51 @@ class SymbolDay:
             self.notes.append(f"{t:%H:%M} the 5-minute turned back against the trade")
             self.seq = SeqState()
             return
+
+        # ---- step456: 112's step 2B ------------------------------------
+        # Steps 1 and 2 were checked off before the bell, so a fresh 5-minute
+        # manipulation is still owed. His reason: "when New York market opens,
+        # NEW MONEY is coming into the market. And when new money comes into
+        # the market, there's ALMOST ALWAYS going to be some form of
+        # manipulation." What satisfies it is another marked level being
+        # pushed through — the same test step 1 uses, one timeframe down,
+        # which is what the 15-minute continuation pool already is. And it
+        # only applies to the pre-market carve-out: "the only time that we use
+        # 2B is if the high time frame form of manipulation happens BEFORE
+        # market opens."
+        if self.needs_2b and s.stage in ("confirmed", "pullback"):
+            took = None
+            for lv in self._pool():
+                if (lv.side > 0 and bar.h > lv.price) or \
+                        (lv.side < 0 and bar.l < lv.price):
+                    took = lv
+                    break
+            if took is None:
+                return
+            self.needs_2b, self.saw_2b = False, True
+            self.notes.append(
+                f"{t:%H:%M} step 2B: the day's sweep was a pre-market one, and "
+                f"the {took.tf} level at {took.price:.2f} is the fresh "
+                f"5-minute manipulation the open owed it")
+            return
+
+        if s.stage == "pullback" and self.cfg.invalidate_on_close_beyond_continuation:
+            # 112, walking a worked example: "Price comes into equilibrium.
+            # Okay, we're looking for a break of structure to the downside.
+            # Oh, wait. It's going higher. It's going higher and we CLOSE
+            # ABOVE EQUILIBRIUM. Oh, so that INVALIDATES step number three."
+            # Judged on bars AFTER the one that stamped the pullback, because
+            # his "it's going higher" is the candles that follow the touch;
+            # applying it to the touching candle itself would kill the stage
+            # on the bar that created it. THAT CHOICE IS OURS, the rule is his.
+            eq = self.t5.equilibrium()
+            if (eq is not None and s.pullback_at is not None and t > s.pullback_at
+                    and ((bar.c > eq) if s.trade_dir < 0 else (bar.c < eq))):
+                self.notes.append(
+                    f"{t:%H:%M} the 5-minute closed back through the midpoint "
+                    f"at {eq:.2f} — the continuation confluence did not hold")
+                self.seq = SeqState()
+                return
 
         if s.stage == "confirmed":
             # The index gate is a condition on TAKING the trade, not on
@@ -1197,11 +2276,30 @@ class SymbolDay:
                 (s.trade_dir < 0 and bar.h >= eq) or (s.trade_dir > 0 and bar.l <= eq))
             hit_gap = any(bar.h >= g.bottom and bar.l <= g.top
                           for g in self.g5.live_in_direction(s.trade_dir))
-            ok = (hit_eq and hit_gap) if self.escalated else (hit_eq or hit_gap)
+            # step456: 112's one conditional on the continuation menu — "that
+            # comes in the form of equilibrium fair value gaps OR IF 2B
+            # HAPPENS THEN AN SMT DIVERGENCE. And that's only if 2B happens."
+            # He enforces the exclusion himself on the next worked example:
+            # "2B didn't happen, at least for the bearish case. Okay? So,
+            # we're NOT ABLE TO USE an SMT divergence." He promises to explain
+            # why 2B unlocks it and never does — that stays NEEDS VIDEO.
+            hit_smt = (self.cfg.smt_in_continuation_menu_after_2b
+                       and self.saw_2b and self.smt_live(self.smt5))
+            # the escalated filter is untouched: two losing weeks still demand
+            # the midpoint AND a gap, and a divergence does not soften it.
+            ok = (hit_eq and hit_gap) if self.escalated else (
+                hit_eq or hit_gap or hit_smt)
             if ok:
                 s.stage, s.pullback_at = "pullback", t
-                s.pullback_kind = ("the midpoint and a fair value gap" if self.escalated
-                                   else "the midpoint" if hit_eq else "a fair value gap")
+                if self.escalated:
+                    s.pullback_kind = "the midpoint and a fair value gap"
+                elif hit_eq:
+                    s.pullback_kind = "the midpoint"
+                elif hit_gap:
+                    s.pullback_kind = "a fair value gap"
+                else:
+                    s.pullback_kind = self.smt5.describe() + ", after step 2B"
+                    self.smt_used = "continuation"
 
     def check_index_gate(self, other_state: int) -> None:
         """Both indexes must agree on the 5-minute or there is no trade. They
@@ -1223,8 +2321,24 @@ class SymbolDay:
         because that break against the trade IS how he sees the 5-minute
         retrace on the 1-minute chart. The entry itself still waits for the
         5-minute pullback to have reached the midpoint or a gap.
+
+        step456: 112 puts FOUR things on this menu, not one — "we're looking
+        for a one minute confirmation confluence out of that 5m minute
+        continuation confluence VIA THE SAME EXACT CONFIRMATION CONFLUENCE
+        that we had had before. So break of structure inverse for value gap
+        79% extension on the Fibonacci or an SMT divergence and then boom from
+        there plain as simple we can enter." The other three are switched
+        individually and every one is tested after the break of structure, so
+        with them off this returns exactly what it always returned.
         """
         bos = self.t1.update(bar)
+        if self.sw1 is not None:
+            self.sw1.update(bar)        # a no-op if run_day already fed it
+        inv1 = 0
+        if self.g1 is not None:
+            inv1 = self.g1.update(bar)
+            if bos:
+                self.g1.on_break_of_structure(bos, self.t1.last_bos_level)
         # kept so an OPEN position can be managed off the same 1-minute
         # structure the entry was triggered on: "I closed the rest of the
         # trade out once we broke structure to the downside on the one
@@ -1233,11 +2347,31 @@ class SymbolDay:
         s = self.seq
         if s.stage not in ("confirmed", "pullback"):
             return False
+        if self.needs_2b:
+            return False                  # step 2B is still owed
         if bos == -s.trade_dir:
             s.counter_bos = True          # the pullback, seen on the 1-minute
             return False
-        return (s.stage == "pullback" and s.counter_bos and
-                s.index_gate_ok and bos == s.trade_dir)
+        if not (s.stage == "pullback" and s.counter_bos and s.index_gate_ok):
+            return False
+        if bos == s.trade_dir:
+            s.trigger_kind = "1-minute break of structure"
+            return True
+        if self.cfg.trigger_menu_1m_gap_inversion and inv1 == s.trade_dir:
+            s.trigger_kind = "1-minute gap inversion"
+            return True
+        if self.cfg.extension_79_enabled and closed_past_79(
+                bar, self._ext79_1m(), s.trade_dir):
+            s.trigger_kind = "1-minute close beyond the 79% extension"
+            return True
+        if self.cfg.smt_in_confirmation_menu and self.smt_live(self.smt1):
+            # 103, naming exactly this: "why did I go short before seeing a one
+            # minute inverse for value gap or a one minute break of structure
+            # to the downside? BECAUSE WE HAD THIS ONE MINUTE BEARISH SMT."
+            s.trigger_kind = self.smt1.describe()
+            self.smt_used = "trigger"
+            return True
+        return False
 
     # ------------------------------------------------- choosing between two
     def confluence_count(self) -> int:
@@ -1264,6 +2398,14 @@ class SymbolDay:
         if "break of structure" in str(s.confirm_kind or ""):
             n += 1
         if s.level is not None and LEVEL_RANK.get(s.level.tf, 0) >= 3:
+            n += 1
+        # step456: a live divergence is one more thing lining up, which is
+        # precisely and only what 120 says it is — "SMT divergence just
+        # STRENGTHENS OUR BIAS... It doesn't tell me to take a trade. It
+        # doesn't tell me to execute." Counting it here is the narrowest
+        # possible way to honour that: this tally can only ever break a tie
+        # between two setups that have both already qualified.
+        if self.smt_live(self.smt5) or self.smt_live(self.smt1):
             n += 1
         return n
 
@@ -1533,10 +2675,13 @@ def size_position(account: float, entry: float, stop_distance: float,
                   risk_allowance: float, tightest_stop_pct: float = 0.0,
                   usd_per_quote: float = 1.0,
                   buying_power: float | None = None,
-                  outer_allowance: float | None = None) -> dict:
+                  outer_allowance: float | None = None,
+                  hold_size_still: bool = True) -> dict:
     """HIS ARITHMETIC, ONCE. Every path that needs a size calls this.
 
-    THE RULE, from the bootcamp day he gives entirely to position size:
+    TWO READINGS OF HIM, AND `hold_size_still` PICKS BETWEEN THEM.
+
+    THE FIRST, from the bootcamp day he gives entirely to position size:
 
         "you're going to set your stop loss in points — what's usually the
          LOWEST your stop loss will be during a trade. For me it's usually
@@ -1546,17 +2691,39 @@ def size_position(account: float, entry: float, stop_distance: float,
          percent if price hits stop right here. That also means I'll be
          risking two percent of my account if we have a larger stop loss."
 
-    So the size is worked out ONCE, off the TIGHTEST stop the instrument
-    normally gives, such that THAT stop would cost `risk_allowance`. Then it
-    is held still. A wider stop today therefore costs proportionally more,
-    and that is the rule rather than a leak in it — his one-to-three-percent
-    band is the OUTPUT of holding the size still, never a dial.
+    The size is worked out ONCE, off the TIGHTEST stop the instrument normally
+    gives, such that THAT stop would cost `risk_allowance`. Then it is held
+    still, and a wider stop today costs proportionally more.
+
+    THE SECOND is the sentence he says about how much a trade may cost:
+    "I'm risking anywhere from 1 to 3% of my account per trade." Read that
+    way, `risk_allowance` is what the trade costs when its stop is hit, full
+    stop, and the size falls out of TODAY's stop so the allowance is spent
+    exactly rather than being a floor.
+
+    WHY IT MATTERS, MEASURED (step465). Holding the size still makes the
+    dollars behind a trade swing with the width of that day's stop. Over the
+    full year the dollars risked ran from $22 to $3,082 on a $100,000 account
+    — a 140-fold spread — while the allowance itself only moved 8-fold. And
+    the wide-stop trades are structurally the LOW-reward ones, because the
+    targets are drawn levels that do not move further away when the stop
+    widens. So the biggest positions sat on the worst trades: split the year's
+    trades into four by dollars risked and the largest quarter loses $10,638
+    of the year's $7,110 hole while the smallest quarter MAKES $2,704. That is
+    how a book with a positive sum of R loses money.
+
+    He has since added the missing half himself, 2026-01-16: "if the stop-loss
+    is like very drastically larger than usual, then I'm going to just cut the
+    contract size in half." He never says how much is "drastically", so
+    `hold_size_still=False` takes the plain reading of the other sentence
+    instead of inventing a threshold.
 
     account         the equity the day's budget was worked out on
     entry           the reference price
     stop_distance   today's stop, in the price
-    risk_allowance  DOLLARS this trade may spend if the tightest stop is hit
-                    — its share of the DAY's budget, not a per-trade ceiling
+    risk_allowance  DOLLARS this trade may spend. With `hold_size_still` it is
+                    what the TIGHTEST stop would cost, so today's wider stop
+                    costs more; without it, it is what THIS stop costs.
     tightest_stop_pct  that instrument's own tightest stop, as a share of the
                     price. ZERO means it has never been measured, and the
                     size then falls out of today's stop instead; the answer
@@ -1565,9 +2732,12 @@ def size_position(account: float, entry: float, stop_distance: float,
                     yen and has to become dollars before the size means
                     anything — off by a factor of about 145 if it is wrong
     buying_power    the broker's own figure. None means do not clamp.
-    outer_allowance DOLLARS still free under the DAY's outer limit. When the
-                    set size would spend more than the day has left, the size
-                    is cut and `capped` says so.
+    outer_allowance DOLLARS the caller will not let this trade exceed. With a
+                    day ledger it is what the DAY has left; per trade it is
+                    that trade's own share of the account. When the size would
+                    spend more, it is cut and `capped` says so.
+    hold_size_still True  — his set size off the tightest stop (the old rule)
+                    False — the allowance is spent exactly, off today's stop
     """
     out = {"units": 0.0, "lots": 0.0, "per_step": 0.0, "ok": False,
            "risk_dollars": 0.0, "risk_share_pct": 0.0, "wider": 1.0,
@@ -1579,9 +2749,17 @@ def size_position(account: float, entry: float, stop_distance: float,
 
     baseline = float(tightest_stop_pct or 0.0) * float(entry)
     measured = baseline > 0
-    if measured:
+    if measured and hold_size_still:
         basis = ("his set size, worked out off the tightest stop this market "
                  "normally gives and then held still")
+    elif measured:
+        # step465. The tightest stop IS measured for this market; it is simply
+        # not what the size is worked out from any more. Today's stop is, so
+        # the trade costs its share of the account and no more.
+        baseline = float(stop_distance)
+        basis = ("today's own stop, so this trade risks exactly its share of "
+                 "the account whatever the stop's width — the set size is no "
+                 "longer held still")
     else:
         # Never measured. Sizing off another market's number is what his rule
         # forbids, so the size falls out of TODAY's stop instead, which makes
@@ -1594,9 +2772,9 @@ def size_position(account: float, entry: float, stop_distance: float,
     risk_dollars = units * stop_distance * usd_per_quote
     uncapped_units, uncapped_risk = units, risk_dollars
 
-    # THE OUTER LIMIT, AND IT IS NOW ON THE DAY. His band tops out at three
-    # percent OF THE ACCOUNT ON THE DAY, so what is passed in here is what
-    # the day has left, not a fresh ceiling for every trade.
+    # THE OUTER LIMIT. What is passed in is whatever the caller will not let
+    # this trade exceed — the day's remaining dollars when there is a day
+    # ledger, or this trade's own share of the account when sizing per trade.
     capped = False
     if outer_allowance is not None and float(outer_allowance) > 0 and \
             risk_dollars > float(outer_allowance):
@@ -1632,6 +2810,23 @@ def size_position(account: float, entry: float, stop_distance: float,
 @dataclass
 class DayBudget:
     """What the day may lose, and the ledger the trades draw from.
+
+    STEP465 — THIS IS OFF BY DEFAULT NOW. `per_trade=True` (which is what
+    `Config.size_per_trade` produces, and it ships on) turns this object into
+    a passive ledger: it still records what is held and what has been lost so
+    the reports and the alerts keep working, but it no longer decides
+    anything. `free()` stops returning less than a whole allocation, so no
+    trade is ever shrunk or refused because of what else traded that day, and
+    `outer_free()` returns the trade's own ceiling fresh each time rather than
+    a pot the day draws down.
+
+    THE READING BELOW IS OURS AND IT IS THE THING STEP465 RETIRED. Every
+    sentence quoted here is real, but he says all of it about ONE trade of a
+    day he is narrating, and the machinery that splits a day's budget between
+    trades was our extrapolation from it. What he states as a rule is per
+    trade: "Me personally I'm risking anywhere from 1 to 3% of my account per
+    trade." That is what ships. Kept whole and switchable, because
+    `size_per_trade=False` is how the recorded baseline is reproduced.
 
     HIS, Day 8 "How to split positions" and Day 9 "Leveraging Risk", which
     together are the biggest fill in Boot Camp 2.0:
@@ -1675,6 +2870,8 @@ class DayBudget:
     lost: float = 0.0                # shares of the budget already lost
     dollars_at_risk: float = 0.0     # what the open trades can still lose
     dollars_lost: float = 0.0        # what the day has already lost
+    # step465: a passive ledger rather than a gate. See the class docstring.
+    per_trade: bool = False
 
     @property
     def budget_dollars(self) -> float:
@@ -1685,11 +2882,23 @@ class DayBudget:
         return self.account * self.outer_share
 
     def free(self) -> float:
-        """Shares of the day's budget still available. His 75%."""
+        """Shares of the day's budget still available. His 75%.
+
+        step465: sizing per trade, a whole allocation is always available —
+        nothing a trade may spend depends on what else traded today.
+        """
+        if self.per_trade:
+            return 1.0
         return max(0.0, 1.0 - self.held - self.lost)
 
     def outer_free(self) -> float:
-        """Dollars still available under the top of his band."""
+        """Dollars still available under the top of his band.
+
+        step465: sizing per trade, this is the trade's OWN ceiling and it is
+        fresh every time rather than a pot the day draws down.
+        """
+        if self.per_trade:
+            return self.outer_dollars
         return max(0.0, self.outer_dollars - self.dollars_at_risk
                    - self.dollars_lost)
 
@@ -1726,6 +2935,15 @@ class TjrBot:
         self.buying_power: float | None = None   # live: the broker's own number
         self.week_pnl: dict = {}
         self.escalated = False
+        # step461: an explicit escalation state, for a caller that already
+        # knows which filter a decision was made under and is re-asking the
+        # same question. `decide_at` has always taken an `escalated` argument
+        # and `refresh_escalation` has always overwritten it from an empty
+        # week ledger a moment later, so the argument did nothing. It matters
+        # now: with entries running to the close there are enough trades for
+        # two losing weeks to accumulate inside a replay, and the causality
+        # tests re-decide those bars with a fresh bot.
+        self.force_escalated: bool | None = None
 
     def _buying_power(self) -> float:
         if self.buying_power is not None:
@@ -1736,6 +2954,9 @@ class TjrBot:
         """A bad run tightens the filter, it does not stop trading. Two losing
         WEEKS promote the entry bar, so the pullback must show the midpoint
         AND a fair value gap rather than either one (step436 section 8)."""
+        if self.force_escalated is not None:
+            self.escalated = self.force_escalated
+            return
         wk = (day - pd.Timedelta(days=day.weekday())).normalize()
         past = sorted(k for k in self.week_pnl if k < wk)
         need = self.cfg.losing_weeks_to_escalate
@@ -1748,10 +2969,15 @@ class TjrBot:
         MORE THAN ONE TRADE A DAY IS THE METHOD, NOT AN EDGE CASE (step452
         item 4). This used to hold a single `trade` and break out of the walk
         the moment it resolved. He runs two, three ("we took three trades
-        today, absurd for me", Day 9) and four (Day 12), and what governs is
-        the day's budget rather than a count. So the walk now keeps going,
-        several positions can be open at once, and `DayBudget` is the thing
-        that stops the day.
+        today, absurd for me", Day 9) and four (Day 12), and there is no count
+        that stops the day. So the walk keeps going and several positions can
+        be open at once.
+
+        WHAT STOPS THE DAY, step465: nothing but the setups running out and
+        the closing bell. Sizing per trade, every trade is the same share of
+        the account whether it is the day's first or its fourth, so there is
+        no pot to run down. `size_per_trade=False` puts `DayBudget` back in
+        charge and that is how the recorded baseline is reproduced.
 
         data:    {symbol: {"5m": frame, "1m": frame}}, `t` in US Eastern
         stop_at: walk no further than this timestamp — the truncation test
@@ -1765,8 +2991,20 @@ class TjrBot:
         syms = list(data.keys())
         legs = {s: SymbolDay(s, data[s]["5m"], data[s]["1m"], day, cfg,
                              self.news, self.escalated) for s in syms}
-        budget = DayBudget(account=self.account, share_of_account=risk_pct,
-                           outer_share=cfg.max_day_risk_share)
+        # step465. Sizing per trade, `share_of_account` is what ONE trade
+        # spends and the outer ceiling is that same number — with the size
+        # worked out off today's own stop the allowance is spent exactly, so
+        # the ceiling is provably tight rather than a second dial. The equity
+        # is the session's opening equity, which is the same figure the day
+        # budget used and keeps one trade's size independent of every other
+        # trade that day.
+        if cfg.size_per_trade:
+            per = cfg.trade_risk_share(derisk)
+            budget = DayBudget(account=self.account, share_of_account=per,
+                               outer_share=per, per_trade=True)
+        else:
+            budget = DayBudget(account=self.account, share_of_account=risk_pct,
+                               outer_share=cfg.max_day_risk_share)
         self.budget = budget
         result = {"day": day, "escalated": self.escalated, "derisk": derisk,
                   "trade": None, "trades": [], "budget": budget,
@@ -1814,12 +3052,27 @@ class TjrBot:
             #    chart's 5-minute trend whether or not he would trade that
             #    chart today. Reading only the tradeable ones switched the veto
             #    off on every day the other index had stood down.
+            #    step456: the SWING LOGS are advanced first, on every symbol,
+            #    so the divergence handed to `on_5m` describes the bar being
+            #    decided rather than the one before it. `SwingLog.update`
+            #    ignores a bar it has already seen, so `on_5m` calling it
+            #    again is free. Same shape as the index gate, and for the same
+            #    reason: neither chart can work this out on its own.
             fired5 = False
             for s in syms:
                 b5 = rows5[s].get(close_t)
                 if b5 is not None:
-                    legs[s].on_5m(b5)
                     fired5 = True
+                    if legs[s].sw5 is not None:
+                        legs[s].sw5.update(b5)
+            if fired5:
+                smt5 = self._smt(legs, syms, inst.working_minutes)
+                for s in syms:
+                    legs[s].smt5 = smt5
+            for s in syms:
+                b5 = rows5[s].get(close_t)
+                if b5 is not None:
+                    legs[s].on_5m(b5)
             if fired5:
                 for s in live:
                     others = [legs[o].t5.state for o in syms if o != s]
@@ -1828,6 +3081,16 @@ class TjrBot:
             # 2) the 1-minute bar, fed to every live symbol whether or not it
             #    is holding a position, because the runner is closed off this
             #    same 1-minute structure
+            fired1 = False
+            for s in syms:
+                b1 = idx[s].get(t)
+                if b1 is not None and legs[s].sw1 is not None:
+                    legs[s].sw1.update(b1)
+                    fired1 = True
+            if fired1:
+                smt1 = self._smt(legs, syms, inst.trigger_minutes)
+                for s in syms:
+                    legs[s].smt1 = smt1
             fires = []
             for s in live:
                 b1 = idx[s].get(t)
@@ -1843,15 +3106,20 @@ class TjrBot:
                 if tr.outcome:
                     open_trades.remove(tr)
 
-            # 4) 10:30: he stops LOOKING, he does not stop managing. "if I
-            #    can't find a trade by 10:30, I'm done." With nothing open
-            #    and nothing left to find, the day is over.
-            if past_cutoff(t, inst):
+            # 4) the end of the LOOKING, which is not the end of the managing.
+            #    With `entries_run_to_the_close` off that is his stated 10:30,
+            #    "if I can't find a trade by 10:30, I'm done"; with it on, and
+            #    that is the shipped default, it is `flat_t` — the same
+            #    instant an open position is closed out, because he is
+            #    intraday and goes home flat. With nothing open and nothing
+            #    left to find, the day is over.
+            if entry_window_closed(t, inst, cfg):
                 if not open_trades:
                     break
                 continue
 
-            # 5) new entries. Never before 09:50, never after 10:30.
+            # 5) new entries. Never before 09:50, never past the boundary
+            #    step 4 just applied.
             if not fires:
                 continue
             if too_early(t, inst):
@@ -1861,6 +3129,20 @@ class TjrBot:
                         f"window — no entry")
                 continue
             for s, b1 in self._choose(legs, fires, day):
+                # step456: the divergence's second job — which of the two
+                # charts gets the order. It can only refuse.
+                wrong_chart = legs[s].smt_forbids_this_chart()
+                if wrong_chart:
+                    legs[s].notes.append(
+                        f"{t:%H:%M} the sequence completed here but {wrong_chart}")
+                    # OURS, NOT HIS: the sweep is treated as SPENT rather than
+                    # held open, which is what happens after a trade is taken
+                    # too. He simply looks at the other chart; he never says
+                    # what becomes of the one he walked away from. Holding it
+                    # open would let the refused setup fire again a minute
+                    # later and quietly undo the rule.
+                    legs[s].seq = SeqState()
+                    continue
                 if budget.free() < cfg.min_budget_share_to_open:
                     legs[s].notes.append(
                         f"{t:%H:%M} a setup completed but the day's risk "
@@ -1883,7 +3165,8 @@ class TjrBot:
             result["notes"][s] = legs[s].notes
             if legs[s].ctx.stand_down is None and not any(
                     tr.symbol == s for tr in taken):
-                result["stand_down"].setdefault(s, self._why_no_trade(legs[s]))
+                result["stand_down"].setdefault(
+                    s, self._why_no_trade(legs[s], cfg))
 
         for tr in open_trades:
             if not tr.outcome:
@@ -1899,6 +3182,32 @@ class TjrBot:
         # trade of the day, which is the one that used to be the only one.
         result["trade"] = taken[0] if taken else None
         return result
+
+    def _smt(self, legs: dict, syms: list, minutes: int) -> Smt | None:
+        """The divergence between the two charts on this timeframe.
+
+        EXACTLY TWO SYMBOLS OR NOTHING, and that is his rule rather than a
+        limitation of ours: "if you guys are trading anything besides the S&P
+        500 in NASDAQ this is not going to apply to you... this only applies
+        to indexes." A crypto run hands `run_day` a single pair, so a
+        divergence cannot form there at all — no switch is involved.
+        """
+        cfg = self.cfg
+        # step461 reads the 5-minute one for its own job. It is still gated:
+        # every step456 consumer goes through `smt_live`, which refuses while
+        # `smt_enabled` is off, so computing it here moves nothing.
+        if not (cfg.smt_enabled or cfg.lean_part2):
+            return None
+        if len(syms) != 2:
+            return None
+        a, b = syms
+        la = legs[a].sw1 if minutes == cfg.instrument.trigger_minutes \
+            else legs[a].sw5
+        lb = legs[b].sw1 if minutes == cfg.instrument.trigger_minutes \
+            else legs[b].sw5
+        if la is None or lb is None:
+            return None
+        return smt_between(a, la, b, lb, cfg.smt_alignment_bars, minutes)
 
     @staticmethod
     def _second_setup_forming(legs: dict, live: list, this: str) -> bool:
@@ -1969,32 +3278,49 @@ class TjrBot:
         return sorted(fires, key=rank, reverse=True)
 
     @staticmethod
-    def _why_no_trade(leg: SymbolDay) -> str:
+    def _why_no_trade(leg: SymbolDay, cfg: Config | None = None) -> str:
+        """step461: the deadline these sentences name is now read off the run
+        rather than hard-coded, because `entries_run_to_the_close` moves it. A
+        reason string that says "before 10:30" on a run that looked until
+        15:55 is a false statement about why nothing was taken, and 31 of the
+        51 stand-downs in step459 were read off exactly these sentences."""
         s = leg.seq
+        by = entry_window_label((cfg or leg.cfg).instrument, cfg or leg.cfg)
+        if leg.needs_2b:
+            return ("the day's sweep happened pre-market and no fresh 5-minute "
+                    "manipulation followed the open — step 2B never completed")
         if s.stage == "waiting_for_sweep":
             if leg.blocked_by_direction:
                 return ("a level was pushed through, but only on the side the "
                         "day's bias forbids")
-            return "no marked level was pushed through before 10:30"
+            return f"no marked level was pushed through {by}"
         if s.stage == "swept":
             return (f"a {s.level.tf} level was swept but the 5-minute never "
-                    f"turned before 10:30")
+                    f"turned {by}")
         if s.stage == "confirmed" and not s.index_gate_ok:
-            return "the two indexes never agreed on the 5-minute before 10:30"
+            return f"the two indexes never agreed on the 5-minute {by}"
         if s.stage == "confirmed":
-            return "no 5-minute pullback into the midpoint or a gap before 10:30"
+            return f"no 5-minute pullback into the midpoint or a gap {by}"
         if s.stage == "pullback":
-            return "the 1-minute never broke back with the trade before 10:30"
-        return "the sequence did not complete before 10:30"
+            return f"the 1-minute never broke back with the trade {by}"
+        return f"the sequence did not complete {by}"
 
     def _open(self, leg: SymbolDay, b1: Bar, day, budget: DayBudget,
               second_setup: bool, d5_hist) -> Trade | None:
-        """Open one trade against the DAY's budget.
+        """Open one trade.
 
-        The share it may spend is his: half the day's budget when a second
-        setup is already forming (Day 8), otherwise whatever the day has
-        left. The size then falls out of `size_position`, which is the same
-        function the live path calls.
+        STEP465, AND IT SHIPS: what this trade may spend is a fixed share of
+        the account — `Config.risk_pct_per_trade`, halved on a news day — and
+        it does not move for anything that happened earlier in the session.
+        No half-share when a second setup is forming, no floor below which the
+        day is over, no pot to run down.
+
+        With `size_per_trade=False` the old day ledger is back: half the day's
+        budget when a second setup is already forming (Day 8), otherwise
+        whatever the day has left.
+
+        Either way the size falls out of `size_position`, which is the same
+        function the live path calls. There is one of it and it stays one.
         """
         cfg, s = self.cfg, leg.seq
         entry = b1.c
@@ -2019,11 +3345,14 @@ class TjrBot:
                 f"entry")
             return None
 
-        share = (cfg.first_trade_share_when_second_expected if second_setup
-                 else 1.0)
-        share = min(share, budget.free())
-        if share < cfg.min_budget_share_to_open:
-            return None
+        if cfg.size_per_trade:
+            share = 1.0
+        else:
+            share = (cfg.first_trade_share_when_second_expected if second_setup
+                     else 1.0)
+            share = min(share, budget.free())
+            if share < cfg.min_budget_share_to_open:
+                return None
         risk_wanted = share * budget.budget_dollars
         bp, outer = self._buying_power(), budget.outer_free()
 
@@ -2031,18 +3360,26 @@ class TjrBot:
             account=budget.account, entry=entry, stop_distance=rps,
             risk_allowance=risk_wanted,
             tightest_stop_pct=tightest_stop(leg.symbol),
-            buying_power=bp, outer_allowance=outer)
+            buying_power=bp, outer_allowance=outer,
+            hold_size_still=not cfg.size_per_trade)
         if not size["ok"]:
             leg.notes.append(f"{b1.t:%H:%M} the size could not be worked out")
             return None
         shares = size["units"]
         clamped = size["clamped"]
-        if second_setup:
+        if second_setup and not cfg.size_per_trade:
             leg.notes.append(
                 f"{b1.t:%H:%M} a second setup was already forming elsewhere, "
                 f"so this one took {100*share:.0f}% of the day's risk budget "
                 f"instead of all of it")
-        if size["capped"]:
+        if size["capped"] and cfg.size_per_trade:
+            leg.notes.append(
+                f"{b1.t:%H:%M} size cut to hold this TRADE inside "
+                f"{100*budget.outer_share:.1f}% of the account: it would "
+                f"otherwise have put ${size['uncapped_risk_dollars']:,.0f} "
+                f"behind the stop against a ceiling of "
+                f"${budget.outer_free():,.0f}")
+        elif size["capped"]:
             leg.notes.append(
                 f"{b1.t:%H:%M} size cut to hold the DAY inside "
                 f"{100*cfg.max_day_risk_share:.0f}% of the account: the set "
@@ -2062,12 +3399,44 @@ class TjrBot:
             d5_hist, b1.t + pd.Timedelta(minutes=1), s.trade_dir, entry, rps,
             leg.ctx.levels, cfg)
         if not targets:
-            # He never says what to do here and this is not an entry rule, so
-            # nothing is refused: the position simply has no place to take
-            # profit and runs to its stop or to the close. Recorded so it is
-            # visible if it ever actually happens.
+            # NO DESTINATION, NO TRADE. Switchable so a before/after can be
+            # run; see Config.refuse_when_nowhere_to_go.
+            #
+            # The old comment here said "he never says what to do". He says
+            # it four times, on camera, and it took looking at the SCREEN to
+            # find it (step457). Watching an NQ chart with his own indicator
+            # reading bullish on all three timeframes, inside trading hours,
+            # he passes: "I probably am not going to take a trade today...
+            # there's nothing to target to the upside because we already
+            # swept all of it out." And elsewhere: "I wouldn't want to be
+            # looking for longs here because we're so close to these London
+            # session lows."
+            #
+            # WHAT IT WAS COSTING: 203 of our 467 S&P trades — 43% — had no
+            # building block ahead of them. They drifted to the close for
+            # +0.62x what they risked. The trades that had somewhere to go
+            # made +1.57x. That single gap is most of the distance between
+            # our hit rate and his.
+            #
+            # build_targets ALREADY returns nothing when no drawn level sits
+            # far enough ahead to pay for the stop. The bot simply took the
+            # trade anyway.
+            if getattr(cfg, "refuse_when_nowhere_to_go", False):
+                leg.notes.append(
+                    f"{b1.t:%H:%M} REFUSED — nothing ahead of the entry to "
+                    f"aim at. Every building block in that direction has "
+                    f"already been taken, or sits too close to pay for the "
+                    f"stop.")
+                return None
             leg.notes.append(f"{b1.t:%H:%M} no building block anywhere ahead of "
                              f"the entry — this trade has no take profit")
+        # step456: whichever divergence was live when this fired, recorded and
+        # nothing more. 120: "It doesn't tell me to take a trade. It doesn't
+        # tell me to execute. It just helps strengthen my bias." The
+        # completion draw from 115 rides along on the record and is
+        # DELIBERATELY NOT fed to build_targets — the exit ladder was rebuilt
+        # in step453 and nothing in this round touches it.
+        smt = next((x for x in (leg.smt5, leg.smt1) if leg.smt_live(x)), None)
         tr = Trade(
             symbol=leg.symbol, day=day, direction=s.trade_dir,
             level_price=s.level.price, level_tf=s.level.tf, swept_at=s.swept_at,
@@ -2083,7 +3452,22 @@ class TjrBot:
             escalated=self.escalated, regime=leg.ctx.regime,
             budget_share=share, second_setup_expected=second_setup,
             size_basis=size["basis"], sizing_account=budget.account,
-            sizing_buying_power=bp, sizing_outer_allowance=outer)
+            sizing_buying_power=bp, sizing_outer_allowance=outer,
+            trigger_kind=s.trigger_kind or "",
+            smt=(smt.describe() if smt is not None else ""),
+            # "bias" is 120's default job — live, strengthening the read, and
+            # not the thing that fired. The other three say it did a job the
+            # menu gave it.
+            smt_role=((leg.smt_used or "bias") if smt is not None else ""),
+            smt_completion=(float(smt.completion) if smt is not None
+                            and smt.completion is not None else float("nan")),
+            # step461, RECORDED ONLY. None of these three reaches a size, a
+            # stop or a target; they are here so a trade the lean did not
+            # want can be picked out of the log without re-deriving it.
+            bias_at_open=leg.ctx.bias_open_dir,
+            bias_now=leg.ctx.bias_dir,
+            against_bias=s.against_bias,
+            overrule_kind=s.overrule_kind or "")
         tr._share_held = share
         tr._risk_held = risk_dollars
         budget.take(share, risk_dollars)
@@ -2198,6 +3582,7 @@ def decide_at(data: dict, day: pd.Timestamp, ts: pd.Timestamp,
     after `ts` DELETED must give the same answer. That is the test."""
     bot = TjrBot(cfg, news)
     bot.escalated = escalated
+    bot.force_escalated = escalated
     res = bot.run_day(data, day, stop_at=ts + pd.Timedelta(minutes=1))
     tr = res["trade"]
     return {
@@ -2323,9 +3708,10 @@ def live_step(data: dict, now: pd.Timestamp, account: float,
     if inst.open_t is not None and now.time() < inst.open_t:
         return {"action": "stand_down",
                 "reason": "pre-market: he never enters here"}
-    if past_cutoff(now, inst):
+    if entry_window_closed(now, inst, cfg):
+        end = (inst.flat_t if cfg.entries_run_to_the_close else inst.cutoff_t)
         return {"action": "stand_down",
-                "reason": f"past the {inst.cutoff_t:%H:%M} cut-off — done for the day"}
+                "reason": f"past the {end:%H:%M} cut-off — done for the day"}
 
     day = now.normalize()
     bot = TjrBot(cfg, news)
@@ -2359,6 +3745,11 @@ def live_step(data: dict, now: pd.Timestamp, account: float,
             "partial_fraction": cfg.partial_fraction,
             "budget_share": tr.budget_share,
             "second_setup_expected": tr.second_setup_expected,
+            # step465: SAID, not inferred. The alert used to work out "half
+            # size today" from the dollars, which needed it to assume the
+            # full-size number was one per cent of the account. It is now a
+            # dial, so the calendar's own answer is passed through instead.
+            "derisk": bool(res.get("derisk")),
             "size_basis": tr.size_basis,
             # the exact three inputs the size was worked out from. A caller
             # that re-sizes rather than sending tr.shares must pass these
@@ -2369,6 +3760,10 @@ def live_step(data: dict, now: pd.Timestamp, account: float,
             "outer_allowance": tr.sizing_outer_allowance,
             "stop_anchor": tr.stop_anchor, "level_tf": tr.level_tf,
             "level_price": tr.level_price, "confirmed_by": tr.confirm_kind,
+            # step456, recorded and nothing more: which of 112's four
+            # 1-minute confluences fired, and whatever divergence was live.
+            "triggered_by": tr.trigger_kind, "smt": tr.smt,
+            "smt_role": tr.smt_role, "smt_completion": tr.smt_completion,
             "pullback_into": tr.pullback_kind, "notional": tr.notional,
             "risk_dollars": tr.risk_dollars, "risk_wanted": tr.risk_wanted,
             "risk_pct_used": tr.risk_pct_used, "clamped": tr.clamped,

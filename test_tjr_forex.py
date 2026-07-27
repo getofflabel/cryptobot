@@ -343,8 +343,13 @@ def test_the_message_carries_everything_he_needs_to_place_it():
     title, msg = tjr_alerts.entry_message(
         sample_sig(), 100_000.0, 1.34 / 218.47,
         fired_at=dt.datetime(2026, 7, 24, 9, 58))
-    for must in ("SELL", "GBP/JPY", "Enter around", "Stop", "First target",
-                 "Second target", "standard lots", "pounds", "Every pip",
+    # THE MESSAGE IS THE COMPACT TABLE HE ASKED FOR, 2026-07-26: "instead of
+    # all these words, just do tp($,%) if theres only 1, if theres more than
+    # one just do tp1, tp2. and same for sl($,%)." The long-form labels this
+    # used to look for ("Enter around", "First target") were rewritten then
+    # and this list had not caught up.
+    for must in ("SELL", "GBP/JPY", "Entry", "SL", "TP1", "TP2",
+                 "standard lots", "Margin", "Leverage",
                  "Why:", "New York time"):
         assert must in msg, f"the alert is missing: {must}"
     assert "218.470" in msg and "218.760" in msg

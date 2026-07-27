@@ -283,7 +283,7 @@ MAX_LESSONS_ON_RECORD = 6     # lessons attached to a decision record (the
 # orphans live positions, and a gate placed inside the dry branch crashes
 # the live path on unbound names — both have already happened here once
 # (test_stand_down_gates.py was written the same hour).
-NEW_ENTRIES_ENABLED = False
+NEW_ENTRIES_ENABLED = True
 
 
 # ===========================================================================
@@ -725,7 +725,24 @@ def rule_vol_gated_trend(d: pd.DataFrame, ctx: dict) -> RuleSignal | None:
     outage) or the champion signal stops pointing up. That is the "ride,
     don't bracket" shape the edge was validated with — it never had a
     profit target and is not getting one."""
-    sig = vol_filtered_ma(d, FAST, SLOW, min_atr_pct=MIN_ATR_PCT).fillna(0.0)
+    # UNGATED, deliberately (round 400, 2026-07-25). This rule shipped with
+    # MIN_ATR_PCT=1.5 — the "only trade when it is moving enough" condition
+    # that the desk's notes called the edge itself. It is not. Tested
+    # cleanly it DESTROYS money:
+    #   the same 59 trend legs, matched pairs: entering at the crossover
+    #   earns +$181.61 per leg, waiting for lively earns +$45.27. The
+    #   condition was the better choice on 5 of 59 legs, at the 1.1st
+    #   percentile of 2,000 sign flips. Net cost -$6,694, which is 71% of
+    #   the ungated system's money, negative in 2020, 2021, 2022, 2023 and
+    #   2025 and positive only in 2024 where one trade carries the year.
+    # Why the old number looked good: the condition sits inside the signal's
+    # state machine, so it does not SKIP a trade, it DELAYS one — and in a
+    # one-position engine a delayed entry lets a DIFFERENT later trade
+    # happen. 30% of the gated run's first-window trades and 57% of its
+    # middle-window trades entered on a bar the ungated run could never
+    # have taken. The old comparison was two different trade sequences.
+    # DO NOT put the gate back without re-reading step400_gate_artifact_audit.md.
+    sig = vol_filtered_ma(d, FAST, SLOW, min_atr_pct=0.0).fillna(0.0)
     i = len(d) - 1
     cur = float(sig.iloc[i])
     prev = float(sig.iloc[i - 1]) if i > 0 else 0.0

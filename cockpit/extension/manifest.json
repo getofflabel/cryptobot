@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "Trading Cockpit",
+  "version": "1.0.0",
+  "description": "On the TradingView chart: the signal exactly as the phone has it, the live price with its age on its face, and the real account balance. Read-only — it cannot place, change or cancel an order.",
+  "permissions": ["storage"],
+  "host_permissions": [
+    "http://127.0.0.1:8787/*",
+    "http://localhost:8787/*"
+  ],
+  "background": { "service_worker": "background.js" },
+  "content_scripts": [
+    {
+      "matches": ["*://*.tradingview.com/*"],
+      "js": ["content.js"],
+      "css": ["panel.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "icons": { "16": "icons/16.png", "48": "icons/48.png", "128": "icons/128.png" }
+}
