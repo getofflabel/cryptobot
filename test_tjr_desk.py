@@ -419,7 +419,12 @@ def test_nothing_but_the_desk_table_names_a_venue():
 
 def test_the_desk_names_each_venue_once_and_only_in_the_table():
     src = inspect.getsource(tjr_desk)
-    for name in ("blofin-demo", "alpaca-paper"):
+    # crypto moved to "blofin-demo-craig" on 2026-07-26: the same BloFin demo
+    # account and the same attribution gate, with a resting LIMIT entry added
+    # because that is Craig's entry. The rule this test exists to hold is
+    # unchanged — a venue is named ONCE, in the market table, and the Desk
+    # below it never learns which venue it is talking to.
+    for name in ("blofin-demo-craig", "alpaca-paper"):
         assert src.count(f'venue_name = "{name}"') >= 1
         assert f'"{name}"' not in src.split("class Desk:")[1], (
             f"{name} is named below the market table — the Desk must not "

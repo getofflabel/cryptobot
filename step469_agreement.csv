@@ -1,0 +1,6 @@
+pair,replay_trades,live_trades,replay_net,live_net,fields_compared,differences
+BTC/USD,19,19,-21339.58,-21339.58,323,0
+ETH/USD,36,36,7620.94,7620.94,612,0
+SOL/USD,31,31,-20392.52,-20392.52,527,0
+XRP/USD,30,30,48660.54,48660.54,510,0
+DOT/USD,24,24,7395.01,7395.01,408,0

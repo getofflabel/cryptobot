@@ -47,7 +47,7 @@ ARMING, WHICH IS HOW A VENUE GOES LIVE
     otherwise, so stocks and gold ship unarmed. See ARMED_DEFAULT below.
 
 WHAT IT WATCHES
-    crypto       ten pairs, decided by tjr_crypto.live_step
+    crypto       five pairs, decided by CRAIG'S method — craig_live.Engine
     S&P 500      SPY and QQQ, decided by tjr_bot.live_step
     gold         GLD with IAU as its second chart, by tjr_gold.live_step
 
@@ -55,6 +55,49 @@ WHAT IT WATCHES
     This file fetches bars, hands them to whichever decision function owns
     that market, sends what comes back to that market's venue, and says what
     happened. That is the whole job.
+
+CRYPTO CHANGED HANDS ON 2026-07-26, AND ONLY CRYPTO
+
+    "if craig is profitable for crypto then change it to that." — Wallace
+
+    It is, on the 1-hour chart: +$21,944 over the last twelve months, five
+    pairs, each on its own $100,000, the measured round trip charged on every
+    closed trade. That is the only net-positive crypto configuration this
+    project has ever measured, and the TJR method pointed at crypto has never
+    had a profitable year at all. So crypto is decided by craig_live.Engine
+    from here.
+
+    STOCKS AND GOLD DID NOT MOVE. They are still the TJR method, in their own
+    files, with the same code path they had yesterday. METHODS NEVER MIX:
+    nothing in the crypto path reads a TJR level, bias or session, and nothing
+    in the stock or gold path reads anything of Craig's. tjr_crypto.py is left
+    importable and untouched so the two can still be replayed side by side.
+
+    THE ONE THING THAT IS GENUINELY NEW IN THE PLUMBING: Craig's entry is a
+    RESTING LIMIT at the middle of a gap, not a market order on a candle
+    close. So a crypto order now has a life of its own — it is placed with its
+    stop attached, it waits up to 24 hours for price to come back, and it is
+    cancelled if it does not. See CryptoMarket below.
+
+    AND THE BLOFIN BOOK IS SIZED ON THE MONEY-GAME LADDER. Alex Gonzalez:
+    "Anything below $25,000, it's all the money game", with the base set so
+    "you have at least four or five trades in you before you would obviously
+    lose the account". Wallace: "This is why I even have it set at 2178 ...
+    its how much I would be willing to lose to even start." So one trade on
+    this book risks equity / 4.5 at the stake — 22.2% OF THE ACCOUNT — coming
+    down to 1% of the account by $25,000. It is switched on in exactly one
+    place, `CryptoMarket.__init__`, through `craig_live.BOOK`; stocks and gold
+    never see it and neither does any replay. It is a SIZE and touches nothing
+    else about the method. The odds it produces on the $2,178 stake are in
+    `step469_craig_live.py --ladder`.
+
+    NOTHING CAPS HOW OFTEN CRYPTO TRADES. Wallace, 2026-07-26: "if you see the
+    setup, take the trade. its a demo at the end of the day." A trades-per-day
+    limit exists so a HUMAN does not overtrade on emotion and the bot has
+    none, so there is no such limit anywhere on this path. The only bounds are
+    the method's own and one of the exchange's — BloFin nets a symbol into ONE
+    position, so a second setup on a pair already carrying one is still
+    decided, sized and reported, and only the SENDING is refused.
 
 WHERE THE LIVE BARS COME FROM, and why each choice
     crypto      Alpaca's crypto endpoints. Twenty-four hours a day, no delay
@@ -113,6 +156,7 @@ import time
 
 import pandas as pd
 
+import craig_live
 import tjr_alerts
 import tjr_bot
 import tjr_crypto
@@ -261,12 +305,47 @@ class Market:
 
 
 class CryptoMarket(Market):
-    """Ten pairs. No bell, no session, one call per pair — which is
-    tjr_crypto's own rule and the reason ten pairs do not cap each other at
-    one trade a day between them."""
+    """Five pairs, decided by CRAIG'S method, on the 1-HOUR candle.
+
+    THE CLOCK. Crypto has no bell, so the engine is evaluated on every 1-hour
+    close, around the clock — not only at New York hours. All three session
+    opens are traded (Asia, London, New York), which is how step467 measured
+    the +$21,944, and the desk keeps polling once a minute: `craig_live.Engine`
+    simply does nothing until an hour has actually closed, so it can never act
+    twice on the same candle or act on half of one.
+
+    THE ORDER HAS A LIFE. His entry is a resting limit at the middle of a fair
+    value gap, so between the signal and the position there is a real object
+    at the exchange:
+
+        placed   the limit goes on WITH its stop attached, in one request.
+                 There is never a moment where a Craig position exists with
+                 nothing under it, and there is never a second call that can
+                 fail while nobody is watching.
+        waiting  it lives 24 candles, which on this chart is 24 hours.
+        dead     it is cancelled when those candles run out, and cancelled
+                 immediately if price reaches where its stop belongs before it
+                 fills — at that point the structure the setup was built on is
+                 already broken and there is nothing left to buy.
+        filled   the bot then owns the position and moves its stop to the
+                 entry price the moment a candle closes past the swing in the
+                 trade's favour.
+
+    ONE POSITION PER PAIR, AND THAT IS THE EXCHANGE'S RULE, NOT THE METHOD'S.
+    BloFin nets everything on a symbol into ONE position, so a second Craig
+    entry on a pair that already has one would fuse the two and neither could
+    be managed afterwards. The engine still DECIDES the second setup and it is
+    still reported; the order is simply not sent, with that reason on the
+    message. Measured over the shipping year this bound on 1 entry in 140.
+    """
     name = "crypto"
-    symbols = tuple(tjr_crypto.PAIRS)
-    venue_name = "blofin-demo"
+    symbols = tuple(craig_live.PAIRS)
+    venue_name = "blofin-demo-craig"
+    # THE ATTRIBUTION TAG DOES NOT MOVE. Client order ids stay CBOT_tjc_...,
+    # which is what proves a position on the exchange is the bot's and not
+    # one Wallace opened by hand. Reissuing it because the method behind it
+    # changed would make every position opened under the old tag stop being
+    # provably ours — including any the desk still has to manage.
     tag = "tjr_crypto"
 
     def __init__(self, venue=None):
@@ -277,28 +356,269 @@ class CryptoMarket(Market):
         # account — which is why it stays the feed even though it is not the
         # venue.
         self.cli = alpaca.from_env()
+        # THE BOOK, NOT THE BARE METHOD. `craig_live.BOOK` is the shipping
+        # configuration plus the MONEY-GAME LADDER, and this is the only
+        # place in the project it is switched on: the BloFin book, and
+        # nothing else. Stocks and gold never see it — they are not even in
+        # this class — and every replay, every step467 number and every
+        # agreement run still uses `live_config`, which has it off.
+        self.engine = craig_live.Engine(cfg_over=craig_live.BOOK)
+        self.pending: list = []        # what the engine asked for this pass
+        self.placed: dict = {}         # (pair, placed_t) -> the venue's record
+        # THE ORDERS THAT REALLY EXIST AT THE EXCHANGE. The engine models
+        # every setup whether or not the order was sent — that is what makes
+        # an unarmed market decide exactly as it would live. But a message
+        # saying "FILLED" or "stopped out" about a position that was never
+        # opened is a lie, and this set is what stops one being sent.
+        self.real: set = set()
+        self._swept = False
+
+    @staticmethod
+    def _ny(ts) -> dt.datetime:
+        """A crypto bar's timestamp, in New York, because that is the clock
+        every message on his phone is written in.
+
+        The crypto tape is kept in naive UTC end to end — the engine, the
+        replay and the record all use it — so the ONLY place it is converted
+        is here, on its way to a message. Converting it any earlier would put
+        the decision layer on two clocks.
+        """
+        return (pd.Timestamp(ts).tz_localize("UTC")
+                .tz_convert("America/New_York").tz_localize(None)
+                .to_pydatetime())
 
     def frames(self) -> dict:
         return {p: crypto_frames(self.cli, p) for p in self.symbols}
 
+    def chart(self, pair: str, frames: dict):
+        """The CLOSED 1-hour candles for one pair, built from the 5-minute
+        feed the desk already pulls. Nothing extra is fetched."""
+        d = frames.get(pair)
+        if not d or "5m" not in d or not len(d["5m"]):
+            return None
+        return craig_live.working_chart(d, self.engine.cfg(pair))
+
     def decide(self, frames, now, account):
+        """One step of the engine per pair, and it is a no-op unless an hour
+        has closed. Returns only the ENTRIES; everything else the engine asked
+        for is held for `manage`, which runs first at the venue."""
         out = []
+        self.pending = []
         for pair in self.symbols:
-            d = frames.get(pair)
-            if not d or len(d["1m"]) == 0:
+            d = self.chart(pair, frames)
+            if d is None or len(d) < 4:
                 continue
-            at = pd.Timestamp(d["1m"]["t"].iloc[-1]) + pd.Timedelta(minutes=1)
-            r = tjr_crypto.live_step(pair, d, at, account)
-            # "cannot_send" WAS ALPACA'S LIMIT, AND ALPACA IS NO LONGER THE
-            # VENUE HERE. tjr_crypto raises it because every US-dollar pair on
-            # Alpaca reports shortable=false. BloFin futures short perfectly
-            # well, so on this desk the refusal is spent and the signal is
-            # taken as the ordinary entry it always was. tjr_crypto.py is not
-            # edited for this — the venue's limits belong to the venue.
-            if r.get("action") in ("enter", "cannot_send"):
-                out.append(dict(r, action="enter", market=self.name,
-                                fired_at=at))
+            try:
+                acts = self.engine.step(pair, d, account)
+            except Exception as e:                           # noqa: BLE001
+                print(f"  crypto {pair}: {str(e)[:160]}")
+                continue
+            width = craig_live.bar_width(self.engine.cfg(pair))
+            for a in acts:
+                if a["kind"] == "enter":
+                    # THE CANDLE'S CLOSE, NOT ITS OPEN. A bar is stamped with
+                    # the minute it STARTED, and the decision is only knowable
+                    # when it ends — an hour later. The record keeps the bar's
+                    # own timestamp so live and replay stay comparable; the
+                    # message says the time the bot actually acted.
+                    sig = a["signal"]
+                    # A CEILING THAT CUTS THE SIZE IS SAID OUT LOUD. The
+                    # money-game ladder asks for a much bigger position than
+                    # the flat 3% did, and on a tight 1-hour stop that can be
+                    # more than this instrument's maximum leverage will carry
+                    # even with the whole balance posted. When it is, the
+                    # size is cut — and the cut is printed here rather than
+                    # quietly applied.
+                    if sig.get("leverage_cap_note"):
+                        print(f"  [LEVERAGE CAP] {pair}: "
+                              f"{sig['leverage_cap_note']}")
+                    out.append(dict(sig, market=self.name,
+                                    fired_at=self._ny(a["at"] + width)))
+                else:
+                    self.pending.append(a)
         return out
+
+    # ------------------------------------------------- the order's own life
+    def manage(self, desk, frames) -> None:
+        """Craig's lifecycle, executed at the venue.
+
+        THE DESK'S DEFAULT MANAGER IS NOT USED FOR CRYPTO and this method is
+        why: that one works a ladder of targets on 1-minute bars and moves the
+        stop after half comes off. Craig has one target, one exit, and a
+        break-even rule that reads a 1-hour close. Two different methods
+        cannot share one manager, so they do not.
+        """
+        self._sweep_stale_orders(desk)
+        for a in self.pending:
+            try:
+                self._do(desk, a)
+            except Exception as e:                           # noqa: BLE001
+                print(f"  crypto {a.get('symbol')}: {a['kind']} failed — "
+                      f"{str(e)[:160]}")
+        self.pending = []
+
+    def _do(self, desk, a) -> None:
+        """One thing the engine asked for, done at the venue and said out loud.
+
+        NOTHING IS SAID ABOUT AN ORDER THAT WAS NEVER SENT. The engine models
+        every setup whether or not the desk sent it — that is exactly what
+        makes an unarmed market decide as it would live, and it is also what
+        happens when the exchange refuses one order out of a run. But a
+        message reading "FILLED" or "stopped out" about a position that never
+        existed is a lie, so `self.real` gates every one of them.
+        """
+        sym = a["symbol"]
+        key = self._key(a)
+        when = self._ny(pd.Timestamp(a["at"])
+                        + craig_live.bar_width(self.engine.cfg(sym)))
+        real = key in self.real
+
+        if a["kind"] == "cancel":
+            wk = a["working"]
+            rec = self.placed.pop(key, None)
+            self.real.discard(key)
+            if real and desk.is_armed(self) and hasattr(self.venue,
+                                                        "cancel_entry"):
+                self.venue.cancel_entry(
+                    sym, order_id=(rec or {}).get("id"), reason=a["why"])
+            if real:
+                desk._push(*tjr_alerts.order_cancelled_message(
+                    self.name, sym, wk.entry, a["why"], when))
+            return
+
+        if a["kind"] == "filled":
+            pos = a["position"]
+            self.placed.pop(key, None)
+            if not real:
+                return
+            # THE MODEL SAID FILLED. DID THE EXCHANGE? A limit that price only
+            # touched can be left behind in the queue, and from that moment
+            # every later message about this trade would be about a position
+            # that is not there. So the exchange is asked, and if it has
+            # nothing, the model lets go of the trade instead of narrating it.
+            if desk.is_armed(self):
+                try:
+                    at_venue = self.venue.position(sym)
+                except Exception:                            # noqa: BLE001
+                    at_venue = None
+                if at_venue is None:
+                    print(f"  crypto {sym}: the engine filled and the exchange "
+                          f"has no position — dropping the trade and taking "
+                          f"the order off the book")
+                    self.engine.live[sym] = [
+                        p for p in self.engine.live.get(sym, []) if p is not pos]
+                    self.real.discard(key)
+                    if hasattr(self.venue, "cancel_entry"):
+                        self.venue.cancel_entry(
+                            sym, reason="the resting order did not fill after "
+                                        "all, so it is not left on the book")
+                    return
+            desk._push(*tjr_alerts.filled_message(
+                self.name, sym, pos.entry, pos.stop_at_risk, pos.target, when))
+            return
+
+        if not real:
+            return
+
+        if a["kind"] == "breakeven":
+            # THE ONE MOMENT A CRAIG POSITION'S PROTECTION IS TOUCHED. The old
+            # bracket has to come off before the new one goes on — BloFin has
+            # no way to move a resting stop in place — so `_restop` cancels
+            # and replaces, and `cancel_stops` only ever removes brackets the
+            # bot itself placed. The window is one round trip wide and it
+            # exists in the safe direction: the stop being replaced is the
+            # ORIGINAL one, further away than the one going on.
+            desk._restop(self, sym, float(a["level"]))
+            desk._push(*tjr_alerts.breakeven_message(
+                self.name, sym, float(a["level"]), a["why"], when))
+            return
+
+        if a["kind"] == "exit":
+            pos = a["position"]
+            self.real.discard(key)          # this setup's life is over
+            # The stop and the target both REST AT THE EXCHANGE, so in the
+            # ordinary case this closes nothing — it is the bot's record
+            # catching up. "held to the cap" is the exception: nothing at the
+            # exchange knows about a time limit, so that one really does close
+            # the position.
+            desk._act(self, sym, None, f"Craig: {pos.outcome}")
+            if pos.outcome == "stopped out":
+                desk._push(*tjr_alerts.stopped_message(
+                    self.name, sym, pos.stop_at_risk, when,
+                    account=tjr_alerts.account_line(self.venue)))
+            elif pos.outcome == "break even":
+                desk._push(*tjr_alerts.close_message(
+                    self.name, sym, pos.exit,
+                    "Price came back to your entry and the stop was already "
+                    "sitting there, so the trade is closed for nothing. It "
+                    "cost the round trip and not a cent more.", when,
+                    account=tjr_alerts.account_line(self.venue)))
+            elif pos.outcome == "target":
+                desk._push(*tjr_alerts.close_message(
+                    self.name, sym, pos.exit,
+                    "The target is reached — four times what the trade was "
+                    "risking. That is the whole position off. That is the "
+                    "trade.", when,
+                    account=tjr_alerts.account_line(self.venue)))
+            else:
+                hours = self.engine.cfg(sym).max_hold_hours
+                desk._push(*tjr_alerts.close_message(
+                    self.name, sym, pos.exit,
+                    f"Neither the stop nor the target was reached and this one "
+                    f"has been open {hours:.0f} hours, which is as long as the "
+                    f"bot holds a crypto trade. It took whatever was there.",
+                    when, account=tjr_alerts.account_line(self.venue)))
+            return
+
+    @staticmethod
+    def _key(a) -> tuple:
+        """One setup's identity, the same on the way out and on the way back:
+        the pair and the candle whose close produced it. A Working carries it
+        as `placed_t` and the Position that comes out of it carries the same
+        moment on its Setup, so an order and the trade it becomes are one
+        thing to this market."""
+        obj = a.get("working") or a.get("position")
+        t = getattr(obj, "placed_t", None)
+        if t is None:
+            t = getattr(getattr(obj, "setup", None), "choch_t", None)
+        return (a["symbol"], pd.Timestamp(t))
+
+    def on_placed(self, sig: dict) -> None:
+        """Remember what the venue said about a resting order, so the engine's
+        cancel can name the exact order id rather than sweeping a symbol — and
+        so nothing downstream ever narrates an order that was not sent."""
+        rec = sig.get("placed") or {}
+        if rec.get("status") != "resting":
+            return
+        key = (sig["symbol"], pd.Timestamp(sig["entry_t"]))
+        self.placed[key] = rec
+        self.real.add(key)
+
+    def _sweep_stale_orders(self, desk) -> None:
+        """ONCE, ON THE FIRST PASS AFTER A RESTART: cancel every Craig entry
+        order still resting at the exchange from before this process started.
+
+        A resting limit outlives the process — that is the point of it — but
+        the SETUP behind it does not survive in memory, so after a redeploy
+        the bot would have an order it can no longer decide about, expire, or
+        explain. Positions are a different case and are deliberately left
+        alone: they still carry the stop and the target that rode in with the
+        entry, which is exactly why the bracket is attached.
+        """
+        if self._swept or not desk.is_armed(self):
+            return
+        self._swept = True
+        if not hasattr(self.venue, "cancel_entry"):
+            return
+        for pair in self.symbols:
+            try:
+                if self.venue.resting_entries(pair):
+                    self.venue.cancel_entry(
+                        pair, reason="the desk restarted, so the setup behind "
+                                     "this resting order is no longer in "
+                                     "memory and it cannot be managed")
+            except Exception as e:                           # noqa: BLE001
+                print(f"  crypto {pair}: startup sweep — {str(e)[:120]}")
 
 
 class IndexMarket(Market):
@@ -420,7 +740,16 @@ class Desk:
             # normally gives, measured from its own setups. Everything refuses
             # to state a size at all when it is missing, rather than sizing per
             # trade — which is the thing the rule specifically rejects.
-            sig["tightest_stop_pct"] = tightest_stop_pct(sig["symbol"])
+            # A SIGNAL THAT BROUGHT ITS OWN KEEPS IT. This file's stop floors
+            # were measured from the TJR method's 5-minute setups, and crypto
+            # is decided by Craig's method on the 1-hour candle now — a
+            # different method on a different chart may not borrow that
+            # number, which is the same rule that stops one instrument
+            # borrowing another's. craig_live measures its own, from its own
+            # setups, and puts them on the signal. Everything else still gets
+            # this file's, exactly as before.
+            sig.setdefault("tightest_stop_pct",
+                           tightest_stop_pct(sig["symbol"]))
             sig["account"] = equity
             # THE DECISION FILES DO NOT ALL SPEAK THE SAME WORD FOR THIS.
             # tjr_crypto returns "side"; tjr_bot (which the index and gold
@@ -458,9 +787,16 @@ class Desk:
         self._push(title, msg)
 
         for s in sigs:
-            if (s.get("placed") or {}).get("status") == "filled":
+            st = (s.get("placed") or {}).get("status")
+            if st == "filled":
                 self.open_trades[(m.name, s["symbol"])] = {
                     "sig": s, "half_off": False}
+            # A MARKET MAY OWN ITS ORDERS' LIVES. Craig's entry is a resting
+            # limit, so it is not a position yet and must not go in
+            # open_trades — but the market that placed it needs the venue's
+            # record so it can cancel that exact order later.
+            if hasattr(m, "on_placed"):
+                m.on_placed(s)
 
     def _size_for(self, m: Market, sig: dict, equity: float) -> dict:
         """His set size, and the one cap we added on top of it. Both numbers
@@ -482,12 +818,30 @@ class Desk:
         # been sized to the full outer limit, so the day could spend twice
         # what it is allowed to. The signal already carries these; the desk
         # simply was not forwarding them.
+        # WHICH SIZING RULE — AND THE SIGNAL SAYS, IT IS NOT ASSUMED HERE.
+        #
+        # Left to itself this call takes position_size's default, which is his
+        # SET size: worked out once off the tightest stop the instrument
+        # normally gives and then held still. That is the right rule for the
+        # TJR books and it is what they still get, because a TJR signal does
+        # not carry this key and None resolves to the old default inside
+        # position_size.
+        #
+        # A CRAIG SIGNAL CARRIES False, and it must. His arithmetic is his own
+        # words — "500 divided by $18 in this case ... that's going to give us
+        # the amount of units that we need in order to risk exactly $500" — so
+        # the size falls out of TODAY'S stop and the allowance is spent
+        # exactly. Every number in step467 was measured under that rule. Sized
+        # the other way a Craig trade on a tight 1-hour stop would come out
+        # several times larger than the one the replay booked, which is the
+        # 36x bug in a new coat.
         return tjr_alerts.position_size(
             m.name, sig["symbol"], equity, entry, stop_distance,
             float(sig.get("tightest_stop_pct") or 0.0),
             float(sig.get("usd_per_quote") or 1.0), risk_pct,
             buying_power=sig.get("buying_power_used"),
-            outer_allowance=sig.get("outer_allowance"))
+            outer_allowance=sig.get("outer_allowance"),
+            hold_size_still=sig.get("hold_size_still"))
 
     def _place_one(self, m: Market, sig: dict, equity: float) -> dict:
         size = self._size_for(m, sig, equity)
@@ -511,6 +865,9 @@ class Desk:
                     "reason": f"the {m.name} market is not armed, so nothing "
                               f"was sent. Everything else about this trade is "
                               f"real. Arm it with CRYPTOBOT_ARM."}
+
+        if sig.get("order_type") == "limit":
+            return self._rest_one(m, sig, size)
 
         rec = m.venue.market_order(
             sig["symbol"], sig["side"], size["units"],
@@ -536,6 +893,48 @@ class Desk:
                              f"position was closed again immediately")
         return rec
 
+    def _rest_one(self, m: Market, sig: dict, size: dict) -> dict:
+        """A RESTING LIMIT, WITH ITS STOP ATTACHED, IN ONE REQUEST.
+
+        There is no second call here and there is no window. The order goes on
+        carrying the level that proves the idea wrong, so from the instant the
+        exchange fills it — which may be a day from now, while this process is
+        being redeployed — the position already has its stop underneath it.
+        `venue.limit_order` refuses outright if the stop is missing or on the
+        wrong side, so a caller that forgets it cannot rest a naked entry.
+
+        ONE POSITION PER SYMBOL. BloFin nets everything on a symbol into ONE
+        position, so a second order on a pair that already has one would fuse
+        the two and neither could be managed. That is the exchange's rule, not
+        the method's: the setup is still decided, still sized, still on the
+        message, and only the SENDING is refused.
+        """
+        sym = sig["symbol"]
+        if not hasattr(m.venue, "limit_order"):
+            return {"status": "not_sent",
+                    "reason": f"{getattr(m.venue, 'name', '?')} has no resting "
+                              f"limit order, and this method's entry is a "
+                              f"resting limit. Nothing was sent."}
+        try:
+            busy = m.venue.position(sym) is not None or bool(
+                m.venue.resting_entries(sym)
+                if hasattr(m.venue, "resting_entries") else False)
+        except Exception:                                    # noqa: BLE001
+            busy = False
+        if busy:
+            return {"status": "not_sent",
+                    "reason": f"{sym} already carries a position or a resting "
+                              f"order of the bot's, and this exchange nets "
+                              f"everything on a symbol into ONE position — so "
+                              f"a second order here would fuse the two and "
+                              f"neither could be managed. The setup is real "
+                              f"and is reported above; it was not sent."}
+        return m.venue.limit_order(
+            sym, sig["side"], size["units"], float(sig["limit_price"]),
+            stop=float(sig["stop"]),
+            targets=[float(t) for t in (sig.get("targets") or [])],
+            reason=f"{m.name} resting entry")
+
     def _what_happened(self, m: Market, sigs: list) -> str:
         """The first thing on the message: what the BOT DID. He is being told,
         not asked."""
@@ -548,6 +947,15 @@ class Desk:
                 line = (f"DONE — the bot {('bought' if s['side'] == 'buy' else 'sold short')} "
                         f"{sym} and its stop is resting at the exchange. "
                         f"Nothing for you to do.")
+            elif st == "resting":
+                p_ = p.get("price")
+                line = (f"ORDER PLACED — the bot is waiting to "
+                        f"{'buy' if s['side'] == 'buy' else 'sell short'} "
+                        f"{sym} at {tjr_alerts.fmt_price(sym, float(p_))}, with "
+                        f"its stop already attached to the order. It fills only "
+                        f"if price comes back there, and it is cancelled after "
+                        f"{s.get('expires_after_bars', 24)} hours if it does "
+                        f"not. Nothing for you to do.")
             elif st == "unwound":
                 line = (f"OPENED AND CLOSED AGAIN — {sym}. {p.get('reason')}")
             elif st == "not_sent":
@@ -569,7 +977,17 @@ class Desk:
         stop was hit so the bot's own record catches up — it is bookkeeping,
         not protection. The targets are the opposite: nothing at the exchange
         knows about them, so this loop is the only thing that acts on them.
+
+        A MARKET MAY OWN ITS OWN MANAGEMENT, and crypto does. Two different
+        methods cannot share one manager: what follows works a LADDER of
+        targets off 1-minute bars and moves the stop once half is off, which
+        is the TJR method. Craig has one target, one exit, and a break-even
+        rule read off a 1-hour close. So CryptoMarket.manage handles crypto
+        and this loop never sees it.
         """
+        if hasattr(m, "manage"):
+            m.manage(self, frames)
+            return
         for sym in list(m.symbols):
             key = (m.name, sym)
             t = self.open_trades.get(key)
@@ -841,15 +1259,18 @@ def derive_stop_floors(verbose: bool = True) -> dict:
     retirement."""
     out = dict(stop_floors())
 
-    for pair in tjr_crypto.PAIRS:
-        try:
-            r = tjr_crypto.run_pair(pair)
-            f = _floor_from(r["trades"])
-            if f:
-                out[pair] = f
-        except Exception as e:
-            if verbose:
-                print(f"  {pair}: {str(e)[:100]}")
+    # CRYPTO IS NOT MEASURED INTO THIS FILE ANY MORE. Crypto is decided by
+    # Craig's method on the 1-hour candle, and its stop floors are measured
+    # from ITS OWN setups into step469_craig_stop_floors.json — a different
+    # method on a different chart may not borrow a number, which is the same
+    # rule that stops one instrument borrowing another's. The old crypto rows
+    # are left in this file rather than stripped out, because deleting a
+    # measurement is not the same as retiring the thing it measured.
+    try:
+        craig_live.derive_stop_floors(verbose=verbose)
+    except Exception as e:                                   # noqa: BLE001
+        if verbose:
+            print(f"  craig crypto floors: {str(e)[:120]}")
 
     try:
         import test_tjr_bot as t
@@ -908,17 +1329,34 @@ def tightest_stop_pct(symbol: str) -> float:
 
 
 # ============================================================== REPORTING
+def craig_crypto_module():
+    """Craig's replay engine, imported only where it is used. It is the same
+    module `craig_live` decides on, so a count taken here is a count of the
+    trades the desk would actually have placed."""
+    import craig_crypto
+    return craig_crypto
+
+
 def volume(verbose: bool = True) -> dict:
     """SETUPS A DAY, PER MARKET — the number trade count is limited by, and
     the only thing the replay is used for. Not a profit claim: he does not
     count historical replay as evidence and neither do we."""
     out = {}
     try:
-        c = tjr_crypto.setups_per_day(verbose=False)
-        n = sum(v["setups"] for v in c.values())
-        d = max(max(v["days"] for v in c.values()), 1)
-        out["crypto"] = {"pairs": len(c), "setups": n, "days": d,
-                         "per_day": round(n / d, 3)}
+        # CRAIG'S OWN COUNT, on the chart he is actually traded on. The
+        # 1-hour is a much quieter chart than the 5-minute the old engine
+        # ran on, and that is most of why it is the one that keeps its money.
+        end = pd.Timestamp("2026-07-26")
+        start = end - pd.Timedelta(days=90)
+        n = 0
+        for pair in craig_live.PAIRS:
+            r = craig_crypto_module().run_pair(
+                pair, start, end, cfg=craig_live.live_config(pair))
+            n += len(r["trades"])
+        days = 91
+        out["crypto"] = {"pairs": len(craig_live.PAIRS), "setups": n,
+                         "days": days, "per_day": round(n / days, 3),
+                         "engine": "craig", "chart": "1h"}
     except Exception as e:
         out["crypto"] = {"error": str(e)[:120]}
     try:
@@ -947,6 +1385,47 @@ def volume(verbose: bool = True) -> dict:
     return out
 
 
+def craig_sample(pair: str = "ETH/USD", account: float = ACCOUNT,
+                 start=None, end=None) -> str:
+    """THE EXACT MESSAGE a real Craig setup sends, built from a setup that
+    genuinely fired in the cached 1-hour history. Sends nothing, places
+    nothing, and reaches no venue.
+
+    It goes through `craig_live.Engine` and then through the same
+    `tjr_alerts.entry_message` every other market uses, so what is printed
+    here is not a mock-up of the message — it is the message.
+    """
+    cc = craig_crypto_module()
+    end = pd.Timestamp(end or "2026-07-26")
+    start = pd.Timestamp(start or (end - pd.Timedelta(days=120)))
+    # THE BOOK'S OWN CONFIG, ladder and all, because the point of this
+    # function is to print the message he will actually receive.
+    cfg = craig_live.book_config(pair)
+    r = craig_live.replay_through_live(pair, start, end, cfg=cfg,
+                                       data=cc.load(pair))
+    eng = r["engine"]
+    trades = r["trades"]
+    if not trades:
+        return "crypto sample unavailable: no Craig setup in the window"
+    last = trades[-1]
+    wk = craig_live.Working(
+        pair=pair, session=last.session, direction=last.direction,
+        setup=last.setup, entry=last.setup.entry, stop=last.setup.stop,
+        target=last.setup.target, placed_t=last.setup.choch_t,
+        last_look_i=0, equity_at_signal=account,
+        units=last.sent_units, risk_dollars=last.risk_dollars)
+    # the moment the candle CLOSED, in New York — the desk's own clock, so
+    # this really is the message and not a near miss of it
+    when = CryptoMarket._ny(pd.Timestamp(last.setup.choch_t)
+                            + craig_live.bar_width(cfg))
+    sig = dict(eng.signal(wk, account), market="crypto", fired_at=when)
+    sig["placed"] = {"status": "resting", "price": wk.entry}
+    title, msg = tjr_alerts.entry_message([sig], account, {pair: 1.0}, when)
+    head = Desk(dry_run=True, markets=[], armed=set())._what_happened(
+        CryptoMarket.__new__(CryptoMarket), [sig])
+    return f"### {title}\n\n{head}\n\n{msg}"
+
+
 def samples() -> str:
     """A real alert for each market, built from a setup that actually fired
     in the cached history. Sends nothing."""
@@ -966,10 +1445,8 @@ def samples() -> str:
         return f"### {title}\n\n{msg}"
 
     try:
-        r = tjr_crypto.run_pair("BTC/USD")
-        if r["trades"]:
-            parts.append(render("crypto", r["trades"][-1], "BTC/USD"))
-    except Exception as e:
+        parts.append(craig_sample())
+    except Exception as e:                                   # noqa: BLE001
         parts.append(f"crypto sample unavailable: {str(e)[:120]}")
     try:
         import test_tjr_bot as t

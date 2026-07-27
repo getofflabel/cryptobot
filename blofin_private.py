@@ -481,6 +481,90 @@ class BlofinDemoPrivate:
             return str(first.get("orderId"))
         raise RuntimeError(f"Unexpected order response: {data}")
 
+    def limit_order(self, symbol: str, side: str, contracts: float,
+                    price: float,
+                    margin_mode: str | None = None,
+                    client_order_id: str | None = None,
+                    lot_size: float | None = None,
+                    stop_price: float | None = None,
+                    take_profit: float | None = None,
+                    tick_size: float | None = None) -> str:
+        """A RESTING LIMIT order at `price`, with its stop attached. Returns
+        the order id.
+
+        WHY THIS EXISTS ALONGSIDE market_order (2026-07-26). The TJR method's
+        trigger is a candle closing, so it goes in at market and a limit that
+        never fills is a signal missed. CRAIG'S ENTRY IS THE OPPOSITE
+        INSTRUCTION: "wait for price to trade into the 50% midpoint of this
+        fair value gap. And that's going to be where I'm looking for my
+        entries." A fill at any other price is not his trade. So his entry is
+        a limit that rests until price comes back to it, and the engine
+        cancels it when it has had its allotted candles.
+
+        THE STOP RIDES IN WITH THE ENTRY, exactly as it does on market_order,
+        and for a resting order it matters MORE rather than less: the fill can
+        land at any moment over the next day, including while this process is
+        being redeployed, and a second call cannot be made by a process that
+        is not running. slTriggerPrice / tpTriggerPrice are the same fields
+        the market path uses, on the same POST /api/v1/trade/order endpoint.
+
+        NOT YET EXERCISED AGAINST THE LIVE DEMO HOST. market_order's attached
+        bracket was verified live on 2026-07-25; the limit variant of the same
+        body has not been sent, because crypto is disarmed while this is
+        built. The fields and the endpoint are the ones BloFin documents and
+        the ones the verified market call already uses — but "documented and
+        analogous" is not "seen working", and this sentence is here so nobody
+        reads it as the latter.
+
+        Always pass tick_size: an unrounded price or trigger is rejected, or
+        worse, truncated onto the wrong side of the market.
+
+        THERE IS NO reduce_only ON THIS METHOD, ON PURPOSE. venue._SealedClient
+        puts every call that can shrink or close a position behind the
+        attribution guard, and it recognises the reducing forms of
+        market_order and post_only_order by name. A reduce-only limit would be
+        a third such form that the seal does not know about, so this method
+        can only ever OPEN. Closing goes through the paths the guard already
+        watches.
+        """
+        margin_mode = margin_mode or self._mode_for(symbol)
+        body = {
+            "instId": symbol,
+            "marginMode": margin_mode,
+            "positionSide": "net",
+            "side": side,
+            "orderType": "limit",
+            "price": fmt_price(price, tick_size),
+            "size": fmt_size(contracts, lot_size),
+        }
+        # NO reduceOnly HERE, and the two lines that used to sit at this spot
+        # were a copy of `post_only_order`'s that referred to an argument this
+        # method does not have. They raised NameError on every call and would
+        # have done so on the very first real Craig order — nothing caught it
+        # because every test in the suite drives a fake client. They also
+        # contradicted this method's own docstring, which says in as many
+        # words that there is no reduce-only form of it on purpose: a
+        # reduce-only limit would be a third way to shrink a position that
+        # `venue._SealedClient`'s attribution guard does not recognise by
+        # name. This method can only ever OPEN.
+        if client_order_id:
+            body["clientOrderId"] = client_order_id
+        # -1 means "when it triggers, get out at MARKET" — in a fast move you
+        # want out, not a resting limit the market can skip straight over.
+        if stop_price is not None:
+            body["slTriggerPrice"] = fmt_price(stop_price, tick_size)
+            body["slOrderPrice"] = "-1"
+        if take_profit is not None:
+            body["tpTriggerPrice"] = fmt_price(take_profit, tick_size)
+            body["tpOrderPrice"] = "-1"
+        data = self._call("POST", "/api/v1/trade/order", body=body)
+        if isinstance(data, list) and data:
+            first = data[0]
+            if str(first.get("code", "0")) != "0":
+                raise RuntimeError(f"Limit order rejected: {first}")
+            return str(first.get("orderId"))
+        raise RuntimeError(f"Unexpected order response: {data}")
+
     def post_only_order(self, symbol: str, side: str, contracts: float,
                         price: float, reduce_only: bool = False,
                         client_order_id: str | None = None) -> str:

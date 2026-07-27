@@ -1,0 +1,42 @@
+{
+  "BTC/USD": {
+    "tightest_stop_pct": 0.00148379239797498,
+    "median_stop_pct": 0.0031164876111753562,
+    "widest_stop_pct": 0.008604341870202658,
+    "setups_measured": 19,
+    "chart": "1h",
+    "engine": "craig"
+  },
+  "ETH/USD": {
+    "tightest_stop_pct": 0.0022974237275199907,
+    "median_stop_pct": 0.0050725388106223155,
+    "widest_stop_pct": 0.017636266088526423,
+    "setups_measured": 36,
+    "chart": "1h",
+    "engine": "craig"
+  },
+  "SOL/USD": {
+    "tightest_stop_pct": 0.00245765946223208,
+    "median_stop_pct": 0.006676385844442662,
+    "widest_stop_pct": 0.021141620694939075,
+    "setups_measured": 31,
+    "chart": "1h",
+    "engine": "craig"
+  },
+  "XRP/USD": {
+    "tightest_stop_pct": 0.002105748413145337,
+    "median_stop_pct": 0.0051436136545286535,
+    "widest_stop_pct": 0.015618412388617633,
+    "setups_measured": 30,
+    "chart": "1h",
+    "engine": "craig"
+  },
+  "DOT/USD": {
+    "tightest_stop_pct": 0.003572670593978038,
+    "median_stop_pct": 0.006380125869188588,
+    "widest_stop_pct": 0.03898614793196531,
+    "setups_measured": 24,
+    "chart": "1h",
+    "engine": "craig"
+  }
+}

@@ -272,6 +272,20 @@ class CraigConfig:
     # the stop, reported, never an input.
     buying_power_multiple: float | None = None
 
+    # THE MONEY-GAME LADDER — the switch only. THE POLICY ITSELF IS NOT IN
+    # THIS FILE: it lives in `craig_live.money_game_share`, because it is an
+    # ACCOUNT-level rule about one book's balance and not part of Craig's
+    # method at all. Nothing in this module reads either field; they are here
+    # because `config_for` is the one place a Craig config is built and the
+    # live desk has to be able to set them without a second config object.
+    #
+    # OFF here and OFF in `craig_live.SHIPPING`, so every number in step467
+    # and every replay still means what it meant. It is turned ON in exactly
+    # one place, `craig_live.BOOK`, which is what `tjr_desk.CryptoMarket`
+    # runs the BloFin book on.
+    money_game_ladder: bool = False
+    money_game_stake: float = 2178.0
+
     # -------------------------------------------------------------- COSTS
     # The pair's own measured round trip, as a share of notional. Charged on
     # every closed trade, consulted by nothing.
@@ -479,6 +493,42 @@ def find_setups(d: pd.DataFrame, open_i: int, end_i: int,
             mrl = float(sl[i])
 
     return setups
+
+
+def session_setups(w: pd.DataFrame, tarr, ts, name: str, cfg: CraigConfig,
+                   pair: str = "", upto_i: int | None = None) -> list:
+    """One session open's setups, stamped onto the working frame `w`.
+
+    THIS IS THE ONE PLACE THE HUNT WINDOW IS CONSTRUCTED. `run_pair` calls it
+    for every session in the replay, and `craig_live.Engine` calls it once per
+    closed candle for the live desk. There is exactly one window arithmetic in
+    the project and both paths reach it, for the same reason there is exactly
+    one sizing path: the 36x sizing bug happened because a replay and a live
+    runner each had their own.
+
+    `upto_i` is the live path's only addition and it can only ever SHORTEN the
+    window: at the moment a candle closes, the rest of the session has not
+    happened yet. Because `find_setups` is causal, shortening the window
+    returns the same setups the full window returns for the bars it covers,
+    which is what `test_craig_live.py` proves against the replay.
+    """
+    i_open = int(np.searchsorted(tarr, np.datetime64(pd.Timestamp(ts)), "left"))
+    i_end = int(np.searchsorted(
+        tarr, np.datetime64(pd.Timestamp(ts) +
+                            pd.Timedelta(minutes=cfg.hunt_minutes)),
+        "left")) - 1
+    if upto_i is not None:
+        i_end = min(i_end, int(upto_i))
+    if i_open >= len(w) or i_end < i_open:
+        return []
+    i_ctx = max(0, i_open - cfg.context_bars)
+    sub = w.iloc[i_ctx:i_end + 1].reset_index(drop=True)
+    out = []
+    for s in find_setups(sub, i_open - i_ctx, i_end - i_ctx, cfg,
+                         pair=pair, session=name):
+        s.choch_i += i_ctx                     # back onto the working frame
+        out.append(s)
+    return out
 
 
 def _bar_step(t):
@@ -868,18 +918,7 @@ def run_pair(pair: str, start, end, cfg: CraigConfig | None = None,
 
     setups = []
     for ts, name in jobs:
-        i_open = int(np.searchsorted(tarr, np.datetime64(ts), "left"))
-        i_end = int(np.searchsorted(
-            tarr, np.datetime64(ts + pd.Timedelta(minutes=cfg.hunt_minutes)),
-            "left")) - 1
-        if i_open >= len(w) or i_end < i_open:
-            continue
-        i_ctx = max(0, i_open - cfg.context_bars)
-        sub = w.iloc[i_ctx:i_end + 1].reset_index(drop=True)
-        for s in find_setups(sub, i_open - i_ctx, i_end - i_ctx, cfg,
-                             pair=pair, session=name):
-            s.choch_i += i_ctx                     # back onto the working frame
-            setups.append(s)
+        setups.extend(session_setups(w, tarr, ts, name, cfg, pair=pair))
 
     setups.sort(key=lambda s: s.choch_t)
     trades, closed = [], []

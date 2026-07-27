@@ -508,7 +508,16 @@ def stop_sits_on(sig: dict) -> str:
 
 def plain_reason(sig: dict) -> str:
     """One sentence for why the trade exists. No term in it needs a glossary.
+
+    A SIGNAL MAY WRITE ITS OWN. Everything below rewrites the TJR method's
+    vocabulary — a liquidity grab, a break of structure, a gap inversion — and
+    that is the only vocabulary it knows. Crypto is decided by Craig's method
+    now (craig_live.py), whose sentence is about a different set of things
+    entirely, so it arrives already written and in plain words. A signal that
+    carries no `why` is a TJR signal and reads exactly as it always has.
     """
+    if sig.get("why"):
+        return str(sig["why"])
     sym = sig["symbol"]
     lvl = sig.get("level_price")
     up = sig["direction"] > 0
@@ -597,11 +606,63 @@ def trade_block(sig: dict, account: float, usd_per_quote: float = 1.0) -> list:
     else:
         half_size_day = day_pct < 0.0075
 
+    # WHICH SIZING RULE — THE SIGNAL SAYS, AND THE MESSAGE MUST NOT GUESS.
+    # A message that states a different size from the one the order carried
+    # is worse than no message: he would reconcile his screen against it and
+    # find they disagree. The desk's order path (`tjr_desk._size_for`) reads
+    # this same key off this same signal, so the two cannot drift. A signal
+    # that does not carry it is a TJR signal and gets the old default, which
+    # position_size resolves from None to the held-still rule.
+    # AND WHICH OUTER LIMIT — SAME REASON, AND IT IS THE CRAIG PATH ONLY.
+    #
+    # Left alone this call takes the single-trade fallback ceiling above, 3%
+    # OF THE ACCOUNT, which is right for every book that has one and is what
+    # every TJR message still gets.
+    #
+    # A CRAIG SIGNAL FROM THE BLOFIN BOOK CARRIES ITS OWN, and it has to be
+    # honoured here or this message states a size the order does not carry.
+    # That book runs the MONEY-GAME LADDER — Alex Gonzalez's "anything below
+    # $25,000, it's all the money game", four or five trades in you, which on
+    # Wallace's $2,178 stake is 22% OF THE ACCOUNT on one trade. The desk's
+    # order path (`tjr_desk._size_for`) already forwards `outer_allowance`
+    # from the signal, so without this line the order would go out at 22% and
+    # the message would say 3%, and he would reconcile his BloFin screen
+    # against a number nothing ever sent.
+    #
+    # Narrowed to `engine == "craig"` on purpose: nothing else on the desk
+    # changes, and no message shape changes either — the same lines, with the
+    # size the order actually carried.
+    outer = sig.get("outer_allowance") if sig.get("engine") == "craig" else None
     size = position_size(market, sym, account, entry, dist,
                          float(sig.get("tightest_stop_pct") or 0.0),
-                         usd_per_quote, risk_pct)
+                         usd_per_quote, risk_pct, outer_allowance=outer,
+                         hold_size_still=sig.get("hold_size_still"))
 
     marg = account * margin_share()
+
+    # THE MARGIN THE EXCHANGE WILL ACTUALLY ASK FOR, when the signal knows
+    # what that exchange's ceiling is. Everything else on the desk keeps the
+    # flat margin share above.
+    #
+    # `margin_share()` is a BUDGET — how much of the account we set aside to
+    # hold one position — and the leverage falls out of it. That works while
+    # the leverage it implies is a number the exchange will accept. The
+    # money-game ladder breaks that: a position 60 times the account on a 10%
+    # margin implies 602x, and BloFin's ETH ceiling is 150x. The exchange does
+    # not refuse — it posts FOUR TIMES THE MARGIN instead. So a message built
+    # on the budget would state a leverage that cannot exist and a margin four
+    # times smaller than the one that will actually be tied up, and every
+    # "% OF THE MARGIN" underneath it would be wrong by the same factor.
+    #
+    # This is exactly what `venue.BlofinVenue._leverage_for` does, and only
+    # ever in the direction of MORE margin, never less.
+    ceiling = float(sig.get("leverage_ceiling") or 0.0)
+    ceiling_binds = False
+    if ceiling > 0 and marg > 0 and size.get("ok"):
+        face_now = (size.get("units") or 0.0) * entry * (usd_per_quote or 1.0)
+        if face_now > ceiling * marg:
+            marg = face_now / ceiling
+            ceiling_binds = True
 
     def money(d):
         """A dollar amount and what it is AS A SHARE OF THE MARGIN.
@@ -630,7 +691,9 @@ def trade_block(sig: dict, account: float, usd_per_quote: float = 1.0) -> list:
 
     lines.append("money below: dollars, and the % OF THE MARGIN "
                  "(what the exchange shows you)")
-    lines.append(f"Entry   {fmt_price(sym, entry)}")
+    lines.append(f"Entry   {fmt_price(sym, entry)}"
+                 + ("   RESTING LIMIT — it fills only if price comes back to it"
+                    if sig.get("order_type") == "limit" else ""))
 
     tgts = [float(t) for t in (sig.get("targets") or [])][:4]
     srcs = list(sig.get("target_sources") or [])
@@ -671,6 +734,15 @@ def trade_block(sig: dict, account: float, usd_per_quote: float = 1.0) -> list:
     lines.append(f"Size    {u} {spec['size_unit']}  =  ${face:,.0f} position")
     lev = (face / marg) if marg > 0 else 0.0
     lines.append(f"Margin  ${marg:,.2f}   Leverage {lev:.0f}x")
+    if ceiling_binds:
+        # SAID OUT LOUD, NOT QUIETLY APPLIED. He will see this margin on his
+        # BloFin screen and it is bigger than the desk's usual share of the
+        # account, so the message says why before he asks.
+        lines.append(f"{sym} stops at {ceiling:.0f}x on this exchange, so it "
+                     f"holds ${marg:,.2f} of the account as margin — "
+                     f"{100*marg/account:.0f}% OF THE ACCOUNT — instead of "
+                     f"the usual {100*margin_share():.0f}%. The size and the "
+                     f"stop are unchanged.")
 
     if half_size_day:
         lines.append("HALF SIZE today — news or a holiday")
@@ -765,6 +837,15 @@ def entry_message(sigs, account: float, usd_per_quote=None,
 
     if by_hand:
         what = "take them by hand" if n > 1 else "take this one by hand"
+    elif states and states <= {"resting"}:
+        # A RESTING LIMIT IS NOT A POSITION AND THE HEADER MAY NOT IMPLY ONE.
+        # Craig's entry waits for price to come back to the middle of the gap,
+        # so at this moment the bot owns an ORDER, not a trade, and it may
+        # never own more than that. Saying "the bot took this one" here would
+        # have him open the app looking for a position that is not there.
+        what = ("the bot placed the orders and is waiting for the price"
+                if n > 1 else
+                "the bot placed the order and is waiting for the price")
     elif states and states <= {"unwound"}:
         what = "OPENED AND CLOSED AGAIN. NOTHING FOR YOU TO DO."
     elif states and states <= {"not_sent", "rejected", "cannot_send"}:
@@ -783,7 +864,24 @@ def entry_message(sigs, account: float, usd_per_quote=None,
         body += trade_block(sig, account, upq(sig["symbol"]))
 
     body += ["", spec["instrument"]]
-    if any(s.get("targets") for s in sigs):
+    if any(s.get("single_exit") for s in sigs):
+        # ONE EXIT, NOT A LADDER. Craig's method has a single target at four
+        # times the risk and takes the whole position off there; there is no
+        # half at the first target and no runner behind it. The ladder
+        # paragraph below is the TJR method's and would be an instruction to
+        # do something this trade has no provision for.
+        body += ["",
+                 "There is nothing to do at any point. The whole position "
+                 "comes off at the target, the stop is already resting at the "
+                 "exchange, and the bot moves that stop to your entry price "
+                 "the moment a 1-hour candle closes past the last swing in "
+                 "your favour — from then on the trade cannot cost anything. "
+                 "If price never comes back to the entry, the order is "
+                 "cancelled and I will tell you.",
+                 "",
+                 "I will message you when it fills, when the stop moves, and "
+                 "when it is out."]
+    elif any(s.get("targets") for s in sigs):
         body.append("")
         body.append("When the first target is reached: take HALF off and move "
                     "the stop to your entry price. At the second target take "
@@ -820,6 +918,73 @@ def first_target_message(market: str, symbol: str, entry: float, target: float,
         "",
         f"{when:%H:%M} New York time."])
     return f"{MARKETS[market]['label']} · {symbol}: half off, move the stop", msg
+
+
+def filled_message(market: str, symbol: str, price: float, stop: float,
+                   target: float, when: dt.datetime | None = None) -> tuple:
+    """A RESTING LIMIT HAS FILLED — the bot now owns a position it did not own
+    a minute ago.
+
+    Added 2026-07-26 with Craig's method. It has no TJR equivalent because a
+    TJR entry goes in at market and the entry message IS the fill message. A
+    limit that rests for up to a day and then fills while he is asleep is a
+    different event and it needs its own line, or the first he hears of the
+    trade is the message telling him it is over.
+    """
+    when = when or dt.datetime.now()
+    msg = "\n".join([
+        f"{MARKETS[market]['label']} — {symbol}",
+        "=" * 46, "",
+        f"FILLED at {fmt_price(symbol, price)}. The order you were told about "
+        f"earlier is now a position.",
+        "",
+        f"Stop   {fmt_price(symbol, stop)}   already resting at the exchange",
+        f"Target {fmt_price(symbol, target)}",
+        "",
+        "Nothing for you to do.",
+        "",
+        f"{when:%H:%M} New York time."])
+    return f"{MARKETS[market]['label']} · {symbol}: filled", msg
+
+
+def breakeven_message(market: str, symbol: str, entry: float, why: str,
+                      when: dt.datetime | None = None) -> tuple:
+    """THE STOP HAS MOVED TO THE ENTRY. Not "half off, move the stop" — that
+    is the TJR ladder and Craig has no ladder. The whole position is still on;
+    all that changed is that it can no longer cost anything."""
+    when = when or dt.datetime.now()
+    msg = "\n".join([
+        f"{MARKETS[market]['label']} — {symbol}",
+        "=" * 46, "",
+        f"The stop is now at {fmt_price(symbol, entry)}, your entry price. "
+        f"The whole position is still on and it can no longer lose money.",
+        "", why, "",
+        "Nothing for you to do.",
+        "",
+        f"{when:%H:%M} New York time."])
+    return f"{MARKETS[market]['label']} · {symbol}: stop at break even", msg
+
+
+def order_cancelled_message(market: str, symbol: str, price: float, why: str,
+                            when: dt.datetime | None = None) -> tuple:
+    """A RESTING ENTRY DIED WITHOUT EVER FILLING. No position was ever opened
+    and no money moved.
+
+    It is sent because silence here would be the wrong kind: he was told the
+    bot had placed an order, and an order that quietly disappears is exactly
+    the sort of thing that makes him stop trusting the messages.
+    """
+    when = when or dt.datetime.now()
+    msg = "\n".join([
+        f"{MARKETS[market]['label']} — {symbol}",
+        "=" * 46, "",
+        f"The resting order at {fmt_price(symbol, price)} is cancelled. It "
+        f"never filled, so nothing was ever opened and this cost nothing.",
+        "", why, "",
+        "Nothing for you to do.",
+        "",
+        f"{when:%H:%M} New York time."])
+    return f"{MARKETS[market]['label']} · {symbol}: order cancelled", msg
 
 
 def close_message(market: str, symbol: str, price: float, why: str,

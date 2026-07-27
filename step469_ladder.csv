@@ -1,0 +1,7 @@
+arm,draw,paths,survived_month_one_pct,doubled_pct,reached_25k_pct,died_pct,median_final,p05_final,p95_final
+HIS base — equity / 4.5,the year as it happened,1,100.0,0.0,0.0,100.0,182.99,182.99,182.99
+HIS base — equity / 4.5,one trade at a time,20000,83.5,47.57,1.095,73.1,199.16,157.37,18623.55
+HIS base — equity / 4.5,in blocks of five,20000,84.6,50.885000000000005,0.695,71.89,199.66,156.88,18115.33
+half the base — equity / 9,the year as it happened,1,100.0,0.0,0.0,100.0,194.15,194.15,194.15
+half the base — equity / 9,one trade at a time,20000,100.0,54.730000000000004,0.13,51.475,217.04,188.35,14839.51
+half the base — equity / 9,in blocks of five,20000,100.0,56.220000000000006,0.065,49.714999999999996,254.17,188.47,14134.28
