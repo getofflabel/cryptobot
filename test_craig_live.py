@@ -918,14 +918,31 @@ def test_a_size_the_exchange_cannot_carry_is_cut_and_said_out_loud():
 
 
 def test_the_ladder_never_reaches_the_stock_or_gold_books():
-    """It is an ACCOUNT-level rule for the BloFin book. Nothing else on the
-    desk may see it, and a TJR signal carries no trace of it."""
-    for m in (tjr_desk.IndexMarket, tjr_desk.GoldMarket):
-        src = inspect.getsource(m)
-        assert "money_game" not in src and "craig" not in src.lower()
+    """CRAIG'S CONFIGURATION IS CRAIG'S. Nothing else on the desk may take
+    `craig_live.BOOK`, and no file every book shares may know the ladder
+    exists.
+
+    UPDATED 2026-07-27, and the reason is Wallace's, not a loosening of this
+    rule. He ruled "ladder on gold too", so the GOLD book runs the ladder as
+    well — through `alex_live`, off `alex_live.GOLD_BOOK`, switched on in its
+    own file. The curve is imported from here rather than copied, which is
+    why the two books cannot drift about it. What this test still holds is
+    the thing it was written to hold: the ladder is a SIZE that lives in a
+    book's own configuration, it is never wired into the shared plumbing, and
+    the index book on Alpaca has no trace of it.
+    """
+    src = inspect.getsource(tjr_desk.IndexMarket)
+    assert "money_game" not in src and "craig" not in src.lower(), \
+        "the ladder or Craig's method reached the index book"
     for mod in (tjr_bot_src(), inspect.getsource(tjr_alerts)):
         assert "money_game" not in mod, \
             "the ladder leaked into a file every book shares"
+    # and the gold book takes the ladder from ONE curve — this one
+    import alex_live
+    assert alex_live.money_game_share(2178.0, 2178.0) == \
+        cl.money_game_share(2178.0, 2178.0)
+    assert "money_game_ladder" not in alex_live.BOOK, \
+        "the forex book took the ladder; it is over his $25,000 line"
 
 
 def tjr_bot_src():
@@ -989,12 +1006,28 @@ def test_the_desks_crypto_path_reaches_craig_and_only_craig():
 
 
 def test_the_stock_and_gold_paths_are_untouched():
-    for cls, mod in ((tjr_desk.IndexMarket, "tjr_bot"),
-                     (tjr_desk.GoldMarket, "tjr_gold")):
-        src = inspect.getsource(cls)
-        assert f"{mod}.live_step" in src, f"{cls.__name__} lost its method"
-        assert "craig" not in src.lower(), \
-            f"{cls.__name__} reaches Craig — methods never mix"
+    """THE STOCK PATH IS UNTOUCHED, and gold changed hands on 2026-07-27 for
+    the same kind of reason crypto did — Wallace's own instruction, "trade
+    gold as xauusdt on blofin", and Alex's method behind it.
+
+    So this test now says what is actually true: the index book still runs the
+    TJR method in its own file, the gold book runs Alex's, the old TJR gold
+    path is left importable for replay exactly as `tjr_crypto` was, and
+    NEITHER of them reaches anything of Craig's decision-making.
+    """
+    src = inspect.getsource(tjr_desk.IndexMarket)
+    assert "tjr_bot.live_step" in src, "IndexMarket lost its method"
+    assert "craig" not in src.lower(), \
+        "IndexMarket reaches Craig — methods never mix"
+
+    gold = inspect.getsource(tjr_desk.GoldMarket)
+    assert "tjr_gold.live_step" not in gold, \
+        "the gold book still runs the retired TJR path"
+    for reaches in ("craig_live.", "craig_crypto."):
+        assert reaches not in gold, \
+            f"the gold book reaches {reaches} — methods never mix"
+    import tjr_gold                                    # still importable
+    assert hasattr(tjr_gold, "live_step")
 
 
 def test_craig_never_imports_the_tjr_method():

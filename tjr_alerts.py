@@ -87,13 +87,35 @@ MARKETS = {
                        "different units and this size is wrong on them."),
         "whole_units": True,
     },
+    # GOLD CHANGED INSTRUMENT ON 2026-07-27, on Wallace's own instruction:
+    # "trade gold as xauusdt on blofin". It was shares of the GLD fund on
+    # Alpaca; it is now TETHER GOLD, XAUT-USDT, a perpetual on BloFin sized
+    # in ounces. Those are different things and a size worked out on one is
+    # wrong on the other, which is exactly what this sentence exists to say.
+    # The levels are still read on the OANDA XAU/USD chart and converted into
+    # XAUT's own prices before anything is sent — see alex_live.convert.
     "gold": {
         "label": "GOLD",
-        "size_unit": "shares",
-        "instrument": ("the size is in SHARES OF GLD, the gold fund. These "
-                       "prices are the fund's, not the price of gold — if you "
-                       "place this on spot gold the numbers will not line up."),
-        "whole_units": True,
+        "size_unit": "ounces of Tether Gold",
+        "instrument": ("the size is in OUNCES OF TETHER GOLD (XAUT-USDT) on "
+                       "BloFin, not shares of a gold fund and not a futures "
+                       "contract. Those move in different units and this size "
+                       "is wrong on them."),
+        "whole_units": False,
+    },
+    # FOREX CAME BACK ON 2026-07-27, on OANDA's practice host, driven by ALEX
+    # GONZALEZ's method. It is a separate row from "currencies" rather than a
+    # rename of it: "currencies" is the old TJR alert-only book's vocabulary
+    # and its messages are still reachable, and a header that changed
+    # underneath an existing book would make two different things look like
+    # one. The units and the words are the same because the instrument is.
+    "forex": {
+        "label": "FOREX",
+        "size_unit": "standard lots",
+        "instrument": ("the size is in STANDARD LOTS of the spot pair on "
+                       "OANDA. One standard lot is 100,000 of the first "
+                       "currency named."),
+        "whole_units": False,
     },
     "currencies": {
         "label": "CURRENCIES",
@@ -170,7 +192,7 @@ def distance_phrase(market: str, symbol: str, price_distance: float,
     PRICE so it can never be read as a change in what the position is worth.
     """
     d = abs(price_distance)
-    if market == "currencies":
+    if market in ("currencies", "forex"):
         return (f"{to_pips(symbol, d):.0f} pips, "
                 f"{d:.{decimals(symbol, entry)}f} on the price")
     share = 100.0 * d / entry if entry else 0.0
@@ -337,7 +359,7 @@ def position_size(market: str, symbol: str, account: float, entry: float,
 
     out["lots"] = out["units"] / STANDARD_LOT
     out["cap_share_pct"] = 100.0 * cap
-    if market == "currencies":
+    if market in ("currencies", "forex"):
         out["per_step"] = out["units"] * pip_size(symbol) * usd_per_quote
     return out
 
@@ -353,7 +375,7 @@ def size_lines(market: str, symbol: str, size: dict, entry: float,
     if not size["ok"]:
         return ["Size           COULD NOT BE WORKED OUT — do not take this one"]
 
-    if market == "currencies":
+    if market in ("currencies", "forex"):
         base = PAIR_SPEC[symbol]["base_name"]
         lines.append(f"Size           {size['lots']:.2f} standard lots")
         lines.append(f"               = {size['units']:,.0f} {base}")
@@ -632,7 +654,15 @@ def trade_block(sig: dict, account: float, usd_per_quote: float = 1.0) -> list:
     # Narrowed to `engine == "craig"` on purpose: nothing else on the desk
     # changes, and no message shape changes either — the same lines, with the
     # size the order actually carried.
-    outer = sig.get("outer_allowance") if sig.get("engine") == "craig" else None
+    #
+    # AND `engine == "alex"` FROM 2026-07-27, for the identical reason. The
+    # forex and gold books scale the size UP on his confluence — "you can
+    # risk more on low-risk trades" — so a setup with every confluence he
+    # names asks for twice the base 3%, which is over the single-trade
+    # fallback ceiling below. Without this line the order would go out at the
+    # bigger size and the message would state the smaller one.
+    outer = (sig.get("outer_allowance")
+             if sig.get("engine") in ("craig", "alex") else None)
     size = position_size(market, sym, account, entry, dist,
                          float(sig.get("tightest_stop_pct") or 0.0),
                          usd_per_quote, risk_pct, outer_allowance=outer,
@@ -729,20 +759,41 @@ def trade_block(sig: dict, account: float, usd_per_quote: float = 1.0) -> list:
         lines.append("TP      none on the chart ahead — run it to the stop")
 
     whole = spec["whole_units"]
-    u = f"{units:,.0f}" if whole else f"{units:,.6f}".rstrip("0").rstrip(".")
+    if market in ("currencies", "forex"):
+        # A CURRENCY SIZE IS NOT THE UNIT COUNT AND MUST NEVER BE PRINTED AS
+        # ONE. `units` here is units of the BASE currency — 805,446 euros —
+        # and a standard lot is 100,000 of them. Printing "805,446 standard
+        # lots" is not a formatting slip: it is a size a hundred thousand
+        # times too large, on the one line he would copy into a ticket.
+        u = f"{units / STANDARD_LOT:,.2f}"
+        base = PAIR_SPEC.get(sym, {}).get("base_name", "units")
+        tail = f"  ({units:,.0f} {base})"
+    else:
+        u = f"{units:,.0f}" if whole else f"{units:,.6f}".rstrip("0").rstrip(".")
+        tail = ""
     face = units * entry * (usd_per_quote or 1.0)
-    lines.append(f"Size    {u} {spec['size_unit']}  =  ${face:,.0f} position")
+    lines.append(f"Size    {u} {spec['size_unit']}  =  "
+                 f"${face:,.0f} position{tail}")
     lev = (face / marg) if marg > 0 else 0.0
     lines.append(f"Margin  ${marg:,.2f}   Leverage {lev:.0f}x")
     if ceiling_binds:
         # SAID OUT LOUD, NOT QUIETLY APPLIED. He will see this margin on his
-        # BloFin screen and it is bigger than the desk's usual share of the
+        # exchange screen and it is bigger than the desk's usual share of the
         # account, so the message says why before he asks.
-        lines.append(f"{sym} stops at {ceiling:.0f}x on this exchange, so it "
-                     f"holds ${marg:,.2f} of the account as margin — "
-                     f"{100*marg/account:.0f}% OF THE ACCOUNT — instead of "
-                     f"the usual {100*margin_share():.0f}%. The size and the "
-                     f"stop are unchanged.")
+        #
+        # THE REASON IS NOT ALWAYS THE SAME REASON, so a signal that knows its
+        # own may say it. On the crypto book the ceiling is the INSTRUMENT'S —
+        # ETH stops at 150x whatever you ask for. On the gold book it is the
+        # LIQUIDATION — the position posts enough margin that the exchange
+        # cannot close it before the stop is reached. Both hold more margin
+        # than the usual share and both leave the size and the stop alone,
+        # which is what the second half of the sentence says either way.
+        why = sig.get("leverage_note") or \
+            f"{sym} stops at {ceiling:.0f}x on this exchange"
+        lines.append(f"{why}, so it holds ${marg:,.2f} of the account as "
+                     f"margin — {100*marg/account:.0f}% OF THE ACCOUNT. That "
+                     f"margin comes back when the trade closes; the size and "
+                     f"the stop are unchanged.")
 
     if half_size_day:
         lines.append("HALF SIZE today — news or a holiday")
@@ -870,7 +921,15 @@ def entry_message(sigs, account: float, usd_per_quote=None,
         # half at the first target and no runner behind it. The ladder
         # paragraph below is the TJR method's and would be an instruction to
         # do something this trade has no provision for.
-        body += ["",
+        # ONE EXIT, AND WHOSE ONE EXIT IT IS. Craig's single target has a
+        # break-even rule behind it and his entry is an order that may never
+        # fill; Alex's has neither — "set and forget", "I am not a break even
+        # trader", and the entry is taken at market the second the candle
+        # closes. Telling him the stop will move to his entry on a book where
+        # it never does is telling him something that will not happen, so a
+        # signal that knows its own management says it.
+        own = [s.get("exit_note") for s in sigs if s.get("exit_note")]
+        body += ["", own[0] if own else
                  "There is nothing to do at any point. The whole position "
                  "comes off at the target, the stop is already resting at the "
                  "exchange, and the bot moves that stop to your entry price "
@@ -880,7 +939,8 @@ def entry_message(sigs, account: float, usd_per_quote=None,
                  "cancelled and I will tell you.",
                  "",
                  "I will message you when it fills, when the stop moves, and "
-                 "when it is out."]
+                 "when it is out." if not own else
+                 "I will message you when it is out, and not before."]
     elif any(s.get("targets") for s in sigs):
         body.append("")
         body.append("When the first target is reached: take HALF off and move "

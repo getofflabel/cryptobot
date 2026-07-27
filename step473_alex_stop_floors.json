@@ -1,0 +1,38 @@
+{
+  "EUR/USD": {
+    "tightest_stop_pct": 0.0015719154291665698,
+    "median_stop_pct": 0.002842940810883501,
+    "widest_stop_pct": 0.0062445805092995466,
+    "setups_measured": 53,
+    "chart": "4h",
+    "engine": "alex",
+    "instrument": "EUR_USD"
+  },
+  "GBP/USD": {
+    "tightest_stop_pct": 0.0018671723188509622,
+    "median_stop_pct": 0.003081018985944952,
+    "widest_stop_pct": 0.013269860967604056,
+    "setups_measured": 63,
+    "chart": "4h",
+    "engine": "alex",
+    "instrument": "GBP_USD"
+  },
+  "GBP/JPY": {
+    "tightest_stop_pct": 0.0019814932534594,
+    "median_stop_pct": 0.004056706145268374,
+    "widest_stop_pct": 0.011595686233567059,
+    "setups_measured": 41,
+    "chart": "4h",
+    "engine": "alex",
+    "instrument": "GBP_JPY"
+  },
+  "XAU/USD": {
+    "tightest_stop_pct": 0.0034600685526972,
+    "median_stop_pct": 0.006730186579671496,
+    "widest_stop_pct": 0.025239493042846534,
+    "setups_measured": 34,
+    "chart": "4h",
+    "engine": "alex",
+    "instrument": "XAU_USD"
+  }
+}

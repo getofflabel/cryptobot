@@ -12,8 +12,11 @@ THE DECISION IT IMPLEMENTS — CHANGED 2026-07-25
     ABOUT WHAT THE BOT DID: it entered, it took half off, it is out. Nothing
     on his phone asks him to do anything.
 
-    CURRENCIES ARE GONE. tjr_forex.py is retired (its own header says why)
-    and no currency is fetched, decided on, or alerted here.
+    CURRENCIES CAME BACK ON 2026-07-27 AND GOLD CHANGED INSTRUMENT — see
+    THE TWO ALEX BOOKS below. They were dropped only because no venue in
+    this build could send a currency order; OANDA's practice host is that
+    venue and it now has one. tjr_forex.py stays retired: the METHOD that
+    file held is not the method the pairs run on now.
 
 TWO VENUES, AND NOTHING IN THIS FILE KNOWS WHICH IS WHICH
     Every order goes through venue.py. This file names a venue exactly once
@@ -21,10 +24,14 @@ TWO VENUES, AND NOTHING IN THIS FILE KNOWS WHICH IS WHICH
     seven methods on the interface. Switching where a market trades is one
     string.
 
-        crypto    blofin-demo   ten pairs, isolated margin, market in,
-                                stop resting AT THE EXCHANGE
-        S&P 500   alpaca-paper  SPY and QQQ
-        gold      alpaca-paper  GLD, with IAU as its second chart
+        crypto    blofin-demo-craig      five pairs, isolated margin, a
+                                         RESTING LIMIT in, stop attached
+        S&P 500   alpaca-paper           SPY and QQQ
+        forex     oanda-practice         EUR/USD, GBP/USD, GBP/JPY, market
+                                         in with the stop and the target
+                                         attached in the same request
+        gold      blofin-demo-alex-gold  XAUT-USDT (Tether Gold), decided on
+                                         OANDA XAU/USD candles
 
     HIS CHARTS NEED NOTHING FROM US. His Alpaca account is already linked to
     TradingView, so the fills show up on his charts by themselves.
@@ -46,10 +53,14 @@ ARMING, WHICH IS HOW A VENUE GOES LIVE
     single order placed on it and STAYS THAT WAY until Wallace says
     otherwise, so stocks and gold ship unarmed. See ARMED_DEFAULT below.
 
-WHAT IT WATCHES
+WHAT IT WATCHES — FOUR BOOKS, THREE MEN, AND THE METHODS NEVER MIX
     crypto       five pairs, decided by CRAIG'S method — craig_live.Engine
-    S&P 500      SPY and QQQ, decided by tjr_bot.live_step
-    gold         GLD with IAU as its second chart, by tjr_gold.live_step
+    S&P 500      SPY and QQQ, decided by TJR's — tjr_bot.live_step
+    forex        three pairs, decided by ALEX GONZALEZ'S — alex_live.Engine
+    gold         Tether Gold, decided by ALEX'S, on his own instruction:
+                 "I'm taking this trade as if it were to be a foreign
+                 exchange currency pair ... based off market structure, not
+                 for the commodity that it is."
 
     THE METHOD IS NOT REIMPLEMENTED HERE and none of those files is edited.
     This file fetches bars, hands them to whichever decision function owns
@@ -99,6 +110,30 @@ CRYPTO CHANGED HANDS ON 2026-07-26, AND ONLY CRYPTO
     position, so a second setup on a pair already carrying one is still
     decided, sized and reported, and only the SENDING is refused.
 
+FOREX AND GOLD ARRIVED ON 2026-07-27, AND GOLD CHANGED HANDS
+
+    Wallace: "trade gold as xauusdt on blofin", and forex on OANDA practice.
+    Both books are ALEX GONZALEZ's method through `alex_live.Engine`, and the
+    old TJR/GLD gold path is retired from live duty and left importable for
+    replay — exactly what happened to `tjr_crypto.py` when Craig took crypto.
+
+    TWO OF HIS RULINGS SHIP WITH THEM, both dated 2026-07-27 and both his
+    rather than newest-governs:
+      * "alex: on"            — the WEEKLY-CLOSE direction rule, which the
+                                June-2026 spine had switched off. Five years,
+                                four instruments: -$85,748 without it,
+                                +$116,028 with it, and its own fade loses.
+      * "ladder on gold too"  — the MONEY-GAME LADDER on the gold book, off
+                                the same curve the Craig book uses. Both
+                                books read the venue's LIVE equity, so one
+                                stake is shared rather than double-counted.
+
+    THE ONE GENUINELY NEW PIECE OF PLUMBING IS GOLD'S TWO PRICES. Its levels
+    are read on OANDA XAU/USD and its orders go to BloFin XAUT-USDT, which
+    sit about a quarter of a percent apart. Every level crosses through
+    `alex_live.convert`, and a basis that cannot be measured in the same
+    second sends nothing at all.
+
 WHERE THE LIVE BARS COME FROM, and why each choice
     crypto      Alpaca's crypto endpoints. Twenty-four hours a day, no delay
                 and no restriction on the account. Nothing else needed.
@@ -112,6 +147,14 @@ WHERE THE LIVE BARS COME FROM, and why each choice
                 disagreement on any closing price was three cents on SPY,
                 eleven on QQQ and nothing at all on GLD. Alpaca stays as the
                 deep history underneath.
+    forex, gold OANDA, for both. It is the venue for the pairs, so its own
+                candles are the right ones; and for gold it is the deepest
+                clean gold tape we can read, which is why the DECISION is
+                read there even though the ORDER goes to BloFin. The cached
+                parquet sits underneath and the live bars go on top, joined
+                at the timestamp and never shifted — both halves are OANDA
+                mid candles on the same grid, so there is no step between
+                them to smooth away.
     NOTE. Alpaca and BloFin are where the ORDERS go. Where the BARS come
     from is a separate question and always has been — reading a price from
     Yahoo and sending the order to Alpaca is not a mismatch, it is the same
@@ -156,6 +199,7 @@ import time
 
 import pandas as pd
 
+import alex_live
 import craig_live
 import tjr_alerts
 import tjr_bot
@@ -172,12 +216,20 @@ ACCOUNT = 100_000.0        # what one percent is one percent OF. Only a
 # Crypto is armed. The BloFin demo account is a demo account, the attribution
 # rule underneath it is built and tested, and that is the venue he named.
 #
-# Stocks and gold are NOT armed. The Alpaca account has never had a single
-# order placed on it in its life and it stays that way until Wallace says
+# Stocks are NOT armed. The Alpaca account has never had a single order
+# placed on it in its life and it stays that way until Wallace says
 # otherwise. Unarmed does not mean half-built: the market decides, sizes,
 # records and messages exactly as it would live. It just does not send.
 #
-# To arm them:  CRYPTOBOT_ARM=crypto,sp500,gold
+# FOREX AND GOLD SHIP UNARMED TOO, 2026-07-27, and for the same reason in
+# different words. The OANDA practice account 101-001-39901192-001 has never
+# had a single order placed on it in its life either, so the first order the
+# forex book sends will be the first order that account has ever seen — and
+# the gold book is a brand-new instrument on an account Wallace trades
+# himself. Both are built, tested and ready; arming them is his call and one
+# environment variable.
+#
+# To arm them:  CRYPTOBOT_ARM=crypto,forex,gold      (add sp500 for stocks)
 ARMED_DEFAULT = "crypto"
 
 _UA = {"User-Agent": "Mozilla/5.0"}
@@ -237,6 +289,45 @@ def splice(old: pd.DataFrame, fresh: pd.DataFrame) -> pd.DataFrame:
     return (pd.concat([keep, fresh])[["t", "open", "high", "low", "close"]]
             .sort_values("t").drop_duplicates("t", keep="last")
             .reset_index(drop=True))
+
+
+def join_bars(old: pd.DataFrame | None,
+              fresh: pd.DataFrame | None) -> pd.DataFrame:
+    """Cached history underneath, live bars on top, JOINED AND NEVER SHIFTED.
+
+    `splice` above exists because Yahoo and Alpaca do not quote the same side
+    of the market and the step where they meet would sit on the chart as a
+    jump in price that never happened. This function is for the case where
+    both halves come from THE SAME FEED — OANDA's cached parquet and OANDA
+    live — so where they overlap they are the same number to the last decimal
+    and shifting one onto the other would be inventing a difference.
+
+    The live half wins on any timestamp they share, because it is the one
+    that was read most recently.
+    """
+    cols = ["t", "open", "high", "low", "close"]
+    parts = [d for d in (old, fresh) if d is not None and len(d)]
+    if not parts:
+        return pd.DataFrame(columns=cols)
+    keep = [d[[c for c in cols if c in d.columns]] for d in parts]
+    return (pd.concat(keep, ignore_index=True)
+            .dropna(subset=cols)
+            .sort_values("t").drop_duplicates("t", keep="last")
+            .reset_index(drop=True)[cols])
+
+
+def new_york_now() -> dt.datetime:
+    """The wall clock in New York, whatever clock this machine keeps.
+
+    THIS IS NOT COSMETIC. Every candle the OANDA books read is stamped in New
+    York wall clock, his entry window is two specific New York hours, and the
+    currency week opens and closes at 17:00 New York. Render's worker runs on
+    UTC, so `datetime.now()` there is four or five hours ahead — far enough to
+    put a Thursday-evening poll on Friday, and to make every 4-hour candle
+    look four hours stale. The two Alex books read this instead.
+    """
+    return (pd.Timestamp.now(tz="UTC").tz_convert("America/New_York")
+            .tz_localize(None).to_pydatetime())
 
 
 def cached(path: str) -> pd.DataFrame | None:
@@ -648,43 +739,458 @@ class IndexMarket(Market):
         return [dict(r, market=self.name, fired_at=at)]
 
 
-class GoldMarket(Market):
-    """Gold, which he named as one of the four markets he trades and which he
-    did not name when he dropped currencies. GLD is a US fund and Alpaca
-    trades it like any other, so it rides the stock venue. If he wants it
-    gone too, it goes the same way currencies did — take it out of
-    build_markets() and give this file's header a line saying why."""
+# =========================================== THE TWO ALEX BOOKS, 2026-07-27
+#
+# FOREX CAME BACK AND GOLD CHANGED HANDS, both on Wallace's own instruction,
+# and both are driven by ALEX GONZALEZ's method through `alex_live.Engine`.
+#
+#   Wallace, 2026-07-26: "trade gold as xauusdt on blofin"
+#
+# THE OLD TJR/GLD GOLD PATH IS RETIRED FROM LIVE DUTY. `tjr_gold.py` is left
+# importable and untouched so the two can still be replayed side by side —
+# exactly what happened to `tjr_crypto.py` when Craig took crypto. Nothing in
+# either class below reads a TJR level, bias or session, and nothing in the
+# stock path reads anything of Alex's. METHODS NEVER MIX.
+#
+# WHAT IS ACTUALLY DIFFERENT ABOUT THESE TWO, in one paragraph each, because
+# everything else is the desk's ordinary machinery:
+#
+#   THE CANDLES ARE OANDA'S FOR BOTH BOOKS, and for gold the ORDER is not.
+#   Gold's levels are read on OANDA XAU/USD, which is the deepest clean gold
+#   tape we can read, and the order goes to BloFin XAUT-USDT, which is what
+#   Wallace asked for. Those are two different prices for the same metal —
+#   about a quarter of a percent apart — so every level crosses through
+#   `alex_live.convert` on the way out, and NOTHING is sent at all if the two
+#   prices cannot both be read in the same second.
+#
+#   THE ENGINE'S EXIT IS BOOKKEEPING; THE REAL ONE RESTS AT THE VENUE. Both
+#   venues take the stop AND the target attached to the entry, in the same
+#   request, so a position is never alive without them and a target does not
+#   need this process to be running. What `manage` below does is notice what
+#   happened so the record and the messages catch up.
+
+
+class AlexMarket(Market):
+    """What the forex book and the gold book share, which is nearly all of it.
+
+    ONE POSITION PER INSTRUMENT and that is HIS rule, not the venue's — "one
+    pair, one time frame, one session, one entry signal". The engine enforces
+    it and this class never sees a second setup on an instrument it is
+    already in.
+
+    THE CLOCK. His entry window admits exactly two 4-hour closes a day, the
+    01:00 and the 05:00 New York ones, Monday to Thursday. The desk still
+    polls once a minute, because a stop, a target or his Friday exit can land
+    on any 15-minute bar; `alex_live.Engine` simply finds nothing to enter
+    until one of those two candles has actually closed.
+    """
+
+    #: how many bars of each timeframe are pulled live and laid over the cache
+    #
+    #   4h    the chart every decision is read off. 500 bars is 83 days, far
+    #         more than the 200 his areas of interest look back over.
+    #   15m   what says whether the stop or the target came first inside an
+    #         hour that touched both. 3,000 bars is 31 days, one more than our
+    #         own 30-day cap on how long a trade may be held.
+    #   1w    Wallace's weekly-close ruling of 2026-07-27 reads the last
+    #         CLOSED weekly candle, so the book cannot run without it.
+    LIVE_BARS = {"4h": 500, "15m": 3000, "1w": 300}
+
+    #: the override dict handed to `alex_live.Engine`. Forex takes the book as
+    #: it stands; gold adds the money-game ladder — see `GoldMarket`.
+    ENGINE_BOOK: dict = {}
+
+    def __init__(self, venue=None):
+        super().__init__(venue)
+        import oanda_api
+        self.al = alex_live
+        # OANDA IS THE CHART FOR BOTH BOOKS. For forex it is also the venue;
+        # for gold it is only ever the chart. This client is READ ONLY — the
+        # orders go through `self.venue`, which is the only object here that
+        # can send one.
+        self.cli = oanda_api.from_env(practice=True)
+        if self.cli is None:
+            raise RuntimeError(
+                f"OANDA is not configured, so the {self.name} book has no "
+                f"candles: {', '.join(oanda_api.missing_keys())} not set.")
+        self.engine = alex_live.Engine(cfg_over=dict(self.ENGINE_BOOK)
+                                       or dict(alex_live.BOOK))
+        self.pending: list = []        # exits the engine asked for this pass
+        # THE ORDERS THAT REALLY EXIST AT THE VENUE. The engine models every
+        # setup whether or not the order was sent — that is what makes an
+        # unarmed market decide exactly as it would live. A message reading
+        # "the target is reached" about a position that was never opened is a
+        # lie, and this set is what stops one being sent.
+        self.real: set = set()
+        self._upq: dict = {}           # this pass's quote rates
+
+    # -------------------------------------------------------------- clock
+    def open_now(self, now: dt.datetime) -> bool:
+        """THE CURRENCY WEEK, which is Sunday 17:00 New York to Friday 17:00.
+
+        Gold's ORDER lives on BloFin, which never closes, but gold's CHART is
+        OANDA's and that does. A book whose chart is not moving has nothing to
+        decide and nothing to notice, so it stands down with forex — and the
+        weekend is precisely why the stop and the target ride in attached to
+        the entry rather than being worked bar by bar from here.
+
+        THE CLOCK IS NEW YORK'S AND IT IS READ HERE, not taken from the
+        argument. See `new_york_now`.
+        """
+        now = new_york_now()
+        wd, hh = now.weekday(), now.hour + now.minute / 60.0
+        if wd == 5:                                   # Saturday
+            return False
+        if wd == 6:                                   # Sunday, until 17:00
+            return hh >= 17.0
+        if wd == 4:                                   # Friday, until 17:00
+            return hh < 17.0
+        return True
+
+    # ------------------------------------------------------------- candles
+    def frames(self) -> dict:
+        return {sym: self.bars(self.al.instrument_for(sym))
+                for sym in self.symbols}
+
+    def bars(self, instrument: str) -> dict:
+        """The cached OANDA parquet with fresh OANDA bars laid on top.
+
+        NO SHIFT BETWEEN THE TWO HALVES, unlike the Yahoo/Alpaca splice the
+        stock books need. Both halves are OANDA mid candles on OANDA's own
+        17:00-New-York grid, so where they overlap they are the same number
+        and joining them at the timestamp is the whole of it.
+
+        AND THE FRAME IS NEVER CUT FROM THE LEFT. His 50 EMA is a running
+        average whose value depends on where the series began, so dropping
+        old bars to save time would quietly move a confluence — and a
+        confluence moves the SIZE.
+        """
+        out = {}
+        for tf, want in self.LIVE_BARS.items():
+            old = cached(self.al.ae.cache_name(instrument, tf))
+            gran = {"4h": "H4", "15m": "M15", "1w": "W"}[tf]
+            try:
+                fresh = self.cli.frame(instrument, gran, count=want,
+                                       complete_only=True)
+            except Exception as e:                       # noqa: BLE001
+                print(f"  {self.name} {instrument} {tf}: live bars "
+                      f"unavailable ({str(e)[:100]}), using the cache alone")
+                fresh = None
+            out[tf] = join_bars(old, fresh)
+        return out
+
+    # ------------------------------------------------------------ deciding
+    def decide(self, frames, now, account) -> list:
+        """One step of the engine per instrument. Returns only the ENTRIES;
+        every exit it asked for is held for `manage`, which runs first at the
+        venue."""
+        out = []
+        self.pending = []
+        # the quote rates this pass decided on, so the size cannot be worked
+        # out on a different one — see `ForexMarket.usd_per_quote`
+        self._upq: dict = {}
+        now = new_york_now()          # the candles' own clock, not the box's
+        for sym in self.symbols:
+            inst = self.al.instrument_for(sym)
+            d = frames.get(sym)
+            if not d or not len(d.get("4h", [])) or not len(d.get("15m", [])):
+                continue
+            upq = self.usd_per_quote(sym, frames)
+            if upq is None:
+                # THE YEN TRAP. A GBP/JPY trade's profit arrives in yen, and
+                # sized as though it arrived in dollars the position is wrong
+                # by about a factor of a hundred and fifty. A rate that cannot
+                # be read refuses rather than falling back to 1.0.
+                print(f"  {self.name} {sym}: the dollar value of one unit of "
+                      f"the quote currency could not be read, so nothing is "
+                      f"decided on it this pass")
+                continue
+            try:
+                acts = self.engine.step(inst, d, account, upq,
+                                        now=pd.Timestamp(now))
+            except Exception as e:                       # noqa: BLE001
+                print(f"  {self.name} {sym}: {str(e)[:160]}")
+                continue
+            for a in acts:
+                if a["kind"] != "enter":
+                    self.pending.append(a)
+                    continue
+                sig = self.dress(a["signal"], a, account)
+                if sig is None:
+                    continue
+                out.append(dict(sig, market=self.name, fired_at=a["at"]))
+        return out
+
+    def dress(self, sig: dict, act: dict, equity: float) -> dict | None:
+        """Whatever this book has to do to an engine signal before it can be
+        an order. Forex trims it to the broker's margin; gold crosses every
+        price into the traded contract's own. Returning None means nothing is
+        sent and the reason has already been said out loud."""
+        return sig
+
+    # --------------------------------------------------------- the exits
+    def manage(self, desk, frames) -> None:
+        """THE DESK'S DEFAULT MANAGER IS NOT USED FOR THESE TWO and this
+        method is why: that one works a LADDER of targets off 1-minute bars
+        and moves the stop once half is off. Alex is set and forget — one
+        target, one exit, no partial and no break even ("I am not a break
+        even trader"). Two different methods cannot share one manager, so
+        they do not.
+        """
+        for a in self.pending:
+            try:
+                self._do(desk, a)
+            except Exception as e:                       # noqa: BLE001
+                print(f"  {self.name} {a.get('symbol')}: {a['kind']} failed — "
+                      f"{str(e)[:160]}")
+        self.pending = []
+
+    def _do(self, desk, a) -> None:
+        """One thing the engine asked for, done at the venue and said out
+        loud. NOTHING IS SAID ABOUT AN ORDER THAT WAS NEVER SENT."""
+        if a["kind"] != "exit":
+            return
+        sym = a["symbol"]
+        key = (sym, pd.Timestamp(a["setup"].decided_t))
+        if key not in self.real:
+            return
+        self.real.discard(key)
+        tr = a["trade"]
+        when = pd.Timestamp(a["at"]).to_pydatetime()
+        # The stop and the target BOTH REST AT THE VENUE, so in the ordinary
+        # case this closes nothing — it is the bot's record catching up. His
+        # Friday exit, the structure flip and our 30-day cap are the
+        # exceptions: nothing at the venue knows about any of those, so those
+        # really do close the position.
+        desk._act(self, sym, None, f"Alex: {tr.outcome}")
+        if tr.outcome == "stop":
+            desk._push(*tjr_alerts.stopped_message(
+                self.name, sym, float(tr.stop), when,
+                account=tjr_alerts.account_line(self.venue)))
+        else:
+            desk._push(*tjr_alerts.close_message(
+                self.name, sym, float(tr.exit or tr.stop), a["why"], when,
+                account=tjr_alerts.account_line(self.venue)))
+
+    def on_placed(self, sig: dict) -> None:
+        """Remember that an order really reached the venue, so nothing
+        downstream ever narrates one that did not."""
+        if (sig.get("placed") or {}).get("status") == "filled":
+            self.real.add((sig["symbol"], pd.Timestamp(sig["entry_t"])))
+
+
+class ForexMarket(AlexMarket):
+    """His three pairs on OANDA's PRACTICE host.
+
+    HIS OWN SPINE IS ONE PAIR, EUR/USD. Running it on three is OUR extension
+    of him and it is declared in `alex_engine.in_his_words()`; EUR/USD is
+    reported on its own everywhere so his own configuration can still be read
+    separately.
+
+    LEVERAGE IS AN OUTPUT HERE AND THERE IS NO DIAL FOR IT. Forex has no
+    leverage setting: the broker holds a fixed share of a position as margin
+    — 2% on EUR/USD and 5% on both pounds pairs on this account — and what
+    you actually used is the position divided by the account. When the stop
+    asks for a position bigger than that margin will hold, the SIZE comes
+    down and the message says so.
+    """
+
+    name = "forex"
+    symbols = ("EUR/USD", "GBP/USD", "GBP/JPY")
+    venue_name = "oanda-practice"
+    # THE TAG NAMES THE MARKET, NOT A METHOD — blofin_private.BOOK_TAGS says
+    # so in as many words. Every order carries CBOT_fx_... in OANDA's own
+    # client extensions and that string is what proves the bot may touch the
+    # trade later. It does not move because the strategy behind it changed.
+    tag = "forex"
+
+    def usd_per_quote(self, symbol: str, frames: dict):
+        """Dollars per unit of the QUOTE currency, read LIVE from the broker.
+
+        1.0 on EUR/USD and GBP/USD because the quote already is dollars. On
+        GBP/JPY the profit arrives in yen. None means it could not be read,
+        and None refuses the trade rather than assuming 1.0 — sized as though
+        the money came back in dollars, a yen-cross position is wrong by about
+        a factor of a hundred and fifty.
+
+        READ ONCE PER PASS AND REMEMBERED. The desk asks for this a second
+        time after `decide` has already used it, and a rate that succeeded for
+        the decision and then failed for the size would fall through to 1.0
+        inside `Desk._size_for` — which is the yen trap arriving by a side
+        door. What was decided on is what is sized on.
+        """
+        got = self._upq.get(symbol)
+        if got is not None:
+            return got
+        try:
+            got = self.cli.usd_per_quote(self.al.instrument_for(symbol))
+        except Exception:                                # noqa: BLE001
+            got = None
+        if got:
+            self._upq[symbol] = float(got)
+        return got
+
+    def dress(self, sig, act, equity):
+        spec = {}
+        try:
+            spec = self.venue.spec(sig["symbol"]) or {}
+        except Exception:                                # noqa: BLE001
+            spec = {}
+        rate = float(spec.get("margin_rate") or 0.0)
+        if rate <= 0:
+            print(f"  forex {sig['symbol']}: the broker's margin rate could "
+                  f"not be read, so how much of this position OANDA will "
+                  f"hold is unknown. Nothing is sent.")
+            return None
+        free = 0.0
+        try:
+            free = float((self.venue.account() or {}).get("buying_power") or 0)
+        except Exception:                                # noqa: BLE001
+            free = 0.0
+        allow, note = self.al.forex_allowance_cap(
+            sig["risk_wanted"], sig["units_wanted"], sig["reference_price"],
+            sig.get("usd_per_quote") or 1.0, rate, free)
+        out = dict(sig)
+        if note:
+            print(f"  [BROKER MARGIN] {sig['symbol']}: {note}")
+            out["risk_wanted"] = allow
+            out["outer_allowance"] = allow
+            out["leverage_cap_note"] = note
+        # WHAT THE BROKER WILL ACTUALLY HOLD, so the message states the margin
+        # his OANDA screen will show rather than the desk's flat budget share.
+        out["leverage_ceiling"] = 1.0 / rate
+        out["leverage_note"] = (
+            f"OANDA holds {100*rate:.0f}% of a {sig['symbol']} position as "
+            f"margin, which is {1.0/rate:.0f}x")
+        return out
+
+
+class GoldMarket(AlexMarket):
+    """Gold, decided on OANDA XAU/USD and traded as BloFin XAUT-USDT.
+
+    WALLACE'S DECISION, VERBATIM: "trade gold as xauusdt on blofin". And gold
+    is Alex's method by Alex's own words — "I'm taking this trade as if it
+    were to be a foreign exchange currency pair ... based off market
+    structure, not for the commodity that it is."
+
+    THE ONE THING THAT IS GENUINELY DIFFERENT: the chart and the order are two
+    different prices. Measured 2026-07-27, XAU/USD was 4,088.85 and XAUT-USDT
+    marked 4,077.60 — eleven dollars apart, which is 0.275% of the price
+    against a stop that is typically 1.5% of it. Copying a level across raw
+    would move the stop about a fifth of its own width. So every price crosses
+    through `alex_live.convert`, and a basis that cannot be measured sends
+    nothing at all rather than assuming the two prices are the same.
+
+    IT SHARES A BLOFIN ACCOUNT WITH THE CRAIG CRYPTO BOOK. Both read the
+    venue's LIVE equity at every entry, so as one of them ties money up the
+    other's next trade is smaller. Neither models the other's positions and
+    neither needs to.
+    """
 
     name = "gold"
-    symbols = (tjr_gold.TRADED,)
-    venue_name = "alpaca-paper"
+    symbols = ("XAU/USD",)
+    venue_name = "blofin-demo-alex-gold"
+    # THE MONEY-GAME LADDER, ON, on Wallace's ruling of 2026-07-27: "ladder on
+    # gold too". It is Alex's own rule — "anything below $25,000, it's all the
+    # money game", four or five trades in you — and this is the only place in
+    # the project it is switched on for gold. The forex book is not even
+    # eligible for it: the OANDA account holds $100,000, which is four times
+    # his own $25,000 threshold, so forex is the percentage game by his rule
+    # rather than by a choice of ours.
+    #
+    # THE STAKE IS SHARED WITH THE CRAIG CRYPTO BOOK and both books read the
+    # venue's LIVE equity every time they size, so a loss in either shrinks
+    # the next bet in both and a win in either grows both. See
+    # `alex_live.GOLD_BOOK`.
+    ENGINE_BOOK = alex_live.book_config("XAU_USD")
+    # THE ATTRIBUTION TAG DOES NOT MOVE. Gold's orders have been CBOT_tjg_...
+    # since the book existed, and that string is what proves a position on the
+    # exchange is the bot's rather than one Wallace opened by hand. Reissuing
+    # it because the method behind it changed would make every position opened
+    # under the old tag stop being provably ours.
     tag = "tjr_gold"
 
-    def open_now(self, now):
-        return now.weekday() < 5 and dt.time(9, 30) <= now.time() < dt.time(16, 0)
+    def usd_per_quote(self, symbol: str, frames: dict):
+        """USDT, which is dollars. The gold contract is quoted in it and the
+        profit arrives in it, so there is no conversion to get wrong."""
+        return 1.0
 
-    def frames(self):
-        return {s: stock_frames(s, f"data_alpaca_{s}_et")
-                for s in (tjr_gold.TRADED, tjr_gold.TWIN)}
+    def dress(self, sig, act, equity):
+        try:
+            mid = self.oanda_mid()
+            mark = self.venue.mark_price(sig["symbol"])
+            basis = self.al.gold_basis(mid, mark)
+        except self.al.BasisUnreadable as e:
+            print(f"  [GOLD BASIS] {str(e)[:400]}")
+            return None
+        except Exception as e:                           # noqa: BLE001
+            print(f"  [GOLD BASIS] the gold basis could not be measured "
+                  f"({str(e)[:160]}). Nothing was sent.")
+            return None
+        out = self.al.convert_signal(sig, basis)
+        # WHAT THE EXCHANGE WILL ACTUALLY HOLD. On this book the leverage is
+        # set by how far the exchange's liquidation has to sit beyond the
+        # stop, not by a flat margin budget, so the margin is usually larger
+        # than the desk's usual share of the account and the message has to
+        # state the one that will really be tied up. See
+        # `alex_live.AlexGoldVenue._leverage_for`.
+        lev = self.venue_leverage(out, equity)
+        if lev:
+            out["leverage_ceiling"] = float(lev)
+            out["leverage_note"] = (
+                f"this position posts enough margin that BloFin cannot "
+                f"liquidate it before the stop is reached, which puts it at "
+                f"{lev:.0f}x")
+            return out
+        # THE STAKE CANNOT CARRY IT, so nothing is sent and nothing is said on
+        # his phone.
+        #
+        # THE SIZE COMES OUT OF THE STOP AND IS NOT NEGOTIABLE DOWNWARDS. A
+        # position this book cannot hold far enough from BloFin's liquidation
+        # for the stop to fire first is not a smaller version of the same
+        # trade — it is a different trade, risking a number nobody chose. So
+        # the answer is NO TRADE.
+        #
+        # AND IT IS NOT A MESSAGE EITHER. Under the money-game ladder this
+        # will happen on a real share of gold setups (step473 --margin has
+        # the count), and a GOLD alert that says "not sent" that often would
+        # train him to stop reading the header. The arithmetic goes to the
+        # log, where the whole reason is on one line.
+        entry = float(out["reference_price"])
+        dist = abs(entry - float(out["stop"]))
+        risk = float(out.get("risk_wanted") or 0.0)
+        units = float(out.get("units_wanted") or 0.0)
+        print(f"  [GOLD NOT SENT] {sig['symbol']}: the setup is real and the "
+              f"stop is {100*dist/entry:.2f}% away as a MOVE IN THE PRICE, "
+              f"but risking ${risk:,.0f} on it means a ${units*entry:,.0f} "
+              f"position, and holding that far enough from BloFin's "
+              f"liquidation for the stop to fire first needs more margin "
+              f"than the ${equity:,.2f} in the account. Nothing was sent.")
+        return None
 
-    def decide(self, frames, now, account):
-        if len(frames[tjr_gold.TRADED]["1m"]) == 0:
-            return []
-        at = pd.Timestamp(frames[tjr_gold.TRADED]["1m"]["t"].iloc[-1]) + \
-            pd.Timedelta(minutes=1)
-        r = tjr_gold.live_step(frames, at, account, clock={"is_open": True})
-        if r.get("action") != "enter":
-            return []
-        return [dict(r, market=self.name, fired_at=at)]
+    def oanda_mid(self) -> float | None:
+        try:
+            p = (self.cli.pricing([self.al.GOLD_INSTRUMENT]) or {}).get(
+                self.al.GOLD_INSTRUMENT) or {}
+            return float(p.get("mid") or 0.0) or None
+        except Exception:                                # noqa: BLE001
+            return None
 
-
-# CURRENCIES USED TO BE A MARKET HERE AND ARE NOT ANYMORE.
-#
-# Wallace, 2026-07-25: "lets leave forex behind". tjr_forex.py is retired in
-# place — nothing imports it, nothing fetches a currency bar, nothing alerts
-# on one, and the Twelve Data key it names is not needed. The file and its
-# tests are still on disk with a header saying so, because the work in it is
-# sound and deleting it would only make it expensive to revive.
+    def venue_leverage(self, sig: dict, equity: float):
+        """The same function the venue itself will call, so the number on the
+        message and the number on the order cannot be two numbers."""
+        try:
+            spec = self.venue.spec(sig["symbol"]) or {}
+            entry = float(sig["reference_price"])
+            dist = abs(entry - float(sig["stop"]))
+            units = float(sig.get("units_wanted") or 0.0)
+            return self.al.gold_leverage(
+                equity, units * entry, dist / entry if entry else 0.0,
+                float(spec.get("max_leverage") or 0.0),
+                type(self.venue).PER_TRADE_MARGIN_SHARE,
+                type(self.venue).LIQUIDATION_SAFETY)
+        except Exception:                                # noqa: BLE001
+            return None
 
 
 # ================================================================ THE DESK
@@ -869,10 +1375,20 @@ class Desk:
         if sig.get("order_type") == "limit":
             return self._rest_one(m, sig, size)
 
+        # THE TARGET RIDES IN WITH THE ENTRY TOO, where the venue can carry
+        # one. Both venues attach the LAST target as a bracket in the same
+        # request as the stop, so a method with a single exit — which is what
+        # Alex has — needs this process to be alive for neither of its two
+        # ends. A method with a ladder still works its partials bar by bar;
+        # the attached one is the "if we lose contact with this entirely, get
+        # out somewhere sensible" order and nothing else. A venue that cannot
+        # hold one ignores the argument.
         rec = m.venue.market_order(
             sig["symbol"], sig["side"], size["units"],
             reference_price=float(sig["reference_price"]),
-            stop=float(sig["stop"]), reason=f"{m.name} entry")
+            stop=float(sig["stop"]),
+            targets=[float(t) for t in (sig.get("targets") or [])],
+            reason=f"{m.name} entry")
         if rec.get("status") != "filled":
             return rec
 
@@ -1175,8 +1691,14 @@ class Desk:
 
 
 def _config_for(m: Market):
-    if m.name == "gold":
-        return tjr_gold.gold_config()
+    # THE TWO ALEX BOOKS OWN THEIR OWN MANAGEMENT and never reach the desk's
+    # default manager, which is the only caller of this. They are listed here
+    # anyway so that a reader does not have to work out from an absence that
+    # nothing here applies to them: Alex is set and forget, there is no
+    # flatten-before-the-bell on a 24-hour currency market, and his config is
+    # `alex_live.live_config`, not anything in this file.
+    if m.name in ("forex", "gold"):
+        return None
     if m.name == "sp500":
         # STOCKS ONLY: the dial stays at the most aggressive setting Alpaca
         # can actually deliver. Wallace chose the top of the band (0.03), but
@@ -1195,7 +1717,7 @@ def build_markets() -> list:
     guard. A market whose venue will not build is dropped with a reason
     printed — never silently swapped for another one."""
     out = []
-    for cls in (CryptoMarket, IndexMarket, GoldMarket):
+    for cls in (CryptoMarket, IndexMarket, ForexMarket, GoldMarket):
         try:
             v, decision = venue_mod.resolve(cls.venue_name, tag=cls.tag)
             if decision["chosen"] != cls.venue_name:
@@ -1271,6 +1793,18 @@ def derive_stop_floors(verbose: bool = True) -> dict:
     except Exception as e:                                   # noqa: BLE001
         if verbose:
             print(f"  craig crypto floors: {str(e)[:120]}")
+
+    # AND NEITHER ARE FOREX OR GOLD, for the identical reason. Both are
+    # decided by Alex's method on the 4-hour candle and their floors are
+    # measured from THEIR OWN setups into step473_alex_stop_floors.json.
+    # Methods never mix, and that includes the one number the sizing wrapper
+    # insists on having measured.
+    try:
+        import alex_live
+        alex_live.derive_stop_floors(verbose=verbose)
+    except Exception as e:                                   # noqa: BLE001
+        if verbose:
+            print(f"  alex forex/gold floors: {str(e)[:120]}")
 
     try:
         import test_tjr_bot as t
@@ -1366,12 +1900,25 @@ def volume(verbose: bool = True) -> dict:
                         "per_day": round(len(trades) / max(len(days), 1), 3)}
     except Exception as e:
         out["sp500"] = {"error": str(e)[:120]}
+    # FOREX AND GOLD, on Alex's method, counted on the chart they are actually
+    # traded on. The 4-hour is a much quieter chart than the 5-minute the old
+    # gold book ran on, and his session gate admits only two of its six daily
+    # closes — so the pace here is measured in trades a WEEK, not a day.
     try:
-        g = tjr_gold.setups_per_day(verbose=False)
-        out["gold"] = {"pairs": 1, "setups": g["setups"], "days": g["days"],
-                       "per_day": g["per_day"]}
+        import alex_live
+        book = alex_live.ae.run_book(
+            start="2025-07-27", end="2026-07-26", verbose=False,
+            cfg_over=alex_live.BOOK, mode="dumb")
+        days = 364
+        for name, insts in (("forex", list(alex_live.FOREX.values())),
+                            ("gold", [alex_live.GOLD_INSTRUMENT])):
+            n = sum(len(book[i]["trades"]) for i in insts if i in book)
+            out[name] = {"pairs": len(insts), "setups": n, "days": days,
+                         "per_day": round(n / days, 3),
+                         "per_week": round(7.0 * n / days, 2),
+                         "engine": "alex", "chart": "4h"}
     except Exception as e:
-        out["gold"] = {"error": str(e)[:120]}
+        out["forex"] = out["gold"] = {"error": str(e)[:120]}
     per_day = sum(v.get("per_day", 0) for v in out.values())
     out["ALL THREE"] = {
         "trades_a_day": round(per_day, 2),
@@ -1423,6 +1970,84 @@ def craig_sample(pair: str = "ETH/USD", account: float = ACCOUNT,
     title, msg = tjr_alerts.entry_message([sig], account, {pair: 1.0}, when)
     head = Desk(dry_run=True, markets=[], armed=set())._what_happened(
         CryptoMarket.__new__(CryptoMarket), [sig])
+    return f"### {title}\n\n{head}\n\n{msg}"
+
+
+def alex_sample(symbol: str = "EUR/USD", account: float | None = None,
+                basis: float | None = None,
+                start=None, end=None) -> str:
+    """THE EXACT MESSAGE one of the two Alex books sends, built from a setup
+    that genuinely fired in the cached 4-hour history. Sends nothing, places
+    nothing, and reaches no venue.
+
+    It goes through `alex_live.Engine.signal` and then through the same
+    `tjr_alerts.entry_message` every other market uses, so what is printed
+    here is not a mock-up of the message — it is the message.
+
+    GOLD IS PRINTED IN XAUT-USDT'S OWN PRICES, crossed at `basis`, because
+    that is what the order would carry. The default is the ratio measured
+    live on 2026-07-27; pass one to see another day's.
+    """
+    import alex_live
+    inst = alex_live.instrument_for(symbol)
+    gold = inst == alex_live.GOLD_INSTRUMENT
+    account = float(account if account is not None
+                    else (2178.0 if gold else 100_000.0))
+    end = pd.Timestamp(end or "2026-07-26")
+    start = pd.Timestamp(start or (end - pd.Timedelta(days=364)))
+    cfg = alex_live.live_config(inst)
+    frames = alex_live.ae.load(inst)
+    r = alex_live.ae.run_instrument(inst, start, end, cfg=cfg, frames=frames)
+    setups = [s for s in r["setups"]]
+    if gold:
+        # THE ONE HE WOULD ACTUALLY RECEIVE. Under the money-game ladder a
+        # share of gold setups cannot be held on this stake at all and are
+        # never sent, so printing one of those as "the message" would be
+        # printing a message that is never sent. `step473_alex_live.py
+        # --margin` is where the count of those lives.
+        setups = [s for s in setups if s.quality <= 1.4] or setups
+    if not setups:
+        return f"{symbol} sample unavailable: no Alex setup in the window"
+    s = setups[-1]
+    upq = alex_live.ae._upq_at(
+        alex_live.ae.usd_per_quote_series(inst, frames, {}), s.decided_t)
+    # THE BOOK'S OWN CONFIG, ladder and all, because the point of this
+    # function is to print the message he will actually receive.
+    eng = alex_live.Engine(cfg_over=alex_live.book_config(inst) if gold
+                           else dict(alex_live.BOOK))
+    eng._cfg[inst] = cfg
+    cfgt = eng.cfg_at(inst, account)
+    tr = alex_live.ae.manage(s, frames["15m"], cfgt, account, upq)
+    if tr is None:
+        return f"{symbol} sample unavailable: the size could not be worked out"
+    sig = eng.signal(s, tr, account, upq, cfg=cfgt)
+    market = "gold" if gold else "forex"
+    if gold:
+        sig = alex_live.convert_signal(sig, 4077.60 / 4088.85
+                                       if basis is None else basis)
+        lev = alex_live.gold_leverage(
+            account, float(sig["units_wanted"]) * float(sig["reference_price"]),
+            abs(sig["reference_price"] - sig["stop"]) / sig["reference_price"],
+            50.0, 0.10, 3.0)
+        if lev:
+            sig["leverage_ceiling"] = float(lev)
+            sig["leverage_note"] = (
+                f"this position posts enough margin that BloFin cannot "
+                f"liquidate it before the stop is reached, which puts it at "
+                f"{lev:.0f}x")
+    else:
+        rate = {"EUR/USD": 0.02}.get(symbol, 0.05)
+        sig["leverage_ceiling"] = 1.0 / rate
+        sig["leverage_note"] = (f"OANDA holds {100*rate:.0f}% of a {symbol} "
+                                f"position as margin, which is "
+                                f"{1.0/rate:.0f}x")
+    when = pd.Timestamp(s.decided_t).to_pydatetime()
+    sig = dict(sig, market=market, fired_at=when)
+    sig["placed"] = {"status": "filled"}
+    title, msg = tjr_alerts.entry_message([sig], account,
+                                          {symbol: upq}, when)
+    head = Desk(dry_run=True, markets=[], armed=set())._what_happened(
+        AlexMarket.__new__(ForexMarket if not gold else GoldMarket), [sig])
     return f"### {title}\n\n{head}\n\n{msg}"
 
 

@@ -694,11 +694,20 @@ class BlofinVenue(Venue):
 
     # How much of the account's own money backs one trade's margin. The
     # leverage needed is worked out FROM this and from the size, never picked.
-    PER_TRADE_MARGIN_SHARE = 0.10
+    # Wallace, 2026-07-27: "place the stop loss when the trade is placed...
+    # and thats it." The stop must be REAL — so a trade may post as much of
+    # the account as it takes for the stop to fire before the exchange's
+    # liquidation ever could. Raised from 0.10 for the money-game ladder,
+    # whose positions run ~40x the account: at 0.10 two thirds of ladder
+    # trades were refused because they could not post enough collateral to
+    # protect their own stop. At 0.70 the median ladder trade clears. The
+    # trade-off, stated plainly: one big position at a time.
+    PER_TRADE_MARGIN_SHARE = 0.70
 
     # Liquidation must sit well beyond the stop or the stop is decoration.
     # The leverage chosen is refused if the exchange would kill the position
-    # before the stop was reached, with this much room to spare.
+    # before the stop was reached, with this much room to spare. THIS RULE
+    # NEVER MOVES — it is what makes the stop a promise instead of a hope.
     LIQUIDATION_SAFETY = 3.0
 
     def __init__(self, client=None, tag: str = "tjr_crypto", **_ignored):
