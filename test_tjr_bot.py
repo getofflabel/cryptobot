@@ -1260,12 +1260,14 @@ def test_everything_off_reproduces_the_recorded_baseline_trade_for_trade():
 
     step461 note: this is now run with `entries_run_to_the_close=False`,
     because that switch ships True on Wallace's instruction and so `Config()`
-    no longer describes the photographed binary. The step461 BIAS switches all
-    still ship False and are covered here with no flag at all — which is the
-    whole point of them shipping off."""
+    no longer describes the photographed binary. 2026-07-27: bias parts 2+3
+    also ship True now, so they too must be said out loud here to describe
+    the photographed binary."""
     import step456_baseline as SB
     want = SB.as_recorded(SB.load())
-    got = SB.as_recorded(SB.run(Config(**SB.OLD_CLOCK)))
+    got = SB.as_recorded(SB.run(Config(bias_yields_to_a_divergence=False,
+                                       bias_flips_on_a_gap_invalidation=False,
+                                       **SB.OLD_CLOCK)))
     assert len(want["trades"]) == len(got["trades"]), (
         f"the baseline took {len(want['trades'])} trades, this build takes "
         f"{len(got['trades'])} with every step456 switch off")
@@ -1671,17 +1673,17 @@ LEAN = Config(bias_revisable_intraday=True)
 
 
 def test_every_step461_switch_ships_off():
+    """2026-07-27: the shipping policy CHANGED. Parts 2 and 3 are his own
+    mechanism (the divergence and the gap invalidation), step461 measured
+    them as the parts that pay, and Wallace's standing instruction is 'just
+    do whatever the pros say' — so they ship ON. Part 1 cost $8.3k for 1.4
+    points and stays off, as does the master switch."""
     c = Config()
-    off = ["bias_revisable_intraday", "bias_holds_on_a_split_read",
-           "bias_yields_to_a_divergence", "bias_flips_on_a_gap_invalidation"]
-    for name in off:
-        assert getattr(c, name) is False, f"{name} does not ship off"
-    assert (c.lean_part1, c.lean_part2, c.lean_part3) == (False, False, False)
-    # the step456 constructor is about a different set of videos and must not
-    # quietly drag this one in with it
-    n = Config.newest_teaching()
-    for name in off:
-        assert getattr(n, name) is False, f"newest_teaching() turned on {name}"
+    assert c.bias_revisable_intraday is False, "the master switch must ship off"
+    assert c.bias_holds_on_a_split_read is False, "part 1 must ship off"
+    assert c.bias_yields_to_a_divergence is True, "part 2 ships ON (2026-07-27)"
+    assert c.bias_flips_on_a_gap_invalidation is True, "part 3 ships ON (2026-07-27)"
+    assert (c.lean_part1, c.lean_part2, c.lean_part3) == (False, True, True)
     # the master switch turns on all three parts and nothing else
     on = Config(bias_revisable_intraday=True)
     assert (on.lean_part1, on.lean_part2, on.lean_part3) == (True, True, True)
@@ -1694,11 +1696,14 @@ def test_every_step461_switch_ships_off():
 
 def test_step461_builds_no_machinery_while_it_is_off():
     """Off does not mean the new code runs and is ignored. It means the new
-    code is never built at all — same standard step456 set for itself."""
-    _, trades, _, _, _ = replay()
+    code is never built at all — same standard step456 set for itself.
+    Since 2026-07-27 parts 2+3 ship ON, so 'off' must now be said out loud."""
+    all_off = Config(bias_yields_to_a_divergence=False,
+                     bias_flips_on_a_gap_invalidation=False)
+    _, trades, _, _, _ = replay(cfg=all_off)
     day = trades[0].day
     d = window(day)
-    leg = SymbolDay("SPY", d["SPY"]["5m"], d["SPY"]["1m"], day, CFG,
+    leg = SymbolDay("SPY", d["SPY"]["5m"], d["SPY"]["1m"], day, all_off,
                     NewsCalendar(), False)
     assert leg.ctx.flip_gaps is None, "the flip gap book was built with the switch off"
     assert leg.ctx.flip_trend is None

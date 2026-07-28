@@ -343,11 +343,20 @@ def stock_frames(symbol: str, cache_prefix: str) -> dict:
     out = {}
     for tf in ("5m", "1m"):
         old = cached(f"{tjr_gold.REPO}/{cache_prefix}_{tf}.parquet")
-        if old is not None and "t" in old and len(old):
-            # the index caches are stored in UTC; the gold ones already in
+        if old is not None and len(old):
+            # the index caches are stored in UTC under the fetcher's raw
+            # column name `timestamp`; the gold ones already carry `t` in
             # New York. Both are normalised here rather than at four call
-            # sites, because a chart half in one clock is worse than no chart.
-            if old["t"].dt.hour.max() >= 20 and "et_" not in cache_prefix:
+            # sites, because a chart half in one clock is worse than no
+            # chart. FOUND 2026-07-27: the old guard checked for `t`, which
+            # raw caches never have, so the converter never ran, splice()
+            # raised KeyError('t'), and on any machine WITH caches the
+            # whole stock book silently sat out ("sp500: 't'"). Render has
+            # no parquet caches, so the cloud desk never hit it.
+            if "timestamp" in old.columns:
+                old = tjr_bot.to_et_frame(old)
+            elif "t" in old.columns and old["t"].dt.hour.max() >= 20 \
+                    and "et_" not in cache_prefix:
                 old = tjr_bot.to_et_frame(old)
         out[tf] = splice(old, live[tf])
     return out
@@ -1241,6 +1250,7 @@ class Desk:
             if key in self.sent:
                 continue            # rule 2: never the same signal twice
             self.sent.add(key)
+            sig["_dedupe_key"] = key
             sig["usd_per_quote"] = m.usd_per_quote(sig["symbol"], frames)
             # HIS SIZING RULE'S ONE INPUT: the tightest stop this instrument
             # normally gives, measured from its own setups. Everything refuses
@@ -1268,6 +1278,20 @@ class Desk:
         self._manage(m, frames)
         if fresh:
             self._enter(m, fresh, equity)
+            # A VENUE ERROR MUST NOT RETIRE A LIVE SETUP (2026-07-28,
+            # Wallace: "if you find out one of these platforms reject a
+            # request you best find out why and fix it asap"). On 2026-07-27
+            # 05:00 the first real Craig setup — a DOT short — died to one
+            # transient BloFin error and was never retried, because the
+            # dedupe marked it handled before the order went in. A placement
+            # that FAILED at the venue is now un-marked, so the next poll
+            # tries the same setup again for as long as the method still
+            # emits it. Deliberate refusals (not armed, symbol busy, no
+            # size) stay final — only a venue rejection earns the retry.
+            for s in fresh:
+                placed = s.get("placed") or {}
+                if placed.get("retryable"):
+                    self.sent.discard(s.get("_dedupe_key"))
         return fresh                # rule 3: an empty list sends nothing
 
     # ------------------------------------------------------------- entries
@@ -1383,12 +1407,20 @@ class Desk:
         # the attached one is the "if we lose contact with this entirely, get
         # out somewhere sensible" order and nothing else. A venue that cannot
         # hold one ignores the argument.
-        rec = m.venue.market_order(
-            sig["symbol"], sig["side"], size["units"],
-            reference_price=float(sig["reference_price"]),
-            stop=float(sig["stop"]),
-            targets=[float(t) for t in (sig.get("targets") or [])],
-            reason=f"{m.name} entry")
+        try:
+            rec = m.venue.market_order(
+                sig["symbol"], sig["side"], size["units"],
+                reference_price=float(sig["reference_price"]),
+                stop=float(sig["stop"]),
+                targets=[float(t) for t in (sig.get("targets") or [])],
+                reason=f"{m.name} entry")
+        except Exception as e:                               # noqa: BLE001
+            print(f"  [VENUE ERROR] {m.name} {sig['symbol']}: the exchange "
+                  f"rejected the entry — {str(e)[:300]}")
+            return {"status": "failed", "retryable": True,
+                    "reason": f"the exchange rejected the order "
+                              f"({str(e)[:160]}). The setup stays live and "
+                              f"the desk will try again next poll."}
         if rec.get("status") != "filled":
             return rec
 
@@ -1445,11 +1477,22 @@ class Desk:
                               f"a second order here would fuse the two and "
                               f"neither could be managed. The setup is real "
                               f"and is reported above; it was not sent."}
-        return m.venue.limit_order(
-            sym, sig["side"], size["units"], float(sig["limit_price"]),
-            stop=float(sig["stop"]),
-            targets=[float(t) for t in (sig.get("targets") or [])],
-            reason=f"{m.name} resting entry")
+        try:
+            return m.venue.limit_order(
+                sym, sig["side"], size["units"], float(sig["limit_price"]),
+                stop=float(sig["stop"]),
+                targets=[float(t) for t in (sig.get("targets") or [])],
+                reason=f"{m.name} resting entry")
+        except Exception as e:                               # noqa: BLE001
+            # The full rejection goes to the LOG as well as the message —
+            # the 2026-07-27 05:00 DOT error reached only Telegram and left
+            # nothing greppable behind.
+            print(f"  [VENUE ERROR] {m.name} {sym}: the exchange rejected "
+                  f"the resting entry — {str(e)[:300]}")
+            return {"status": "failed", "retryable": True,
+                    "reason": f"the exchange rejected the order "
+                              f"({str(e)[:160]}). The setup stays live and "
+                              f"the desk will try again next poll."}
 
     def _what_happened(self, m: Market, sigs: list) -> str:
         """The first thing on the message: what the BOT DID. He is being told,

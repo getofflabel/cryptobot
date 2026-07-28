@@ -509,10 +509,18 @@ class Config:
     # The same three parts individually, so a part that costs money is visible
     # rather than averaged into the pile — the shape step456's before/after
     # already uses. `bias_revisable_intraday` is the whole teaching and turns
-    # on all three; these three exist to take it apart. All four ship OFF.
-    bias_holds_on_a_split_read: bool = False          # part 1
-    bias_yields_to_a_divergence: bool = False         # part 2
-    bias_flips_on_a_gap_invalidation: bool = False    # part 3
+    # on all three; these three exist to take it apart.
+    #
+    # 2026-07-27: PARTS 2 AND 3 SHIP ON. They are his own mechanism — the
+    # divergence that "strengthens my bearish bias" and the market proving
+    # him wrong through the higher-timeframe gap (capstone 2026-01-17,
+    # lesson 2026-01-14) — step461 measured part 2 buying 4.1 points of
+    # agreement and part 3 as the only part that also improved the money,
+    # and Wallace's standing instruction is "just do whatever the pros say."
+    # Part 1 stays OFF: it cost $8.3k for 1.4 points in the same measurement.
+    bias_holds_on_a_split_read: bool = False          # part 1 — stays off
+    bias_yields_to_a_divergence: bool = True          # part 2 — ON
+    bias_flips_on_a_gap_invalidation: bool = True     # part 3 — ON
     # WHICH higher timeframe carries part 3's gap. HIS: every worked example
     # in the 2026-01-14 lesson is hourly or 4-hour, and the hourly is the one
     # he names most — "on the hourly time frame, we were coming into this
@@ -606,9 +614,13 @@ class Config:
 
 # ------------------------------------------------------- higher timeframes
 def to_et_frame(d: pd.DataFrame) -> pd.DataFrame:
-    """UTC parquet -> a frame whose `t` is the bar's START in US Eastern."""
+    """UTC parquet -> a frame whose `t` is the bar's START in US Eastern.
+
+    Accepts either the fetcher's raw `timestamp` column or an already-renamed
+    `t` (both UTC) — tjr_desk.stock_frames sends both shapes here."""
     out = d.copy()
-    ts = pd.to_datetime(out["timestamp"], utc=True)
+    col = "timestamp" if "timestamp" in out.columns else "t"
+    ts = pd.to_datetime(out[col], utc=True)
     out["t"] = ts.dt.tz_convert("America/New_York").dt.tz_localize(None)
     return (out[["t", "open", "high", "low", "close"]]
             .sort_values("t").reset_index(drop=True))

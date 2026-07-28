@@ -322,7 +322,26 @@ class OandaClient:
         return r.json() if r.text else None
 
     def _get(self, path, params=None):
-        return self._request("GET", path, params=params)
+        # RETRY BEFORE SURRENDER (2026-07-28, Wallace: "if you find out one
+        # of these platforms reject a request you best find out why and fix
+        # it asap"). OANDA's practice servers intermittently answer reads
+        # with 401 "Insufficient authorization" — seen 2026-07-27 08:00 and
+        # 2026-07-28 03:00 from Render while the identical token+call
+        # returned 200 minutes later from both the laptop and Render's own
+        # shell. Transient on their side. A read is safe to retry, so a
+        # failing GET gets three tries with a short pause before the caller
+        # ever hears about it. Writes (_post/_put) are NOT retried here —
+        # blindly repeating an order is how doubles happen.
+        import time as _time
+        last = None
+        for attempt in range(3):
+            try:
+                return self._request("GET", path, params=params)
+            except Exception as e:                        # noqa: BLE001
+                last = e
+                if attempt < 2:
+                    _time.sleep(1.5 * (attempt + 1))
+        raise last
 
     def _post(self, path, body):
         return self._request("POST", path, body=body)
