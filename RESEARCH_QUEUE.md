@@ -32,19 +32,21 @@ Rules (non-negotiable, they are why anything here can be trusted):
    NEGATIVE net R, QQQ's sealed net is a third of SPY's, and the tight tail
    of the stop distribution sits at the scale of the spread.
 
-2. **HIS CONFLUENCES, AS PARTITIONS OF THE POPULATION R450 ALREADY BUILT.**
-   R450 tested his ENTRY sequence bare. step432/step436 §1 say the
-   continuation confluences are **equilibrium and fair value gaps, and
-   nothing else** — order blocks and breaker blocks are retired and a test
-   fails the build if they reappear. Question: does requiring price to be
-   at the equilibrium of the sweep leg, or to be filling a fair value gap,
-   partition the 1-minute-trigger population into a materially better
-   subset?
-   **A partition, never a re-run** (the round-400 lesson): every candidate
-   is scored independently, the filtered set must be a strict subset of the
-   same entries by timestamp, and the script asserts it. FVG definition is
-   fixed by step436 §5 — three candles, low of the third above the high of
-   the first, dies on a body close through it, never on a wick. No grid.
+2. **THE CRYPTO 1-MINUTE ARM, RE-RUN ON THE BACKFILLED HISTORY (R475's
+   by-product, and it is the biggest unclaimed number on the desk).**
+   R450 ran on 147 days because that was all the 1-minute data there was.
+   The parquet files now hold **2021-01-01 → 2026-07-26** — 2.6M BTC
+   1-minute bars against R450's 208k. R475 replayed the bare parent over
+   that window as a side effect and got **+0.1769% of price per entry over
+   42,354 entries, t = 15.33**, against R450's +0.0551% at t = 2.63. Three
+   times the effect, six times the t, fourteen times the sample.
+   What is owed: the t clustered BY DAY (R474 showed clustering roughly
+   halves a t of this shape), the year-by-year read that R450 could not do,
+   and the arm-A/arm-B/random-control comparison redone at this sample size.
+   **There is no clean sealed slice left on this family** (see below), so
+   this round produces a description, not a qualification, and it must say
+   so at the top. A candidate out of it needs a NEW instrument or NEW data
+   to verify on.
 
 3. **HIS DAILY BIAS AS A PARTITION (step434).** Same population, same rule:
    keep only sweeps taken in the direction of the 4-hour / daily bias his
@@ -97,8 +99,23 @@ use. They are recorded, not deleted, so nobody re-opens them by accident.
   look, taken on `prev day low → 1m BOS, hold to close`, which survived. The
   other 22 qualifying cells of that round are unverified out of sample and
   must stay that way. **Never re-open the SPY/QQQ 1-minute final window for
-  this family.** The crypto 1-minute family's sealed window (R450) is still
-  untouched.
+  this family.**
+- **CRYPTO 1-minute sweep-to-BOS: the sealed 20% is now SPENT TOO (R475).**
+  One look, taken on `4h swing low → 1m BOS, hold 24h` + fair value gap.
+  Positive in price terms (+0.0726% gross per trade... 24 trades, net R
+  −1.98) and **explicitly NOT a deployment candidate** — read R475's sealed
+  paragraph before anyone revives it. **Both of this family's sealed windows
+  are now gone.** The backfilled 2021-2026 crypto window has boundaries that
+  R450 and R475 have both already read inside, so a future candidate on this
+  family needs a NEW instrument or NEW data, not a new slice.
+- **HIS CONTINUATION CONFLUENCES AS AN ENTRY FILTER: dead (R475).**
+  Equilibrium is nothing on both windows (t = 1.06 on 147 days, 1.49 on 5.5
+  years). The fair value gap looked real on 147 days (+0.2007%, t = 2.61)
+  and **reverses sign on fourteen times the data** (−0.0377%, t = −1.36):
+  the gap-filling subset is worse than the entries it throws away. 1 of 96
+  cells cleared on the short window and 0 of 96 on the long one, against ~6
+  by chance. Do not re-test this partition, and do not re-tune the gap or
+  equilibrium definitions to rescue it.
 
 ## Blocked on data (unlock ~2026-08-20, when cryptobot_snap has ~4 weeks)
 - Book-imbalance entries: fade rips when bid-side depth collapses; buy dips

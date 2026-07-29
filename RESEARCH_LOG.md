@@ -2521,3 +2521,146 @@ regardless of what the structure permits.
 **ONE.** The final 20% of the SPY/QQQ 1-minute sweep-to-break-of-structure
 family is now spent and must never be re-opened for this family. The crypto
 1-minute family's sealed window (R450) is still untouched.
+
+## ROUND 475 — his confluences do NOT partition his own entries into a better subset, and the crypto sealed window is now spent (2026-07-29)
+
+**What was tested.** Queue item 2, exactly as written: does requiring price
+to be at his equilibrium, or to be filling a fair value gap, partition round
+450's 1-minute-trigger population into a materially better subset? A
+partition, never a re-run — the parent is round 450's arm B imported from
+`step450_tjr_crypto_1m` unchanged, one simulation per cell, and every
+filtered set is rows of that same frame. The script asserts strict-subset
+and no-leak on every cell.
+
+File: `step475_tjr_confluence_partition.py`, output `step475_output.txt`.
+
+**Faithful to him.** The confluence is read on the FIVE-minute chart, not
+the one-minute — his own instruction (step432 §2: the 1-minute trigger is
+"taken at a 5-minute ingredient… I'm not looking for order flow to get
+respected on the 1-minute timeframe"). Equilibrium is step436 §6: the exact
+midpoint of the most recent confirmed 5-minute swing low and swing high,
+long below it, short above it. Fair value gap is step436 §5: three candles,
+low of the third above the high of the first, dies on a body close through
+it and never on a wick. EITHER is his own escalation rule (§8). **Order
+blocks and breaker blocks are not built — he retired them (§1) and there is
+no order-block code in the file.**
+**Ours:** the confluence is evaluated at the close of the 1-minute trigger
+bar off the last 5-minute bar that had already closed, read one bar staler
+still. Strictly causal, deliberately conservative.
+
+### THE DATA MOVED UNDER THIS ROUND, AND IT CHANGES WHAT R450 MEANS
+
+Round 450 ran on 147 days — "the 1-minute history starts 2026-03-01",
+42,386 BTC 5-minute bars and 208,210 1-minute bars. **The parquet files now
+hold 2021-01-01 → 2026-07-26: 578,831 BTC 5-minute bars and 2,597,036
+1-minute bars.** The crypto 1-minute history was backfilled after R450 ran,
+the data files are gitignored, and nothing recorded it. R450's honest limit
+number one — "147 days, one regime" — is closed by the data itself.
+
+So the round ran TWICE, same partition, same code, no tuning between them:
+round 450's own 147-day window (the queue item as literally written, and the
+only run permitted to spend a sealed look, because those are the boundaries
+R450 defined), and the full 5.5 years. **The full window was barred from
+spending a look before the run**, because R450's whole 147 days now sit
+inside that window's final 20% and it is therefore not a clean slice.
+
+### THE VERDICT: NO. THE CONFLUENCES DO NOT SELECT A BETTER SUBSET.
+
+Cell counting, both windows: **1 of 96 partition cells cleared the bar on
+the 147-day window and 0 of 96 on the 5.5-year window. Luck alone would hand
+us about 6 of 96.** Below chance on one window and a zero on the other.
+
+The pooled read is where the answer actually lives. Choosing slice, gross,
+one row per distinct entry:
+
+| | 147-day window | | 5.5-year window | |
+|---|---|---|---|---|
+| population | entries | mean gross | entries | mean gross |
+| parent, bare sweep → 1m BOS | 3,140 | +0.0538% (t 2.58) | 42,354 | **+0.1769% (t 15.33)** |
+| kept by EQUILIBRIUM | 1,421 | +0.0779% | 25,684 | +0.1912% |
+| thrown away by EQUILIBRIUM | 1,719 | +0.0339% | 16,670 | +0.1549% |
+| kept by FAIR VALUE GAP | 437 | **+0.2265%** | 5,962 | +0.1445% |
+| thrown away by FAIR VALUE GAP | 2,703 | +0.0259% | 36,392 | **+0.1822%** |
+| kept by EITHER | 1,593 | +0.0959% | 27,136 | +0.1870% |
+| thrown away by EITHER | 1,547 | +0.0105% | 15,218 | +0.1588% |
+
+Kept minus thrown away — the only comparison that tests a partition:
+
+| filter | 147 days | 5.5 years |
+|---|---|---|
+| equilibrium | +0.0440%, t = 1.06 | +0.0363%, t = 1.49 |
+| **fair value gap** | **+0.2007%, t = 2.61** | **−0.0377%, t = −1.36** |
+| either | +0.0854%, t = 2.05 | +0.0282%, t = 1.12 |
+| sweep-leg equilibrium (barred) | +0.0103%, t = 0.25 | +0.0061%, t = 0.25 |
+
+**The fair value gap looked like a real partition on 147 days at t = 2.6 and
+REVERSES SIGN on fourteen times the data.** On 42,354 entries the gap-filling
+subset is worse than the entries the filter throws away. Equilibrium is
+nothing on both windows. This is the shape of a short-window artifact, and
+the only reason we can see it is that the backfill arrived.
+
+**Read against his own check (step436 §11 — he trades a third to two thirds
+of days), none of these filters is doing his job anyway.** Equilibrium keeps
+48% of entries and EITHER keeps 53%, which is a coin flip dressed as a
+filter; the gap keeps 14%, which is the right order of magnitude, and it is
+the one that inverts.
+
+### THE BY-PRODUCT, AND IT IS BIGGER THAN THE QUEUE ITEM
+
+The parent on 5.5 years: **+0.1769% of price per entry over 42,354 entries,
+t = 15.33.** Round 450 measured +0.0551% at t = 2.63 on 3,119. Same
+construction, fourteen times the sample, **three times the effect size and
+six times the t.** R450's "a hypothesis with a pulse, not a validated edge"
+is no longer the right description of the bare 1-minute trigger on crypto.
+
+The venue arithmetic is unchanged and gets larger, not smaller: median stop
+0.240% of price, one Alpaca crypto round trip 0.50% of notional, so the
+transaction is **2.1 stop distances** and the whole signal is about a third
+of one round trip. Charged for honesty, deciding nothing (owner rule). The
+number to hunt is still a cheaper venue — queue item 4.
+
+### THE SEALED SLICE — ONE LOOK TAKEN, AND IT IS NOT A CANDIDATE
+
+One cell cleared the full bar on R450's window: `4h swing low → 1m BOS, hold
+24h` with the fair value gap filter (50 choosing / 21 middle trades,
+choosing net +0.0079% against its parent's −0.3474%). The rule fixed before
+the run allowed ONE look. Taken:
+
+| sealed 2026-06-27 → 2026-07-26 | trades | gross | net | net R | win |
+|---|---|---|---|---|---|
+| pooled | 24 | +0.7244% | +0.2244% | **−1.984** | 20.8% |
+| BTCUSD | 4 | +0.6078% | +0.1078% | | |
+| ETHUSD | 10 | +0.8173% | +0.3173% | | |
+| SOLUSD | 10 | +0.6782% | +0.1782% | | |
+
+**This is NOT proposed for deployment and must not be treated as a survivor.**
+Positive in price terms on all three windows, and disqualified by everything
+else in the round: 24 sealed trades on a 30-day slice; **net risk multiple
+−1.98**, because at a 0.245% stop the 0.50% round trip is two stop distances
+before the trade starts; and the identical filter on fourteen times the data
+has the opposite sign, which is the round's main finding. One cell surviving
+out of 96 when chance gives 6 is not a survivor, it is the expected tail.
+
+### Looks consumed
+
+**ONE, and it is spent.** The final 20% of the CRYPTO 1-minute
+sweep-to-break-of-structure family is now consumed and must never be
+re-opened for this family. Both sealed windows this family had — SPY/QQQ
+(R474) and crypto (this round) — are now gone.
+**Note for whoever runs the next crypto 1-minute round:** the backfilled
+2021-2026 window has slice boundaries that R450 and R475 have both already
+read inside. There is no clean out-of-sample slice left on this family
+without new data or a new instrument.
+
+### Honest limits
+
+- The 147-day window's slices are ~88 / ~30 / ~30 days. Cells that thin were
+  always going to throw a tail cell, which is exactly what happened.
+- The 5.5-year window's parent t of 15.33 is computed across entries, not
+  clustered by day. R474 showed day-clustering roughly halves a t of this
+  shape on the index; the crypto number is not clustered here and should be
+  before anything is built on it.
+- The gap kill rule implemented is the settled one (a body close through
+  it). His softer "spent once the trend continued past it" kill (step432
+  line 165) is not built, because it has no mechanical definition in the
+  spec and inventing one would be a swept parameter.
