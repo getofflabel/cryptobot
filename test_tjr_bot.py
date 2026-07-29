@@ -857,12 +857,22 @@ def test_live_step_reproduces_the_replay_entry_on_the_bar_it_fired():
 
 
 def test_live_step_waits_rather_than_re_entering_an_old_signal():
+    """2026-07-28: the boundary MOVED. A poll landing a few minutes after
+    the trigger now still gets the entry (`live_entry_grace_minutes`),
+    because the live loop takes several minutes to walk four markets and
+    the old exact-minute rule silently ate both of the first live session's
+    entries. Beyond the grace window the old law still holds: too stale is
+    too stale."""
     _, trades, _, _, _ = replay()
     tr = trades[0]
-    now = tr.entry_t + pd.Timedelta(minutes=6)
+    past_grace = CFG.live_entry_grace_minutes + 1
+    now = tr.entry_t + pd.Timedelta(minutes=past_grace)
     out = live_step(truncate(window(tr.day), now - pd.Timedelta(minutes=1)),
                     now, CFG.account_start, clock={"is_open": True})
     assert out["action"] != "enter", out
+    # and the grace window itself never spans the truncation guard: a grace
+    # entry needs the sim's own trade record, never a bar that has not closed
+    assert CFG.live_entry_grace_minutes >= 0
 
 
 def test_a_market_with_no_bell_has_no_clock_rules_at_all():

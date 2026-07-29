@@ -527,6 +527,14 @@ class Config:
     # hourly fair value gap." Picking the hourly of the two is OURS.
     bias_flip_gap_minutes: int = 60
 
+    # OURS (2026-07-28): how many minutes past its trigger a live entry may
+    # still be sent. Exists because the live poll loop takes several minutes
+    # to walk four markets, and a 1-minute trigger that fired between polls
+    # was returned as "already handled" with no order ever placed — the
+    # first two live stock sessions produced entries at 13:54 and 14:40 and
+    # sent neither. Replay is untouched by this: it steps every bar.
+    live_entry_grace_minutes: int = 6
+
     # ================== step461: THE INTRADAY ENTRY CUT-OFF, AND IT SHIPS ON
     #
     # WALLACE'S CALL, 2026-07-26, verbatim: "man [expletive] the 10:30 cut off
@@ -3737,6 +3745,49 @@ def live_step(data: dict, now: pd.Timestamp, account: float,
     # first the moment the day budget went in.
     fired = [t for t in res["trades"]
              if t.entry_t == now - pd.Timedelta(minutes=1)]
+    # THE POLL RACE (found 2026-07-28, and it cost the first two live
+    # sessions). This function only returned an entry when the poll landed on
+    # the exact minute the 1-minute trigger fired. The live desk's cycle
+    # walks four markets with real API calls and takes several minutes, so
+    # entries fell between polls and came back as "already handled" — the
+    # bot found the 13:54 SPY entry that day, told itself it was handled,
+    # and no order ever existed. An entry that fired within the last few
+    # minutes is still HIS entry; the grace window below is OURS, with two
+    # rails: the sim must not have already exited it, and the price must
+    # still sit between its stop and its first target (never enter a trade
+    # already stopped, never chase one already paying).
+    if not fired and getattr(cfg, "live_entry_grace_minutes", 0) > 0:
+        window_start = now - pd.Timedelta(minutes=cfg.live_entry_grace_minutes)
+        for t in reversed(res["trades"]):
+            et = getattr(t, "entry_t", None)
+            if et is None or not (window_start <= et < now):
+                continue
+            xt = getattr(t, "exit_t", None)
+            # run_day(stop_at=now) TRUNCATES: a trade still open at the last
+            # bar is booked "flat by the close" with an exit on that bar.
+            # That is the sim running out of tape, not the trade ending — a
+            # real stop or target names itself in the outcome. Only a real
+            # exit disqualifies the entry here.
+            oc = str(getattr(t, "outcome", "") or "")
+            truncated = (oc == "flat by the close"
+                         and xt is not None and not pd.isna(xt)
+                         and xt >= now - pd.Timedelta(minutes=2))
+            if (xt is not None and not pd.isna(xt) and xt <= now
+                    and not truncated):
+                continue                      # the sim really closed it
+            try:
+                px = float(data[t.symbol]["1m"]["close"].iloc[-1])
+            except Exception:                                # noqa: BLE001
+                continue
+            tgt1 = float(t.targets[0]) if t.targets else None
+            if t.direction > 0 and (px <= t.stop or
+                                    (tgt1 is not None and px >= tgt1)):
+                continue
+            if t.direction < 0 and (px >= t.stop or
+                                    (tgt1 is not None and px <= tgt1)):
+                continue
+            fired = [t]
+            break
     if not fired:
         if not res["trades"]:
             why = "; ".join(f"{k}: {v}" for k, v in res["stand_down"].items())
