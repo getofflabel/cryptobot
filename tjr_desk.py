@@ -739,10 +739,14 @@ class IndexMarket(Market):
 
     def decide(self, frames, now, account):
         if any(len(frames[s]["1m"]) == 0 for s in self.symbols):
+            self.last_reason = "live bars unavailable"
             return []
         at = max(pd.Timestamp(frames[s]["1m"]["t"].iloc[-1])
                  for s in self.symbols) + pd.Timedelta(minutes=1)
         r = tjr_bot.live_step(frames, at, account, clock={"is_open": True})
+        # kept for the evening summary — the one line that tells Wallace WHY
+        # a silent day was silent, instead of a channel that says nothing
+        self.last_reason = str(r.get("reason") or "")[:180]
         if r.get("action") != "enter":
             return []
         return [dict(r, market=self.name, fired_at=at)]
@@ -1663,7 +1667,49 @@ class Desk:
         print(self.startup_banner())
         while True:
             self.once()
+            self._maybe_evening_summary()
             time.sleep(max(2.0, 62.0 - (time.time() % 60.0)))
+
+    # -------------------------------------------------- the evening summary
+    #
+    # Wallace, 2026-07-29, after five armed days in which the only Telegram
+    # message the desk ever sent him was one error card: "all ive seen so far
+    # was error messages through telegram." A channel that only speaks when
+    # something breaks teaches its owner to dread it. So the desk now says
+    # ONE thing every evening whatever happened: each book, its equity, and
+    # the reason it acted or stood down. Silence becomes information.
+    SUMMARY_AT = dt.time(17, 5)          # after the stock close, New York
+
+    def _maybe_evening_summary(self) -> None:
+        now = new_york_now()
+        if now.time() < self.SUMMARY_AT:
+            return
+        today = now.date()
+        if getattr(self, "_summary_sent", None) == today:
+            return
+        self._summary_sent = today
+        try:
+            self._push(f"the desk today — {today:%A %b %d}",
+                       self.evening_summary())
+        except Exception as e:                               # noqa: BLE001
+            print(f"  evening summary failed: {str(e)[:120]}")
+
+    def evening_summary(self) -> str:
+        lines = []
+        for m in self.markets:
+            try:
+                eq = float((m.venue.account() or {}).get("equity") or 0.0)
+                eq_s = f"${eq:,.0f}"
+            except Exception:                                # noqa: BLE001
+                eq_s = "equity unreadable"
+            armed = "armed" if self.is_armed(m) else "NOT armed"
+            why = str(getattr(m, "last_reason", "") or
+                      "no setup qualified today")[:160]
+            lines.append(f"{m.name.upper()} ({armed}, {eq_s})\n  {why}")
+        sent_today = sum(1 for k in self.sent
+                         if str(new_york_now().date()) in str(k))
+        lines.append(f"orders sent today: {sent_today}")
+        return "\n\n".join(lines)
 
     # ------------------------------------------------------------ reporting
     def startup_banner(self) -> str:
