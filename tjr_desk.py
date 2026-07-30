@@ -1243,7 +1243,15 @@ class Desk:
 
     # ---------------------------------------------------------- one pass
     def poll_market(self, m: Market, now: dt.datetime | None = None) -> list:
-        now = now or dt.datetime.now()
+        # NEW YORK, NEVER THE SERVER'S CLOCK (found 2026-07-30, and it is the
+        # bug that ate the whole week). Render runs UTC, so dt.datetime.now()
+        # there is four hours ahead of the market, and IndexMarket.open_now's
+        # "9:30 to 16:00" silently meant 5:30 AM TO NOON New York. The stock
+        # book stopped being polled at lunch every day — and every entry this
+        # week (Mon 13:54/14:40 replayed, Tue 13:54/14:40, Thu 13:49) fired
+        # in the afternoon. The forex and gold books already read New York
+        # explicitly; this makes every book's gate see the same clock.
+        now = now or new_york_now()
         if not m.open_now(now):
             return []
         frames = m.frames()
