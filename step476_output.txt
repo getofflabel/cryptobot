@@ -1,0 +1,87 @@
+========================================================================================================
+ROUND 476 - THE CRYPTO 1-MINUTE ARM ON THE FULL 2021-2026 HISTORY
+========================================================================================================
+THIS ROUND CANNOT QUALIFY ANYTHING. Both sealed windows on this
+family are spent (R474 SPY/QQQ, R475 crypto) and the backfilled
+window has boundaries R450 and R475 have both already read inside.
+No look is opened here. Nothing below is out-of-sample evidence.
+It is a DESCRIPTION of a population the desk has already seen.
+
+window 2021-01-01 -> 2026-07-26 UTC  (2032 days)
+  R450 ran on 147 days of this same tape, at the very end of it.
+  slice labels below, for continuity only: choosing < 2024-05-04, middle < 2025-06-15, then the rest.
+cost charged 0.5% of notional round trip, for honesty only.
+  BTCUSD: 578,831 5-minute bars, 2,597,036 1-minute bars, 2021-01-01 -> 2026-07-26
+  ETHUSD: 580,432 5-minute bars, 2,538,368 1-minute bars, 2021-01-01 -> 2026-07-26
+  SOLUSD: 457,955 5-minute bars, 1,955,709 1-minute bars, 2021-01-01 -> 2026-07-26
+
+========================================================================================================
+DELIVERABLE 3 - ARM A vs ARM B vs RANDOM CONTROL, AT THE NEW SAMPLE
+========================================================================================================
+Whole window. One row per distinct entry (the four target settings
+score the same entries and are collapsed). t by day pools BTC, ETH
+and SOL into ONE observation per UTC day - the conservative read.
+
+construction                                entries   days   gross%  t naive  t by day   grossR    netR   stop%  lev@1%
+5-minute trigger (R370's construction)       75,023  2,033  0.0296%     3.11      3.30    0.080  -0.982  0.663%    1.5x
+1-MINUTE trigger (HIS construction)          71,073  2,033  0.1435%    18.37     13.77    0.640  -6.041  0.242%    4.1x
+RANDOM entry, same stop machinery            41,623  2,033  0.0024%     0.26      0.06    0.149  -7.741  0.267%    3.7x
+
+R475 quoted +0.1769% at t = 15.33 on 42,354 entries for arm B.
+The t by day above is the number that should replace it: R474
+found day-clustering roughly halves a t of this shape on the index.
+
+THE DIFFERENCES, PAIRED ON SHARED UTC DAYS (the numbers to quote):
+  1-minute trigger minus 5-minute trigger: +0.0994% of price per day, t = 9.17 over 2,033 shared days
+  1-minute trigger minus RANDOM entry    : +0.1504% of price per day, t = 13.13 over 2,033 shared days
+  5-minute trigger minus RANDOM entry    : +0.0510% of price per day, t = 3.61 over 2,033 shared days
+
+========================================================================================================
+DELIVERABLE 2 - ONE REGIME OR SIX YEARS? THE YEAR-BY-YEAR READ
+========================================================================================================
+R450 could not ask this: it held 147 days. Slice labels are
+round 450's boundaries, carried for continuity only - no slice
+here is sealed and none is being spent.
+
+year  slice      1m entries  days  1m gross  t by day 1m grossR  1m netR  5m gross ctl gross
+2021  choosing       13,890   365   0.2908%      8.46     0.832   -7.880   0.1640%   0.0604%
+2022  choosing       13,956   365   0.1800%      8.12     0.814   -5.338   0.1062%   0.0418%
+2023  choosing       11,314   365   0.0371%      1.87     0.319   -6.306  -0.1066%  -0.0535%
+2024  middle         10,863   366   0.1320%      5.58     0.603   -6.199   0.0108%   0.0046%
+2025  late           13,609   365   0.1106%      6.10     0.572   -5.313   0.0103%  -0.0290%
+2026  late            7,441   207   0.0387%      2.09     0.619   -4.624  -0.0922%  -0.0350%
+
+arm B gross is positive in 6 of 6 years; its risk multiple after costs is positive in 0 of 6.
+
+========================================================================================================
+ARM B BY ASSET (a number that only holds on one coin is a coin fact)
+========================================================================================================
+asset       entries   days   gross%  t naive  t by day     net%   grossR    netR   stop%
+BTCUSD       25,443  2,033  0.0865%    10.21      9.42 -0.4135%    0.509  -8.744  0.185%
+ETHUSD       25,415  2,033  0.1545%    13.77     12.00 -0.3455%    0.614  -5.203  0.239%
+SOLUSD       20,215  1,615  0.2014%     9.59      8.05 -0.2986%    0.836  -3.692  0.341%
+
+========================================================================================================
+CELL CENSUS - DESCRIPTIVE ONLY, NOT A QUALIFICATION
+========================================================================================================
+5-minute trigger     cells  32   positive on both labelled slices and 2+ assets:   0   expected by luck alone ~4
+                     median gross choosing   0.0013%   median net  -0.4987%   median stop 1.253% -> 0.8x at 1% risked
+1-MINUTE trigger     cells  32   positive on both labelled slices and 2+ assets:   0   expected by luck alone ~4
+                     median gross choosing   0.1388%   median net  -0.3612%   median stop 0.406% -> 2.5x at 1% risked
+
+Those counts CANNOT promote anything. The slices they are cut on
+have already been read by R450 and R475. They are printed so the
+shape of the population is on the record, and for no other use.
+
+========================================================================================================
+THE VENUE ARITHMETIC, CHARGED FOR HONESTY AND DECIDING NOTHING
+========================================================================================================
+median structural stop, arm B: 0.242% of price -> 4.1x at 1% of the account risked
+one Alpaca crypto round trip: 0.5% of notional = 2.07 stop distances, charged before the trade moves
+arm B gross per entry: 0.1435% of price = 0.29 round trips
+Queue item 4 - the venue table - is the number that moves this.
+
+========================================================================================================
+LOOKS CONSUMED: NONE. No sealed slice was opened, because this
+family has none left. Nothing here is proposed for deployment.
+========================================================================================================

@@ -2664,3 +2664,175 @@ without new data or a new instrument.
   it). His softer "spent once the trend continued past it" kill (step432
   line 165) is not built, because it has no mechanical definition in the
   spec and inventing one would be a swept parameter.
+
+## ROUND 476 — his 1-minute trigger beats a random entry by 13 standard errors over 5.5 years, and still loses money at Alpaca's toll (2026-08-01)
+
+**What was tested.** Queue item 2, exactly as written: the crypto 1-minute
+arm re-run on the backfilled 2021-01-01 → 2026-07-26 history, delivering the
+three things owed — the t **clustered by day**, the **year-by-year** read
+R450 could not do, and the **arm-A / arm-B / random-control** comparison
+redone at the new sample size.
+
+File: `step476_crypto_1m_full_history.py`, output `step476_output.txt`,
+tables `step476_arms.csv`, `step476_by_year.csv`, `step476_cells.csv`.
+
+**No new construction, no grid, no tuning.** Round 450's module is imported
+and its `run_asset` called unchanged — same two-candle swings, same sweep
+scan, same 1-minute body-close trigger, same structural stop (the extreme
+traded between the sweep and the entry), same 2-hour pending expiry, same
+24-hour hold cap, same 0.50% round trip charged for honesty and used to
+decide nothing. This round measures a population; it does not propose one.
+
+**THIS ROUND COULD NOT QUALIFY ANYTHING, AND THE SCRIPT HAS NO QUALIFICATION
+BLOCK.** Both sealed windows on this family are spent — SPY/QQQ in R474,
+crypto in R475 — and the backfilled window has boundaries R450 and R475 have
+both already read inside. Stated at the top of the file and at the top of the
+output. **Looks consumed: NONE.**
+
+### A correction to how R475's headline number is recorded
+
+RESEARCH_LOG describes R475's by-product as "the parent on 5.5 years:
++0.1769% of price per entry over 42,354 entries, t = 15.33." That number is
+R475's **choosing slice only** — `partition_effect` filters `sig_t < t_tr`
+before it counts. It is 2021-01-01 → 2024-05-04, not the full window.
+
+The whole 5.5 years holds **71,073 arm-B entries**, and the choosing slice is
+~60% of 2,032 days at the same rate, which lands on ~42,800 — R475's 42,354.
+Weighting this round's per-year grosses across those same dates reproduces
++0.174% against R475's +0.1769%. The two runs agree exactly; only the label
+was wrong. **The whole-window figure is +0.1435%, not +0.1769%**, and the gap
+between them is not noise — it is the decay documented below.
+
+### DELIVERABLE 3 — the three constructions, whole window
+
+| construction | entries | days | gross % of price | t naive | **t by day** | gross R | net R | median stop | lev @1% |
+|---|---|---|---|---|---|---|---|---|---|
+| 5-minute trigger (R370's) | 75,023 | 2,033 | +0.0296% | 3.11 | **3.30** | 0.080 | −0.982 | 0.663% | 1.5x |
+| **1-MINUTE trigger (his)** | 71,073 | 2,033 | **+0.1435%** | 18.37 | **13.77** | 0.640 | **−6.041** | 0.242% | 4.1x |
+| RANDOM entry, same stop machinery | 41,623 | 2,033 | +0.0024% | 0.26 | **0.06** | 0.149 | −7.741 | 0.267% | 3.7x |
+
+Clustering unit is the **UTC calendar day** — the live desk's boundary, and
+OURS, because crypto has no session. Every entry on BTC, ETH and SOL inside
+one day collapses to one observation, because three coins on one day are one
+draw of the market and not three. That is the most conservative reading
+available and it is the one quoted.
+
+**Day-clustering costs 25% of the t here, not the ~50% R474 found on the
+index.** t naive 18.37 → t by day 13.77. R474's warning was correct in
+direction and roughly twice too pessimistic for this population: index
+entries pile into a handful of hours a session, crypto entries spread across
+2,033 unbroken days at ~35 a day.
+
+**The control is clean, and that matters more than the headline.** A random
+entry with the identical stop machinery returns +0.0024% at t = 0.06 — not
+approximately zero, zero. Whatever arm B is measuring, it is not an artifact
+of the stop construction, the hold cap or the cost model, because all three
+are shared with a control that returns nothing.
+
+Paired on shared UTC days, which is the comparison to quote:
+
+| difference | per day | t | shared days |
+|---|---|---|---|
+| 1-minute trigger − 5-minute trigger | +0.0994% | **9.17** | 2,033 |
+| **1-minute trigger − RANDOM entry** | **+0.1504%** | **13.13** | 2,033 |
+| 5-minute trigger − RANDOM entry | +0.0510% | 3.61 | 2,033 |
+
+**R370's question is answered at scale: his 1-minute trigger is not a
+refinement of the 5-minute one, it is five times the effect.** And the
+5-minute construction, dead on SPY 72 cells out of 72 and negative on
+crypto's 147 days (−0.0352%, t = −1.40 in R450), is weakly ALIVE on 5.5 years
+of crypto — +0.0296%, beating random by t = 3.61. Reported because the queue
+asked for this comparison. It is not a candidate and the standing ban on
+re-testing that construction is untouched.
+
+### DELIVERABLE 2 — year by year, the read R450 could not do
+
+| year | slice label | 1m entries | days | 1m gross | t by day | 1m gross R | 1m net R | 5m gross | control gross |
+|---|---|---|---|---|---|---|---|---|---|
+| 2021 | choosing | 13,890 | 365 | **+0.2908%** | 8.46 | 0.832 | −7.880 | +0.1640% | +0.0604% |
+| 2022 | choosing | 13,956 | 365 | +0.1800% | 8.12 | 0.814 | −5.338 | +0.1062% | +0.0418% |
+| 2023 | choosing | 11,314 | 365 | +0.0371% | 1.87 | 0.319 | −6.306 | −0.1066% | −0.0535% |
+| 2024 | middle | 10,863 | 366 | +0.1320% | 5.58 | 0.603 | −6.199 | +0.0108% | +0.0046% |
+| 2025 | late | 13,609 | 365 | +0.1106% | 6.10 | 0.572 | −5.313 | +0.0103% | −0.0290% |
+| 2026 | late | 7,441 | 207 | +0.0387% | 2.09 | 0.619 | −4.624 | −0.0922% | −0.0350% |
+
+Slice labels are R450's boundaries carried for continuity only. No slice here
+is sealed and none was spent.
+
+**Gross is positive in 6 of 6 years and the risk multiple after costs is
+positive in 0 of 6.** That single line is the round.
+
+**It is not one regime, and it is not stationary either.** The two strongest
+years are the two oldest (2021, 2022) and the two weakest are 2023 and the
+2026 stub — 2026 being the seven months the desk actually lives in, at
++0.0387% and t = 2.09. The effect never changes sign, and it is about a
+seventh the size today that it was in 2021. R450's 147 days sat inside that
+2026 stub, which is why R450 measured +0.0551% and R475's choosing slice,
+weighted to 2021-2022, measured +0.1769%. Every number this family has
+produced is consistent once the year is attached to it.
+
+### Arm B by asset — three coins agree
+
+| asset | entries | days | gross | t naive | t by day | net | gross R | net R | median stop |
+|---|---|---|---|---|---|---|---|---|---|
+| BTCUSD | 25,443 | 2,033 | +0.0865% | 10.21 | 9.42 | −0.4135% | 0.509 | −8.744 | 0.185% |
+| ETHUSD | 25,415 | 2,033 | +0.1545% | 13.77 | 12.00 | −0.3455% | 0.614 | −5.203 | 0.239% |
+| SOLUSD | 20,215 | 1,615 | +0.2014% | 9.59 | 8.05 | −0.2986% | 0.836 | −3.692 | 0.341% |
+
+Positive gross on all three with day-clustered t of 8 to 12, so this is not a
+coin fact (SOL's Alpaca history is shorter, hence 1,615 days). Under the
+standing transfer rule that is three assets agreeing — **but agreement is a
+hypothesis, not validation, and there is no clean out-of-sample slice left on
+this family to validate it against.** The effect size also tracks the stop
+size across the three coins almost exactly, which is what a signal
+proportional to volatility looks like: gross R is far flatter (0.51 / 0.61 /
+0.84) than gross % of price.
+
+### The cell census, and why 0 of 32 does NOT mean the signal failed
+
+| arm | cells | positive on both labelled slices and 2+ assets | expected by luck | median gross choosing | median net choosing | median stop |
+|---|---|---|---|---|---|---|
+| 5-minute | 32 | 0 | ~4 | +0.0013% | −0.4987% | 1.253% → 0.8x |
+| 1-minute | 32 | 0 | ~4 | **+0.1388%** | **−0.3612%** | 0.406% → 2.5x |
+
+**Read that pair of columns before reading the zero.** The cell machinery
+scores on NET, and at a 0.50% round trip against a median gross of +0.1388%
+nothing can pass arithmetically — the census is measuring Alpaca's fee
+schedule, not his method. It is printed so the shape of the population is on
+the record and for no other use, and it cannot promote anything regardless,
+because the slices it is cut on have already been read by R450 and R475.
+
+### The whole round in one paragraph
+
+His sweep → 1-minute break of structure is a **real, six-year, three-coin,
+day-clustered, control-beating signal of about +0.14% of price per entry**,
+and at Alpaca's crypto rates it is **worth −6 times the risked amount per
+trade**. Median structural stop 0.242% of price (4.1x at 1% risked, inside
+the 10x US cap); one round trip 0.50% of notional, which is **2.07 stop
+distances charged before the trade moves**; the entire signal is **0.29 of
+one round trip**. The method does not need to get better. The venue needs to
+get roughly ten times cheaper. **Queue item 4 — the venue table — is now the
+only thing standing between this desk and a measured edge**, and it is a
+written table, not a backtest.
+
+### Honest limits
+
+- **Nothing here is out-of-sample.** Every number is a description of tape
+  R450 and R475 have already read. A candidate off this family needs a NEW
+  instrument or NEW data, and no amount of sample size substitutes for that.
+- The UTC day is our clustering unit and our day boundary. A different
+  boundary would redistribute entries across clusters and move the clustered
+  t somewhat; it would not touch the naive t or any mean.
+- The decay from 2021 to 2026 is measured, not explained. It could be the
+  market, or it could be that Alpaca's early crypto tape is thinner and its
+  bars noisier. This round does not distinguish those.
+- The random control enters every 60th 5-minute bar, so it holds 41,623
+  entries against arm B's 71,073 and its days are the same 2,033. Paired
+  daily differencing handles the count mismatch; a control matched entry-for
+  -entry was not built.
+- Arm A's revival on the long window is reported, not investigated. It is
+  still barred from testing as a candidate.
+
+### Looks consumed
+
+**NONE.** No sealed slice exists on this family and none was opened.

@@ -32,21 +32,24 @@ Rules (non-negotiable, they are why anything here can be trusted):
    NEGATIVE net R, QQQ's sealed net is a third of SPY's, and the tight tail
    of the stop distribution sits at the scale of the spread.
 
-2. **THE CRYPTO 1-MINUTE ARM, RE-RUN ON THE BACKFILLED HISTORY (R475's
-   by-product, and it is the biggest unclaimed number on the desk).**
-   R450 ran on 147 days because that was all the 1-minute data there was.
-   The parquet files now hold **2021-01-01 → 2026-07-26** — 2.6M BTC
-   1-minute bars against R450's 208k. R475 replayed the bare parent over
-   that window as a side effect and got **+0.1769% of price per entry over
-   42,354 entries, t = 15.33**, against R450's +0.0551% at t = 2.63. Three
-   times the effect, six times the t, fourteen times the sample.
-   What is owed: the t clustered BY DAY (R474 showed clustering roughly
-   halves a t of this shape), the year-by-year read that R450 could not do,
-   and the arm-A/arm-B/random-control comparison redone at this sample size.
-   **There is no clean sealed slice left on this family** (see below), so
-   this round produces a description, not a qualification, and it must say
-   so at the top. A candidate out of it needs a NEW instrument or NEW data
-   to verify on.
+2. ~~**THE CRYPTO 1-MINUTE ARM, RE-RUN ON THE BACKFILLED HISTORY.**~~
+   **DONE — R476, 2026-08-01. No look consumed.** All three deliverables
+   landed. Whole window 2021-2026: **71,073 entries over 2,033 days,
+   +0.1435% of price per entry, t naive 18.37, t clustered by UTC day
+   13.77.** Random entry on the same stop machinery returns +0.0024% at
+   t = 0.06, and the paired daily difference is **+0.1504%, t = 13.13**.
+   The 1-minute trigger beats the 5-minute one by +0.0994% a day at t = 9.17.
+   Gross positive in **6 of 6 years** and in all three coins (t by day 8-12),
+   **and the risk multiple after costs is negative in 6 of 6 and all three**.
+   Median stop 0.242% of price (4.1x at 1% risked); one Alpaca round trip is
+   2.07 stop distances; the whole signal is 0.29 of one round trip.
+   Two corrections recorded there: R475's "+0.1769% over 42,354 entries" was
+   its **choosing slice**, not the full window (the whole window is
+   +0.1435%); and the effect **decays** — 2021 +0.2908% down to the 2026 stub
+   at +0.0387% — which is why every number this family has produced differs
+   and all of them are consistent once the year is attached.
+   Nothing is proposed for deployment and nothing could be: this family has
+   no sealed slice left anywhere.
 
 3. **HIS DAILY BIAS AS A PARTITION (step434).** Same population, same rule:
    keep only sweeps taken in the direction of the 4-hour / daily bias his
@@ -55,11 +58,15 @@ Rules (non-negotiable, they are why anything here can be trusted):
    same unfiltered population.
 
 4. **WHAT A CRYPTO ROUND TRIP ACTUALLY COSTS, VENUE BY VENUE.** Not a
-   backtest — a table. R450's signal is 0.055% of price per trade and one
-   Alpaca crypto round trip is 0.50% of notional, so the transaction is
-   nine times the size of the thing it collects. This is the single highest
-   leverage number on the desk right now: the method does not need to get
-   better, the venue needs to get cheaper by roughly a factor of ten.
+   backtest — a table. **R476 promoted this to the only thing standing
+   between the desk and a measured edge.** Measured over 5.5 years, three
+   coins and 71,073 entries, his signal is 0.1435% of price per entry
+   against a 0.50% Alpaca round trip: the transaction is **3.5x the size of
+   the thing it collects**, or 2.07 stop distances charged before the trade
+   moves. (R450's "nine times" came from its 147-day slice, which is the
+   weakest window in the whole history — the real ratio is 3.5x.) The
+   method does not need to get better, the venue needs to get cheaper by
+   roughly a factor of four.
    Deliverable: taker and maker rates, US-person availability, and the 10x
    legal leverage ceiling, for every venue a US person can actually use.
    **No account is opened and no money moves — this is a written table for
@@ -95,6 +102,13 @@ use. They are recorded, not deleted, so nobody re-opens them by accident.
   t = 1.81 clustered by day and **0 of 32 cells qualify** (R474). Do not
   test this construction again on any instrument. The 1-minute trigger is a
   different object and is the opposite result.
+  **R476 footnote, and the ban is unchanged:** on 5.5 years of crypto this
+  construction is weakly ALIVE — +0.0296%, t by day 3.30, beating a random
+  entry by t = 3.61 — because R450's negative read came off the weakest
+  147 days in the history. It is still five times smaller than the 1-minute
+  trigger (paired difference t = 9.17), it is still net-negative at any
+  venue we can reach, and it is **still barred from being tested as a
+  candidate.** Recorded so nobody re-derives it and mistakes it for news.
 - **SPY/QQQ 1-minute sweep-to-BOS: the sealed 20% is SPENT (R474).** One
   look, taken on `prev day low → 1m BOS, hold to close`, which survived. The
   other 22 qualifying cells of that round are unverified out of sample and
@@ -128,6 +142,13 @@ expectancy after costs. **A tight stop only counts if it is the stop the
 book would REALLY use** (R150/R194): stops belong at chart structure, and a
 swept flat percentage that happens to be small is an assumption, not an
 edge.
+NOTE (R476): on 5.5 years his crypto structural stop — the extreme traded
+between the sweep and the entry, which is the stop the book would REALLY use
+— has a median of **0.242% of price, or 4.1x at 1% risked** (BTC 0.185%,
+ETH 0.239%, SOL 0.341%). That is the honest number for this method and it is
+comfortably inside the 10x US cap. It is WIDER than R450's two-candle swing
+figure below because the two measure different objects: the swing is one
+structure, the stop spans the whole sweep-to-entry leg.
 NOTE (R450): the structure supports it. His 1-minute two-candle swing sits
 at 0.077% of price on BTC and 0.16-0.22% on the other seven pairs, which is
 4.6x to 13.1x at 1% risked, read off the chart rather than chosen. **US law
