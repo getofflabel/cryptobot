@@ -2836,3 +2836,208 @@ written table, not a backtest.
 ### Looks consumed
 
 **NONE.** No sealed slice exists on this family and none was opened.
+
+## ROUND 477 — his daily bias is the first partition that keeps the right share of the entries, and it does not make them better (2026-08-05)
+
+**What was tested.** Queue item 3, exactly as written: his daily / 4-hour
+bias as a PARTITION of the population R450 built, one partition, both
+directions reported, chance baseline stated. Run after item 2 (R476) so both
+partitions are measured against the same unfiltered population.
+
+File: `step477_tjr_daily_bias_partition.py`, output `step477_output.txt`,
+tables `step477_populations.csv`, `step477_partition_effect.csv`,
+`step477_by_direction.csv`, `step477_by_year.csv`, `step477_counts.csv`,
+`step477_table.csv`, `step477_gross_clears.csv`.
+
+**THIS ROUND COULD NOT QUALIFY ANYTHING AND OPENED NO LOOK.** Both sealed
+windows on this family are spent (R474 SPY/QQQ, R475 crypto) and the
+backfilled 2021-2026 window has boundaries R450 and R475 have both already
+read inside. Stated at the top of the file and the top of the output.
+**Looks consumed: NONE.**
+
+**The bias definition, and it is his.** step434 §1D settles which procedure he
+actually runs: on every live bootcamp morning he runs **Procedure B**, nested
+trend, not the previous-session profile method he teaches. So the bias on a
+timeframe is the direction of the most recent **body-close break of the most
+recent confirmed two-candle swing**, held until it flips ("we're going to
+stick to this bias until we're proved wrong", Day50). **Daily sets it, the
+4-hour must agree** ("at least I need the daily and the four hour to be in
+confluence", Day50), daily wins conflicts (Day49). Structure is read with
+R450's own `tjr_swings`, so nothing new was invented. Procedure A is NOT
+built: he teaches it and does not perform it, it needs a London session a
+24/7 market does not have, and the spec itself flags merging the two as our
+reconstruction he never endorsed.
+
+Three partitions, each one a sentence of his: **DAILY** (trade runs with the
+daily bias), **H4** (with the 4-hour), **AGREE** (both, and they agree — his
+live rule, and the primary). Reported beside them: the **STAND-DOWN set**,
+the entries taken on days the two timeframes disagree, which his instruction
+discards wholesale.
+
+### THE ONE THING THAT WORKED: the filter is finally the right SIZE
+
+| population | entries kept | share of parent |
+|---|---|---|
+| parent, bare sweep → 1m BOS | 96,528 | 100.0% |
+| with the DAILY bias | 48,110 | 49.8% |
+| with the 4-HOUR bias | 37,374 | 38.7% |
+| **with BOTH, and the two agree** | **22,244** | **23.0%** |
+| days the two DISAGREE (he sits out) | 40,917 | 42.4% |
+
+**AGREE is the first partition this family has produced that lands at his own
+stated trading frequency.** He trades a minority of sessions, 7-15 days a
+month (step434 §6F). R475's confluences kept 48% and 53% — a coin flip
+dressed as a filter — and only its fair value gap kept the right order of
+magnitude, and that one inverted. This keeps 23%. The shape is right.
+
+### THE VERDICT: NO. THE BIAS DOES NOT SELECT A BETTER SUBSET.
+
+Whole window, gross, one row per distinct entry, t clustered by UTC day
+(R476's unit — three coins inside one day are ONE observation):
+
+| population | entries | days | mean gross | t naive | **t by day** | median stop |
+|---|---|---|---|---|---|---|
+| parent, bare sweep → 1m BOS | 71,073 | 2,033 | **+0.1435%** | 18.37 | **13.77** | 0.242% |
+| kept by DAILY | 35,264 | 2,029 | +0.1287% | 10.90 | 8.77 | 0.239% |
+| thrown away by DAILY | 35,809 | 2,031 | +0.1580% | 15.43 | 11.64 | 0.244% |
+| kept by H4 | 27,986 | 2,031 | +0.1252% | 10.48 | 9.08 | 0.242% |
+| thrown away by H4 | 43,087 | 2,033 | +0.1554% | 15.10 | 10.94 | 0.241% |
+| **kept by AGREE** | 16,608 | 1,859 | **+0.1200%** | 7.19 | 7.17 | 0.249% |
+| **thrown away by AGREE** | 54,465 | 2,033 | **+0.1507%** | 17.06 | 12.52 | 0.240% |
+| **STAND-DOWN set (he sits these out)** | 29,977 | 1,739 | **+0.1337%** | 11.11 | 6.44 | 0.232% |
+
+**Every kept set is worse than the set it threw away, on all three
+partitions.** And the cleanest line in the round: **the 42% of entries his
+rule discards wholesale return +0.1337% against the parent's +0.1435%.** The
+days he sits out are not worse days.
+
+Kept minus thrown away — the only comparison that tests a partition:
+
+| filter | unpaired | t | **paired by day** | **t** | shared days |
+|---|---|---|---|---|---|
+| DAILY | −0.0293% | −1.87 | −0.0215% | −0.60 | 2,027 |
+| H4 | −0.0302% | −1.91 | +0.0303% | 1.01 | 2,031 |
+| **AGREE** | **−0.0307%** | **−1.63** | **+0.0570%** | **1.59** | 1,859 |
+
+**The two readings of the primary partition disagree in SIGN and neither is
+significant.** Unpaired says the kept set is worse; paired-by-day says
+slightly better. The gap is structural, not noise: AGREE's entries live on
+1,859 days against the complement's 2,033, so the paired comparison silently
+drops the 174 days on which his rule would have had nobody in the market at
+all. When a partition's answer depends on which of two defensible poolings
+you choose, there is no answer.
+
+### Both directions, as the queue required
+
+| population | LONG n | LONG gross | t/day | SHORT n | SHORT gross | t/day |
+|---|---|---|---|---|---|---|
+| parent | 35,201 | +0.1809% | 11.67 | 35,872 | +0.1068% | 9.43 |
+| kept by DAILY | 18,958 | +0.1613% | 8.19 | 16,306 | +0.0909% | 5.55 |
+| kept by H4 | 14,305 | +0.1509% | 6.92 | 13,681 | +0.0983% | 5.43 |
+| **kept by AGREE** | 9,032 | +0.1560% | 5.73 | 7,576 | **+0.0770%** | 3.98 |
+| thrown away by AGREE | 26,169 | +0.1895% | 9.88 | 28,296 | +0.1147% | 9.73 |
+
+**The filter is worse than its own complement on BOTH sides**, so it is not a
+hidden directional bet that happens to have paid — it is just weaker. Noted
+separately: the parent's longs are 1.7x its shorts (+0.1809% vs +0.1068%),
+which is this family's own long bias and belongs to the population, not to
+the filter.
+
+### The primary partition by asset — and this is where it dies
+
+| asset | kept n | kept gross | thrown n | thrown gross | **paired diff** | **t** |
+|---|---|---|---|---|---|---|
+| BTCUSD | 5,897 | +0.0382% | 19,546 | +0.1010% | **−0.0075%** | **−0.21** |
+| ETHUSD | 6,018 | +0.1280% | 19,397 | +0.1627% | **−0.0003%** | **−0.01** |
+| SOLUSD | 4,693 | +0.2125% | 15,522 | +0.1981% | **+0.2295%** | **1.96** |
+
+**Two exact zeros and one coin.** The entire paired-by-day positive is SOL,
+and even SOL does not reach 2. Under the standing transfer rule (R89/R100/
+R170/R190) that is a coin fact, not a finding — and this is precisely the
+failure mode the rule was written to catch.
+
+### Year by year — the only thing pointing the other way, and it is thin
+
+| year | parent n | parent gross | AGREE n | AGREE gross | kept share | paired diff | t |
+|---|---|---|---|---|---|---|---|
+| 2021 | 13,890 | +0.2908% | 3,118 | +0.3046% | 22.4% | +0.0308% | 0.29 |
+| 2022 | 13,956 | +0.1800% | 3,037 | +0.1614% | 21.8% | +0.0919% | 0.89 |
+| 2023 | 11,314 | +0.0371% | 2,862 | +0.0359% | 25.3% | +0.0382% | 0.65 |
+| 2024 | 10,863 | +0.1320% | 2,488 | +0.1293% | 22.9% | +0.1003% | 1.24 |
+| 2025 | 13,609 | +0.1106% | 3,298 | +0.0353% | 24.2% | +0.0147% | 0.19 |
+| 2026 | 7,441 | +0.0387% | 1,805 | +0.0064% | 24.3% | +0.0770% | 0.89 |
+
+The paired difference is positive in **6 of 6 years**, which a sign test puts
+at about 1 in 32 — the strongest thing in the round pointing in the bias's
+favour, and it is recorded rather than buried. It does not survive contact
+with the rest: **every one of the six t values is below 1.25**, the pooled
+paired t is 1.59, and the by-asset table shows the whole effect is SOL. The
+kept share is also stable at 22-25% across all six years, which is a good
+sign about the *definition* and says nothing about the *edge*.
+
+### The two cell censuses, and why the first one is worthless here
+
+**On NET: 0 of 96 cells clear, against ~6 expected by luck.** That number is
+measuring Alpaca's fee schedule and nothing else — at a 0.50% round trip
+against a ~0.14% gross, no cell can pass arithmetically. R476 made this point
+and it applies with full force. Letting that census stand alone would also
+let costs gate a config, which the owner rule forbids outright. It is
+recorded for continuity and is not evidence about the bias.
+
+**On GROSS — the census that actually tests the partition — 12 of 96 clear,
+against ~1.5 expected by luck** (a cell clears when the kept set is positive,
+beats its parent AND beats its complement, on both labelled slices).
+
+That 8x is an **upper bound on the surprise, not a p-value**, and the script
+says so. The 96 are not 96 independent draws: the four target settings score
+the SAME entries so each population is counted up to four times, and AGREE is
+a strict subset of both DAILY and H4. Collapsed to distinct level × filter
+populations — the honest unit — it is **5 of the 24 that exist**, and they
+cluster on three levels: `prev day low`, `prev day high`, `last session
+high`. Ten of the twelve raw clears are SHORT cells, while the pooled short
+read above is *worse* under the filter, which is what it looks like when a
+handful of mid-sized cells drift up against a population dominated by the 1h
+swing levels going the other way.
+
+**Nothing here can be pursued anyway.** Any follow-up on that cluster would
+be re-tuning a partition after seeing which cells cleared, on slices R450 and
+R475 have already read, in a family with no sealed window left on any
+instrument. It is recorded so nobody re-derives it and mistakes it for news.
+
+### The whole round in one paragraph
+
+His daily/4-hour bias is the first filter this family has produced that keeps
+the right **share** of the entries — 23%, his own stated frequency, where
+R475's confluences kept a coin flip. It does not improve the entries it
+keeps. Kept +0.1200% against thrown-away +0.1507%; the paired and unpaired
+readings disagree in sign and neither reaches 2; the positive one is entirely
+SOL, with BTC at −0.0075% and ETH at −0.0003%; and the 42% of entries his
+stand-down rule discards outright return +0.1337% against the parent's
++0.1435%. **The bias is a real risk-management rule that cuts exposure by
+three quarters at no measurable cost to the average entry — which is a
+finding about SIZE, not about selection.** Queue item 4, the venue table,
+remains the only thing standing between this desk and a measured edge.
+
+### Honest limits
+
+- **Nothing here is out-of-sample.** Every number describes tape R450 and
+  R475 have already read. No amount of sample size substitutes for that.
+- The bias is read on UTC-cut daily and 4-hour candles. Crypto has no session
+  and nothing decides the boundary for us; a different cut would move which
+  side of a marginal close the bias sits on. Not tested, and it should not be
+  swept as a parameter.
+- A candle closing through both the recent swing high and the recent swing
+  low leaves the bias unchanged rather than picking a side. Stated before the
+  run; a tiebreak would have been a hidden parameter.
+- 270 entries (0.3%) landed before either timeframe had formed a bias and are
+  in neither the kept nor the thrown-away set.
+- Procedure A is untested here, not refuted. Testing it would need a session
+  structure this market does not have, so it is closed on this instrument
+  rather than open.
+- The gross census bar ("beats parent and complement on both slices") is six
+  conditions and its 1-in-64 baseline assumes independence, which these cells
+  do not have. The collapsed count is the number to read.
+
+### Looks consumed
+
+**NONE.** No sealed slice exists on this family and none was opened.

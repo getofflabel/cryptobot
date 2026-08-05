@@ -51,11 +51,32 @@ Rules (non-negotiable, they are why anything here can be trusted):
    Nothing is proposed for deployment and nothing could be: this family has
    no sealed slice left anywhere.
 
-3. **HIS DAILY BIAS AS A PARTITION (step434).** Same population, same rule:
-   keep only sweeps taken in the direction of the 4-hour / daily bias his
-   spec defines. One partition, both directions reported, chance baseline
-   stated. Runs after item 2 so both partitions are measured against the
-   same unfiltered population.
+3. ~~**HIS DAILY BIAS AS A PARTITION (step434).**~~
+   **DONE — R477, 2026-08-05. No look consumed.** Bias built from step434
+   §1D's Procedure B, the one he PERFORMS: most recent body-close break of
+   the most recent confirmed two-candle swing, held until it flips; daily
+   sets it, the 4-hour must agree, daily wins conflicts. Procedure A not
+   built (he teaches it, doesn't perform it, and it needs a London session
+   crypto hasn't got).
+   **VERDICT: NO.** Kept by his rule **+0.1200%** of price per entry against
+   thrown away **+0.1507%** (parent +0.1435%). All three partitions are worse
+   than their own complement. Paired by UTC day the primary filter reads
+   **+0.0570%, t = 1.59**, unpaired it reads **−0.0307%, t = −1.63** — the
+   two poolings **disagree in sign** and neither reaches 2. By asset the whole
+   positive is one coin: BTC −0.0075% (t −0.21), ETH −0.0003% (t −0.01), SOL
+   +0.2295% (t 1.96). Worse than its complement on longs AND shorts.
+   **The one real result: it keeps 23.0% of entries** — the first partition
+   in this family at his own stated trading frequency (R475's confluences
+   kept 48-53%). And **the 42.4% of entries his stand-down rule discards
+   wholesale return +0.1337%**, essentially the parent. So his bias is a
+   SIZE rule that cuts exposure by three quarters at no measurable cost to
+   the average entry, not a selection rule.
+   Censuses: 0 of 96 on net (that census measures Alpaca's fee schedule, not
+   the bias); 12 of 96 on gross against ~1.5 by luck, which collapses to **5
+   of 24 distinct level × filter populations** once the four target settings
+   and the AGREE ⊂ DAILY ∩ H4 nesting are accounted for. **Barred from
+   follow-up** — chasing that cluster would be re-tuning after seeing the
+   clears, on slices R450 and R475 have already read.
 
 4. **WHAT A CRYPTO ROUND TRIP ACTUALLY COSTS, VENUE BY VENUE.** Not a
    backtest — a table. **R476 promoted this to the only thing standing
@@ -122,6 +143,21 @@ use. They are recorded, not deleted, so nobody re-opens them by accident.
   are now gone.** The backfilled 2021-2026 crypto window has boundaries that
   R450 and R475 have both already read inside, so a future candidate on this
   family needs a NEW instrument or NEW data, not a new slice.
+- **HIS DAILY / 4-HOUR BIAS AS AN ENTRY FILTER: dead (R477).** All three
+  partitions (daily, 4-hour, both-agreeing) are WORSE than the entries they
+  throw away, on both directions, over 5.5 years and 71,073 entries. The
+  paired-by-day and unpaired readings disagree in sign and neither reaches 2,
+  and the positive one is SOL alone (BTC and ETH are exact zeros). Do not
+  re-test this partition and do not re-tune the bias definition — a different
+  timeframe cut, a tiebreak rule or a "strength of bias" threshold to rescue
+  it would all be swept parameters. **Do not chase the gross-census cluster
+  either** (prev day low / prev day high / last session high): that is
+  re-tuning after seeing which cells cleared, on spent slices.
+  **What SURVIVES from R477 and is worth keeping:** his bias is a real
+  exposure rule. It keeps 23% of entries, his own stated frequency, and the
+  77% it discards perform the same as the ones it keeps — so it cuts size by
+  three quarters at no measurable cost to the average entry. That is a
+  finding about how much to have on, not about which trade to take.
 - **HIS CONTINUATION CONFLUENCES AS AN ENTRY FILTER: dead (R475).**
   Equilibrium is nothing on both windows (t = 1.06 on 147 days, 1.49 on 5.5
   years). The fair value gap looked real on 147 days (+0.2007%, t = 2.61)
