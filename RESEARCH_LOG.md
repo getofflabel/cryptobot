@@ -3041,3 +3041,178 @@ remains the only thing standing between this desk and a measured edge.
 ### Looks consumed
 
 **NONE.** No sealed slice exists on this family and none was opened.
+
+---
+
+## ROUND 478 — the venue can get 9.4x cheaper on a US-legal CFTC venue, and that flips the average entry positive without touching the method (2026-08-06)
+
+**Hypothesis / queue item 4.** "What a crypto round trip actually costs, venue
+by venue. Not a backtest — a table." Deliverable: taker and maker rates,
+US-person availability, and the 10x legal leverage ceiling, for every venue a
+US person can actually use. Built in `step478_venue_cost_table.py`. No orders,
+no live file touched, no account opened, no money moved.
+
+**Looks consumed: NONE.** This round fits nothing, sweeps nothing and reads no
+out-of-sample slice. It is arithmetic on published fee schedules against
+numbers R476 already established. No test window was touched.
+
+### The premise of the queue item had gone stale, in the desk's favour
+
+The item assumed the US menu is spot venues charging tens of basis points,
+under a 10x legal leverage ceiling. Both halves are now out of date:
+
+1. **CFTC-regulated crypto PERPETUALS exist onshore.** Coinbase Financial
+   Markets listed nano perpetual-style futures to US persons on 2025-07-21;
+   Kraken Derivatives US launched Bitnomial-listed perps on 2026-06-15.
+2. **Futures bill PER CONTRACT, not as a percentage of notional.** That single
+   fact is what closes the gap, and it is why the answer was never "shop for a
+   lower percentage."
+
+Kraken Derivatives US charges a flat **$0.15 per contract per side, all-in**
+($0.03 commission + $0.10 exchange/clearing + $0.02 NFA). Contracts are sized
+0.01 BTC / 0.5 ETH / 5 SOL, which at 2026-08-06 marks (BTC $64,771, ETH
+$1,911, SOL $73.99) puts notional in a $370–$960 band. That band is the whole
+mechanism, and it is also the fragility: the percentage moves **inversely with
+price**. If BTC halves, the BTC round trip doubles.
+
+### The table
+
+| venue / execution | round trip | vs Alpaca taker | net per entry | cost / signal |
+|---|---|---|---|---|
+| Alpaca spot, TAKER (base) | 0.5000% | — | **−0.3565%** | 3.48x |
+| Alpaca spot, MAKER (base) | 0.3000% | 1.7x cheaper | **−0.1565%** | 2.09x |
+| Kraken Derivatives US, SOL | 0.0811% | 6.2x cheaper | **+0.0624%** | 0.57x |
+| Kraken Derivatives US, BTC | 0.0463% | 10.8x cheaper | **+0.0972%** | 0.32x |
+| Kraken Derivatives US, ETH | 0.0314% | 15.9x cheaper | **+0.1121%** | 0.22x |
+| **Kraken Derivatives US, 3-coin avg** | **0.0529%** | **9.4x cheaper** | **+0.0906%** | **0.37x** |
+
+Charged against R476's signal: **+0.1435% of price per entry, gross, 71,073
+entries, 3 coins, 2021–2026.**
+
+### Two findings, and they must not be merged
+
+**FINDING A — Alpaca's own maker rate is 0.15% a side, not 0.25%.** Every
+backtest in this log has been charged 0.50% round trip, i.e. taker on both
+legs. Posting both legs on the venue the desk **already has** takes the round
+trip to 0.30%, a **1.67x cut, no new account, no new venue, available today.**
+It is not free — a post-only entry that does not fill is a missed trade, and
+`backtest.py` already models exactly that (`execution="maker"` chases at the
+close on a miss). This is a change to how the desk FILLS.
+
+**FINDING B — US perps are a 9.4x cut.** The queue asked for a factor of four.
+This is **9.4**. The sign of the average entry flips from −0.3565% to +0.0906%
+of price **on the venue change alone, with no change whatsoever to the
+method.** Worth roughly 0.45% of price per entry, the largest single
+improvement available to this desk.
+
+### The catch, and it is a real one
+
+R476 established that this effect **decays**: 2021 +0.2908% → the 2026 stub at
++0.0387%. Charging the new venue against the most recent year:
+
+| venue | 2021 net | 2026 net |
+|---|---|---|
+| Alpaca taker | −0.2092% | −0.4613% |
+| Kraken US, ETH | +0.2594% | **+0.0073%** |
+| Kraken US, BTC | +0.2445% | **−0.0076%** |
+| Kraken US, 3-coin avg | +0.2379% | **−0.0142%** |
+
+**The 2026 signal (0.0387%) and the new cost (0.0529% avg) are the same
+size.** On the most recent year the average entry is at or below break-even
+even after the venue is fixed. Stated plainly: **the venue change removes the
+COST objection and does nothing at all to the DECAY objection.** It does not
+make the 1-minute sweep-to-BOS family tradeable. Nothing is proposed for
+deployment by this round.
+
+### Stop distances, and the leverage ceiling is not binding
+
+Per coin, on each coin's own R476 structural stop (never a pooled one):
+
+| coin | stop % | Alpaca RT | Kraken US RT | leverage @ 1% risked |
+|---|---|---|---|---|
+| BTC | 0.185% | 2.70x | 0.25x | 5.41x |
+| ETH | 0.239% | 2.09x | 0.13x | 4.18x |
+| SOL | 0.341% | 1.47x | 0.24x | 2.93x |
+
+Alpaca charges 2.0–2.7 stop distances before the trade moves; the US perp
+venues charge 0.13–0.25.
+
+**On the "10x legal ceiling": it is not binding and it never was.** Coinbase's
+US perps allow up to 10x; Kraken Derivatives US sets margin per contract. The
+method needs **2.9x on SOL, 4.2x on ETH, 5.4x on BTC**, read off its own
+structural stop at 1% risked. All three fit inside 10x with room. **The
+STANDING PRIORITY's 15–20x tier is asking for leverage this method does not
+need and cannot justify from chart structure.** The binding constraint was
+never leverage. It was cost.
+
+### Contract granularity — the cost nobody quotes
+
+Futures trade in whole contracts; a percentage venue lets any size through, a
+contract venue rounds, and rounding is real tracking error. At 1% risked on
+R476's pooled 0.242% stop, position notional is 4.13x equity. The coarsest
+contract is ETH at $955.60. To hold ≥20 of them (rounding under ~2.5% of
+position) the account needs about **$4,625 of equity**. **Below roughly $5,000
+the rounding error on the coarsest leg is larger than the fee saving being
+chased, and the venue change stops being worth it.**
+
+### Every venue a US person can actually use
+
+**Perpetual futures, CFTC-regulated, US persons eligible**
+- **Kraken Derivatives US** — $0.15/contract/side all-in, flat. Bitnomial-listed,
+  16 perps at launch 2026-06-15. Sizes 0.01 BTC / 0.5 ETH / 5 SOL. Leverage set
+  by per-contract margin. **Primary-sourced; this is the figure the round leans on.**
+- **Coinbase Financial Markets** — 0.00% maker / 0.03% taker, *promotional*, plus
+  a per-contract fixed component reported at $0.10–$0.15 (**secondary source —
+  verify before sizing on it**). Nano sizes 0.01 BTC / 0.10 ETH. Up to 10x.
+
+**Spot, US persons eligible** (maker / taker, base tier, per side)
+- Alpaca 0.15 / 0.25 ← what the desk uses now
+- Kraken Pro 0.25 / 0.40
+- Gemini ActiveTrader 0.00–0.20 / 0.03–0.40, volume-tiered
+- Coinbase Advanced 0.40 / 0.60 — the most expensive retail venue on the list
+- Robinhood — no explicit commission, paid through the spread. **A desk that
+  charges honest costs cannot use a venue that will not state them.**
+
+**NOT available to US persons — recorded so nobody re-proposes them**
+- BloFin (the desk's old venue, dropped 2026-07-25), Bybit (Excluded
+  Jurisdiction, KYC-enforced), Hyperliquid (front-end geo-blocked).
+- **Kraken Derivatives INTERNATIONAL** (PF_XBTUSD, 0.02%/0.05%, up to 100x) is
+  **NOT the US product.** Anyone quoting 100x leverage or a 0.05% taker rate for
+  a US account has read the wrong page. This round refuses to blur the two.
+- A VPN does not make any of these available; it is a terms-of-service breach
+  with frozen-funds and clawback risk.
+
+### Honest limits
+
+Three costs are real, unmeasured here, and **every one cuts against the
+conclusion.** None are estimated — guessing them would be the same sin as
+tuning a parameter after seeing a test.
+
+1. **SPREAD.** The fee is not the round trip; the spread is the other half. On
+   a $370–$960 contract in a US perp market weeks-to-months old it could exceed
+   the fee outright — a 1-tick spread on a thin book can be 0.1435% on its own,
+   the entire signal. **This is now the open question, and it can only be
+   answered by recording the book, not by reading a fee page.**
+2. **FUNDING.** Perps pay/receive funding; spot does not. Kraken US settles it
+   as one cash adjustment at 3:00pm CT daily, and the method holds 24 hours, so
+   it eats a settlement essentially every trade. Sign and magnitude unknown.
+   `backtest.py` already has `funding_series` machinery that could measure it.
+3. **PROMOTIONAL RATES EXPIRE.** Coinbase's 0.00%/0.03% is explicitly
+   promotional. Kraken US's $0.15 is a standing published schedule with a
+   stated right to change.
+4. Marks are a 2026-08-06 snapshot. The flat-fee venues' cost-as-a-percentage
+   is a function of price and will drift with it.
+
+### Verdict
+
+**The venue can get cheaper by a factor of 9.4 on a CFTC-regulated,
+US-person-legal venue, at leverage the method's own stops already justify.**
+Two things are actionable with no further research: Alpaca maker-both-legs
+(1.67x, today), and US perps (9.4x). One thing is true and is **not** a green
+light: the 2026 stub of the signal is still eaten by the new cost. **No
+strategy is proposed for deployment. NOTHING DEPLOYED, NO LOOK CONSUMED, NO
+ORDER PLACED.**
+
+### Looks consumed
+
+**NONE.** Not a backtest. No sealed slice opened, none exists to open.

@@ -78,20 +78,54 @@ Rules (non-negotiable, they are why anything here can be trusted):
    follow-up** — chasing that cluster would be re-tuning after seeing the
    clears, on slices R450 and R475 have already read.
 
-4. **WHAT A CRYPTO ROUND TRIP ACTUALLY COSTS, VENUE BY VENUE.** Not a
-   backtest — a table. **R476 promoted this to the only thing standing
-   between the desk and a measured edge.** Measured over 5.5 years, three
-   coins and 71,073 entries, his signal is 0.1435% of price per entry
-   against a 0.50% Alpaca round trip: the transaction is **3.5x the size of
-   the thing it collects**, or 2.07 stop distances charged before the trade
-   moves. (R450's "nine times" came from its 147-day slice, which is the
-   weakest window in the whole history — the real ratio is 3.5x.) The
-   method does not need to get better, the venue needs to get cheaper by
-   roughly a factor of four.
-   Deliverable: taker and maker rates, US-person availability, and the 10x
-   legal leverage ceiling, for every venue a US person can actually use.
-   **No account is opened and no money moves — this is a written table for
-   Wallace to decide from.**
+4. ~~**WHAT A CRYPTO ROUND TRIP ACTUALLY COSTS, VENUE BY VENUE.**~~
+   **DONE — R478, 2026-08-06. No look consumed.** The queue asked the venue
+   to get cheaper by a factor of four. **It can get cheaper by 9.4**, on a
+   CFTC-regulated venue a US person can legally use.
+   The premise had gone stale in the desk's favour: **crypto perpetuals now
+   exist onshore** (Coinbase Financial Markets 2025-07-21, Kraken Derivatives
+   US 2026-06-15) and **futures bill PER CONTRACT, not as a percentage.**
+   Kraken Derivatives US charges a flat **$0.15/contract/side all-in** on
+   contracts sized 0.01 BTC / 0.5 ETH / 5 SOL — a $370-$960 notional band, so
+   the round trip is **0.0463% BTC, 0.0314% ETH, 0.0811% SOL, 0.0529% avg**
+   against Alpaca taker's 0.50%. R476's average entry flips from **−0.3565%
+   to +0.0906% of price on the venue change alone**, method untouched.
+   **Second finding, free and available today: Alpaca's own MAKER rate is
+   0.15%/side, not 0.25%.** Every backtest in this log charged taker on both
+   legs. Posting both legs on the venue the desk already has is 0.30% round
+   trip, a 1.67x cut, at the price of missed fills (`backtest.py`'s
+   `execution="maker"` already models the chase).
+   **NOT A GREEN LIGHT.** R476's decay stands untouched: the 2026 stub of the
+   signal is +0.0387% against the new 0.0529% cost — **the same size**. The
+   venue removes the COST objection and does nothing to the DECAY objection.
+   **The 10x ceiling is not binding and never was:** the method needs 2.9x
+   SOL / 4.2x ETH / 5.4x BTC off its own structural stops at 1% risked.
+   Full table, the unavailable-to-US list, and the honest limits in R478.
+
+5. **HOW WIDE IS THE BOOK ON A US PERPETUAL CONTRACT?** *(new, opened by
+   R478 — it is now the only thing standing between the desk and a measured
+   edge, and it inherits that title directly from the venue question.)*
+   R478 priced the FEE and deliberately refused to guess the SPREAD. On a
+   $370-$960 contract in a US perp market that is weeks-to-months old, the
+   spread can plausibly exceed the fee outright: **a 1-tick spread on a thin
+   book can be 0.1435% of price on its own — the entire signal.** Every
+   number in R478 is therefore an upper bound on how good the venue is.
+   Deliverable: top-of-book bid/ask and depth for PBTCUCZ50 / PETHIUZ50 /
+   PSOLUZ50 (and the Coinbase nano perps), sampled across the 24h clock,
+   recorded to a file the way `cryptobot_snap` already records book data.
+   Median and tail spread in % of price, beside R478's fee table.
+   **Read-only market data. No account, no order, no money.** If the venue
+   cannot be polled without an account, say so and stop — do not open one.
+
+6. **WHAT DOES FUNDING COST A 24-HOUR HOLD?** *(new, opened by R478.)*
+   Perps pay/receive funding; spot does not. Kraken US settles it as one cash
+   adjustment at 3:00pm CT daily and the method holds 24 hours, so it eats a
+   settlement essentially every trade. Sign and magnitude both unknown, and
+   `backtest.py` already has `funding_series` machinery plus cached
+   `data_bybit_*_funding.parquet` to measure it against. Note the honest
+   caveat before running: Bybit funding is a PROXY for Bitnomial funding, not
+   the same series, so this bounds the magnitude rather than pricing the
+   venue. Runs after item 5 — spread is the larger unknown.
 
 ## Obsoleted by the 2026-07-25 strategy pivot — DO NOT RUN
 Wallace retired every self-derived strategy and rebuilt the desk on TJR's
@@ -191,6 +225,18 @@ at 0.077% of price on BTC and 0.16-0.22% on the other seven pairs, which is
 caps it at 10x**, so only BTC's 1-minute structure is tighter than the
 ceiling. The binding constraint is no longer the stop — it is that a round
 trip costs 2.4 stop distances at Alpaca crypto rates. See queue item 4.
+NOTE (R478): **the cost constraint that made this tier look necessary is
+gone, and the tier itself is not.** On CFTC-regulated US perpetuals a round
+trip is 0.031-0.081% of price (flat $0.15/contract/side) against Alpaca's
+0.50%, so cost is no longer 2.0-2.7 stop distances but 0.13-0.25. With that
+gone, the method's OWN structural stops ask for **2.9x on SOL, 4.2x on ETH
+and 5.4x on BTC at 1% risked** — all comfortably inside the 10x US perp
+ceiling, none of them anywhere near 15-20x. Recorded, not decided: the
+mandate is Wallace's and stands until he changes it. What R478 establishes
+is that **nothing in the measured structure of this method requires 15-20x,
+and reaching for it would mean setting stops tighter than chart structure
+supports** — which the rule directly above forbids. The binding constraint
+was always cost, and cost now has an answer.
 NOTE (R474): on the index the 1-minute swing is **0.046% of price on SPY
 (21.6x at 1% risked) and 0.063% on QQQ (15.8x)** — the tightest structure
 this desk has measured anywhere, and the index costs 0.04% a round trip
