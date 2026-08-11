@@ -311,25 +311,32 @@ async def record(minutes: float, interval: float):
 
     fh = open(OUT, "a")
     try:
-        async with websockets.connect(BITNOMIAL_WS, open_timeout=30,
-                                      ping_interval=20, max_queue=None) as ws:
+      while time.time() < deadline:
+        # A dropped socket must not end the run - it must be re-subscribed.
+        # The first version of this ended the recording silently on a drop and
+        # lost an hour, which is exactly the kind of gap that would quietly
+        # bias a spread measurement toward whichever minutes happened to work.
+        try:
+          async with websockets.connect(BITNOMIAL_WS, open_timeout=30,
+                                        ping_interval=20, max_queue=None) as ws:
             await ws.send(json.dumps({
                 "type": "subscribe",
                 "product_codes": [],
                 "channels": [{"name": "book", "product_codes": BITNOMIAL_SYMS}],
             }))
             while time.time() < deadline:
-                # drain the websocket until the next sample instant
-                try:
-                    timeout = max(0.05, next_sample - time.time())
-                    msg = await asyncio.wait_for(ws.recv(), timeout=timeout)
-                    book.on_message(json.loads(msg))
-                    continue
-                except asyncio.TimeoutError:
-                    pass
-                except Exception as e:
-                    print(f"  ! websocket dropped ({e}); rows so far: {written}")
-                    break
+                # Drain the websocket until the next sample instant. The check
+                # on next_sample is load-bearing: without it, a BUSY book keeps
+                # returning messages before the timeout fires and the recorder
+                # never samples at all - it samples only when the market goes
+                # quiet, which is precisely backwards.
+                while time.time() < next_sample:
+                    try:
+                        msg = await asyncio.wait_for(
+                            ws.recv(), timeout=max(0.05, next_sample - time.time()))
+                        book.on_message(json.loads(msg))
+                    except asyncio.TimeoutError:
+                        break
 
                 ts = now_iso()
                 rows = []
@@ -356,6 +363,11 @@ async def record(minutes: float, interval: float):
                     next_sample = time.time() + interval
                 left = int(deadline - time.time())
                 print(f"  {ts}  +{len(rows)} rows (total {written}), {left}s left", flush=True)
+        except Exception as e:
+            if time.time() < deadline:
+                print(f"  ! websocket dropped ({e}); reconnecting", flush=True)
+                book = BitnomialBook(specs)     # snapshot is stale; start clean
+                await asyncio.sleep(3)
     finally:
         fh.close()
     print(f"\nwrote {written} rows to {OUT}")
