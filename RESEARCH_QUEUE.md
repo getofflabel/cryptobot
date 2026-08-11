@@ -102,20 +102,37 @@ Rules (non-negotiable, they are why anything here can be trusted):
    SOL / 4.2x ETH / 5.4x BTC off its own structural stops at 1% risked.
    Full table, the unavailable-to-US list, and the honest limits in R478.
 
-5. **HOW WIDE IS THE BOOK ON A US PERPETUAL CONTRACT?** *(new, opened by
-   R478 — it is now the only thing standing between the desk and a measured
-   edge, and it inherits that title directly from the venue question.)*
-   R478 priced the FEE and deliberately refused to guess the SPREAD. On a
-   $370-$960 contract in a US perp market that is weeks-to-months old, the
-   spread can plausibly exceed the fee outright: **a 1-tick spread on a thin
-   book can be 0.1435% of price on its own — the entire signal.** Every
-   number in R478 is therefore an upper bound on how good the venue is.
-   Deliverable: top-of-book bid/ask and depth for PBTCUCZ50 / PETHIUZ50 /
-   PSOLUZ50 (and the Coinbase nano perps), sampled across the 24h clock,
-   recorded to a file the way `cryptobot_snap` already records book data.
-   Median and tail spread in % of price, beside R478's fee table.
-   **Read-only market data. No account, no order, no money.** If the venue
-   cannot be polled without an account, say so and stop — do not open one.
+5. **HOW WIDE IS THE BOOK ON A US PERPETUAL CONTRACT?** — **ANSWERED ON ONE
+   SLICE OF THE CLOCK, R479, 2026-08-11. No look consumed. STAYS OPEN only
+   for the 24-hour read, which lands 2026-08-12 with no further work.**
+   Both venues poll fine with **no account** (Bitnomial public websocket book,
+   Coinbase public REST book), so the item's stop-rule never triggered and
+   nothing was signed up for. Symbols corrected: **PETHUIZ50 / PSOLUSZ50**.
+   **The item's specific fear is refuted.** One tick is **0.0078% (BTC),
+   0.0107% (ETH), 0.0132% (SOL)** of price — a ninth to an eighteenth of the
+   signal, not the whole thing. But the book rests **5-6 ticks wide** on
+   Bitnomial and 2 on Coinbase, so median spread is **0.0470 / 0.0641 /
+   0.0661%** (Bitnomial) and **0.0156 / 0.0533 / 0.0264%** (Coinbase).
+   **The spread is the same size as the fee.** All-in, R478's 3-coin average
+   cost goes 0.0529% → **0.1120% (Bitnomial) / 0.0847% (Coinbase)**, and its
+   net entry goes +0.0906% → **+0.0315% / +0.0588%**. R478's DIRECTION
+   survives, every NUMBER it attached was optimistic by 2-3x. In stop
+   distances the honest figure is **0.32-0.50x**, not 0.13-0.25x.
+   **On the 2026 stub every coin on every US venue is now NEGATIVE after fee
+   and spread.** Cost is no longer fully answered, and decay never was.
+   **New, unasked-for finding: Bitnomial's book is too thin for a real
+   account.** Usable equity window ~$5k-$10k (R478's rounding floor below,
+   its own depth above); **on Bitnomial SOL the window does not exist** —
+   5-level depth is consumed by a $2,834 account, under the $5,000 floor.
+   **Coinbase Derivatives is the better venue on both axes** (tighter on all
+   three coins, 1-2 orders of magnitude deeper). R478 leaned on Kraken US
+   because its fee was primary-sourced; on the book evidence, **Coinbase's
+   fee is now the number worth sourcing properly** — see item 7.
+   WHAT IS LEFT: coverage was **3 of 24 UTC hours** (06-08). A launch agent
+   `com.wallace.usperp-book-snap` now records 6 min at :30 every hour into
+   `data_usperp_book.jsonl`, so the next session runs
+   `step479_us_perp_spread_snap.py --report` on full-clock data and closes
+   this. Do not re-record; just read it.
 
 6. **WHAT DOES FUNDING COST A 24-HOUR HOLD?** *(new, opened by R478.)*
    Perps pay/receive funding; spot does not. Kraken US settles it as one cash
@@ -126,6 +143,25 @@ Rules (non-negotiable, they are why anything here can be trusted):
    caveat before running: Bybit funding is a PROXY for Bitnomial funding, not
    the same series, so this bounds the magnitude rather than pricing the
    venue. Runs after item 5 — spread is the larger unknown.
+   **R479 note:** this is now the last unmeasured cost. It is also the only
+   one that can come back POSITIVE — funding is paid or received depending on
+   which side the book is on, so unlike fee and spread it is not a guaranteed
+   subtraction. Measure the sign before assuming it hurts.
+
+7. **WHAT DOES COINBASE DERIVATIVES ACTUALLY CHARGE?** *(new, opened by R479.)*
+   R478 leaned its whole table on Kraken Derivatives US because that fee
+   schedule was primary-sourced, and flagged Coinbase's per-contract
+   component ($0.10-$0.15, plus a promotional 0.00%/0.03%) as SECONDARY.
+   R479 then measured the books and found Coinbase is the better venue on
+   both spread and depth, by a wide margin — which makes the one number
+   nobody has sourced properly the number the decision now rests on.
+   Deliverable: Coinbase Derivatives' fee schedule for the CDE perps
+   (BIP/ETP/SLP), primary-sourced, with the promotional component separated
+   from the standing one and its expiry stated. Nano contract sizes are
+   already confirmed from the public product endpoint (0.01 BTC / 0.1 ETH /
+   5 SOL). Re-run `step479_us_perp_spread_snap.py --report` afterwards with
+   the corrected fee so the all-in table stops carrying Kraken's rate as a
+   stand-in. **Reading a fee page. No account, no order, no money.**
 
 ## Obsoleted by the 2026-07-25 strategy pivot — DO NOT RUN
 Wallace retired every self-derived strategy and rebuilt the desk on TJR's
@@ -237,6 +273,13 @@ is that **nothing in the measured structure of this method requires 15-20x,
 and reaching for it would mean setting stops tighter than chart structure
 supports** — which the rule directly above forbids. The binding constraint
 was always cost, and cost now has an answer.
+NOTE (R479): **cost has HALF an answer.** With the measured spread added, the
+all-in charge is 0.32-0.50 stop distances, not R478's 0.13-0.25 — still a
+transformation against Alpaca's 2.0-2.7, still nowhere near needing 15-20x.
+The tier remains unrequired by anything in this method's measured structure.
+A second, harder constraint arrived with it: **Bitnomial's book only supports
+about $5k-$10k of equity**, so on that venue the ceiling is account SIZE, not
+leverage. Coinbase's book supports roughly $300k.
 NOTE (R474): on the index the 1-minute swing is **0.046% of price on SPY
 (21.6x at 1% risked) and 0.063% on QQQ (15.8x)** — the tightest structure
 this desk has measured anywhere, and the index costs 0.04% a round trip

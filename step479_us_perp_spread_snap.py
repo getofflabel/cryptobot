@@ -524,15 +524,16 @@ def report():
         print("WALKING THE BOOK: what a real order actually pays, not what the top of book quotes")
         print("Cost = volume-weighted fill vs mid, one side, doubled for a round trip. % of price.")
         print("=" * 100)
-        print(f"{'venue':22s} {'coin':4s} {'$10k RT':>9s} {'$50k RT':>9s} {'$100k RT':>9s} {'unfilled':>10s}")
+        print(f"{'venue':22s} {'coin':4s} {'$10k RT':>9s} {'$50k RT':>9s} {'$100k RT':>9s}"
+              f"   {'% of samples too big for 5 levels':>34s}")
         wk = defaultdict(list)
         for r in walk:
             wk[(r["venue"], r["coin"])].append(r)
         for (venue, coin), rs in sorted(wk.items()):
             line = f"{venue:22s} {coin:4s}"
-            short = 0
+            shorts = []
             for target in (10_000, 50_000, 100_000):
-                costs = []
+                costs, short = [], 0
                 for r in rs:
                     cs, mid = r["contract_size"], r["mid"]
                     need, coins = target, 0.0        # need = notional still to buy
@@ -548,9 +549,13 @@ def report():
                     vwap = target / coins
                     costs.append(200.0 * (vwap - mid) / mid)   # both legs
                 line += f" {statistics.median(costs):9.4f}" if costs else f" {'n/a':>9s}"
-            print(line + f" {short:10d}")
-        print("  'unfilled' counts samples where the order exceeded the 5 recorded levels;")
-        print("  those are EXCLUDED from the medians, so this table is optimistic where it is blank.")
+                shorts.append(100.0 * short / max(len(rs), 1))
+            print(line + "   " + "  ".join(f"{s:5.0f}%" for s in shorts))
+        print("  The last three columns are the share of samples where that order size did NOT")
+        print("  fit inside the 5 recorded levels, one per size. Those samples are EXCLUDED from")
+        print("  the median beside them, so every number here is OPTIMISTIC by exactly that much.")
+        print("  'n/a' means it never fit. Only 5 levels a side are recorded, so this understates")
+        print("  nothing about the venue - it just cannot see past level 5.")
 
     ctrl = {c: st for (v, c), st in stats.items() if v.startswith("kraken_INTL")}
     us = {c: st for (v, c), st in stats.items() if v == "bitnomial_krakenUS"}

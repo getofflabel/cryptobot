@@ -7,3 +7,5 @@ bot_state.json
 bot.log
 nohup.out
 tjr_transcripts/
+logs/usperp_book_snap.log
+logs/usperp_book_snap.err

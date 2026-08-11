@@ -3216,3 +3216,223 @@ ORDER PLACED.**
 ### Looks consumed
 
 **NONE.** Not a backtest. No sealed slice opened, none exists to open.
+
+---
+
+## ROUND 479 — the spread on the US perp book is the same size as the fee, so R478's cost table was optimistic by about half (2026-08-11)
+
+**Queue item 5.** R478 priced the FEE on the US perpetual venues and refused to
+guess the SPREAD, which made every number it published an upper bound on how
+good the venue is. This round measures the spread off the live book.
+
+### Looks consumed
+
+**NONE.** Not a backtest. Nothing is fitted, nothing is swept, no sealed slice
+is opened. This is a recording of a public order book. **No account was
+opened, no API key used, no order placed, no money moved.**
+
+### First: both venues CAN be polled with no account, so the queue's stop-rule never triggered
+
+The item said "if the venue cannot be polled without an account, say so and
+stop — do not open one." It can be, on both:
+
+- **Bitnomial** (the exchange that lists Kraken Derivatives US's perps) serves
+  an unauthenticated WebSocket at `wss://bitnomial.com/exchange/ws` with a
+  `book` channel: full snapshot on subscribe, level updates after. Its product
+  specs are public REST at `bitnomial.com/exchange/api/v1/prod/product/specs/`.
+- **Coinbase Derivatives** serves an unauthenticated REST book at
+  `api.coinbase.com/api/v3/brokerage/market/product_book`.
+
+**Symbol correction.** The queue wrote PETHIUZ50 / PSOLUZ50. The live symbols
+are **PETHUIZ50** (id 5608) and **PSOLUSZ50** (id 5609). PBTCUCZ50 (5614) was
+right. Confirmed off the public spec endpoint, not guessed.
+
+### The specific fear in the queue item is REFUTED, and a different one replaces it
+
+The item's worry was that "a 1-tick spread on a thin book can be 0.1435% of
+price on its own — the entire signal." **It cannot.** One tick, measured:
+
+| contract | tick | tick as % of price |
+|---|---|---|
+| PBTCUCZ50 | $5.00 | **0.0078%** |
+| PETHUIZ50 | $0.20 | **0.0107%** |
+| PSOLUSZ50 | $0.01 | **0.0132%** |
+
+One tick is a **ninth to an eighteenth** of R476's signal. Tick granularity was
+never the risk. **The risk is how many ticks wide the book actually sits**, and
+that is the thing worth measuring: Bitnomial rests **5–6 ticks wide**, Coinbase
+**2 ticks wide.**
+
+### The measurement
+
+1,728 samples, every 20 seconds, 2026-08-11 06:43–08:40 UTC, written to
+`data_usperp_book.jsonl` by `step479_us_perp_spread_snap.py`.
+
+**Median spread, % of price. One full spread is paid per round trip if both
+legs cross.**
+
+| venue | BTC | ETH | SOL | 3-coin avg |
+|---|---|---|---|---|
+| Bitnomial / Kraken US | 0.0470% | 0.0641% | 0.0661% | **0.0591%** |
+| Coinbase Derivatives | 0.0156% | 0.0533% | 0.0264% | **0.0318%** |
+| *Kraken INTERNATIONAL (control, NOT US-eligible)* | *0.0016%* | *0.0053%* | *0.0132%* | *0.0067%* |
+
+Tails are well behaved on Coinbase (p99 = median) and not on Bitnomial, whose
+BTC book reached 0.4382% and ETH 0.5242% at their worst — three to eight times
+the median, and three times the whole signal.
+
+### THE ANSWER TO THE QUEUE ITEM: fee + spread, against the signal
+
+| venue | coin | R478 fee RT | spread | **ALL-IN** | vs full signal | vs 2026 signal |
+|---|---|---|---|---|---|---|
+| Bitnomial/Kraken US | BTC | 0.0463% | 0.0470% | **0.0933%** | +0.0502% | −0.0546% |
+| Bitnomial/Kraken US | ETH | 0.0314% | 0.0641% | **0.0955%** | +0.0480% | −0.0568% |
+| Bitnomial/Kraken US | SOL | 0.0811% | 0.0661% | **0.1472%** | **−0.0037%** | −0.1085% |
+| Coinbase CDE | BTC | 0.0463% | 0.0156% | **0.0619%** | +0.0816% | −0.0232% |
+| Coinbase CDE | ETH | 0.0314% | 0.0533% | **0.0847%** | +0.0588% | −0.0460% |
+| Coinbase CDE | SOL | 0.0811% | 0.0264% | **0.1075%** | +0.0360% | −0.0688% |
+
+Signal is R476's: **+0.1435%** of price per entry over 2021–2026, **+0.0387%**
+on the 2026 stub. Coinbase's fee is carried at the Kraken US rate because R478
+could only source Coinbase's per-contract component secondarily; its **spread**
+is measured here, not assumed.
+
+**The headline correction to R478.** R478 published a 3-coin average cost of
+0.0529% and a net entry of **+0.0906%**. With the spread included the average
+cost is **0.1120% on Bitnomial** and **0.0847% on Coinbase**, so the net entry
+is **+0.0315%** and **+0.0588%**. **R478 was optimistic by 2–3x on the net, and
+by roughly 2x on the cost.** It said so itself — it labelled the spread the
+open question — but the corrected numbers belong on the record next to the
+originals.
+
+**What does NOT change: the venue is still much cheaper than Alpaca.** Against
+Alpaca taker's 0.50% the US perps are **4.5x cheaper (Bitnomial) and 5.9x
+cheaper (Coinbase)** all-in, not R478's 9.4x. **That comparison is unfair to
+the US venue in a way worth naming: 0.50% is Alpaca's FEE, and Alpaca's spot
+spread has never been measured by this desk either.** The honest statement is
+that the US perp venues cost 0.085–0.112% all-in, and the true multiple against
+Alpaca is at least 4.5x and probably better. It is not measured, so it is not
+claimed.
+
+### The same cost in stop distances, which is the unit that decides anything
+
+| venue | coin | stop (R476) | all-in | in stop distances |
+|---|---|---|---|---|
+| Bitnomial | BTC | 0.185% | 0.0933% | 0.50x |
+| Bitnomial | ETH | 0.239% | 0.0955% | 0.40x |
+| Bitnomial | SOL | 0.341% | 0.1472% | 0.43x |
+| Coinbase | BTC | 0.185% | 0.0619% | 0.33x |
+| Coinbase | ETH | 0.239% | 0.0847% | 0.35x |
+| Coinbase | SOL | 0.341% | 0.1075% | 0.32x |
+
+R478 reported 0.13–0.25 stop distances on fee alone against Alpaca's 2.0–2.7.
+The honest figure with the spread is **0.32–0.50**. Still transformative next
+to Alpaca. Roughly double what R478 implied.
+
+### THE FINDING NOBODY ASKED FOR: Bitnomial's book is too thin for a real account
+
+Median resting notional:
+
+| venue | coin | top of book | within 5 levels | equity that consumes 5 levels at 4.13x |
+|---|---|---|---|---|
+| Bitnomial | BTC | $31,978 | $50,449 | **$12,215** |
+| Bitnomial | ETH | $23,418 | $43,097 | **$10,435** |
+| Bitnomial | SOL | $3,775 | $11,704 | **$2,834** |
+| Coinbase | BTC | $25,600 | $1,210,524 | $293,105 |
+| Coinbase | ETH | $175,500 | $1,430,941 | $346,475 |
+| Coinbase | SOL | $1,515 | $210,518 | $50,973 |
+
+At R478's 4.13x position-to-equity, **Bitnomial has a usable window of roughly
+$5,000 to $10,000 of equity** — floored by R478's contract-rounding limit and
+capped by its own depth. **On Bitnomial SOL the window does not exist at all:**
+its 5-level depth is consumed by a $2,834 account, which is below the $5,000
+rounding floor. There is no account size that both clears the rounding and
+fits inside the book.
+
+Walking the book confirms it. Round-trip cost for a real order, VWAP against
+mid, with the share of samples where the order did not fit inside 5 levels:
+
+| venue | coin | $10k | $50k | $100k | didn't fit (10k / 50k / 100k) |
+|---|---|---|---|---|---|
+| Bitnomial | BTC | 0.0469% | 0.0527% | 0.0731% | 1% / 54% / 86% |
+| Bitnomial | ETH | 0.0641% | 0.0760% | 0.0909% | 0% / 49% / 99% |
+| Bitnomial | SOL | 0.1253% | n/a | n/a | 18% / 100% / 100% |
+| Coinbase | BTC | 0.0156% | 0.0178% | 0.0228% | 0% / 0% / 0% |
+| Coinbase | ETH | 0.0533% | 0.0533% | 0.0533% | 0% / 0% / 0% |
+| Coinbase | SOL | 0.0419% | 0.0543% | 0.0685% | 0% / 0% / 0% |
+
+The medians EXCLUDE the samples that didn't fit, so each one is optimistic by
+exactly the percentage beside it. Only 5 levels a side were recorded, so this
+sees nothing past level 5 — it is a floor on the cost, not a ceiling.
+
+**Coinbase Derivatives is the better venue on both axes measured here** —
+tighter on all three coins and one to two orders of magnitude deeper. R478
+leaned on Kraken US because its fee schedule was primary-sourced and
+Coinbase's was not. On the evidence of the book, Coinbase's fee is the number
+worth chasing down properly.
+
+### The control, and what it says about waiting
+
+Kraken INTERNATIONAL is **not available to US persons and is not a candidate.**
+It is here only to separate "young venue" from "this is what a perp costs":
+
+| coin | US (Bitnomial) | offshore | ratio |
+|---|---|---|---|
+| BTC | 0.0470% | 0.0016% | **30.1x** |
+| ETH | 0.0641% | 0.0053% | **12.0x** |
+| SOL | 0.0661% | 0.0132% | **5.0x** |
+
+A mature perp book is 5 to 30 times tighter than the US one. **Almost all of
+the US spread is the venue's age, not the instrument.** That is a reason to
+RE-MEASURE these venues periodically, not a reason to assume they will
+converge — the offshore number is what is possible, not what is promised.
+
+### Honest limits
+
+1. **COVERAGE. 3 of 24 UTC hours (06–08).** The queue asked for the 24-hour
+   clock and this is one slice of it, sitting in the Asia/early-London window.
+   US-listed venues plausibly tighten during US hours and widen overnight, and
+   this sample cannot see either. A launch agent
+   (`com.wallace.usperp-book-snap`) now records 6 minutes at :30 past every
+   hour into the same file, so **full-clock coverage exists from 2026-08-12**
+   and the item stays open for that read.
+2. **FUNDING is still unmeasured** and is queue item 6.
+3. Marks are 2026-08-11 (BTC ~$63.9k). Flat per-contract fees move inversely
+   with price; spread in % of price does too.
+4. Only the top 5 levels a side were recorded.
+5. Alpaca's own spot spread remains unmeasured, so the multiple against the
+   incumbent venue is a lower bound.
+
+### Two bugs in the recorder, found by running it, both of which would have flattered the answer
+
+Recorded because a measurement round is only worth its instrument.
+
+1. **The drain loop never sampled a busy book.** It continued on every
+   websocket message, so it only reached its sample instant when the market
+   went quiet — it would have measured spreads **exclusively during lulls**,
+   which is the narrow half of the distribution and the wrong half.
+2. **A dropped socket silently ended the recording** rather than
+   re-subscribing, losing 47 minutes of the first run.
+
+Both fixed. `step479b_book_validation.py` independently checks the third risk:
+the Bitnomial book is maintained incrementally (snapshot + level updates), so a
+bug in the apply loop would produce a stale book and an invented spread without
+crashing. A second, independent websocket snapshot agrees with the running
+recorder's top of book to within a few ticks.
+
+### Verdict
+
+**The spread does NOT eat the signal, and it is not negligible either — it is
+the same size as the fee.** R478's cost figures roughly double once the book is
+included, and its net-per-entry roughly halves. Every conclusion R478 reached
+about DIRECTION survives; every number it attached to that direction was
+optimistic.
+
+**And the decay objection is now worse, not better. On the 2026 stub of the
+signal, every coin on every US venue is NEGATIVE after fee and spread**
+(−0.023% to −0.109% of price per entry). R478 said the venue removes the cost
+objection and does nothing to the decay objection. With the spread measured,
+the cost objection is **not fully removed either**.
+
+**NOTHING PROPOSED FOR DEPLOYMENT. NOTHING DEPLOYED. NO LOOK CONSUMED. NO ORDER
+PLACED. NO ACCOUNT OPENED.**
