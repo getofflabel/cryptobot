@@ -1,0 +1,183 @@
+3351 US-venue samples in data_usperp_book.jsonl
+window: 2026-08-11T06:43:02.896936+00:00  ->  2026-08-12T06:36:04.725657+00:00
+
+======================================================================================================
+1. THE SAMPLE IS NOT FLAT ACROSS THE CLOCK, AND THAT MATTERS
+R479's own recording is still in the file and all of it is in hours 06-08.
+======================================================================================================
+  hours 06-08 hold 1,302 of 3,351 samples = 38.9%
+  a flat clock would give those three hours 12.5%
+  thinnest hours (all 6 US series pooled): 02=15, 13=15, 01=21, 00=111
+  -> every table below reports POOLED (as-recorded) and HOUR-EQUAL-WEIGHTED
+     (mean of the 24 hourly medians). The second is the honest clock estimate.
+
+======================================================================================================
+2. SPREAD BY UTC HOUR, IN % OF PRICE. median per hour.
+======================================================================================================
+
+  bitnomial_krakenUS BTC   (n per hour in brackets)
+    00  01  02  03  04  05  06  07  08  09  10  11
+    0.0472  0.0393  0.0471  0.0432  0.0471  0.0392  0.0470  0.0470  0.0469  0.0546  0.0545  0.0545
+    [18]    [ 3]    [ 2]    [18]    [18]    [18]    [66]    [58]    [91]    [18]    [18]    [18]  
+    12  13  14  15  16  17  18  19  20  21  22  23
+    0.0467  0.0352  0.0391  0.0392  0.0394  0.0394  0.0394  0.0395  0.0393  0.0472  0.0471  0.0472
+    [18]    [ 2]    [18]    [18]    [18]    [18]    [18]    [18]    [18]    [18]    [18]    [18]  
+
+  bitnomial_krakenUS ETH   (n per hour in brackets)
+    00  01  02  03  04  05  06  07  08  09  10  11
+    0.0532  0.0532  0.0531  0.0531  0.0530  0.0318  0.0641  0.0640  0.0641  0.0693  0.0690  0.0688
+    [18]    [ 3]    [ 2]    [18]    [18]    [18]    [66]    [58]    [91]    [18]    [18]    [18]  
+    12  13  14  15  16  17  18  19  20  21  22  23
+    0.0636  0.0744  0.0426  0.0427  0.0430  0.0430  0.0430  0.0429  0.0426  0.0532  0.0532  0.0532
+    [18]    [ 2]    [18]    [18]    [18]    [18]    [18]    [18]    [18]    [18]    [18]    [18]  
+
+  bitnomial_krakenUS SOL   (n per hour in brackets)
+    00  01  02  03  04  05  06  07  08  09  10  11
+    0.0525  0.0656  0.0458  0.0525  0.0525  0.0525  0.0529  0.0662  0.0661  0.0661  0.0528  0.0395
+    [18]    [ 3]    [ 2]    [18]    [18]    [18]    [66]    [58]    [91]    [18]    [18]    [18]  
+    12  13  14  15  16  17  18  19  20  21  22  23
+    0.0792  0.0396  0.0530  0.0532  0.0401  0.0334  0.0399  0.0399  0.0527  0.0263  0.0524  0.0525
+    [18]    [ 2]    [18]    [18]    [18]    [18]    [18]    [18]    [18]    [18]    [18]    [18]  
+
+  coinbase_CDE BTC   (n per hour in brackets)
+    00  01  02  03  04  05  06  07  08  09  10  11
+    0.0157  0.0079  0.0078  0.0157  0.0157  0.0157  0.0156  0.0156  0.0156  0.0156  0.0156  0.0078
+    [19]    [ 4]    [ 3]    [19]    [19]    [19]    [67]    [59]    [93]    [19]    [19]    [19]  
+    12  13  14  15  16  17  18  19  20  21  22  23
+    0.0156  0.0156  0.0156  0.0157  0.0157  0.0157  0.0158  0.0158  0.0079  0.0236  0.0157  0.0157
+    [19]    [ 3]    [19]    [19]    [19]    [19]    [19]    [19]    [19]    [19]    [19]    [19]  
+
+  coinbase_CDE ETH   (n per hour in brackets)
+    00  01  02  03  04  05  06  07  08  09  10  11
+    0.0266  0.0399  0.0265  0.0266  0.0530  0.0529  0.0267  0.0533  0.0533  0.0532  0.0265  0.0529
+    [19]    [ 4]    [ 3]    [19]    [19]    [19]    [67]    [59]    [93]    [19]    [19]    [19]  
+    12  13  14  15  16  17  18  19  20  21  22  23
+    0.0529  0.0531  0.0532  0.0533  0.0537  0.0536  0.0537  0.0268  0.0266  0.0532  0.0266  0.0266
+    [19]    [ 3]    [19]    [19]    [19]    [19]    [19]    [19]    [19]    [19]    [19]    [19]  
+
+  coinbase_CDE SOL   (n per hour in brackets)
+    00  01  02  03  04  05  06  07  08  09  10  11
+    0.0262  0.0262  0.0262  0.0262  0.0262  0.0262  0.0264  0.0265  0.0264  0.0264  0.0264  0.0263
+    [19]    [ 4]    [ 3]    [19]    [19]    [19]    [67]    [59]    [93]    [19]    [19]    [19]  
+    12  13  14  15  16  17  18  19  20  21  22  23
+    0.0264  0.0396  0.0265  0.0266  0.0267  0.0267  0.0266  0.0266  0.0263  0.0395  0.0262  0.0263
+    [19]    [ 3]    [19]    [19]    [19]    [19]    [19]    [19]    [19]    [19]    [19]    [19]  
+
+======================================================================================================
+3. IS THE HOUR-TO-HOUR VARIATION REAL, OR IS IT LUCK?
+Control: shuffle the hour labels 500 times, preserving each hour's sample count.
+p = share of shuffles whose spread-of-hourly-medians is at least as big as observed.
+======================================================================================================
+venue                  coin   pooled  clock-wt   best hr  worst hr  worst/best      sd       p
+bitnomial_krakenUS     BTC    0.0469    0.0444 0.0352@13 0.0546@09       1.55x  0.0054   0.076
+bitnomial_krakenUS     ETH    0.0537    0.0539 0.0318@05 0.0744@13       2.34x  0.0109   0.018
+bitnomial_krakenUS     SOL    0.0529    0.0511 0.0263@21 0.0792@12       3.01x  0.0117   0.026
+coinbase_CDE           BTC    0.0156    0.0147 0.0078@11 0.0236@21       3.03x  0.0035   0.002
+coinbase_CDE           ETH    0.0529    0.0427 0.0265@10 0.0537@18       2.02x  0.0127   0.261
+coinbase_CDE           SOL    0.0264    0.0275 0.0262@02 0.0396@13       1.51x  0.0036   0.008
+  'clock-wt' = mean of the 24 hourly medians: each hour counts once, as the clock has it.
+  p < 0.05 means the book really is wider at some hours than others.
+
+======================================================================================================
+4. WAS R479'S 06-08 WINDOW REPRESENTATIVE? (the actual open question)
+======================================================================================================
+venue                  coin    06-08  other 21 hrs   ratio  clock-wt   R479 err
+bitnomial_krakenUS     BTC    0.0470        0.0467   0.99x    0.0444      +5.8%
+bitnomial_krakenUS     ETH    0.0641        0.0532   0.83x    0.0539     +18.9%
+bitnomial_krakenUS     SOL    0.0661        0.0525   0.79x    0.0511     +29.3%
+coinbase_CDE           BTC    0.0156        0.0156   1.00x    0.0147      +6.3%
+coinbase_CDE           ETH    0.0533        0.0529   0.99x    0.0427     +24.8%
+coinbase_CDE           SOL    0.0264        0.0264   1.00x    0.0275      -3.8%
+  'R479 err' = how far R479's published median sat from the full-clock truth,
+  as a percentage of it. Negative = R479 was OPTIMISTIC (quoted a tighter book).
+
+======================================================================================================
+5. THE TAIL BY HOUR. A wide print costs the same whenever it lands, but if the
+tail concentrates in known hours it is avoidable rather than a cost of doing business.
+======================================================================================================
+venue                  coin  p90 pooled  p99 pooled  worst hr by p90  share of p90+ prints in 3 worst hrs
+bitnomial_krakenUS     BTC       0.0547      0.2119   0.0552@18                                 14%
+bitnomial_krakenUS     ETH       0.0747      0.1274   0.1068@15                                 14%
+bitnomial_krakenUS     SOL       0.0793      0.1048   0.0925@12                                 34%
+coinbase_CDE           BTC       0.0157      0.0236   0.0315@21                                 59%
+coinbase_CDE           ETH       0.0534      0.0537   0.0537@18                                 59%
+coinbase_CDE           SOL       0.0267      0.0526   0.0526@21                                 38%
+  3 of 24 hours is 12.5% by luck. Well above that = the wide prints have a home.
+
+======================================================================================================
+6. IS COINBASE THE BETTER VENUE EVERY HOUR, OR ONLY ON AVERAGE?
+R479 concluded Coinbase wins on spread and depth. This checks it hour by hour.
+======================================================================================================
+coin  hours coinbase tighter   median gap (bitnomial-coinbase)   worst hour for coinbase
+BTC            24 / 24                                  0.0313           gap +0.0195 @13
+ETH            18 / 24                                  0.0146           gap -0.0211 @05
+SOL            23 / 24                                  0.0263           gap -0.0132 @21
+
+======================================================================================================
+7. THE ACCOUNT CEILING IN THE WORST HOUR, NOT THE MEDIAN ONE.
+R479 quoted depth at the median. An account has to survive its thinnest hour.
+equity = min(5-level bid, ask) notional / 4.13 (R478: 1% risked = 4.13x equity)
+======================================================================================================
+venue                  coin  median-hr equity $  worst-hr equity $  worst hr   ratio
+bitnomial_krakenUS     BTC               12,705              9,005        09   0.71x
+bitnomial_krakenUS     ETH               11,157              8,426        13   0.76x
+bitnomial_krakenUS     SOL                3,108              2,728        02   0.88x
+coinbase_CDE           BTC              325,223             26,173        21   0.08x
+coinbase_CDE           ETH              341,447             16,606        21   0.05x
+coinbase_CDE           SOL               49,848              5,614        21   0.11x
+
+======================================================================================================
+8. THE ALL-IN TABLE, CORRECTED TO THE FULL CLOCK.
+Same construction as R479: all-in = R478 fee + one median spread. Only the
+spread changes, from the 06-08 median to the hour-equal-weighted median.
+======================================================================================================
+venue                  coin     fee   spread   ALL-IN  in stops  vs full sig  vs 2026 sig
+bitnomial_krakenUS     BTC   0.0463   0.0444   0.0907     0.49x      +0.0528      -0.0520
+bitnomial_krakenUS     ETH   0.0314   0.0539   0.0853     0.36x      +0.0582      -0.0466
+bitnomial_krakenUS     SOL   0.0811   0.0511   0.1322     0.39x      +0.0113      -0.0935
+coinbase_CDE           BTC   0.0463   0.0147   0.0610     0.33x      +0.0825      -0.0223
+coinbase_CDE           ETH   0.0314   0.0427   0.0741     0.31x      +0.0694      -0.0354
+coinbase_CDE           SOL   0.0811   0.0275   0.1086     0.32x      +0.0349      -0.0699
+
+  'vs sig' = R476's gross signal minus all-in cost, in % of price per entry.
+  Coinbase's fee is still carried at the Kraken US rate (queue item 7, unsourced).
+  The spread column is measured on the venue named.
+
+======================================================================================================
+9. THE HOLE AT 21:00 UTC. Not an outlier - a scheduled, DAILY, documented one.
+======================================================================================================
+  MEASURED: at 21:30-21:36 UTC the Coinbase book is a fraction of its own depth on
+  all three coins at once, sustained across every sample in the window, and it is
+  the widest hour of the clock for BTC and SOL. Bitnomial shows nothing at that hour.
+
+  venue                  coin   depth @21 $   depth other 23h $  @21 as share
+  bitnomial_krakenUS     BTC         76,299              52,455          145%
+  bitnomial_krakenUS     ETH         60,102              45,768          131%
+  bitnomial_krakenUS     SOL         11,394              12,847           89%
+  coinbase_CDE           BTC        108,094           1,349,801            8%
+  coinbase_CDE           ETH         68,584           1,422,206            5%
+  coinbase_CDE           SOL         23,186             207,301           11%
+
+  MECHANISM, PRIMARY-SOURCED (docs.cdp.coinbase.com/derivatives/introduction/
+  market-hours, read 2026-08-12): Coinbase Derivatives runs 24x7 for 24x7-enabled
+  products, halting only Fridays 16:00-16:50 CT. But NON-24x7 PARTICIPANTS take
+  'a one-hour break each day from 4:00 PM - 5:00 PM CT'. That is 21:00-22:00 UTC,
+  exactly the hour measured. The market stays OPEN; a large share of who quotes it
+  goes home. 2026-08-11 was a TUESDAY, so the weekly Friday halt cannot explain it.
+
+  WHY IT MATTERS MORE THAN A COST LINE: the method holds 24 hours, so EVERY
+  position spans this hour. If a stop triggers inside it, the book that has to
+  absorb the exit is the thin one. R479's headline - Coinbase supports ~$300k of
+  equity - is a 23-hour number. The exitable-at-all-times ceiling is the 21:00 one.
+
+  venue                  coin  R479 ceiling $  21:00 ceiling $     cut
+  bitnomial_krakenUS     BTC           12,701           18,474   1.45x
+  bitnomial_krakenUS     ETH           11,082           14,553   1.31x
+  bitnomial_krakenUS     SOL            3,111            2,759   0.89x
+  coinbase_CDE           BTC          326,828           26,173   0.08x
+  coinbase_CDE           ETH          344,360           16,606   0.05x
+  coinbase_CDE           SOL           50,194            5,614   0.11x
+
+  HONEST LIMIT: the MECHANISM is documented and recurs daily, so it will be there
+  tomorrow. The MAGNITUDE is one day's observation of that hour. Treat the size of
+  the hole as indicative and the existence of it as established.

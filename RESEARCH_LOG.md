@@ -3436,3 +3436,185 @@ the cost objection is **not fully removed either**.
 
 **NOTHING PROPOSED FOR DEPLOYMENT. NOTHING DEPLOYED. NO LOOK CONSUMED. NO ORDER
 PLACED. NO ACCOUNT OPENED.**
+
+---
+
+## ROUND 480 — the 24-hour clock closes queue item 5: the hour barely moves the spread, but one documented hour a day removes 90% of Coinbase's book (2026-08-12)
+
+**Queue item 5, the leftover.** R479 measured the US perpetual book on 3 of 24
+UTC hours (06–08) and left the item open for one thing only: read the same
+recorder's output once the launch agent had covered the full clock. That read
+is this round. `step479_us_perp_spread_snap.py --report` was run as the queue
+instructed, and `step480_us_perp_spread_clock.py` does the part a pooled report
+cannot — the hour-by-hour breakdown the item was actually asking for.
+
+**NO LOOK CONSUMED.** Same standing as R479. This is a measurement of a
+recorded order book. It fits nothing, sweeps nothing, and reads no
+out-of-sample slice. No account, no key, no order, no money. Nothing in the
+live bot touched.
+
+**Data:** 5,064 samples, 2026-08-11 06:43 UTC → 2026-08-12 06:36 UTC, 24/24 UTC
+hours on all three venues (Bitnomial/Kraken-US, Coinbase CDE, Kraken
+International as the offshore control). 3,351 of those are US-venue rows.
+
+### First, an honesty correction on the sample itself
+
+R479's own recording is still in the file and **all of it sits in hours 06–08**,
+so those three hours hold **38.9% of the samples against the 12.5% a flat clock
+would give them**. The pooled median is therefore weighted toward exactly the
+slice whose representativeness was the open question. Every number below is
+reported **hour-equal-weighted** (mean of the 24 hourly medians) as well as
+pooled. Two hours are thin (02 and 13 have 15 samples across all six US
+series); their medians are printed with counts beside them and are not leaned
+on.
+
+### The open question, answered: R479's window was representative, and it erred toward pessimism
+
+| venue | coin | R479's 06–08 | other 21 hrs | full-clock | R479's error |
+|---|---|---|---|---|---|
+| Bitnomial | BTC | 0.0470% | 0.0467% | 0.0444% | **+5.8%** |
+| Bitnomial | ETH | 0.0641% | 0.0532% | 0.0539% | **+18.9%** |
+| Bitnomial | SOL | 0.0661% | 0.0525% | 0.0511% | **+29.3%** |
+| Coinbase | BTC | 0.0156% | 0.0156% | 0.0147% | **+6.3%** |
+| Coinbase | ETH | 0.0533% | 0.0529% | 0.0427% | **+24.8%** |
+| Coinbase | SOL | 0.0264% | 0.0264% | 0.0275% | −3.8% |
+
+**Positive = R479 quoted a WIDER book than the clock really has.** In 5 of 6
+series R479 was pessimistic, by up to 29%, and the one optimistic case is 3.8%.
+This is the good direction to be wrong in and it is worth saying plainly:
+**R479's conclusions do not need revising, they need loosening slightly in the
+desk's favour.** No number here rescues the signal, and none was going to — the
+corrections are hundredths of a percent against a decay problem measured in
+tenths.
+
+### Does the book have a time of day at all?
+
+Yes, but weakly, and it is not the effect anyone expected.
+
+| venue | coin | pooled | clock-wt | best hour | worst hour | worst/best | p (shuffle) |
+|---|---|---|---|---|---|---|---|
+| Bitnomial | BTC | 0.0469% | 0.0444% | 0.0352%@13 | 0.0546%@09 | 1.55x | 0.076 |
+| Bitnomial | ETH | 0.0537% | 0.0539% | 0.0318%@05 | 0.0744%@13 | 2.34x | **0.018** |
+| Bitnomial | SOL | 0.0529% | 0.0511% | 0.0263%@21 | 0.0792%@12 | 3.01x | **0.026** |
+| Coinbase | BTC | 0.0156% | 0.0147% | 0.0078%@11 | 0.0236%@21 | 3.03x | **0.002** |
+| Coinbase | ETH | 0.0529% | 0.0427% | 0.0265%@10 | 0.0537%@18 | 2.02x | 0.261 |
+| Coinbase | SOL | 0.0264% | 0.0275% | 0.0262%@02 | 0.0396%@13 | 1.51x | **0.008** |
+
+Control (R100's rule — beat luck, not zero): the hour labels were shuffled 500
+times preserving each hour's sample count, and the statistic is the spread of
+the 24 hourly medians. **4 of 6 series clear p < 0.05.** So the hour is real on
+most series — but the honest reading is that **the effect is small and has no
+usable shape**. The best and worst hours do not agree across coins or venues,
+the US session does not systematically tighten these books, and the worst-to-
+best ratio of 1.5–3x is applied to a number that is a third of a stop distance.
+**There is no "trade at hour X" finding here and nobody should go looking for
+one** — six series, 24 hours each, is 144 cells, and picking the good ones after
+seeing them is the exact re-tuning this queue forbids.
+
+### R479's headline holds hour by hour
+
+Coinbase is tighter than Bitnomial in **24/24 hours on BTC, 23/24 on SOL, and
+18/24 on ETH**, with median gaps of 0.0313% / 0.0263% / 0.0146%. R479 called
+Coinbase the better venue on an average; it is the better venue on the clock.
+
+### The corrected all-in table
+
+Only the spread column changes — fee is R478's, quoted not re-derived.
+
+| venue | coin | fee | spread (clock-wt) | ALL-IN | in stop distances | vs full signal | vs 2026 signal |
+|---|---|---|---|---|---|---|---|
+| Bitnomial | BTC | 0.0463% | 0.0444% | 0.0907% | 0.49x | +0.0528% | **−0.0520%** |
+| Bitnomial | ETH | 0.0314% | 0.0539% | 0.0853% | 0.36x | +0.0582% | **−0.0466%** |
+| Bitnomial | SOL | 0.0811% | 0.0511% | 0.1322% | 0.39x | +0.0113% | **−0.0935%** |
+| Coinbase | BTC | 0.0463% | 0.0147% | 0.0610% | 0.33x | +0.0825% | **−0.0223%** |
+| Coinbase | ETH | 0.0314% | 0.0427% | 0.0741% | 0.31x | +0.0694% | **−0.0354%** |
+| Coinbase | SOL | 0.0811% | 0.0275% | 0.1086% | 0.32x | +0.0349% | **−0.0699%** |
+
+**R479's central verdict is unchanged: on the 2026 stub of the signal, every
+coin on every US venue is still NEGATIVE after fee and spread.** The full-clock
+correction improves the numbers by 0.001–0.010% of price and the gap it needs to
+close is 0.022–0.094%. Cost got slightly cheaper; decay did not move.
+
+### The finding nobody asked for: Coinbase's book empties out for one hour, every day
+
+The hour-21 column is not an outlier. At 21:30–21:36 UTC the Coinbase book
+collapses **on all three coins simultaneously**, sustained across every sample
+in the window, and it is the widest hour of the clock for BTC and SOL:
+
+| venue | coin | depth @21:00 | depth other 23h | @21 as share |
+|---|---|---|---|---|
+| Bitnomial | BTC | $76,299 | $52,455 | 145% |
+| Bitnomial | ETH | $60,102 | $45,768 | 131% |
+| Bitnomial | SOL | $11,394 | $12,847 | 89% |
+| Coinbase | BTC | $108,094 | $1,349,801 | **8%** |
+| Coinbase | ETH | $68,584 | $1,422,206 | **5%** |
+| Coinbase | SOL | $23,186 | $207,301 | **11%** |
+
+**Mechanism, primary-sourced** (`docs.cdp.coinbase.com/derivatives/introduction/
+market-hours`, read 2026-08-12): Coinbase Derivatives runs 24x7 for 24x7-enabled
+products and halts only Fridays 16:00–16:50 CT — but **non-24x7 participants
+take "a one-hour break each day from 4:00 PM – 5:00 PM CT."** That is
+21:00–22:00 UTC, exactly the measured hour. The market stays OPEN; a large part
+of who quotes it goes home. **2026-08-11 was a Tuesday**, so the weekly Friday
+halt cannot explain it. Bitnomial shows no such hole, which is a real point in
+its favour: it is continuous.
+
+**Why this outranks the spread correction.** The method holds 24 hours, so
+**every position spans this hour**. If a stop triggers inside it, the book
+absorbing the exit is the thin one. R479's headline — Coinbase supports roughly
+$300k of equity — is a **23-hour** number:
+
+| venue | coin | R479 ceiling | 21:00 ceiling | cut |
+|---|---|---|---|---|
+| Coinbase | BTC | $326,828 | $26,173 | **0.08x** |
+| Coinbase | ETH | $344,360 | $16,606 | **0.05x** |
+| Coinbase | SOL | $50,194 | $5,614 | **0.11x** |
+| Bitnomial | BTC | $12,701 | $18,474 | 1.45x |
+| Bitnomial | ETH | $11,082 | $14,553 | 1.31x |
+| Bitnomial | SOL | $3,111 | $2,759 | 0.89x |
+
+**The exitable-at-all-times ceiling on Coinbase is $17k–$26k, not $300k** — the
+same order of magnitude as Bitnomial's, which R479 rejected as too thin for a
+real account. Coinbase remains the better venue on spread and on 23 of 24
+hours of depth. It is not the order of magnitude roomier venue R479 described,
+once the requirement is that a 24-hour position can be exited whenever it needs
+to be.
+
+### Honest limits
+
+1. **ONE DAY.** The clock is fully covered; it is covered once. Hour effects on
+   a book are the sort of thing that is stable day to day, but a single wide
+   print in a thin hour moves that hour. Sample counts are printed beside every
+   hour in `step480_output.txt`.
+2. The 21:00 hole: the **mechanism is documented and recurs daily**, so it will
+   be there tomorrow. The **magnitude** is one observation. Existence
+   established, size indicative.
+3. **The cost is clock-weighted, not entry-weighted.** R476 did not persist its
+   71,073 entry timestamps, only its aggregates, so this assumes entries spread
+   evenly over the 24 hours. Given how weak and shapeless the hour effect turned
+   out to be, this matters little for the spread — but it matters for the 21:00
+   hour, and that is now a queue item rather than something improvised here.
+4. Only the top 5 levels a side are recorded, so every depth figure is a lower
+   bound on the venue and the walk-the-book costs exclude the samples that did
+   not fit.
+5. Coinbase's fee is still carried at Kraken US's rate. That is queue item 7 and
+   it is now the last unsourced number in the venue decision, alongside funding.
+
+### Verdict
+
+**Queue item 5 is CLOSED.** The 24-hour clock says R479's three-hour window was
+representative and slightly pessimistic; the spread is real but has no usable
+time-of-day shape; and R479's every DIRECTIONAL conclusion survives the full
+clock. The cost picture moved in the desk's favour by hundredths of a percent
+and the decay objection is untouched, so **nothing here changes the standing
+answer: this method is not deployable on a US perpetual venue on its 2026
+behaviour.**
+
+The round's real output is the one it was not looking for: **the better venue
+has a documented daily hour in which 90–95% of its book is absent**, and that
+converts R479's "Coinbase supports ~$300k" into "~$20k if you require to be
+able to get out at any moment." That is an operational constraint on account
+size, and it belongs in front of any future deployment conversation.
+
+**NOTHING PROPOSED FOR DEPLOYMENT. NOTHING DEPLOYED. NO LOOK CONSUMED. NO ORDER
+PLACED. NO ACCOUNT OPENED.**

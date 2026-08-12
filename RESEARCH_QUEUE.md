@@ -102,9 +102,41 @@ Rules (non-negotiable, they are why anything here can be trusted):
    SOL / 4.2x ETH / 5.4x BTC off its own structural stops at 1% risked.
    Full table, the unavailable-to-US list, and the honest limits in R478.
 
-5. **HOW WIDE IS THE BOOK ON A US PERPETUAL CONTRACT?** — **ANSWERED ON ONE
-   SLICE OF THE CLOCK, R479, 2026-08-11. No look consumed. STAYS OPEN only
-   for the 24-hour read, which lands 2026-08-12 with no further work.**
+5. ~~**HOW WIDE IS THE BOOK ON A US PERPETUAL CONTRACT?**~~
+   **CLOSED — R480, 2026-08-12. No look consumed.** Full 24/24-hour clock read,
+   5,064 samples over 2026-08-11 06:43 → 2026-08-12 06:36 UTC.
+   **R479's 06-08 window was representative, and pessimistic.** In 5 of 6 series
+   it quoted a WIDER book than the clock really has (by up to 29%); the one
+   optimistic case is 3.8%. Full-clock spreads: Bitnomial **0.0444 / 0.0539 /
+   0.0511%**, Coinbase **0.0147 / 0.0427 / 0.0275%** (BTC/ETH/SOL), all-in
+   **0.0610-0.1322%**, still **0.31-0.49 stop distances**.
+   **The hour is real but shapeless.** 4 of 6 series beat a 500-draw label
+   shuffle (p 0.002-0.026), worst/best hour 1.5-3.0x, but best and worst hours
+   agree across neither coin nor venue and the US session does not tighten
+   these books. **No "trade at hour X" finding exists here and hunting one in
+   144 cells would be re-tuning after seeing the clears — barred.**
+   **R479's verdict is untouched: on the 2026 stub every coin on every US venue
+   is still NEGATIVE after fee and spread** (−0.022% to −0.094%). The clock
+   corrected cost by hundredths of a percent; decay did not move.
+   Coinbase is tighter than Bitnomial in 24/24 hours on BTC, 23/24 on SOL,
+   18/24 on ETH — R479's better-venue call holds hour by hour.
+   **NEW, UNASKED-FOR, AND THE ROUND'S REAL OUTPUT: Coinbase's book empties for
+   one documented hour EVERY DAY.** At 21:00-22:00 UTC depth is **5-11%** of the
+   other 23 hours on all three coins at once. Mechanism primary-sourced: CDE
+   runs 24x7 but **non-24x7 participants break daily 16:00-17:00 CT**; the
+   market stays open, the quoting goes home. 2026-08-11 was a Tuesday so the
+   weekly Friday halt does not explain it. **Bitnomial has no such hole.**
+   The method holds 24h, so every position spans it: **R479's "Coinbase supports
+   ~$300k of equity" is a 23-hour number; the exitable-at-all-times ceiling is
+   $17k-$26k** — Bitnomial's order of magnitude, the one R479 called too thin.
+   That is an operational cap on ACCOUNT SIZE and it belongs in front of any
+   deployment conversation. See new item 8.
+   Honest limits: one day of clock, so the 21:00 hole's mechanism is
+   established and its magnitude is indicative; cost is clock-weighted, not
+   weighted by when the method actually enters (R476 did not persist its entry
+   timestamps).
+
+5b. *(historical, R479's own summary, kept so the closure above is readable)*
    Both venues poll fine with **no account** (Bitnomial public websocket book,
    Coinbase public REST book), so the item's stop-rule never triggered and
    nothing was signed up for. Symbols corrected: **PETHUIZ50 / PSOLUSZ50**.
@@ -128,11 +160,12 @@ Rules (non-negotiable, they are why anything here can be trusted):
    three coins, 1-2 orders of magnitude deeper). R478 leaned on Kraken US
    because its fee was primary-sourced; on the book evidence, **Coinbase's
    fee is now the number worth sourcing properly** — see item 7.
-   WHAT IS LEFT: coverage was **3 of 24 UTC hours** (06-08). A launch agent
-   `com.wallace.usperp-book-snap` now records 6 min at :30 every hour into
-   `data_usperp_book.jsonl`, so the next session runs
-   `step479_us_perp_spread_snap.py --report` on full-clock data and closes
-   this. Do not re-record; just read it.
+   WHAT WAS LEFT: coverage was **3 of 24 UTC hours** (06-08). **Done in R480 —
+   see the closure at the top of item 5.** The launch agent
+   `com.wallace.usperp-book-snap` is still recording into
+   `data_usperp_book.jsonl`; it can be left running (it costs nothing and a
+   second day would upgrade the 21:00 hole from indicative to measured) or
+   stopped. Nothing in the queue depends on it.
 
 6. **WHAT DOES FUNDING COST A 24-HOUR HOLD?** *(new, opened by R478.)*
    Perps pay/receive funding; spot does not. Kraken US settles it as one cash
@@ -162,6 +195,32 @@ Rules (non-negotiable, they are why anything here can be trusted):
    5 SOL). Re-run `step479_us_perp_spread_snap.py --report` afterwards with
    the corrected fee so the all-in table stops carrying Kraken's rate as a
    stand-in. **Reading a fee page. No account, no order, no money.**
+   **R480 addition, same page-read, no extra work:** while on Coinbase's docs,
+   capture the **trading-hours schedule** properly too. R480 sourced the daily
+   16:00-17:00 CT non-24x7 participant break from
+   `docs.cdp.coinbase.com/derivatives/introduction/market-hours` and it explains
+   the measured hole exactly, but the quarterly three-hour maintenance window
+   and the Friday 16:00-16:50 CT halt are secondary in this log, and both bite
+   a 24-hour hold.
+
+8. **WHAT DOES A 24-HOUR HOLD DO WHEN THE BOOK IS NOT THERE?** *(new, opened
+   by R480.)* R480 measured a **documented, daily, one-hour window (21:00-22:00
+   UTC) in which Coinbase's book is 5-11% of its normal depth**, and the method
+   holds 24 hours, so **every position spans it**. Two questions, cheap, and
+   neither is a backtest of the strategy:
+   (a) **What share of the method's stops and exits would land inside it?**
+   R476's entries were not persisted, so this needs the entry timestamps
+   regenerated from `step476_crypto_1m_full_history.py` — aggregate only, no
+   new slice read, no look consumed. If the answer is ~1/24 the constraint is
+   priced by charging a wider spread on that fraction; if exits CLUSTER there
+   it is a different and worse problem.
+   (b) **Does the 21:00 hole recur?** The recorder is still running. One more
+   day upgrades the magnitude from indicative to measured, at the cost of
+   re-running `step480_us_perp_spread_clock.py`. **Do not re-record; just read
+   whatever has accumulated.**
+   This also settles the ACCOUNT SIZE question, which is now the binding
+   constraint on this venue rather than leverage: **$17k-$26k exitable-at-all-
+   times on Coinbase against $300k+ at the median hour.**
 
 ## Obsoleted by the 2026-07-25 strategy pivot — DO NOT RUN
 Wallace retired every self-derived strategy and rebuilt the desk on TJR's
@@ -280,6 +339,15 @@ The tier remains unrequired by anything in this method's measured structure.
 A second, harder constraint arrived with it: **Bitnomial's book only supports
 about $5k-$10k of equity**, so on that venue the ceiling is account SIZE, not
 leverage. Coinbase's book supports roughly $300k.
+NOTE (R480): the full 24-hour clock leaves the cost conclusion where R479 put
+it — all-in is **0.31-0.49 stop distances**, so the tier is still unrequired by
+anything in this method's measured structure. But **Coinbase's $300k is a
+23-hour number.** For one documented hour a day (21:00-22:00 UTC, the daily
+non-24x7 participant break) its book is 5-11% of normal, which puts the
+exitable-at-all-times ceiling at **$17k-$26k** — the same order as Bitnomial's,
+the figure R479 rejected as too thin. On a 24-hour hold that spans the window
+every single trade, **account SIZE is now the binding constraint on both US
+venues, and it binds an order of magnitude tighter than leverage does.**
 NOTE (R474): on the index the 1-minute swing is **0.046% of price on SPY
 (21.6x at 1% risked) and 0.063% on QQQ (15.8x)** — the tightest structure
 this desk has measured anywhere, and the index costs 0.04% a round trip
