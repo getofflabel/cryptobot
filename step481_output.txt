@@ -1,0 +1,117 @@
+========================================================================================================
+ROUND 481 - WHAT FUNDING COSTS A 24-HOUR HOLD  (queue item 6)
+========================================================================================================
+NO LOOK CONSUMED. This is a cost laid over an entry population the
+desk has already fully described (R476). Nothing is qualified here.
+CAVEAT, fixed before the run: Bybit funding is a PROXY for a US
+venue's series. This bounds MAGNITUDE and establishes SIGN. It does
+not price Kraken, Coinbase or Bitnomial.
+Sign convention: positive = money IN. charge = -direction * rate.
+  BTCUSD: 25,443 arm-B hold-24h entries, 25,421 inside funding coverage (2020-03-25 -> 2026-07-24)
+  ETHUSD: 25,415 arm-B hold-24h entries, 25,390 inside funding coverage (2020-10-21 -> 2026-07-24)
+  SOLUSD: 20,215 arm-B hold-24h entries, 18,181 inside funding coverage (2021-06-29 -> 2026-07-23)
+
+pooled: 71,073 entries, 68,992 chargeable (97.1%). Entry and EXIT timestamps are now
+persisted to step481_entries_funding.csv - queue item 8(a) needs
+exactly this file and no longer has to regenerate anything.
+
+RECONCILIATION with R476, so the ledger's gross is not a mystery:
+  all 71,073 entries, gross +0.1435% - R476 reported 71,073 entries at +0.1435%.
+  It reproduces EXACTLY, which is the check that matters: this
+  round regenerated the population rather than reading a cache.
+  chargeable 68,992 entries, gross +0.1309% - the 2,081 dropped are early SOL,
+  before Bybit listed the perp, and they are the most volatile in
+  the set. That gap, and nothing else, is the whole difference
+  between the ledger's gross below and R476's headline.
+
+DATA LIMIT, found in this round and not previously recorded:
+  Alpaca's 1-minute tape has GAPS, and the 24-hour cap is counted
+  in BARS. 8.0% of holds therefore span more than 24h of
+  WALL CLOCK (max 10,013h). Funding is a wall-clock charge, so
+  those entries are shown separately below, never silently pooled.
+
+========================================================================================================
+1. DOES A HOLD ACTUALLY STRADDLE A SETTLEMENT?
+========================================================================================================
+THE QUEUE ITEM SAYS THE METHOD 'HOLDS 24 HOURS'. IT DOES NOT.
+24 hours is the CAP. The stop is the sweep-to-entry extreme and it
+is tight, so most positions are gone long before a settlement.
+
+hold length in hours: p25 0.13   MEDIAN 0.72   p75 4.43   p90 24.00
+  9.7% run the cap out; 90.3% are stopped out first
+  exits by reason: stop 90.3%, time 9.7%
+8-hourly settlements straddled: mean 0.68, median 0, none at all in 68.4% of entries
+once-daily US mark at 20:00 UTC (3pm CT): mean 0.21 settlements, missed entirely by 81.3% of entries
+once-daily US mark at 21:00 UTC (3pm CT): mean 0.22 settlements, missed entirely by 80.8% of entries
+
+========================================================================================================
+2. THE SIGN AND THE SIZE  (positive = the trade COLLECTS funding)
+========================================================================================================
+median structural stop on this population: 0.237% of price  (4.2x at 1% risked)
+
+cadence                               mean %  median %  t naive  t by day  stop dist   vs fee
+Bybit 8-hourly (the real series)    +0.0001%  +0.0000%     0.27      0.64    +0.000x   +0.00x
+once-daily mark 20:00 UTC           -0.0003%  +0.0000%    -0.74     -0.53    -0.001x   -0.00x
+once-daily mark 21:00 UTC           -0.0002%  +0.0000%    -0.55     -0.37    -0.001x   -0.00x
+Bybit 8h, GAP-CLEAN holds only      +0.0003%  +0.0000%     1.67      2.17    +0.001x   +0.00x
+
+'stop dist' is the charge as a fraction of the median structural
+stop. 'vs fee' is against R478's 0.0529% three-coin US round trip.
+NEGATIVE means the trade PAYS. POSITIVE means it COLLECTS.
+
+========================================================================================================
+3. WHERE THE SIGN COMES FROM - LONG vs SHORT
+========================================================================================================
+Funding is not symmetric in crypto: the historical average rate is
+positive, so longs pay and shorts collect. The method takes both,
+so the NET depends entirely on its own long/short mix.
+
+side        entries   share  raw rate/hold   funding %  t by day
+LONG         34,208   49.6%       +0.0056%    -0.0056%    -13.54
+SHORT        34,784   50.4%       +0.0056%    +0.0056%      6.88
+
+underlying 8-hourly rate straddled per hold, both sides pooled: +0.0056% of price
+
+========================================================================================================
+4. BY ASSET AND BY YEAR - is the sign one coin or one regime?
+========================================================================================================
+asset       entries   long%   funding %  t by day  stop dist
+BTCUSD       25,421   48.8%    +0.0004%      1.26    +0.002x
+ETHUSD       25,390   49.6%    +0.0000%      0.13    +0.000x
+SOLUSD       18,181   50.6%    -0.0003%      0.52    -0.001x
+
+year      entries   long%   funding %  t by day   raw rate
+2021       11,893   49.3%    +0.0007%      1.11   +0.0201%
+2022       13,954   51.6%    -0.0011%     -1.43   -0.0033%
+2023       11,316   49.3%    +0.0019%      1.34   +0.0055%
+2024       10,863   48.3%    -0.0002%     -0.43   +0.0081%
+2025       13,609   49.2%    -0.0003%     -2.93   +0.0027%
+2026        7,357   49.3%    -0.0003%     -3.32   +0.0007%
+
+funding is a net CREDIT in 2 of 6 years and a net CHARGE in 4.
+
+========================================================================================================
+5. THE LEDGER, WITH THE LAST UNMEASURED COST PUT IN
+========================================================================================================
+R476's method numbers, reproduced on this same hold-24h population
+so the funding charge has something to be a fraction of. They are a
+DESCRIPTION of a spent window and qualify nothing.
+
+line                                          % of price  stop dist
+gross per entry (arm B, hold 24h)               +0.1309%    +0.553x
+fee+spread, Coinbase (R479 all-in)              -0.0847%    -0.358x
+fee+spread, Bitnomial (R479 all-in)             -0.1120%    -0.473x
+fee only, Kraken US 3-coin (R478)               -0.0529%    -0.224x
+FUNDING, this round, Bybit proxy                +0.0001%    +0.000x
+Alpaca taker round trip (what the log charged)    -0.5000%    -2.114x
+
+net after fee+spread+funding, Coinbase          +0.0463%    +0.196x
+net after fee+spread+funding, Bitnomial         +0.0190%    +0.080x
+
+the 2026 stub is the number that has been deciding this family:
+  2026 gross +0.0358%, funding -0.0003%, fee+spread -0.0847% (Coinbase) -> net -0.0492%
+
+========================================================================================================
+LOOKS CONSUMED: NONE. No sealed slice opened, no cell qualified,
+nothing proposed for deployment, no order placed, no account opened.
+========================================================================================================

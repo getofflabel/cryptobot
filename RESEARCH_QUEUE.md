@@ -167,19 +167,35 @@ Rules (non-negotiable, they are why anything here can be trusted):
    second day would upgrade the 21:00 hole from indicative to measured) or
    stopped. Nothing in the queue depends on it.
 
-6. **WHAT DOES FUNDING COST A 24-HOUR HOLD?** *(new, opened by R478.)*
-   Perps pay/receive funding; spot does not. Kraken US settles it as one cash
-   adjustment at 3:00pm CT daily and the method holds 24 hours, so it eats a
-   settlement essentially every trade. Sign and magnitude both unknown, and
-   `backtest.py` already has `funding_series` machinery plus cached
-   `data_bybit_*_funding.parquet` to measure it against. Note the honest
-   caveat before running: Bybit funding is a PROXY for Bitnomial funding, not
-   the same series, so this bounds the magnitude rather than pricing the
-   venue. Runs after item 5 — spread is the larger unknown.
-   **R479 note:** this is now the last unmeasured cost. It is also the only
-   one that can come back POSITIVE — funding is paid or received depending on
-   which side the book is on, so unlike fee and spread it is not a guaranteed
-   subtraction. Measure the sign before assuming it hurts.
+6. ~~**WHAT DOES FUNDING COST A 24-HOUR HOLD?**~~
+   **DONE — R481, 2026-08-18. CLOSED. No look consumed.**
+   **Funding costs nothing: +0.0001% of price per entry, t by day 0.64,
+   0.000 stop distances, under 1% of the fee.** Every cadence agrees (Bybit
+   8-hourly, once-daily 3pm CT at both DST offsets, gap-clean subset); the
+   sign flips between them and no reading reaches 2.2.
+   R479 was right that this was the one cost that could come back positive.
+   It comes back at **zero**, and the reason is structural, not small:
+   the rate straddled per hold is a real **+0.0056% of price**, but the book
+   is **49.6% long / 50.4% short** — eight levels, four each way — so the
+   charge and the credit cancel. Longs pay −0.0056% (t by day −13.54),
+   shorts collect +0.0056% (t +6.88). **Any future variant that leans one
+   way re-opens this question and it would not be a rounding error then.**
+   **THE ITEM'S PREMISE WAS FALSE AND THAT IS THE ROUND'S REAL OUTPUT.**
+   The method does NOT hold 24 hours. 24h is the CAP: **median hold 43
+   minutes**, p75 4.4h, **90.3% stopped out, 9.7% run the cap**, and
+   **68.4% of entries straddle no settlement at all** (81% miss a once-daily
+   mark). See the correction to item 8 below.
+   **The cost side of this family's argument is now FINISHED** — fee sourced
+   (R478), spread measured on the full clock (R479/R480), funding measured
+   here. Whole stack on Coinbase = 0.358 stop distances; the 5.5-year window
+   clears it (+0.0463% net, +0.196x). **The 2026 stub does not (−0.0492%).**
+   **Decay is the entire remaining objection and nothing in this queue is
+   pointed at it.** See new item 9.
+   Second, unasked-for: **Alpaca's 1-minute tape has GAPS** and the 24h cap
+   is counted in BARS, so 8.0% of holds span more than 24h of wall clock
+   (worst: an 18-bar hold spanning 10,013h). Doesn't move R481's answer
+   (gap-clean sensitivity reads the same zero); does apply to every
+   1-minute round in this log, and is on the record now.
 
 7. **WHAT DOES COINBASE DERIVATIVES ACTUALLY CHARGE?** *(new, opened by R479.)*
    R478 leaned its whole table on Kraken Derivatives US because that fee
@@ -203,17 +219,27 @@ Rules (non-negotiable, they are why anything here can be trusted):
    and the Friday 16:00-16:50 CT halt are secondary in this log, and both bite
    a 24-hour hold.
 
-8. **WHAT DOES A 24-HOUR HOLD DO WHEN THE BOOK IS NOT THERE?** *(new, opened
-   by R480.)* R480 measured a **documented, daily, one-hour window (21:00-22:00
-   UTC) in which Coinbase's book is 5-11% of its normal depth**, and the method
-   holds 24 hours, so **every position spans it**. Two questions, cheap, and
-   neither is a backtest of the strategy:
-   (a) **What share of the method's stops and exits would land inside it?**
-   R476's entries were not persisted, so this needs the entry timestamps
-   regenerated from `step476_crypto_1m_full_history.py` — aggregate only, no
-   new slice read, no look consumed. If the answer is ~1/24 the constraint is
-   priced by charging a wider spread on that fraction; if exits CLUSTER there
-   it is a different and worse problem.
+8. **WHAT DOES A HOLD DO WHEN THE BOOK IS NOT THERE?** *(opened by R480,
+   PREMISE CORRECTED BY R481 — read this before running it.)*
+   R480 measured a **documented, daily, one-hour window (21:00-22:00 UTC) in
+   which Coinbase's book is 5-11% of its normal depth**, and concluded that
+   because the method holds 24 hours **every position spans it**.
+   **R481 refutes the premise: the median position lives 43 MINUTES and 90.3%
+   are stopped out before the 24h cap.** The exposure is therefore a SHARE to
+   be counted, not "all of them" — and it is still real, because a stop that
+   fires inside the hole is filled into a book at 5-11% of normal depth.
+   **R480's $17k-$26k exitable-at-all-times ceiling is built on the false
+   premise and must be re-derived, not quoted, until (a) is answered.**
+   Two questions, cheap, and neither is a backtest of the strategy:
+   (a) **What share of the method's stops and exits land inside 21:00-22:00
+   UTC?** **The regeneration this item budgeted for is already DONE:** entry
+   AND exit timestamps for all 68,992 chargeable entries are persisted in
+   `step481_entries_funding.csv` (R481). Read that file; regenerate nothing.
+   Aggregate only, no new slice read, no look consumed. If exits land there at
+   ~1/24 the constraint is priced by charging a wider spread on that fraction;
+   if they CLUSTER there it is a different and worse problem. Note the 43-minute
+   median cuts both ways — fewer positions span the hole, but entries taken in
+   the hours before it are exposed at exactly the wrong resolution.
    (b) **Does the 21:00 hole recur?** The recorder is still running. One more
    day upgrades the magnitude from indicative to measured, at the cost of
    re-running `step480_us_perp_spread_clock.py`. **Do not re-record; just read
@@ -221,6 +247,29 @@ Rules (non-negotiable, they are why anything here can be trusted):
    This also settles the ACCOUNT SIZE question, which is now the binding
    constraint on this venue rather than leverage: **$17k-$26k exitable-at-all-
    times on Coinbase against $300k+ at the median hour.**
+
+9. **THE DECAY IS NOW THE WHOLE ARGUMENT. NOBODY HAS MEASURED IT.** *(new,
+   opened by R481.)* Three rounds have been spent driving the cost side of
+   this family to a finish (R478 fee, R479/R480 spread, R481 funding), and
+   the answer is that **cost is no longer what kills it.** On the full 5.5
+   years the method clears the whole Coinbase stack with +0.196 stop
+   distances left over. On the 2026 stub it does not, because the GROSS fell
+   from +0.2908% (2021) to +0.0387% (R476's year table) — **a 7.5x decay in
+   the signal itself.** Every "not deployable" verdict since R478 rests on
+   that one number and no round has ever interrogated it.
+   Deliverable, and it is a DESCRIPTION not a candidate (this family has no
+   sealed slice anywhere, so nothing here can qualify):
+   (a) Is the decay in the ENTRY COUNT, the WIN RATE, or the SIZE of the
+   winners? R481's split is the handle — 90.3% stopped / 9.7% run the cap,
+   and the whole +0.1309% comes from that 9.7% at +4.13% each. If the decay
+   is the tail thinning, that is a different fact about the market than if
+   the stops got worse.
+   (b) Is it monotone or is 2026 a stub? 2026 is a partial year ending
+   2026-07-26 and is being quoted as if it were a regime.
+   (c) Does the same decay show on the INDEX over the same calendar years?
+   R474's SPY/QQQ population is already built. If the decay is crypto-only
+   it is a crowding story; if it is both, it is a volatility story.
+   `step481_entries_funding.csv` already holds the crypto side of this.
 
 ## Obsoleted by the 2026-07-25 strategy pivot — DO NOT RUN
 Wallace retired every self-derived strategy and rebuilt the desk on TJR's
@@ -357,6 +406,16 @@ classes. The catch is the same one in a different place: at a 0.084% stop a
 0.04% round trip is still 0.48 stop distances, so the arm's net risk
 multiple is negative and only the wider-stop cells clear. Wider stop, not
 tighter, is where the money is on the index.
+
+NOTE (R481): **the cost side is finished and the tier is still unrequired.**
+Funding, the last unmeasured cost, is **+0.0001% of price — zero**, because the
+book is 49.6% long / 50.4% short and the charge cancels against the credit.
+Whole stack on Coinbase = **0.358 stop distances** off a 0.237% median
+structural stop (4.2x at 1% risked). Nothing in this method's measured
+structure asks for 15-20x, and the mandate stands until Wallace changes it.
+R481 also corrects an assumption every round since R478 has carried: **the
+method does not hold 24 hours — the median position lives 43 minutes** and 90%
+are stopped out. Anywhere this log reasons from "a 24-hour hold", check it.
 
 ## STANDING RULE (R89/R100/R170/R190): TRANSFER IS PART OF VALIDATION
 Single-asset sealed tests do not catch asset-specific overfitting. Any

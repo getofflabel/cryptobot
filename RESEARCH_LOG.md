@@ -3618,3 +3618,156 @@ size, and it belongs in front of any future deployment conversation.
 
 **NOTHING PROPOSED FOR DEPLOYMENT. NOTHING DEPLOYED. NO LOOK CONSUMED. NO ORDER
 PLACED. NO ACCOUNT OPENED.**
+
+---
+
+## ROUND 481 — funding is the one cost that is not a cost, and the reason is that the method does not actually hold 24 hours (2026-08-18)
+
+**Queue item 6. The last unmeasured cost.** Research only. No orders, no
+account, no live file touched. **No look consumed** — this is a cost laid over
+an entry population the desk has already fully described (R476), not a
+qualification of anything.
+
+Script: `step481_funding_on_24h_hold.py`. Output: `step481_output.txt`.
+Data out: `step481_entries_funding.csv` (68,992 chargeable entries with entry
+AND exit timestamps), `step481_cadence.csv`, `step481_by_year.csv`.
+
+### The caveat, fixed before the run
+
+Bybit funding is a **proxy**. It is not Kraken's series, not Coinbase's, not
+Bitnomial's. This round **bounds the magnitude and establishes the sign of the
+mechanism** on the same three coins in the same hours. Nothing here may be
+quoted as "US perp funding".
+
+### The premise of the queue item is wrong, and that is the finding
+
+Queue item 6 says: *"the method holds 24 hours, so it eats a settlement
+essentially every trade."* It does not.
+
+**24 hours is the CAP, not the hold.** The stop is the sweep-to-entry extreme
+and it is tight, so the position is usually gone long before any settlement:
+
+| hold length | p25 | **median** | p75 | p90 |
+|---|---|---|---|---|
+| hours | 0.13 | **0.72** | 4.43 | 24.00 |
+
+**90.3% are stopped out; 9.7% run the cap out.** The median position lives
+**43 minutes**. So:
+
+- 8-hourly settlements straddled: **mean 0.68, median 0, and 68.4% of entries
+  straddle none at all.**
+- On a once-daily 3:00pm CT mark (Kraken US's cadence), **81% of entries miss
+  the settlement entirely** — mean 0.21 per trade.
+
+### The sign and the size
+
+Sign convention stated once: positive funding means longs pay shorts, so the
+charge is `-direction × rate` and **positive below = money in**.
+
+| cadence | mean | median | t naive | t by day | stop distances |
+|---|---|---|---|---|---|
+| Bybit 8-hourly (the real series) | **+0.0001%** | +0.0000% | 0.27 | 0.64 | **+0.000x** |
+| once-daily mark 20:00 UTC | −0.0003% | +0.0000% | −0.74 | −0.53 | −0.001x |
+| once-daily mark 21:00 UTC | −0.0002% | +0.0000% | −0.55 | −0.37 | −0.001x |
+| Bybit 8-hourly, gap-clean holds only | +0.0003% | +0.0000% | 1.67 | 2.17 | +0.001x |
+
+**Funding is zero to three decimal places of a stop distance.** Against the
+0.237% median structural stop it is 0.000–0.001x; against R478's 0.0529%
+three-coin US round trip it is under 1% of the fee. Every cadence agrees, the
+sign flips between them, and no reading reaches t = 2.2 even when it is helped.
+
+### Why it is zero — and it is not because funding is small
+
+The underlying rate straddled per hold averages **+0.0056% of price**, which is
+real money. It nets out because **the method is direction-balanced**:
+
+| side | entries | share | raw rate straddled | funding P&L | t by day |
+|---|---|---|---|---|---|
+| LONG | 34,208 | 49.6% | +0.0056% | **−0.0056%** | −13.54 |
+| SHORT | 34,784 | 50.4% | +0.0056% | **+0.0056%** | +6.88 |
+
+Each side individually pays or collects at high significance. The book takes
+sweeps of lows and sweeps of highs in **almost exactly equal number**, so the
+charge and the credit cancel. This is a structural property of the
+construction — eight levels, four long and four high, scanned symmetrically —
+not an accident of the window.
+
+By asset: BTC +0.0004%, ETH +0.0000%, SOL −0.0003% (t by day 1.26 / 0.13 /
+0.52). By year: a net credit in 2 of 6 and a net charge in 4, largest reading
++0.0019% (2023), the two significant years (2025 t −2.93, 2026 t −3.32) both
+at **−0.0003%** — significance without magnitude, which is what 13,000 entries
+buys you on a number that is genuinely near zero.
+
+### The ledger, complete for the first time
+
+Gross reproduces R476 **exactly** (all 71,073 entries, +0.1435%), which is the
+check that matters — this round regenerated the population rather than trusting
+a cache. The ledger runs on the 68,992 that sit inside funding coverage
+(+0.1309%); the 2,081 dropped are early SOL from before Bybit listed the perp,
+and they are the most volatile entries in the set.
+
+| line | % of price | stop distances |
+|---|---|---|
+| gross per entry (arm B, hold-24h) | +0.1309% | +0.553x |
+| fee + spread, Coinbase (R479) | −0.0847% | −0.358x |
+| fee + spread, Bitnomial (R479) | −0.1120% | −0.473x |
+| **funding, this round** | **+0.0001%** | **+0.000x** |
+| *(Alpaca taker, what the log charged for a year)* | *−0.5000%* | *−2.114x* |
+| **net, Coinbase, all three costs in** | **+0.0463%** | **+0.196x** |
+| **net, Bitnomial, all three costs in** | **+0.0190%** | **+0.080x** |
+
+**And the 2026 stub, which is the number that has been deciding this family:**
+gross +0.0358%, funding −0.0003%, fee+spread −0.0847% → **net −0.0492%.**
+
+### Verdict
+
+**Queue item 6 is CLOSED. Funding does not move this decision in either
+direction.** R479 was right that it was the one cost that could come back
+positive; the honest answer is that it comes back at **zero**, because the
+method's own symmetry cancels it. The last unmeasured cost is now measured and
+it changes nothing.
+
+**The cost side of this argument is finished.** Fee is sourced (R478), spread
+is measured on the full clock (R479/R480), funding is measured here. The whole
+cost stack on the better venue is **0.358 stop distances**, and on the whole
+5.5-year window the method clears it with +0.196x left over. **On 2026 it does
+not clear it, and that was true before this round and is true after it. Decay,
+not cost, is the entire remaining objection — and nothing in the queue is
+currently pointed at decay.**
+
+### Two things found that were not asked for
+
+1. **The "24-hour hold" premise is false everywhere it appears in this log,
+   including in R480's conclusion.** R480 argued the daily 21:00–22:00 UTC
+   Coinbase liquidity hole bites *"every position, because the method holds 24
+   hours"*, and set the exitable-at-all-times account ceiling at $17k–$26k on
+   that basis. The median position lives **43 minutes** and 90% are stopped out
+   before the cap. That does not refute item 8 — a 43-minute position opened at
+   20:50 UTC is still exposed, and the stop that fires inside the hole is still
+   filled into a book at 5–11% of normal depth — but it **changes the arithmetic
+   from "all of them" to a share that must now be counted.** Item 8(a) is the
+   right way to count it, and it is now cheap: **entry and exit timestamps for
+   all 68,992 entries are persisted in `step481_entries_funding.csv`**, so the
+   regeneration that item 8(a) budgeted for is already done.
+2. **Alpaca's 1-minute tape has gaps, and the 24-hour cap is counted in BARS.**
+   8.0% of holds therefore span more than 24 hours of wall clock, the worst a
+   single 18-bar "hold" spanning 10,013 hours. It does not move this round's
+   answer (the gap-clean sensitivity is in the table above and reads the same
+   zero), but it is a property of the tape every 1-minute round in this log has
+   been running on without recording it, and it is recorded now.
+
+### Honest limits
+
+1. **Bybit is a proxy.** Sign and order of magnitude, not a venue price.
+2. **The once-daily US cadence is modelled**, not observed: the same 8-hourly
+   economics accumulated and paid at one mark. It answers "how often would a
+   hold be exposed", not "what would Kraken have charged".
+3. The population is R476's, on a window every slice of which has been read.
+   **This round qualifies nothing and could not.**
+4. The direction balance that produces the zero is a property of *this*
+   construction. Any future variant that leans long or short **re-opens this
+   question**, and at +0.0056% of price per hold on the exposed side it would
+   not be a rounding error.
+
+**NOTHING PROPOSED FOR DEPLOYMENT. NOTHING DEPLOYED. NO LOOK CONSUMED. NO ORDER
+PLACED. NO ACCOUNT OPENED.**
