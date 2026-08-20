@@ -462,6 +462,23 @@ exitable-at-all-times ceiling at **$17k-$26k** — the same order as Bitnomial's
 the figure R479 rejected as too thin. On a 24-hour hold that spans the window
 every single trade, **account SIZE is now the binding constraint on both US
 venues, and it binds an order of magnitude tighter than leverage does.**
+NOTE (R482): **the 10x ceiling this desk has been planning against is an
+INTRADAY ceiling.** Coinbase's own live margin schedule gives 10.00x BTC / 9.99x
+ETH but only **5.00x SOL** intraday, and **overnight it drops to 4.07x BTC /
+4.08x ETH / 2.73x SOL.** R478 measured the method's own structural requirement at
+5.4x BTC / 4.2x ETH / 2.9x SOL at 1% risked and called it comfortably inside 10x.
+**BTC and ETH are BELOW their overnight ceiling.** The 15-20x tier is not merely
+unrequired — on this venue, for any position held past 16:00 CT, **even the
+method's own modest requirement is not financed.** It bites precisely the 9.7% of
+positions that run the 24-hour cap, which per R481 produce the entire gross. The
+owner mandate stands until Wallace changes it; what is recorded here is that the
+venue will not lend at the tier the mandate asks for, overnight, at any account
+size.
+NOTE (R482, cost): every cost figure in this file is an **exchange fee**. The
+retail FCM (Coinbase Financial Markets) bills a **percentage of notional** on
+top, published only as a floor ("as low as 0.02%"). At that floor it exceeds the
+whole exchange fee. Treat every "all-in" and "net" number above as optimistic by
+**at least 0.04% of price a round trip** until item 10 sources it.
 NOTE (R474): on the index the 1-minute swing is **0.046% of price on SPY
 (21.6x at 1% risked) and 0.063% on QQQ (15.8x)** — the tightest structure
 this desk has measured anywhere, and the index costs 0.04% a round trip
