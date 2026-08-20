@@ -1,0 +1,81 @@
+{
+  "round": "R482",
+  "queue_item": 7,
+  "exchange_fee_per_side_usd": 0.1,
+  "effective_trade_date": "2025-12-15",
+  "source": "CFTC submission #2025-75, filed 2025-11-26, Appendix A (Clean)",
+  "promotional_component": null,
+  "tier_applied": "Professional (bot = not Non-Professional; identical $0.10 in band 2)",
+  "specs": {
+    "BTC": {
+      "product_id": "BIP-20DEC30-CDE",
+      "contract_size": 0.01,
+      "price": 72520.0,
+      "notional": 725.2,
+      "funding_rate": "0.000015",
+      "funding_interval": "3600s",
+      "intraday_margin": {
+        "long_margin_rate": "0.1000185",
+        "short_margin_rate": "0.1000008"
+      },
+      "overnight_margin": {
+        "long_margin_rate": "0.245625",
+        "short_margin_rate": "0.306375"
+      },
+      "open_interest": "243783"
+    },
+    "ETH": {
+      "product_id": "ETP-20DEC30-CDE",
+      "contract_size": 0.1,
+      "price": 2327.0,
+      "notional": 232.70000000000002,
+      "funding_rate": "0.000014",
+      "funding_interval": "3600s",
+      "intraday_margin": {
+        "long_margin_rate": "0.100062",
+        "short_margin_rate": "0.0998894"
+      },
+      "overnight_margin": {
+        "long_margin_rate": "0.24525",
+        "short_margin_rate": "0.33475"
+      },
+      "open_interest": "345893"
+    },
+    "SOL": {
+      "product_id": "SLP-20DEC30-CDE",
+      "contract_size": 5.0,
+      "price": 86.97,
+      "notional": 434.85,
+      "funding_rate": "0.000018",
+      "funding_interval": "3600s",
+      "intraday_margin": {
+        "long_margin_rate": "0.1999824",
+        "short_margin_rate": "0.2001666"
+      },
+      "overnight_margin": {
+        "long_margin_rate": "0.366",
+        "short_margin_rate": "0.55975"
+      },
+      "open_interest": "32759"
+    }
+  },
+  "cde_fee_roundtrip_pct": {
+    "BTC": 0.027578599007170433,
+    "ETH": 0.08594757198109153,
+    "SOL": 0.045992871104978725
+  },
+  "kraken_us_fee_roundtrip_pct_R478": {
+    "BTC": 0.0463,
+    "ETH": 0.0314,
+    "SOL": 0.0811
+  },
+  "allin_fee_plus_spread_pct": {
+    "bitnomial_krakenUS|BTC": 0.0907,
+    "bitnomial_krakenUS|ETH": 0.0853,
+    "bitnomial_krakenUS|SOL": 0.1322,
+    "coinbase_CDE|BTC": 0.04227859900717043,
+    "coinbase_CDE|ETH": 0.12864757198109153,
+    "coinbase_CDE|SOL": 0.07349287110497872
+  },
+  "cfm_commission": "UNSOURCED - percentage of notional, 'as low as 0.02%' floor only"
+}

@@ -197,27 +197,57 @@ Rules (non-negotiable, they are why anything here can be trusted):
    (gap-clean sensitivity reads the same zero); does apply to every
    1-minute round in this log, and is on the record now.
 
-7. **WHAT DOES COINBASE DERIVATIVES ACTUALLY CHARGE?** *(new, opened by R479.)*
-   R478 leaned its whole table on Kraken Derivatives US because that fee
-   schedule was primary-sourced, and flagged Coinbase's per-contract
-   component ($0.10-$0.15, plus a promotional 0.00%/0.03%) as SECONDARY.
-   R479 then measured the books and found Coinbase is the better venue on
-   both spread and depth, by a wide margin — which makes the one number
-   nobody has sourced properly the number the decision now rests on.
-   Deliverable: Coinbase Derivatives' fee schedule for the CDE perps
-   (BIP/ETP/SLP), primary-sourced, with the promotional component separated
-   from the standing one and its expiry stated. Nano contract sizes are
-   already confirmed from the public product endpoint (0.01 BTC / 0.1 ETH /
-   5 SOL). Re-run `step479_us_perp_spread_snap.py --report` afterwards with
-   the corrected fee so the all-in table stops carrying Kraken's rate as a
-   stand-in. **Reading a fee page. No account, no order, no money.**
-   **R480 addition, same page-read, no extra work:** while on Coinbase's docs,
-   capture the **trading-hours schedule** properly too. R480 sourced the daily
-   16:00-17:00 CT non-24x7 participant break from
-   `docs.cdp.coinbase.com/derivatives/introduction/market-hours` and it explains
-   the measured hole exactly, but the quarterly three-hour maintenance window
-   and the Friday 16:00-16:50 CT halt are secondary in this log, and both bite
-   a 24-hour hold.
+7. ~~**WHAT DOES COINBASE DERIVATIVES ACTUALLY CHARGE?**~~
+   **DONE — R482, 2026-08-20. CLOSED. No look consumed. No account, no order.**
+   **$0.10 per contract PER SIDE, electronic, STANDING**, effective trade date
+   2025-12-15, primary-sourced from **CFTC submission #2025-75** (filed
+   2025-11-26, Appendix A) and corroborated independently by Lincoln Park
+   Financial's BIP page. **The promotional component the item asked to separate
+   DOES NOT EXIST** — no waiver, no expiry, nothing. R478's remembered
+   "promotional 0.00%/0.03%" is the **INTERNATIONAL (INTX)** book a US person
+   cannot trade; struck from the log. Tier is moot: the filing's "not using a
+   fully automated order generating computer system" makes a bot user a
+   **Professional**, and band 2 charges Professional and Non-Professional the
+   same $0.10. Contract sizes confirmed live: **0.01 BTC / 0.1 ETH / 5 SOL**.
+   As a percentage: **BTC 0.0276%, ETH 0.0859%, SOL 0.0460% round trip**, avg
+   0.0532% against R478's Kraken stand-in avg of 0.0529%. **The averages match
+   and the per-coin order REVERSES** — Coinbase's ETH contract is a fifth of
+   Kraken's, so ETH goes from R478's cheapest coin to the most expensive.
+   R478's average survived by coincidence; its per-coin Coinbase figures were
+   all wrong. `step479_us_perp_spread_snap.py` now carries a venue-aware
+   `fee_rt()`; **the Kraken stand-in is gone from the Coinbase rows.**
+   Re-run all-in (fee + spread, 9-day sample): Coinbase **BTC 0.0432% / 0.23x**,
+   **ETH 0.1126% / 0.47x**, **SOL 0.0724% / 0.21x**. Coinbase still wins on BTC
+   and SOL and **LOSES ON ETH** (0.47x vs Bitnomial's 0.35x) — the opposite of
+   R478's table.
+   **THE ROUND'S REAL OUTPUT, AND IT REOPENS THE COST QUESTION R481 CLOSED:**
+   R478's "futures bill PER CONTRACT, not as a percentage" is true of the
+   EXCHANGE and **false of the ACCOUNT**. A US person faces **Coinbase Financial
+   Markets (CFM)**, an FCM that charges its own commission on top, and **CFM
+   bills a PERCENTAGE of notional** — "as low as 0.02%", a volume-tier FLOOR,
+   not a rate. **At that floor the commission EXCEEDS the entire exchange fee it
+   sits on.** The standing tier table is behind coinbase.com, which 403s every
+   unauthenticated request, so it is **UNSOURCED** and no value was invented for
+   it. Every net number in this log is an **exchange-fee-only floor, optimistic
+   by at least 0.04% of price a round trip.** See new item 10.
+   Trading hours primary-sourced (R480's addendum): **Friday 16:00-16:50 CT
+   all-markets halt CONFIRMED**; **non-24x7 daily break 16:00-17:00 CT** —
+   R480's hole exactly, mechanism confirmed; quarterly 3-4h weekend window.
+   **DST TRAP:** the hole is fixed in CHICAGO time, so it is 21:00-22:00 UTC in
+   summer and **22:00-23:00 UTC in winter**. Item 8(a) must bucket in CT.
+   Two unasked-for findings, both live off the public product endpoint:
+   **(a) CDE funding settles HOURLY (3600s), not 8-hourly.** R481's "68.4% of
+   entries straddle no settlement" is a Bybit fact wearing a Coinbase label and
+   is false here. R481's ZERO survives — the 49.6/50.4 long/short split cancels
+   the flows whatever the cadence; the cadence moves the variance, not the mean.
+   **(b) THE 10x CAP IS INTRADAY ONLY.** Overnight margin is **24.6% BTC (4.07x),
+   24.5% ETH (4.08x), 36.6% SOL (2.73x)**, and SOL is **5x even intraday**.
+   R478 said the method needs 5.4x BTC / 4.2x ETH / 2.9x SOL and called that
+   comfortably inside 10x. **BTC and ETH are BELOW their overnight ceiling.**
+   It bites exactly the 9.7% of positions that run the 24h cap — per R481, the
+   tail that produces the ENTIRE gross at +4.13% each. **The margin schedule is
+   hostile to the only positions that make the money.** Belongs in front of
+   item 9.
 
 8. **WHAT DOES A HOLD DO WHEN THE BOOK IS NOT THERE?** *(opened by R480,
    PREMISE CORRECTED BY R481 — read this before running it.)*
@@ -235,7 +265,11 @@ Rules (non-negotiable, they are why anything here can be trusted):
    UTC?** **The regeneration this item budgeted for is already DONE:** entry
    AND exit timestamps for all 68,992 chargeable entries are persisted in
    `step481_entries_funding.csv` (R481). Read that file; regenerate nothing.
-   Aggregate only, no new slice read, no look consumed. If exits land there at
+   Aggregate only, no new slice read, no look consumed. **R482 CORRECTION:
+   bucket in CHICAGO time (16:00-17:00 CT), not UTC.** The break is fixed in CT,
+   so it is 21:00-22:00 UTC only in summer and 22:00-23:00 UTC in winter; a
+   UTC-bucketed census would smear the hole across two hours and understate it.
+   If exits land there at
    ~1/24 the constraint is priced by charging a wider spread on that fraction;
    if they CLUSTER there it is a different and worse problem. Note the 43-minute
    median cuts both ways — fewer positions span the hole, but entries taken in
@@ -270,6 +304,37 @@ Rules (non-negotiable, they are why anything here can be trusted):
    R474's SPY/QQQ population is already built. If the decay is crypto-only
    it is a crowding story; if it is both, it is a volatility story.
    `step481_entries_funding.csv` already holds the crypto side of this.
+
+   **R482 ADDITION, and it reorders this item's own list:** (a) is now the most
+   decisive leg. R482 found the CDE **overnight** leverage ceiling is 4.07x BTC
+   / 4.08x ETH / 2.73x SOL against a method that needs 5.4x / 4.2x / 2.9x — so
+   the 9.7% tail that produces the whole gross is exactly the part the venue is
+   least willing to finance. **If (a) shows the decay IS that tail thinning,
+   the venue constraint and the decay are pointed at the same 9.7% of trades
+   and this family is finished on two independent grounds.**
+
+10. **WHAT DOES THE ACCOUNT PAY, NOT THE EXCHANGE?** *(new, opened by R482, and
+   it is the last open cost question.)* R481 declared the cost side finished and
+   R482 reopened it: the exchange fee is the SMALLER half. **Coinbase Financial
+   Markets bills a percentage of notional on top of CDE's $0.10/side, and the
+   only public figure is a marketing floor ("as low as 0.02%").** At that floor
+   alone the commission exceeds the whole exchange fee; the standing volume-tier
+   table is unpublished and coinbase.com 403s every unauthenticated request.
+   Every "net" number in this log — R478's, R479's, R480's, R481's ledger and
+   R482's own table — is an exchange-fee-only floor, optimistic by **at least
+   0.04% of price a round trip**, which is larger than the 2026 stub of the
+   signal (+0.0387%).
+   Deliverable, in preference order, cheapest first:
+   (a) **A published CFM fee schedule from a non-Coinbase channel** — the NFA
+   BASIC record, an FCM disclosure document, a CFTC Form 1-FR, an introducing
+   broker's published rate card (Lincoln Park already publishes CDE's exchange
+   fee, so it may publish the commission), or Coinbase's own investor materials.
+   (b) Failing that, **state the BREAK-EVEN commission** — the CFM rate at which
+   the method goes negative on the full window and on the 2026 stub — so the
+   unsourced number has a bar to clear rather than a guess attached.
+   **Reading documents. No account, no order, no money.** If (a) turns out to
+   require an account, that is itself the finding: the true cost of this venue
+   is not knowable before signing up, and it goes to Wallace as such.
 
 ## Obsoleted by the 2026-07-25 strategy pivot — DO NOT RUN
 Wallace retired every self-derived strategy and rebuilt the desk on TJR's
