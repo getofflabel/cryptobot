@@ -958,3 +958,163 @@ def test_the_structure_state_is_built_when_and_only_when_it_is_read():
             want_s, want_c = ae.trend_series(d4), ae.closes_at(d4, cfg.tf)
             assert np.array_equal(states, want_s)
             assert np.array_equal(closes, want_c)
+
+
+# ============ 10. A BOOK THAT COULD NOT LOOK NEVER READS AS A QUIET ONE
+#
+# step484, 2026-08-25. The forex book was armed on 2026-07-27 and placed
+# nothing for four weeks. The audit proved the method genuinely refused every
+# one of the 108 four-hour closes in his entry window, so the silence was
+# real — but it also proved the desk COULD NOT HAVE TOLD WALLACE OTHERWISE.
+# `last_reason` was set by the stock book alone, every skip inside
+# `AlexMarket.decide` was silent, and an empty weekly frame refuses every
+# trade forever without raising. Four weeks of "forex — no setup" would have
+# read identically if the candles had never arrived at all.
+
+
+def _alex_market(cls=tjr_desk.ForexMarket):
+    """One of the two Alex books with no venue, no network and no client.
+    `decide` needs the engine and the symbol table and nothing else."""
+    m = cls.__new__(cls)
+    m.al = al
+    m.engine = al.Engine(cfg_over=dict(cls.ENGINE_BOOK) or dict(al.BOOK))
+    m.pending = []
+    m.real = set()
+    m._upq = {}
+    return m
+
+
+def _fx_frames(when=pd.Timestamp("2026-07-23 01:05")):
+    """The candles the desk held at the minute the last real setup of the
+    drought closed — GBP/JPY, 2026-07-23 01:00 New York."""
+    out = {}
+    for sym in tjr_desk.ForexMarket.symbols:
+        inst = al.instrument_for(sym)
+        d = {}
+        for tf in ("4h", "15m", "1w"):
+            f = data(inst)[tf]
+            w = pd.Timedelta(minutes=ae._TF_MINUTES[tf])
+            d[tf] = f[f["t"] + w <= when].reset_index(drop=True)
+        out[sym] = d
+    return out
+
+
+def test_an_empty_weekly_frame_refuses_out_loud_instead_of_silently():
+    """THE TRAP. `weekly_bias_table` on an empty frame builds a table with no
+    rows; every setup then fails the last-closed-weekly test on `j < 0` and
+    the book refuses EVERY trade with no exception and no message. On Render
+    there is no parquet cache — `.gitignore` holds `*.parquet` — so this
+    frame is one live OANDA request per pair per poll, and `bars()` swallows
+    a failed one into an empty frame. This is that failure, shown to be real
+    at the engine and then shown to be named by the book."""
+    inst, when = "GBP_JPY", pd.Timestamp("2026-07-23 01:05")
+    frames = _fx_frames(when)["GBP/JPY"]
+
+    # 1. the engine really does go silent, with no exception at all
+    got = {}
+    for label, wk in (("present", frames["1w"]), ("empty", frames["1w"].iloc[:0])):
+        eng = al.Engine(cfg_over=dict(al.BOOK))
+        got[label] = eng.step(inst, dict(frames, **{"1w": wk}), 100_000.0,
+                              0.00628, now=when)
+    assert len(got["present"]) == 1, "the reference setup did not fire"
+    assert got["empty"] == [], "the empty weekly frame did not block"
+
+    # 2. and the book now says so rather than reporting a quiet day
+    m = _alex_market()
+    m.usd_per_quote = lambda sym, frames: 1.0
+    blind = {s: dict(d, **{"1w": d["1w"].iloc[:0]})
+             for s, d in _fx_frames(when).items()}
+    assert m.decide(blind, when.to_pydatetime(), 100_000.0) == []
+    assert "NOT LOOKED AT" in m.last_reason
+    assert "1w" in m.last_reason
+    for sym in tjr_desk.ForexMarket.symbols:
+        assert sym in m.last_reason, f"{sym} is not named"
+
+
+def test_a_pair_whose_candles_never_arrived_is_named_and_not_counted_quiet():
+    m = _alex_market()
+    m.usd_per_quote = lambda sym, frames: 1.0
+    when = pd.Timestamp("2026-07-23 01:05")
+    frames = _fx_frames(when)
+    frames["EUR/USD"] = dict(frames["EUR/USD"],
+                             **{"4h": frames["EUR/USD"]["4h"].iloc[:0]})
+    m.decide(frames, when.to_pydatetime(), 100_000.0)
+    assert "EUR/USD" in m.last_reason and "4h" in m.last_reason
+    # the pairs that WERE read are still reported as read
+    assert "GBP/USD" in m.last_reason and "GBP/JPY" in m.last_reason
+
+
+def test_a_yen_rate_that_cannot_be_read_reaches_the_evening_card():
+    m = _alex_market()
+    m.usd_per_quote = lambda sym, frames: None if sym == "GBP/JPY" else 1.0
+    when = pd.Timestamp("2026-07-23 01:05")
+    m.decide(_fx_frames(when), when.to_pydatetime(), 100_000.0)
+    assert "GBP/JPY" in m.last_reason
+    assert "quote currency" in m.last_reason
+
+
+def test_a_quiet_pass_is_one_short_line_and_an_entry_says_so(monkeypatch):
+    """Wallace on the card, 2026-08-25: a quiet day is one line of context,
+    not a wall of rejection. So a pass where every pair was read and the
+    method simply said no must not read like a list of refusals.
+
+    THE CLOCK IS PINNED, because `decide` reads `new_york_now()` and ignores
+    the argument — which is the 2026-07-30 fix and must stay that way. A
+    candle five minutes old is inside `ENTRY_FRESHNESS`; the wall clock would
+    make every candle in this file years stale and the test would pass
+    without ever reaching the code it is about."""
+    quiet = pd.Timestamp("2026-07-24 01:05")     # a real 01:00 close, no setup
+    monkeypatch.setattr(tjr_desk, "new_york_now", lambda: quiet.to_pydatetime())
+    m = _alex_market()
+    m.usd_per_quote = lambda sym, frames: 1.0
+    assert m.decide(_fx_frames(quiet), quiet.to_pydatetime(), 100_000.0) == []
+    assert m.last_reason.endswith("no setup"), m.last_reason
+    assert "NOT LOOKED AT" not in m.last_reason
+    assert len(m.last_reason) < 110
+
+    # and a pass that DID enter names the entry instead
+    hit = pd.Timestamp("2026-07-23 01:05")
+    monkeypatch.setattr(tjr_desk, "new_york_now", lambda: hit.to_pydatetime())
+    m2 = _alex_market()
+    m2.usd_per_quote = lambda sym, frames: 0.00628
+    m2.dress = lambda sig, act, equity: sig
+    out = m2.decide(_fx_frames(hit), hit.to_pydatetime(), 100_000.0)
+    assert len(out) == 1 and out[0]["symbol"] == "GBP/JPY"
+    assert "GBP/JPY" in m2.last_reason and "entry" in m2.last_reason
+
+
+def test_both_alex_books_report_and_not_only_the_stock_one():
+    """`Desk.evening_summary` reads `last_reason` off every market. Before
+    step484 only `IndexMarket` ever set it, so forex and gold said "no setup"
+    every night whatever had happened to them."""
+    src = inspect.getsource(tjr_desk.AlexMarket.decide)
+    assert "last_reason" in src
+    for cls in (tjr_desk.ForexMarket, tjr_desk.GoldMarket):
+        assert cls.decide is tjr_desk.AlexMarket.decide
+
+
+def test_a_book_that_never_built_is_not_reported_as_a_quiet_book():
+    """render.yaml, in as many words: "keys that existed only on the laptop
+    have silently broken this worker twice, and both times it looked exactly
+    like the strategy deciding not to trade." The evening card only ever
+    walks the books that DID build, so a dropped one was invisible."""
+    class _Venue:
+        name = "nowhere"
+        def account(self):
+            return {"equity": 100_000.0}
+
+    m = tjr_desk.IndexMarket.__new__(tjr_desk.IndexMarket)
+    m.venue = _Venue()
+    m.last_reason = "no setup"
+    desk = tjr_desk.Desk(dry_run=True, markets=[m], armed=set())
+    old = dict(tjr_desk.MISSING_BOOKS)
+    try:
+        tjr_desk.MISSING_BOOKS.clear()
+        assert "forex" not in desk.evening_summary()
+        tjr_desk.MISSING_BOOKS["forex"] = "OANDA is not configured: token not set"
+        card = desk.evening_summary()
+        assert "forex IS NOT RUNNING AT ALL" in card
+        assert "OANDA is not configured" in card
+    finally:
+        tjr_desk.MISSING_BOOKS.clear()
+        tjr_desk.MISSING_BOOKS.update(old)

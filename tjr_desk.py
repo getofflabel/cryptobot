@@ -896,17 +896,50 @@ class AlexMarket(Market):
     def decide(self, frames, now, account) -> list:
         """One step of the engine per instrument. Returns only the ENTRIES;
         every exit it asked for is held for `manage`, which runs first at the
-        venue."""
+        venue.
+
+        A PAIR THAT COULD NOT BE LOOKED AT SAYS SO, and that is the whole of
+        what step484 added here. The forex book was armed on 2026-07-27 and
+        placed nothing for four weeks; the audit proved the method genuinely
+        refused every candle, but it also proved the desk had NO WAY OF
+        SAYING SO — every night's card read "forex — no setup" because
+        `last_reason` was set by the stock book alone, and every skip in this
+        loop was silent. A book whose candles never arrived and a book whose
+        method said no looked identical, which is exactly the shape of the
+        two bugs this desk has already had (the UTC clock, the poll race).
+        Now the nightly card carries the real answer.
+        """
         out = []
         self.pending = []
         # the quote rates this pass decided on, so the size cannot be worked
         # out on a different one — see `ForexMarket.usd_per_quote`
         self._upq: dict = {}
         now = new_york_now()          # the candles' own clock, not the box's
+        stood_down, looked = [], []
         for sym in self.symbols:
             inst = self.al.instrument_for(sym)
-            d = frames.get(sym)
-            if not d or not len(d.get("4h", [])) or not len(d.get("15m", [])):
+            d = frames.get(sym) or {}
+            missing = [tf for tf in ("4h", "15m") if not len(d.get(tf, []))]
+            # THE WEEKLY IS A FRAME THE METHOD CANNOT RUN WITHOUT, and an
+            # empty one does not raise — `weekly_bias_table` builds a table
+            # with no rows, every setup then fails the "last closed weekly
+            # candle" test on `j < 0`, and the book refuses every trade
+            # FOREVER without a word. On Render there is no parquet cache
+            # (`.gitignore` holds `*.parquet`), so this frame is one live
+            # OANDA request per pair per poll and `bars()` swallows a failed
+            # one into an empty frame. Silence there would be indistinguish-
+            # able from the method being quiet, which is the whole reason
+            # this check exists. See `step484_forex_audit`.
+            if getattr(self.engine.cfg(inst), "weekly_bias", False) \
+                    and not len(d.get("1w", [])):
+                missing.append("1w")
+            if missing:
+                stood_down.append(
+                    f"{sym}: no {', '.join(missing)} candles arrived, so it "
+                    f"was not looked at")
+                print(f"  {self.name} {sym}: the "
+                      f"{', '.join(missing)} candles could not be read, so "
+                      f"nothing is decided on it this pass")
                 continue
             upq = self.usd_per_quote(sym, frames)
             if upq is None:
@@ -914,6 +947,9 @@ class AlexMarket(Market):
                 # sized as though it arrived in dollars the position is wrong
                 # by about a factor of a hundred and fifty. A rate that cannot
                 # be read refuses rather than falling back to 1.0.
+                stood_down.append(
+                    f"{sym}: the dollar value of the quote currency could "
+                    f"not be read, so it was not looked at")
                 print(f"  {self.name} {sym}: the dollar value of one unit of "
                       f"the quote currency could not be read, so nothing is "
                       f"decided on it this pass")
@@ -922,17 +958,43 @@ class AlexMarket(Market):
                 acts = self.engine.step(inst, d, account, upq,
                                         now=pd.Timestamp(now))
             except Exception as e:                       # noqa: BLE001
+                stood_down.append(f"{sym}: {str(e)[:80]}")
                 print(f"  {self.name} {sym}: {str(e)[:160]}")
                 continue
+            looked.append(sym)
             for a in acts:
                 if a["kind"] != "enter":
                     self.pending.append(a)
                     continue
                 sig = self.dress(a["signal"], a, account)
                 if sig is None:
+                    # `dress` has already said out loud why nothing is sent
+                    stood_down.append(f"{sym}: the size could not be worked "
+                                      f"out, so nothing was sent")
                     continue
                 out.append(dict(sig, market=self.name, fired_at=a["at"]))
+        self.last_reason = self._stand_down_line(looked, stood_down, out)
         return out
+
+    def _stand_down_line(self, looked: list, stood_down: list,
+                         out: list) -> str:
+        """ONE LINE FOR THE EVENING CARD, and it has to be impossible to read
+        a broken book as a quiet one.
+
+        Wallace's own note on the card, 2026-08-25: a quiet day is one line
+        of context, not a wall of rejection. So a pass where every pair was
+        read and the method simply said no is one short sentence, and only a
+        pair that could NOT be read gets named.
+        """
+        if out:
+            return f"{len(out)} entry(s) on {', '.join(s['symbol'] for s in out)}"
+        if not looked:
+            return ("NOT LOOKED AT — " + "; ".join(stood_down)) if stood_down \
+                else "NOT LOOKED AT — no candles arrived for any pair"
+        if stood_down:
+            return (f"read {', '.join(looked)} and the method said no; "
+                    + "; ".join(stood_down))
+        return f"read {', '.join(looked)}, no setup"
 
     def dress(self, sig: dict, act: dict, equity: float) -> dict | None:
         """Whatever this book has to do to an engine signal before it can be
@@ -1723,6 +1785,10 @@ class Desk:
             armed = "" if self.is_armed(m) else " (NOT armed)"
             why = str(getattr(m, "last_reason", "") or "no setup")[:110]
             tails.append(f"{m.name}{armed} {eq_s} — {why}")
+        # A BOOK THAT NEVER BUILT IS NOT A BOOK THAT WAS QUIET. See
+        # MISSING_BOOKS.
+        for name, why in sorted(MISSING_BOOKS.items()):
+            tails.append(f"{name} IS NOT RUNNING AT ALL — {why[:110]}")
         return "\n".join(heads) + "\n\n" + "\n".join(tails)
 
     # ------------------------------------------------------------ reporting
@@ -1815,11 +1881,23 @@ def _config_for(m: Market):
     return None                      # crypto has no bell and nothing to be flat for
 
 
+#: books that did NOT build on this process, and why. A DROPPED BOOK IS NOT A
+#: QUIET BOOK, and until step484 the difference was invisible: `build_markets`
+#: printed the reason to a log nobody reads and the evening card only ever
+#: walks the books that DID build, so a forex book missing its OANDA keys
+#: looked exactly like a forex book whose method said no. render.yaml already
+#: says this in as many words — "keys that existed only on the laptop have
+#: silently broken this worker twice, and both times it looked exactly like
+#: the strategy deciding not to trade". Now it reaches his phone.
+MISSING_BOOKS: dict = {}
+
+
 def build_markets() -> list:
     """One market per line, each with its venue resolved through venue.py's
     guard. A market whose venue will not build is dropped with a reason
     printed — never silently swapped for another one."""
     out = []
+    MISSING_BOOKS.clear()
     for cls in (CryptoMarket, IndexMarket, ForexMarket, GoldMarket):
         try:
             v, decision = venue_mod.resolve(cls.venue_name, tag=cls.tag)
@@ -1828,6 +1906,7 @@ def build_markets() -> list:
                       f"{decision['chosen']!r} — {decision['why']}")
             out.append(cls(venue=v))
         except Exception as e:
+            MISSING_BOOKS[cls.name] = str(e)[:120]
             print(f"  {cls.name}: not available — {str(e)[:120]}")
     return out
 
