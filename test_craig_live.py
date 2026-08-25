@@ -659,27 +659,36 @@ def test_the_desk_turns_a_craig_signal_into_a_resting_limit_with_its_stop():
     assert "waiting for the price" in desk.pushed[0][1]
 
 
-def test_the_ladder_reaches_the_exchange_and_the_message_says_the_same_size():
-    """THE SHIPPING PATH, END TO END, ON THE LADDER. Real candles in, a real
-    resting order out, and the message stating the coins that were sent — not
-    a number capped somewhere else on the way to the phone."""
+def test_the_fixed_dollars_reach_the_exchange_and_the_message_says_the_size():
+    """THE SHIPPING PATH, END TO END, ON CRAIG'S OWN DOLLARS. Real candles in,
+    a real resting order out, and the message stating the coins that were
+    sent — not a number capped somewhere else on the way to the phone.
+
+    2026-08-10: the book stopped running Alex's money-game ladder (two men's
+    doctrine in one method) and started running Craig's own stated sizing —
+    "if you're trying to risk $50 per trade and you can use 25x leverage",
+    2026-07-05, mid-band $75. Same end-to-end assertion, new sizing law.
+    """
     c = _FakeClient()
-    m, when, t = _wired(c, ladder=True)
+    m, when, t = _wired(c, book=True)
     desk = _Recorder(armed={"crypto"})
     fresh = desk.poll_market(m, when)
     assert len(fresh) == 1
     sig = fresh[0]
-    assert sig["money_game_ladder"] is True
+    assert sig["money_game_ladder"] is False, \
+        "Alex's ladder rode into a Craig order — methods never mix"
     eq = float(sig["sizing_account"])
-    want = cl.money_game_risk_dollars(eq, cl.BOOK["money_game_stake"])
+    want = cl.risk_share_for(eq, cl.book_config(PAIR)) * eq
+    assert want == pytest.approx(cl.BOOK["fixed_risk_dollars"], rel=1e-9), \
+        f"at ${eq:,.0f} his fixed dollars came out as ${want:,.2f}"
     assert sig["risk_wanted"] == pytest.approx(want, rel=1e-9), \
-        "the signal did not carry the ladder's dollars"
+        "the signal did not carry his fixed dollars"
     assert sig["size"]["risk_dollars"] == pytest.approx(want, rel=1e-6), \
-        "the desk sized the order on something other than the ladder"
+        "the desk sized the order on something other than his fixed dollars"
     assert len(c.limits) == 1
     assert c.limits[0]["price"] == pytest.approx(t.setup.entry)
     assert c.limits[0]["stop_price"] == pytest.approx(t.setup.stop), \
-        "the ladder cost the resting entry its attached stop"
+        "the fixed-dollar sizing cost the resting entry its attached stop"
     # AND THE MESSAGE SAYS THE SAME NUMBER. This is the drift that would have
     # him reconciling his BloFin screen against a size nothing ever sent.
     said = desk.pushed[0][1]
@@ -687,7 +696,7 @@ def test_the_ladder_reaches_the_exchange_and_the_message_says_the_same_size():
     assert coins in said, \
         f"the message states a different size from the order:\n{said}"
     assert "3% of the account" not in said, \
-        "the desk's flat outer limit silently capped a money-game message"
+        "the desk's flat outer limit silently capped a fixed-dollar message"
 
 
 def test_an_unarmed_desk_decides_sizes_and_reports_and_sends_nothing():
@@ -762,14 +771,24 @@ def test_the_message_says_the_time_the_candle_closed_not_the_time_it_opened():
         "replay can no longer be compared"
 
 
-# ================================== 6c. THE MONEY-GAME LADDER
+# ================================== 6c. HOW BIG THE BOOK'S TRADES ARE
 #
+# TWO RULES LIVE HERE AND THEY BELONG TO TWO DIFFERENT MEN.
+#
+# ALEX'S LADDER, which the GOLD book runs and Craig's book no longer does.
 # Alex Gonzalez, 2026-02-22: "Anything below $25,000, it's all the money
 # game" ... "you have to make sure that you have at least four or five trades
 # in you before you would obviously lose the account" ... "as you start
 # creating a bigger account, you lower that risk".
 # Wallace: "This is why I even have it set at 2178 ... its how much I would be
 # willing to lose to even start."
+#
+# CRAIG'S OWN DOLLARS, which his book runs as of 2026-08-10. Running Alex's
+# doctrine on Craig's method broke the methods-never-mix law and ten live days
+# billed us for it: three losses of $400-600 on the $2,178 stake, and refusals
+# wherever a leverage cap could not carry a position about forty times the
+# account. Craig, 2026-07-05: "if you're trying to risk $50 per trade and you
+# can use 25x leverage". `craig_live.BOOK` runs the mid-band, $75 a trade.
 STAKE = 2178.0
 
 
@@ -804,26 +823,64 @@ def test_the_ladder_only_ever_steps_down():
                                                                  rel=1e-3)
 
 
-def test_the_ladder_is_on_for_the_blofin_book_and_off_everywhere_else():
-    assert cl.BOOK["money_game_ladder"] is True
-    assert cl.BOOK["money_game_stake"] == STAKE
-    assert cl.book_config(PAIR).money_game_ladder is True
-    # the method's own config, which every replay and every step467 number
-    # was measured on, does not have it
-    assert cl.live_config(PAIR).money_game_ladder is False
+def test_the_fixed_dollars_are_on_for_the_blofin_book_and_the_ladder_is_off():
+    """2026-08-10: THE LADDER CAME OFF CRAIG'S BOOK and his own number went on.
+
+    Alex's money game on Craig's method mixed two men's doctrine, which is the
+    one law this project does not bend, and ten live days showed the bill:
+    three losses of $400-600 on a $2,178 stake, plus refusals wherever a
+    pair's leverage cap could not carry a position about forty times the
+    account. Craig states his own small-account sizing, 2026-07-05: "if you're
+    trying to risk $50 per trade and you can use 25x leverage". The book runs
+    the mid-band of that, $75 a trade, and no ladder.
+
+    The other half of this test is the half that protects step467: the
+    SHIPPING configuration — the one every replay number was measured on — has
+    neither the fixed dollars nor the ladder, and neither does any other
+    book.
+    """
+    assert cl.BOOK["fixed_risk_dollars"] == 75.0, \
+        "Craig's own dollars moved off the mid-band of his $50-$100"
+    assert cl.BOOK["money_game_ladder"] is False, \
+        "Alex's ladder is back on Craig's book — methods never mix"
+    cfg = cl.book_config(PAIR)
+    assert cfg.fixed_risk_dollars == 75.0
+    assert cfg.money_game_ladder is False
+    # THE SHIPPING CONFIGURATION ALONE, so every step467 replay number still
+    # means what it meant: no fixed dollars, no ladder, just the flat dial.
+    assert "fixed_risk_dollars" not in cl.SHIPPING
     assert "money_game_ladder" not in cl.SHIPPING
+    ship = cl.live_config(PAIR)
+    assert ship.fixed_risk_dollars == 0.0, \
+        "the replay's own config took the book's dollars — step467 moved"
+    assert ship.money_game_ladder is False
+    assert cl.risk_share_for(100_000.0, ship) == pytest.approx(0.03), \
+        "the shipping config no longer sizes on the flat 3% it was measured on"
+    # and neither does the method's bare default
+    assert cc.CraigConfig().fixed_risk_dollars == 0.0
     assert cc.CraigConfig().money_game_ladder is False
-    # and the desk turns it on in exactly one place — the crypto market's
-    # own engine, and nowhere else
+    # NO OTHER BOOK PICKS THEM UP. Stocks run their own file, gold runs Alex's
+    # off `alex_live`, and neither has ever heard of Craig's dollars.
+    import alex_live
+    for book in (alex_live.BOOK, alex_live.GOLD_BOOK):
+        assert "fixed_risk_dollars" not in book, \
+            "Craig's dollars reached a book that is not Craig's"
+    stocks = inspect.getsource(tjr_desk.IndexMarket)
+    assert "fixed_risk_dollars" not in stocks and "craig" not in stocks.lower()
+    # and the desk turns Craig's book on in exactly one place — the crypto
+    # market's own engine, and nowhere else
     src = inspect.getsource(tjr_desk)
     assert src.count("Engine(cfg_over=craig_live.BOOK)") == 1
     assert "craig_live.BOOK" in inspect.getsource(tjr_desk.CryptoMarket)
 
 
-def test_the_ladder_moves_only_the_size():
+def test_the_fixed_dollars_move_only_the_size():
     """IT IS A SIZING POLICY AND NOTHING ELSE. The same twelve months, run
-    with the ladder on and with it off: every entry, every stop, every target
-    and every outcome identical, and only the coins different."""
+    with Craig's fixed dollars on (the book) and off (bare shipping): every
+    entry, every stop, every target and every outcome identical, and only
+    the coins different. (Renamed 2026-08-10 — the book's sizing policy is
+    now Craig's $75, not Alex's ladder, and the test compares whatever the
+    book runs against bare shipping.)"""
     for pair in cl.PAIRS:
         flat = cl.replay_through_live(pair, *YEAR, cfg=cl.live_config(pair),
                                       data=data(pair))["trades"]
@@ -845,9 +902,17 @@ def test_the_ladder_moves_only_the_size():
         assert moved > 0, f"{pair}: the ladder changed no size at all"
 
 
-def test_the_ladder_still_goes_through_the_one_sizing_path():
-    """It is a WRAPPER. The coins still come out of
-    `tjr_alerts.position_size`, which is the desk's own front door."""
+def test_the_fixed_dollars_still_go_through_the_one_sizing_path():
+    """IT IS A WRAPPER. Since 2026-08-10 the book sizes on Craig's own stated
+    dollars — "if you're trying to risk $50 per trade and you can use 25x
+    leverage", 2026-07-05, mid-band $75 — and the coins still come out of
+    `tjr_alerts.position_size`, which is the desk's own front door.
+
+    A sizing rule that quietly stopped using that door is how two paths get
+    separate arithmetic, so the second half of this test takes the door away
+    and insists the sizing FAILS rather than falling back to a number of its
+    own.
+    """
     seen = []
     real = tjr_alerts.position_size
 
@@ -860,16 +925,31 @@ def test_the_ladder_still_goes_through_the_one_sizing_path():
         out = cl.size_for(PAIR, STAKE, 60_000.0, 400.0, cl.book_config(PAIR))
     finally:
         cl.tjr_alerts.position_size = real
-    assert len(seen) == 1, "the ladder sized something without the wrapper"
+    assert len(seen) == 1, \
+        "the fixed dollars sized something without the wrapper"
     assert seen[0][1]["hold_size_still"] is False
-    assert out["risk_dollars"] == pytest.approx(484.0, abs=0.5)
-    assert out["risk_share_used"] == pytest.approx(1 / 4.5)
+    assert seen[0][1]["outer_allowance"] == pytest.approx(75.0), \
+        "the dollars handed to the one sizing call are not Craig's $75"
+    assert out["risk_dollars"] == pytest.approx(75.0, abs=1e-6)
+    assert out["risk_share_used"] == pytest.approx(75.0 / STAKE)
+    assert out["units"] == pytest.approx(75.0 / 400.0, rel=1e-9), \
+        "the coins are not the dollars divided by the stop"
+    # AND THERE IS NO SECOND DOOR. Take the one away and sizing must raise.
+    gone = tjr_alerts.position_size
+    del tjr_alerts.position_size
+    try:
+        with pytest.raises(AttributeError):
+            cl.size_for(PAIR, STAKE, 60_000.0, 400.0, cl.book_config(PAIR))
+    finally:
+        tjr_alerts.position_size = gone
 
 
-def test_the_desk_and_the_engine_size_the_ladder_identically():
-    """The 36x bug's shape, under the new rule. The desk knows nothing about
-    the ladder — it reads the dollars off the signal — so if the two ever
-    disagree, this fails."""
+def test_the_desk_and_the_engine_size_the_fixed_dollars_identically():
+    """The 36x bug's shape, under the 2026-08-10 rule. The book no longer runs
+    Alex's ladder; it runs Craig's own stated sizing — "if you're trying to
+    risk $50 per trade and you can use 25x leverage", 2026-07-05, mid-band
+    $75. The desk knows nothing about that rule either — it reads the dollars
+    off the signal — so if the two ever disagree, this fails."""
     desk = tjr_desk.Desk(dry_run=True, markets=[], armed=set())
     market = tjr_desk.CryptoMarket.__new__(tjr_desk.CryptoMarket)
     eng = cl.Engine(cfg_over=cl.BOOK)
@@ -887,7 +967,11 @@ def test_the_desk_and_the_engine_size_the_ladder_identically():
                 units=t.sent_units, risk_dollars=t.risk_dollars)
             sig = dict(eng.signal(wk, t.equity_at_entry), market="crypto",
                        usd_per_quote=1.0)
-            assert sig["money_game_ladder"] is True
+            assert sig["money_game_ladder"] is False, \
+                "Alex's ladder is back on Craig's book"
+            assert sig["risk_wanted"] == pytest.approx(75.0, rel=1e-9), \
+                (f"{pair} {t.entry_t}: the signal carried "
+                 f"${sig['risk_wanted']:,.2f}, not Craig's $75")
             got = desk._size_for(market, sig, t.equity_at_entry)
             assert got["ok"]
             assert got["units"] == pytest.approx(wk.units, rel=1e-9), \
@@ -898,13 +982,26 @@ def test_the_desk_and_the_engine_size_the_ladder_identically():
 
 
 def test_a_size_the_exchange_cannot_carry_is_cut_and_said_out_loud():
-    """The ladder asks for a much bigger position than the flat 3% did, and
-    on a tight stop it can be more than the instrument's own ceiling will
-    carry with the WHOLE balance posted as margin. It is cut — and the answer
-    says by how much rather than quietly shrinking."""
+    """UNCHANGED IN SPIRIT, rebuilt on the 2026-08-10 sizing law. Ask for
+    enough dollars on a tight enough stop and the position is worth more than
+    the instrument's own ceiling will carry with the WHOLE balance posted as
+    margin. It is cut — and the answer says by how much rather than quietly
+    shrinking.
+
+    The book's own $75 (Craig, 2026-07-05: "if you're trying to risk $50 per
+    trade and you can use 25x leverage") does NOT bind here, which is half the
+    point of moving to it — the ladder's ~$484 on a $2,178 stake is what kept
+    hitting these ceilings. So the cap-binding case is built on purpose, with
+    a fixed-dollar figure large enough to reach it.
+    """
     pair = "XRP/USD"                      # 50x, the lowest ceiling of the five
-    cfg = cl.book_config(pair)
     entry, dist = 2.0, 2.0 * 0.0010       # a 0.10% stop as a MOVE IN THE PRICE
+    # HIS OWN DOLLARS DO NOT REACH THE CEILING on this stop, and saying so is
+    # what makes the cut below a deliberately constructed case
+    assert cl.size_for(pair, STAKE, entry, dist,
+                       cl.book_config(pair))["truncated_by_leverage_cap"] \
+        is False, "Craig's $75 is still hitting the exchange's ceiling"
+    cfg = cl.book_config(pair, fixed_risk_dollars=500.0)
     out = cl.size_for(pair, STAKE, entry, dist, cfg)
     assert out["truncated_by_leverage_cap"] is True
     assert out["units"] * entry == pytest.approx(
@@ -1205,7 +1302,7 @@ def _working_from(t):
         risk_dollars=t.risk_dollars)
 
 
-def _wired(client, pair=PAIR, ladder=False):
+def _wired(client, pair=PAIR, book=False):
     """A CryptoMarket on a fake exchange, fed the real 5-minute tape up to the
     exact moment one real setup's candle closed — so `poll_market` has exactly
     one thing to decide.
@@ -1215,9 +1312,10 @@ def _wired(client, pair=PAIR, ladder=False):
     """
     _, liv = both(pair)
     t = next(x for x in reversed(liv) if x.setup.kind)
-    # `ladder=True` is the BLOFIN BOOK'S OWN config — what `CryptoMarket`
-    # really builds. The setups are identical either way; only the size moves.
-    cfg = cl.book_config(pair) if ladder else cl.live_config(pair)
+    # `book=True` is the BLOFIN BOOK'S OWN config — what `CryptoMarket` really
+    # builds, Craig's fixed dollars and all. The setups are identical either
+    # way; only the size moves.
+    cfg = cl.book_config(pair) if book else cl.live_config(pair)
     close = pd.Timestamp(t.setup.choch_t) + cl.bar_width(cfg)
     d5 = data(pair)["5m"]
     five = d5[(d5["t"] >= close - pd.Timedelta(days=20)) &

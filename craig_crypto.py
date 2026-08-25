@@ -285,6 +285,12 @@ class CraigConfig:
     # runs the BloFin book on.
     money_game_ladder: bool = False
     money_game_stake: float = 2178.0
+    # 2026-08-10: Craig's OWN small-account sizing, from his 2026-07-05
+    # video: "if you're trying to risk $50 per trade and you can use 25x
+    # leverage". A fixed DOLLAR risk per trade; 0 means unused. When set it
+    # outranks both the ladder and the flat dial — see
+    # craig_live.risk_share_for. Shipped at the mid of his $50-100 band.
+    fixed_risk_dollars: float = 0.0
 
     # -------------------------------------------------------------- COSTS
     # The pair's own measured round trip, as a share of notional. Charged on

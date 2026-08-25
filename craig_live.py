@@ -133,8 +133,18 @@ SHIPPING = {
 # difference between the two is a SIZE and nothing else — see the ladder
 # below, and `test_the_ladder_moves_only_the_size`.
 BOOK = {
-    "money_game_ladder": True,
+    # 2026-08-10: THE LADDER COMES OFF THIS BOOK. It was Alex Gonzalez's
+    # money-game doctrine applied to Craig Percoco's method — which breaks
+    # Wallace's own first law (methods never mix), and ten live days showed
+    # what the mix does: $400-600 losses on a $2,178 stake (three of them,
+    # −42% of the stake), and refusal cards whenever a pair's leverage cap
+    # could not carry a position ~40x the account. Craig states his OWN
+    # small-account sizing, 2026-07-05 video: "if you're trying to risk $50
+    # per trade and you can use 25x leverage". Fixed dollars, moderate
+    # leverage. His book now runs his number — mid-band $75 a trade.
+    "money_game_ladder": False,
     "money_game_stake": 2178.0,
+    "fixed_risk_dollars": 75.0,     # HIS: "$50 to $100" — mid-band
 }
 
 
@@ -746,9 +756,18 @@ def money_game_risk_dollars(equity: float, stake: float) -> float:
 
 
 def risk_share_for(equity: float, cfg: cc.CraigConfig) -> float:
-    """The share of the account one trade may cost — the ladder's when the
-    book is on it, and the flat crypto dial otherwise. ONE function, so the
-    engine, the desk and the report cannot drift apart about it."""
+    """The share of the account one trade may cost — ONE function, so the
+    engine, the desk and the report cannot drift apart about it.
+
+    Priority order, each level a professional's own stated rule:
+      1. `fixed_risk_dollars` — Craig's own small-account sizing ("risk $50
+         per trade... 25x leverage"), expressed as the share of the CURRENT
+         account that his fixed dollars amount to.
+      2. the money-game ladder (Alex's doctrine) where a book runs it.
+      3. the flat dial otherwise."""
+    fixed = float(getattr(cfg, "fixed_risk_dollars", 0.0) or 0.0)
+    if fixed > 0 and equity > 0:
+        return min(fixed / float(equity), 0.25)
     if not getattr(cfg, "money_game_ladder", False):
         return float(cfg.risk_pct_per_trade)
     return money_game_share(equity, getattr(cfg, "money_game_stake", 0.0))
