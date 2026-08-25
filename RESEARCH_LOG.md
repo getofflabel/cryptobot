@@ -3994,3 +3994,179 @@ declared finished, has one component left and it is the biggest one.**
 
 **NOTHING PROPOSED FOR DEPLOYMENT. NOTHING DEPLOYED. NO LOOK CONSUMED. NO ORDER
 PLACED. NO ACCOUNT OPENED.**
+
+---
+
+## ROUND 483 — the break is real, recurs daily, and the method walks straight through the middle of it at exactly the rate of chance (2026-08-25)
+
+**Queue item 8, verbatim, with R481's premise correction and R482's DST fix.
+`step483_hole_exposure.py`. Research only. No orders, no live file, no account,
+no re-recording, NO LOOK CONSUMED and none could be** — part (a) reads
+timestamps off a population R476 has already fully described, part (b) reads a
+recorder's own log, part (c) charges a cost onto a published aggregate. No cell
+qualified, no partition proposed, no slice opened.
+
+### The question
+
+R480 measured a documented, daily, one-hour window in which Coinbase's book is
+5-11% of normal depth, and concluded that **because the method holds 24 hours,
+every position spans it** — putting the exitable-at-all-times account ceiling at
+$17k-$26k. R481 refuted the premise (median hold **43 minutes**, 90.3% stopped
+out). The item asked for the exposure to be **counted, not assumed**, and for
+R480's ceiling to be **re-derived, not quoted**.
+
+### (a) Where on the Chicago clock does this method actually trade?
+
+68,992 entries, 2021-01-01 → 2026-07-24, bucketed in **CT** (R482: the break is
+fixed in Chicago time, so a UTC census smears it across two hours).
+
+| | count | share | flat clock | z |
+|---|---|---|---|---|
+| **exits landing in the break** | 2,877 | **4.170%** | 4.167% | **+0.04** |
+| entries landing in the break | 2,883 | 4.179% | 4.167% | +0.16 |
+| **positions straddling a break** | 13,385 | **19.401%** | — | *(R480 assumed 100%)* |
+| touching the break at all | 15,943 | 23.108% | — | — |
+| exits inside the **Friday all-markets halt** | 312 | 0.452% | 0.496% | −1.64 |
+
+**The exit share is the flat-clock rate to three decimal places.** That is not a
+weak result dressed up — it is a strong one, because **the CT clock is violently
+lumpy everywhere else.** Hours 07-09 CT run 5.7-6.1% of exits (z = +19.9, +25.9,
++19.7); hours 21-23 CT run 2.8-3.2% (z = −12.6, −15.5, −18.2). Against a clock
+with ±26 sigma structure in it, **the break hour reads +0.04 and ranks 12th of
+24.** The method has no opinion about 16:00 CT whatsoever.
+
+It holds everywhere it was checked and nothing moves: by exit reason (stops
+4.151%, z −0.20; cap-runners 4.350%, z +0.75), by coin (BTC 4.178%, ETH 4.147%,
+SOL 4.191%), and by year in all six (4.021% to 4.311%, every z inside ±0.8).
+
+**The hole exits are ordinary trades.** Mean gross in the hole **+0.1333%** of
+price against **+0.1308%** outside — difference +0.0024%, **t = +0.07**. Stop
+distance, net, and the cap-runner share all read the same both sides. There is
+no version of this where the money is concentrated in the window.
+
+**R480's premise was wrong by a factor of five and the correction runs in the
+desk's favour.** Not 100% of positions span a break — **19.4%** do.
+
+**Two things that did NOT come back clean, and they belong together:**
+
+1. **312 exits over 5.5 years land inside the Friday 16:00-16:50 CT all-markets
+   halt** (R482, primary-sourced). ~57 a year. That is not a thin book, it is a
+   **closed** one: those stops cannot fire at all and the position carries to the
+   reopen. Small, real, and a different kind of problem from a spread surcharge.
+2. **The 9.7% tail straddles a break essentially always: 6,711 of 6,712 =
+   99.985%.** They run the 24-hour cap, so of course they do. And that tail
+   carries the entire gross — at **+4.13% each**, it is **307% of the
+   population's total gross**, i.e. the stopped 90.3% are collectively negative
+   and the cap-runners are the whole number. **R482's constraint and this one
+   now point at the same trades**: the positions that make all the money are the
+   ones the venue will not finance overnight (4.07x BTC / 4.08x ETH / 2.73x SOL
+   against a 5.4x / 4.2x / 2.9x requirement) **and** the ones that sit through
+   the empty hour every single time.
+
+### (b) The hole recurs. R480's one-day number was right.
+
+18,451 samples, **13 calendar days** (2026-08-11 → 2026-08-25) against R480's
+one. Recorder untouched; this is whatever accumulated on its own.
+
+Median 5-level notional in the break hour as a share of the other 23 hours:
+
+| venue | BTC | ETH | SOL |
+|---|---|---|---|
+| **Coinbase CDE** | **11.0%** | **5.7%** | **13.2%** |
+| Bitnomial | 110.9% | 105.5% | 106.6% |
+| Kraken INTL *(offshore control)* | 94.6% | 111.7% | 69.3% |
+
+**R480 read "5-11% on all three coins at once" off a single Tuesday. On thirteen
+days it reads 5.7-13.2%.** The magnitude is now measured, not indicative. Day by
+day, Coinbase is under 25% of normal depth on **8/11 (BTC), 9/11 (ETH), 8/11
+(SOL)** days with coverage — and **all three exception days are weekend days**
+(08-16 Sun, 08-22 Sat, 08-23 Sun), where the other 23 hours are already thin so
+the ratio rises without the break-hour book improving. **Weekday-only: 10.4% BTC
+/ 5.4% ETH / 12.8% SOL.** Bitnomial still has no such hole, and neither does the
+offshore control — this is a Coinbase-specific, weekday, mechanism-explained
+event, exactly as R482's CFTC sourcing says it should be.
+
+The spread widens with it, and only on Coinbase: **2.01x BTC, 1.32x ETH, 1.99x
+SOL** (0.0154% → 0.0310%, 0.0397% → 0.0525%, 0.0264% → 0.0527%). Bitnomial 0.89-
+1.08x, Kraken 0.99-1.00x.
+
+### (c) Priced
+
+Charge the exit leg the break-hour half-spread instead of the normal one, on the
+4.170% of exits that land there. Median structural stop 0.237% of price.
+
+| venue | coin | extra per leg | × share = per entry | in stop distances |
+|---|---|---|---|---|
+| Coinbase | BTC | 0.0078% | **0.00032%** | 0.0014 |
+| Coinbase | ETH | 0.0064% | **0.00027%** | 0.0011 |
+| Coinbase | SOL | 0.0131% | **0.00055%** | 0.0023 |
+
+**Three to six ten-thousandths of a percent of price per entry, one to two
+thousandths of a stop distance.** Against a whole-window gross of +0.1309% and a
+2026 stub of +0.0360%, the break costs **about 1.5% of what is left of the
+signal.** It is a rounding error and it is now measured rather than feared.
+
+### R480's account ceiling, re-derived
+
+R480's **$17k-$26k is a property of the BOOK** — the equity whose stop can cross
+the break-hour book without walking it — and it does not move, because the book
+does not care why you are there. What the census changes is the **obligation**.
+R480 said every position spans the hole, which made exitable-at-all-times the
+only ceiling. On the measured clock:
+
+- **95.83% of exits meet the normal book** (R479's ~$300k)
+- **4.17% meet the thin one** ($17k-$26k)
+
+An account sized above the thin-book ceiling is not broken; it pays a worse fill
+on that share, and that fill is the surcharge above. **R480's sentence stays true
+as a book fact and stops being the binding constraint on account size for this
+method.** The binding constraint on this venue is back to being R482's overnight
+margin schedule, and behind it, decay.
+
+### Honest limits
+
+1. The exit timestamps are the **backtest's** exits on Alpaca's 1-minute tape —
+   when the stop or cap *would* fire, not fills observed on a US venue. Right
+   object for "which hour does the method ask to trade in", not a fill study.
+2. **13 days is 13 days.** The mechanism is primary-sourced (R482, CFTC
+   submission #2025-75) and the magnitude is now measured across two weeks. It is
+   not a year, and nothing here reads seasonality.
+3. R481's gap finding stands: Alpaca's tape has gaps and the 24h cap is counted
+   in bars, so 8.0% of holds span more than 24h of wall clock. The straddle count
+   here is computed on **wall clock**, so those holds correctly straddle more
+   breaks — which is why the cap-runner straddle rate is 99.985% and not lower.
+4. The surcharge assumes the break-hour **spread** is what a stop pays. At 5-13%
+   of normal depth a large order also **walks the book**, which the median spread
+   does not capture. The number above is a floor for a small account and
+   understates it for one near the ceiling.
+5. Every cost figure here is an **exchange-fee-only** world (R482 item 10): CFM's
+   percentage commission is still unsourced and is larger than everything in this
+   round put together.
+
+### Verdict
+
+**QUEUE ITEM 8 IS CLOSED, both legs.**
+
+(a) **The exposure is chance and nothing else.** 4.170% of exits against a
+4.167% flat clock, z = +0.04, on a clock that is ±26 sigma lumpy elsewhere.
+Stable across every reason, coin and year. The hole exits are worth the same as
+the rest (t = +0.07). **R480's "every position spans it" was wrong by 5x — the
+real straddle rate is 19.4%.**
+
+(b) **The hole is real and daily.** 13 days confirm R480's one: 5.4-12.8% of
+normal weekday depth on Coinbase, none on Bitnomial, none offshore.
+
+(c) **Priced, it is 0.0003-0.0006% of price per entry** — 1.5% of the 2026 stub
+of the signal. **The break is not a reason this method fails.**
+
+**What this round removes from the argument:** an account-size ceiling that was
+never binding, built on a hold assumption R481 had already refuted.
+
+**What it adds:** 57 exits a year into a closed Friday market, and a second,
+independent constraint landing on the same 9.7% of trades that R482's margin
+schedule already hits and that carry 100% of the gross. **Decay (item 9) is
+still the whole argument, and item 10's unsourced FCM commission is still the
+larger cost.**
+
+**NOTHING PROPOSED FOR DEPLOYMENT. NOTHING DEPLOYED. NO LOOK CONSUMED. NO ORDER
+PLACED. NO ACCOUNT OPENED. NO RECORDING RESTARTED.**
