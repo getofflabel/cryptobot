@@ -1703,21 +1703,27 @@ class Desk:
             print(f"  evening summary failed: {str(e)[:120]}")
 
     def evening_summary(self) -> str:
-        lines = []
+        """Money and actions first, stand-down reasons as one quiet line each.
+
+        The first shape of this card led with four books' refusal reasons
+        every night, and Wallace read a month of it as 'weeks of denied
+        trades' (2026-08-25). A quiet day is one line of context, not a wall
+        of rejection."""
+        heads, tails = [], []
+        sent_today = sum(1 for k in self.sent
+                         if str(new_york_now().date()) in str(k))
+        heads.append(f"orders today: {sent_today}"
+                     + ("" if sent_today else " — a quiet day, books below"))
         for m in self.markets:
             try:
                 eq = float((m.venue.account() or {}).get("equity") or 0.0)
                 eq_s = f"${eq:,.0f}"
             except Exception:                                # noqa: BLE001
-                eq_s = "equity unreadable"
-            armed = "armed" if self.is_armed(m) else "NOT armed"
-            why = str(getattr(m, "last_reason", "") or
-                      "no setup qualified today")[:160]
-            lines.append(f"{m.name.upper()} ({armed}, {eq_s})\n  {why}")
-        sent_today = sum(1 for k in self.sent
-                         if str(new_york_now().date()) in str(k))
-        lines.append(f"orders sent today: {sent_today}")
-        return "\n\n".join(lines)
+                eq_s = "equity ?"
+            armed = "" if self.is_armed(m) else " (NOT armed)"
+            why = str(getattr(m, "last_reason", "") or "no setup")[:110]
+            tails.append(f"{m.name}{armed} {eq_s} — {why}")
+        return "\n".join(heads) + "\n\n" + "\n".join(tails)
 
     # ------------------------------------------------------------ reporting
     def startup_banner(self) -> str:
