@@ -4170,3 +4170,243 @@ larger cost.**
 
 **NOTHING PROPOSED FOR DEPLOYMENT. NOTHING DEPLOYED. NO LOOK CONSUMED. NO ORDER
 PLACED. NO ACCOUNT OPENED. NO RECORDING RESTARTED.**
+
+## ROUND 485 — the decay is real in price terms, is not a decay in the edge, and does not exist on the index at all (2026-08-26)
+
+**QUEUE ITEM 9.** Research only. No orders. No live file touched. No account.
+**NO LOOK CONSUMED, and none could be** — parts (a) and (b) decompose a mean the
+desk has already published (R476, whole window, no sealed slice left anywhere on
+this family) into arithmetic parts; part (c) rebuilds R474's index population
+with R474's own code and reads it by calendar year. Nothing qualified. Nothing
+proposed. `step485_decay_anatomy.py`, full console output in
+`step485_output.txt`, index population persisted to `step485_index_entries.csv`.
+
+### The question
+
+Every "not deployable" verdict since R478 rests on one number: R476's gross fell
+from +0.2908% of price (2021) to +0.0387% (2026), 7.5x. Cost has been driven to
+a finish across three rounds and is no longer what kills this family. **Nobody
+had ever interrogated the decay itself.**
+
+### The handle, and it is exact arithmetic with no residual
+
+In this construction a stopped entry loses **exactly** its stop (verified in
+code: `np.allclose(gross, -stop)` is True on all 62,280 stopped rows). So with
+p = the share running the 24h cap, W = their mean gross, L = the mean stop of
+the stopped:
+
+    mean gross%  =  p*W − (1−p)*L
+    mean R       =  p*W_R − (1−p)        (a stop is −1.000R, always)
+
+That turns "why did the gross fall" into three numbers and no residual, and the
+three are exactly the queue's own candidates: how many, how often they win, how
+big the winners are.
+
+### (a) THE DECAY IS THE PRICE SCALE. IT IS NOT THE EDGE, AND IT IS NOT THE TAIL
+
+| year | n | n/day | p_win% | W% | L% | gross% | stop med% | W_R | mean R | t/day |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 2021 | 11,893 | 32.6 | 10.33 | 5.659 | 0.380 | 0.2437 | 0.307 | 15.12 | 0.664 | 9.29 |
+| 2022 | 13,956 | 38.2 | 10.05 | 4.645 | 0.319 | 0.1800 | 0.246 | 17.06 | 0.814 | 8.12 |
+| 2023 | 11,314 | 31.0 | 9.50 | 2.642 | 0.236 | 0.0371 | 0.159 | 12.88 | 0.319 | 1.87 |
+| 2024 | 10,863 | 29.7 | 10.02 | 3.710 | 0.267 | 0.1320 | 0.230 | 14.99 | 0.603 | 5.58 |
+| 2025 | 13,609 | 37.3 | 9.37 | 4.084 | 0.300 | 0.1106 | 0.256 | 15.77 | 0.572 | 6.10 |
+| 2026 | 7,357 | 35.9 | 8.74 | 3.420 | 0.288 | 0.0358 | 0.224 | 17.42 | 0.610 | 1.85 |
+
+The `check` column reproduces every gross to four decimals from p, W and L.
+
+**Shift-share, 2021 → 2026, total fall −0.2079% of price, residual 0.0000:**
+
+- **the WINNERS' SIZE, W 5.659% → 3.420%: −0.2134 (103% of the fall)**
+- the WIN RATE, p 10.33% → 8.74%: −0.0773 (37%)
+- the LOSERS' SIZE, L 0.380% → 0.288%: **+0.0828 (−40%, it gives back)**
+- entry count is not in the identity at all, and it went **UP**: 32.6 → 35.9 a
+  day, +10.1%.
+
+**And now the same years with the price scale divided out** (ratio to 2021):
+
+| year | gross% | ×2021 | mean R | ×2021 | stop med% | ×2021 |
+|---|---|---|---|---|---|---|
+| 2021 | 0.2437 | 1.00 | 0.664 | 1.00 | 0.307 | 1.00 |
+| 2022 | 0.1800 | 0.74 | 0.814 | 1.23 | 0.246 | 0.80 |
+| 2023 | 0.0371 | **0.15** | 0.319 | 0.48 | 0.159 | 0.52 |
+| 2024 | 0.1320 | 0.54 | 0.603 | 0.91 | 0.230 | 0.75 |
+| 2025 | 0.1106 | 0.45 | 0.572 | 0.86 | 0.256 | 0.83 |
+| 2026 | 0.0358 | **0.15** | 0.610 | **0.92** | 0.224 | 0.73 |
+
+**In % of price the method is at 0.15 of its 2021 self. In risk multiples it is
+at 0.92.** The daily-series trend confirms it and the three tests separate
+cleanly:
+
+- gross% of price: **−0.038 per year, t = −6.05** — DECAYING
+- stop median%: **−0.022 per year, t = −7.87** — DECAYING
+- risk multiple R: −0.047 per year, **t = −1.15 — FLAT**
+
+**R482's feared scenario does not happen.** It warned that if the decay were the
+9.7% cap-runner tail thinning, the venue's overnight margin schedule and the
+decay would land on the same trades and the family would be finished on two
+independent grounds. The tail did not thin: p fell 15.4% (10.33% → 8.74%) and
+**per unit of risk the winners got BIGGER, 15.12R → 17.42R**, the two almost
+exactly cancelling in `mean R = p*W_R − (1−p)`. The winners are smaller in % of
+price **because their stops are smaller**: mean stop of a cap-runner 0.641% →
+0.461%.
+
+All three coins agree in direction. BTC is the weakest — 2026 gross **−0.0079%**,
+mean R 0.146 — ETH holds at +0.0805% / 0.484R, SOL at +0.0358% / 1.227R.
+
+### (b) IT IS NOT MONOTONE, AND 2026 IS NOT A STUB ARTIFACT
+
+Every year cut to 2026's own calendar window (Jan 1 → Jul 26), so stubs are
+compared to stubs:
+
+| year (Jan 1 → Jul 26) | n | p_win% | W% | gross% | mean R | stop med% | t/day |
+|---|---|---|---|---|---|---|---|
+| 2021 | 5,567 | 10.53 | 6.396 | 0.2989 | 0.768 | 0.338 | 7.19 |
+| 2022 | 7,904 | 9.68 | 5.139 | 0.1847 | 0.939 | 0.274 | 6.10 |
+| 2023 | 7,387 | 9.65 | 3.135 | **0.0513** | 0.394 | 0.181 | 1.71 |
+| 2024 | 5,190 | 10.42 | 3.530 | 0.1496 | 0.661 | 0.210 | 4.77 |
+| 2025 | 7,761 | 9.37 | 4.362 | 0.1251 | 0.721 | 0.267 | 4.89 |
+| 2026 | 7,357 | 8.74 | 3.420 | **0.0358** | 0.610 | 0.224 | 1.85 |
+
+**2026's low reading survives the stub correction** — it is not an artifact of a
+short year. But **the series is not monotone**: 2023 was already at 0.051% on
+the same calendar cut, and the very next year recovered to 0.150%. 2026 looks
+like 2023, and 2023 was followed by a recovery. Quarterly, 2026 reads +0.004% /
++0.063% / +0.053% against 2023's +0.144% / −0.039% / +0.009%.
+
+Spearman on the six year means: rho −0.829, p 0.042 for gross%; **rho −0.429,
+p 0.397 for mean R**. Six points is six points and this is weak by construction,
+stated so nobody quotes it as a trend test.
+
+### (c) THE INDEX DOES NOT DECAY — AND ITS GROSS TRACKS ITS OWN VOLATILITY AT r = +0.92
+
+R474's population rebuilt with R474's own functions: 23,318 entries, 1-minute
+trigger, hold to close, eight levels pooled, SPY + QQQ, 2016-2026.
+
+| year | n | gross% | mean R | stop med% | t/day |
+|---|---|---|---|---|---|
+| 2016 | 2,314 | 0.0626 | 0.570 | 0.082 | 4.07 |
+| 2017 | 2,242 | 0.0427 | 0.600 | 0.055 | 5.06 |
+| 2018 | 2,462 | 0.0984 | 0.802 | 0.107 | 4.73 |
+| 2019 | 2,061 | 0.0723 | 0.841 | 0.079 | 4.95 |
+| 2020 | 2,192 | 0.1187 | 0.636 | 0.137 | 4.00 |
+| 2021 | 2,096 | 0.0707 | 0.629 | 0.082 | 4.56 |
+| 2022 | 2,209 | 0.1029 | 0.607 | 0.166 | 4.02 |
+| 2023 | 2,322 | 0.0781 | 0.673 | 0.096 | 4.40 |
+| 2024 | 2,249 | 0.0703 | 0.883 | 0.084 | 3.75 |
+| 2025 | 2,064 | 0.0714 | 0.561 | 0.100 | 4.04 |
+| 2026 | 1,107 | 0.0542 | 0.526 | 0.106 | 2.64 |
+
+Over the crypto window the index goes 1.00 / 1.46 / 1.11 / 0.99 / 1.01 / **0.77**
+against crypto's 1.00 / 0.74 / 0.15 / 0.54 / 0.45 / **0.15**. **The index has no
+7.5x decay and no decay at all outside 2026's partial year.**
+
+**Realized 1-minute volatility, mean |1-minute return| as % of price:**
+
+| year | BTC | ETH | SOL | SPY | QQQ |
+|---|---|---|---|---|---|
+| 2021 | 0.0825 | 0.1053 | 0.1844 | 0.0177 | 0.0242 |
+| 2022 | 0.0563 | 0.0787 | 0.1213 | 0.0314 | 0.0406 |
+| 2023 | 0.0384 | 0.0421 | 0.0969 | 0.0193 | 0.0254 |
+| 2024 | 0.0598 | 0.0709 | 0.0949 | 0.0169 | 0.0229 |
+| 2025 | 0.0522 | 0.0804 | 0.0906 | 0.0209 | 0.0255 |
+| 2026 | 0.0445 | 0.0717 | 0.0764 | 0.0190 | 0.0262 |
+
+**Crypto's 1-minute volatility fell to 0.52 of its 2021 level. SPY's did not
+fall at all (0.0177 → 0.0190).** The instrument that did not compress is the
+instrument whose method did not decay.
+
+**And the gross is a near-linear function of that scale on both asset classes:**
+
+- **INDEX, gross% vs SPY 1-minute vol, 11 years: r = +0.915 (p 0.000),
+  rho = +0.755 (p 0.007)**
+- **CRYPTO, gross% vs 3-coin 1-minute vol, 6 years: r = +0.933 (p 0.007),
+  rho = +0.943 (p 0.005)**
+
+Eleven points and six points respectively — a description, not a test. But it is
+the same description on two asset classes, ten years apart, and it answers the
+queue's own either/or: **this is a volatility story, not a crowding story.**
+
+### THE CORRECTION THIS ROUND FORCES, AND IT IS THE MOST CONSEQUENTIAL THING IN IT
+
+R481 closed the cost side by reporting that the 5.5-year window clears the whole
+Coinbase stack with **"+0.196 stop distances left over."** That number is a
+**ratio of means** — mean net % of price divided by the *median* stop. A book
+sized off each trade's **own** stop does not earn it.
+
+    ratio of means   0.0545 / 0.2366  =  +0.230
+    mean per trade   mean( net% / that trade's own stop% )  =  −0.346
+                     t clustered by UTC day = −3.18  (2,031 days)
+
+**The two statistics of the same population disagree in sign, and the per-trade
+one is significantly negative.** Per-trade net R is negative in **all six
+years** — 2021 −0.394, 2022 −0.039, 2023 −0.675, 2024 −0.471, 2025 −0.343,
+**2026 −0.161, the second-best year of the six.**
+
+The reason is the shape of the stop distribution, not the decay: `1/stop` has a
+heavy right tail (stop deciles p10 0.065%, p25 0.128%, p50 0.237%, p75 0.395%,
+p90 0.611%), and **12.14% of all entries have a stop tighter than the entire
+round trip.** A fixed percentage cost against a stop that can be a twentieth of
+a percent is not a rounding error; it is the trade.
+
+Stated and not acted on: **no filter is proposed and none may be.** A minimum-
+stop threshold is a swept parameter and this family has no sealed slice left
+anywhere to test one on.
+
+**The same check on the index**, whole 2016-2026 population: ratio of means
++0.402, **mean per trade −0.024, t by day −1.23**, with **14.53%** of entries
+carrying a stop tighter than the 0.04% round trip. This corroborates rather than
+contradicts R474, which already recorded that the arm as a whole has negative
+net R; what is new is the mechanism.
+
+### Honest limits
+
+1. The crypto population is step481's 68,992 funding-covered entries, not
+   R476's 71,073. Five of six years match R476's gross to four decimals; **2021
+   does not** (0.2437 here against R476's 0.2908) because only 85.6% of 2021's
+   entries have funding coverage. Where 2021 anchors a ratio in this round, it
+   anchors it at the more conservative number — the decay measured here (0.15x)
+   is therefore *smaller* than R476's headline (0.13x), not larger.
+2. Realized volatility is the mean absolute 1-minute return. It is a scale, not
+   a volatility model, and it is measured on Alpaca's tape with R481's known
+   gaps.
+3. Six years and eleven years are small samples for a correlation. Both r values
+   are reported with their Spearman companions and neither is offered as a test.
+4. The index population is pooled over eight levels un-deduped, exactly as the
+   crypto one is (pooled gross +0.0778% vs deduped +0.0611% — the dedupe moves
+   the level, not the year profile). Its 2026 is 134 days.
+5. Every cost figure remains **exchange-fee-only** on the crypto side (queue
+   item 10): CFM's percentage commission is still unsourced and is larger than
+   the entire per-year cost charged above.
+
+### Verdict
+
+**QUEUE ITEM 9 IS CLOSED. The decay is real in price terms, is not a decay in
+the edge, and is not the tail.**
+
+(a) **103% of the fall is the winners getting smaller in % of price, and they
+got smaller because their stops did.** Per unit of risk the winners got *bigger*
+(15.12R → 17.42R), the win rate fell 15%, and the two cancel: **mean R is
+0.664 → 0.610, daily trend t = −1.15, flat.** Entry count rose 10%.
+
+(b) **Not monotone.** 2023 sat at the same level on a matched calendar cut and
+2024 recovered to 2.9x it. 2026's low is real, not a stub artifact, and it is
+the second-*best* of the six years in per-trade net R.
+
+(c) **The index does not decay, and the gross of this method is a near-linear
+function of realized volatility on both asset classes (r = +0.92 / +0.93).**
+Crypto's 1-minute volatility halved; SPY's did not move. **Volatility story.
+Not crowding.**
+
+**What this removes from the argument:** "the signal decayed 7.5x" as a reason
+this family is not deployable. In the units a risk-sized book actually earns,
+it did not decay at all. R482's two-independent-grounds scenario is refuted.
+
+**What it adds, and it is worse:** the family's net problem was never the decay
+and is not fixed by a better year. **Per-trade net R is −0.346 (t = −3.18) and
+negative in every one of the six years**, because 12% of entries carry a stop
+tighter than the round trip. The desk has been quoting a ratio-of-means that
+flatters this population by a full sign.
+
+**NOTHING PROPOSED FOR DEPLOYMENT. NOTHING DEPLOYED. NO LOOK CONSUMED. NO ORDER
+PLACED. NO ACCOUNT OPENED.**

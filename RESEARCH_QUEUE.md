@@ -290,36 +290,45 @@ Rules (non-negotiable, they are why anything here can be trusted):
    fills; 13 days is not a year; the surcharge uses the median SPREAD and does not
    model walking a book at 5-13% depth, so it is a floor for a small account.
 
-9. **THE DECAY IS NOW THE WHOLE ARGUMENT. NOBODY HAS MEASURED IT.** *(new,
-   opened by R481.)* Three rounds have been spent driving the cost side of
-   this family to a finish (R478 fee, R479/R480 spread, R481 funding), and
-   the answer is that **cost is no longer what kills it.** On the full 5.5
-   years the method clears the whole Coinbase stack with +0.196 stop
-   distances left over. On the 2026 stub it does not, because the GROSS fell
-   from +0.2908% (2021) to +0.0387% (R476's year table) — **a 7.5x decay in
-   the signal itself.** Every "not deployable" verdict since R478 rests on
-   that one number and no round has ever interrogated it.
-   Deliverable, and it is a DESCRIPTION not a candidate (this family has no
-   sealed slice anywhere, so nothing here can qualify):
-   (a) Is the decay in the ENTRY COUNT, the WIN RATE, or the SIZE of the
-   winners? R481's split is the handle — 90.3% stopped / 9.7% run the cap,
-   and the whole +0.1309% comes from that 9.7% at +4.13% each. If the decay
-   is the tail thinning, that is a different fact about the market than if
-   the stops got worse.
-   (b) Is it monotone or is 2026 a stub? 2026 is a partial year ending
-   2026-07-26 and is being quoted as if it were a regime.
-   (c) Does the same decay show on the INDEX over the same calendar years?
-   R474's SPY/QQQ population is already built. If the decay is crypto-only
-   it is a crowding story; if it is both, it is a volatility story.
-   `step481_entries_funding.csv` already holds the crypto side of this.
-
-   **R482 ADDITION, and it reorders this item's own list:** (a) is now the most
-   decisive leg. R482 found the CDE **overnight** leverage ceiling is 4.07x BTC
-   / 4.08x ETH / 2.73x SOL against a method that needs 5.4x / 4.2x / 2.9x — so
-   the 9.7% tail that produces the whole gross is exactly the part the venue is
-   least willing to finance. **If (a) shows the decay IS that tail thinning,
-   the venue constraint and the decay are pointed at the same 9.7% of trades
-   and this family is finished on two independent grounds.**
+9. ~~**THE DECAY IS NOW THE WHOLE ARGUMENT. NOBODY HAS MEASURED IT.**~~
+   **DONE — R485, 2026-08-26. CLOSED, all three legs. No look consumed.**
+   **THE DECAY IS THE PRICE SCALE, NOT THE EDGE.** In % of price the method is
+   at **0.15** of its 2021 self; in **risk multiples it is at 0.92** (mean R
+   0.664 -> 0.610, daily trend **t = -1.15, flat**), while gross% trends at
+   **t = -6.05** and the median stop at **t = -7.87**. The exact identity
+   `mean gross% = p*W - (1-p)*L` (a stopped entry loses exactly its stop,
+   verified) decomposes the -0.2079% fall with **zero residual**: winners'
+   SIZE **103%**, win rate 37%, smaller losses give back 40%. **Entry count
+   went UP 10%.**
+   **(a) R482's feared scenario is REFUTED — the tail did not thin.** p fell
+   only 15.4% (10.33% -> 8.74%) and per unit of risk the winners got **BIGGER,
+   15.12R -> 17.42R**; the two cancel. Winners are smaller in % of price
+   because their stops are (0.641% -> 0.461%). The venue's overnight margin
+   constraint and the decay are **not** pointed at the same trades.
+   **(b) NOT monotone, and 2026 is not a stub artifact.** Every year cut to
+   Jan 1 -> Jul 26: 0.299 / 0.185 / **0.051** / 0.150 / 0.125 / **0.036**.
+   2023 was already this low and 2024 recovered to 2.9x it. In per-trade net R
+   2026 is the **second-best** of the six years.
+   **(c) THE INDEX DOES NOT DECAY. Volatility story, not crowding.** SPY/QQQ
+   2016-2026 sits in 0.043-0.119% with no trend; over the crypto window it goes
+   1.00 / 1.46 / 1.11 / 0.99 / 1.01 / 0.77 against crypto's 1.00 / 0.74 / 0.15
+   / 0.54 / 0.45 / 0.15. Crypto's 1-minute volatility fell to **0.52** of 2021;
+   **SPY's did not fall at all** (0.0177 -> 0.0190). And the gross is a
+   near-linear function of that scale on both asset classes: **index r = +0.915
+   (11 years, p 0.000), crypto r = +0.933 (6 years, p 0.007).**
+   **THE ROUND'S REAL OUTPUT, AND IT IS A CORRECTION TO THIS LOG:** R481's
+   "+0.196 stop distances left over" is a **ratio of means** (mean net% over
+   MEDIAN stop). A book sized off each trade's OWN stop earns the per-trade
+   mean, which is **-0.346, t by day -3.18, negative in ALL SIX YEARS.** The
+   two statistics of the same population **disagree in sign.** Cause: `1/stop`
+   has a heavy right tail and **12.14% of entries have a stop tighter than the
+   whole round trip.** Same check on the index: ratio of means +0.402, per
+   trade **-0.024** (t -1.23), 14.53% of entries under the 0.04% round trip —
+   which corroborates R474's own "the arm as a whole has NEGATIVE net R" and
+   supplies the mechanism.
+   **Barred from follow-up: no minimum-stop filter.** A stop threshold is a
+   swept parameter and this family has no sealed slice left anywhere to test
+   one on. The fact is recorded; it is not to be acted on as a selection rule.
 
 10. **WHAT DOES THE ACCOUNT PAY, NOT THE EXCHANGE?** *(new, opened by R482, and
    it is the last open cost question.)* R481 declared the cost side finished and
@@ -343,6 +352,50 @@ Rules (non-negotiable, they are why anything here can be trusted):
    **Reading documents. No account, no order, no money.** If (a) turns out to
    require an account, that is itself the finding: the true cost of this venue
    is not knowable before signing up, and it goes to Wallace as such.
+
+11. **THE LOG'S NET NUMBERS ARE RATIO-OF-MEANS. RESTATE THEM PER TRADE.**
+   *(new, opened by R485, and it is an AUDIT, not a hypothesis.)* R485 found
+   that the desk's headline risk-multiple statistic and the number a
+   risk-sized book actually earns **disagree in sign** on the crypto 1-minute
+   family (+0.230 vs -0.346, t -3.18). The same discrepancy can be sitting
+   under any "x stop distances" or "net R" sentence in this log that was
+   computed as (mean net %) / (a median or mean stop) rather than as the mean
+   of per-trade net/stop.
+   Deliverable: grep the log and the step files for every risk-multiple claim,
+   classify each as ratio-of-means or per-trade, and **restate the
+   ratio-of-means ones per trade with a t clustered by day.** Where a
+   per-trade recomputation is impossible because the per-entry data is gone,
+   say so and mark the number unverified rather than quietly keeping it.
+   Priority note: R474's surviving cell (item 0) already reports a PER-TRADE
+   net R (+0.132) — `simulate()` computes net_R per row and `summarise()`
+   takes its mean — so item 0 is **not** exposed to this error. Confirm that
+   in code, in writing, before touching anything else, because that is the one
+   number in front of Wallace right now.
+   Reading and arithmetic on data already on disk. No new backtest, no look.
+
+12. **IF THE GROSS IS A LINEAR FUNCTION OF VOLATILITY, WHAT IS THE STOP?**
+   *(new, opened by R485, and it is a DESCRIPTION with a hard fence around
+   it.)* R485 established that this method's gross tracks realized 1-minute
+   volatility at r = +0.92 on the index over 11 years and r = +0.93 on crypto
+   over 6, and that the whole "decay" is that scale moving. It also
+   established that the binding problem is the **shape of the stop
+   distribution**: 12% of crypto entries and 14.5% of index entries carry a
+   stop tighter than the round trip they must pay, which is what drives
+   per-trade net R negative while the ratio-of-means looks positive.
+   Deliverable, purely descriptive:
+   (a) The joint distribution of stop size and outcome. Do the tightest-stop
+       entries differ in gross R from the widest, or are they the same trade
+       at a different scale? If they are the same trade, the cost problem is a
+       pure SIZING fact and can be stated as one.
+   (b) Is the tight-stop share itself a function of volatility? If low
+       volatility manufactures unaffordable stops, then "the method degrades
+       in quiet markets" and "cost eats it" are one sentence, not two.
+   (c) The same two readings on the index, where volatility did not compress.
+   **THE FENCE, non-negotiable:** this item may NOT propose, test or imply a
+   minimum-stop filter, a volatility gate, or any threshold. Both families'
+   sealed slices are spent; nothing here can become a candidate and no
+   parameter may be swept. If the round finds itself wanting to cut the
+   population, it has failed and must report the description only.
 
 ## Obsoleted by the 2026-07-25 strategy pivot — DO NOT RUN
 Wallace retired every self-derived strategy and rebuilt the desk on TJR's
@@ -506,6 +559,23 @@ structure asks for 15-20x, and the mandate stands until Wallace changes it.
 R481 also corrects an assumption every round since R478 has carried: **the
 method does not hold 24 hours — the median position lives 43 minutes** and 90%
 are stopped out. Anywhere this log reasons from "a 24-hour hold", check it.
+
+NOTE (R485): **the desk has been quoting the wrong statistic.** "0.358 stop
+distances" and "+0.196 left over" are ratios of means; the number a book sized
+off each trade's own stop earns is the **per-trade mean, and it is -0.346 with
+t = -3.18, negative in all six years.** The cause is not the decay: `1/stop` has
+a heavy right tail and **12.14% of crypto entries (14.53% of index entries)
+carry a stop tighter than the entire round trip.** This is the strongest
+argument yet that the binding constraint on this desk is neither leverage nor
+account size but the **shape of the stop distribution** — and it cuts against
+the 15-20x mandate from the opposite direction to R478's: the tier is not merely
+unrequired, the entries whose structure would ALLOW it are precisely the ones
+that cannot pay for themselves. Owner mandate stands until Wallace changes it.
+NOTE (R485, decay): the decay this desk has been treating as a fact about the
+method is a fact about the MARKET. In risk multiples the crypto 1-minute method
+is at 0.92 of its 2021 self with a flat trend (t = -1.15); the index does not
+decay at all; and gross tracks realized 1-minute volatility at r = +0.92 / +0.93
+on the two asset classes. **Stop reasoning from "the signal decayed."**
 
 NOTE (R483): **the account-size ceiling R479/R480 raised is not binding on this
 method and the daily book hole is not a reason it fails.** The method's exits sit
