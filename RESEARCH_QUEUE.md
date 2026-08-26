@@ -366,11 +366,15 @@ Rules (non-negotiable, they are why anything here can be trusted):
    ratio-of-means ones per trade with a t clustered by day.** Where a
    per-trade recomputation is impossible because the per-entry data is gone,
    say so and mark the number unverified rather than quietly keeping it.
-   Priority note: R474's surviving cell (item 0) already reports a PER-TRADE
-   net R (+0.132) — `simulate()` computes net_R per row and `summarise()`
-   takes its mean — so item 0 is **not** exposed to this error. Confirm that
-   in code, in writing, before touching anything else, because that is the one
-   number in front of Wallace right now.
+   **ITEM 0 IS NOT EXPOSED, CONFIRMED IN R485 — this was checked first because
+   it is the one number in front of Wallace right now.** `simulate()` computes
+   `net_R` per row and `summarise()` takes its mean, so R474's +0.132 is
+   already a per-trade figure. Independently confirmed by arithmetic on R474's
+   own published foursome: if its net R were a ratio-of-means sharing a stop
+   divisor with its gross R, then grossR/netR would equal gross%/net%. It does
+   not (4.68 against 2.23), and the implied mean cost-over-stop of 0.486
+   matches the reported 0.084% median stop. **R474's sealed numbers stand as
+   published.**
    Reading and arithmetic on data already on disk. No new backtest, no look.
 
 12. **IF THE GROSS IS A LINEAR FUNCTION OF VOLATILITY, WHAT IS THE STOP?**
