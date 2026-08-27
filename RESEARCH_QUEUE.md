@@ -330,28 +330,57 @@ Rules (non-negotiable, they are why anything here can be trusted):
    swept parameter and this family has no sealed slice left anywhere to test
    one on. The fact is recorded; it is not to be acted on as a selection rule.
 
-10. **WHAT DOES THE ACCOUNT PAY, NOT THE EXCHANGE?** *(new, opened by R482, and
-   it is the last open cost question.)* R481 declared the cost side finished and
-   R482 reopened it: the exchange fee is the SMALLER half. **Coinbase Financial
-   Markets bills a percentage of notional on top of CDE's $0.10/side, and the
-   only public figure is a marketing floor ("as low as 0.02%").** At that floor
-   alone the commission exceeds the whole exchange fee; the standing volume-tier
-   table is unpublished and coinbase.com 403s every unauthenticated request.
-   Every "net" number in this log — R478's, R479's, R480's, R481's ledger and
-   R482's own table — is an exchange-fee-only floor, optimistic by **at least
-   0.04% of price a round trip**, which is larger than the 2026 stub of the
-   signal (+0.0387%).
-   Deliverable, in preference order, cheapest first:
-   (a) **A published CFM fee schedule from a non-Coinbase channel** — the NFA
-   BASIC record, an FCM disclosure document, a CFTC Form 1-FR, an introducing
-   broker's published rate card (Lincoln Park already publishes CDE's exchange
-   fee, so it may publish the commission), or Coinbase's own investor materials.
-   (b) Failing that, **state the BREAK-EVEN commission** — the CFM rate at which
-   the method goes negative on the full window and on the 2026 stub — so the
-   unsourced number has a bar to clear rather than a guess attached.
-   **Reading documents. No account, no order, no money.** If (a) turns out to
-   require an account, that is itself the finding: the true cost of this venue
-   is not knowable before signing up, and it goes to Wallace as such.
+10. ~~**WHAT DOES THE ACCOUNT PAY, NOT THE EXCHANGE?**~~
+   **DONE — R486, 2026-08-27. CLOSED. No look consumed. No account, no order.**
+   **THE ITEM'S PREMISE WAS WRONG: CFM's fee is INCLUSIVE of the exchange's, not
+   on top of it.** Primary-sourced from Coinbase's own launch announcement
+   ("Perpetual futures have arrived in the U.S.", 2025-07-21), read via the
+   **Internet Archive** because coinbase.com and help.coinbase.com still 403 every
+   unauthenticated request. Verbatim: *"fees as low as 0.02%\* per contract"* and
+   *"\*Trading fees are inclusive of exchange, clearing, and NFA fees. A minimum of
+   $0.15 is charged per contract to cover these fixed costs."* So the account pays
+   **max(rate x notional, $0.15) per side**, with CDE's $0.10 INSIDE it — CFM's own
+   take over the exchange fee is **five cents a side**, not a percentage on top.
+   **The thing that actually bites is the $0.15 MINIMUM, which no percentage-based
+   cost model in this log could see.** At live notionals (0.01 BTC / 0.1 ETH /
+   5 SOL = $801 / $251 / $544) **the minimum binds on ETH and SOL**, where the
+   account pays $0.15 whatever the rate says — **including at a rate of zero.**
+   Corrected all-in: **BTC 0.0556% / ETH 0.1463% / SOL 0.0816%.** The item's
+   "optimistic by at least 0.04% a round trip" is **overstated 2-3x on BTC and SOL
+   (+0.0150 / +0.0184) and correct on ETH (+0.0399).**
+   **(a) PARTIALLY MET, and the fallback clause is now answered: the full schedule
+   is NOT knowable before signing up.** CFM's mandatory **CFTC Rule 1.55(k)
+   disclosure (2026-05-21, 12pp) was fetched and text-extracted in full and
+   contains NO FEE SCHEDULE**; NFA BASIC publishes registration only; Lincoln Park
+   publishes the exchange fee ($.10, corroborating R482 a second time) and no
+   commission; Tradovate is a different FCM whose fee is additive. **The standing
+   volume-tier ladder above the 0.02% floor is UNSOURCED and no value was invented
+   for it.** Bonus: the docs' "0.00%/0.03%" is re-confirmed as the INTERNATIONAL
+   book (it sits next to a "10 USDC min notional"), independently re-striking it.
+   **(b) THE BAR, and it is two different answers per R485.** Break-even all-in
+   round trip, whole 68,992-entry population: **mean-net 0.1309%, per-trade R
+   0.0448%.**
+   - **On mean-net the sourced 0.02% floor CLEARS all three coins**, and the ladder
+     now has a number to beat: the method goes negative above **0.0355%/side on
+     BTC, 0.0637% on ETH, 0.0672% on SOL.** At the one published CFM rate above the
+     floor (0.05%, the older futures' intro tier) **BTC goes negative** and ETH is
+     untouched because its minimum binds at both rates.
+   - **On per-trade R NO BAR EXISTS TO CLEAR. The $0.15 minimum ALONE exceeds the
+     entire fee budget on all three coins; a commission of zero still leaves it
+     negative.** Budgets are $0.048 / $0.032 / $0.146 a side against a $0.15 floor.
+   **The constraint has a PRICE attached, which is the most useful number here:**
+   the minimum becomes payable at **BTC $251,590 / ETH $11,621 / SOL $112.** SOL is
+   at $108.74 — **within 4%.** That is a finding about the size of the CONTRACT
+   against the size of the signal, per the owner's cost rule.
+   **2026 IS THE STRONGEST YEAR ON THE PER-TRADE STATISTIC, NOT THE WEAKEST:** its
+   break-even is **0.0581%**, above the full window's 0.0448%. **"The 2026 stub
+   cannot pay for itself" is true of the mean-net statistic only** — qualify it
+   everywhere this file uses it.
+   Honest limits: every percentage is a **price snapshot** (2026-08-27, BTC
+   $80,130) because a fixed-dollar fee over a moving notional re-prices with the
+   coin — quote the dollar figures and the price thresholds, not the percentages;
+   and **"per side" is an inference, not a quotation** (the footnote says "per
+   contract"), with the alternative halving every fee figure.
 
 11. **THE LOG'S NET NUMBERS ARE RATIO-OF-MEANS. RESTATE THEM PER TRADE.**
    *(new, opened by R485, and it is an AUDIT, not a hypothesis.)* R485 found
@@ -539,11 +568,33 @@ positions that run the 24-hour cap, which per R481 produce the entire gross. The
 owner mandate stands until Wallace changes it; what is recorded here is that the
 venue will not lend at the tier the mandate asks for, overnight, at any account
 size.
-NOTE (R482, cost): every cost figure in this file is an **exchange fee**. The
-retail FCM (Coinbase Financial Markets) bills a **percentage of notional** on
-top, published only as a floor ("as low as 0.02%"). At that floor it exceeds the
-whole exchange fee. Treat every "all-in" and "net" number above as optimistic by
-**at least 0.04% of price a round trip** until item 10 sources it.
+NOTE (R482, cost, SUPERSEDED BY R486 — kept so the correction is readable): every
+cost figure in this file is an **exchange fee**. The retail FCM (Coinbase
+Financial Markets) bills a **percentage of notional** on top, published only as a
+floor ("as low as 0.02%"). At that floor it exceeds the whole exchange fee. Treat
+every "all-in" and "net" number above as optimistic by **at least 0.04% of price
+a round trip** until item 10 sources it.
+NOTE (R486, cost, and it REPLACES the note above): **CFM's fee is INCLUSIVE of the
+exchange, clearing and NFA fees, not charged on top of them.** The account pays
+**max(rate x notional, $0.15) per contract per side**, with CDE's $0.10 inside it,
+so CFM's own take is **five cents a side**. The corrected all-in round trips are
+**BTC 0.0556% / ETH 0.1463% / SOL 0.0816%** (spread term unchanged from R482), and
+R482's "at least 0.04%" is **overstated 2-3x on BTC and SOL, correct on ETH.**
+**The binding term is not a percentage at all — it is the $0.15 MINIMUM**, which
+binds on ETH and SOL at today's contract notionals and is what the account pays
+even at a commission rate of zero. **Cost in this family is now a function of the
+PRICE OF THE COIN**, because a fixed-dollar fee over a moving notional re-prices
+every time the coin does. Quote the dollar figures, not the percentages, and
+re-run `step486_cfm_commission.py` whenever prices have moved materially.
+NOTE (R486, the bar): break-even all-in round trip on the whole 68,992-entry
+population is **0.1309% on the mean-net statistic and 0.0448% per trade.** The
+sourced 0.02% floor clears the first on all three coins (the method goes negative
+above **0.0355%/side BTC, 0.0637% ETH, 0.0672% SOL**) and **cannot clear the
+second at any rate including zero**, because the $0.15 minimum alone exceeds the
+per-trade budget. The minimum becomes payable at **BTC $251,590 / ETH $11,621 /
+SOL $112** — SOL is within 4% of it. And **2026 is the STRONGEST year on the
+per-trade statistic** (break-even 0.0581% against the window's 0.0448%), so
+"the 2026 stub cannot pay for itself" is a mean-net sentence only.
 NOTE (R474): on the index the 1-minute swing is **0.046% of price on SPY
 (21.6x at 1% risked) and 0.063% on QQQ (15.8x)** — the tightest structure
 this desk has measured anywhere, and the index costs 0.04% a round trip

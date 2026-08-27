@@ -4410,3 +4410,218 @@ flatters this population by a full sign.
 
 **NOTHING PROPOSED FOR DEPLOYMENT. NOTHING DEPLOYED. NO LOOK CONSUMED. NO ORDER
 PLACED. NO ACCOUNT OPENED.**
+
+## ROUND 486 — the account's fee is INCLUSIVE of the exchange's, not on top of it, and the thing that actually bites is a fifteen-cent minimum (2026-08-27)
+
+**QUEUE ITEM 10.** Research only. No orders. No account opened. No live file
+touched, imported or modified. **NO LOOK CONSUMED, and none could be** — Section 4
+solves an equation on the mean of a population the desk has already fully
+published (step481's 68,992 funding-covered entries; no sealed slice left
+anywhere on this family). No partition proposed, no parameter swept, no cell
+qualified. `step486_cfm_commission.py`, full console output in
+`step486_output.txt`, table persisted to `step486_cfm_breakeven.json`.
+
+### The question
+
+R481 declared the cost side finished; R482 reopened it. The exchange fee is the
+smaller half: **Coinbase Financial Markets (CFM), the FCM a US person actually
+faces, bills a percentage of notional on top of CDE's $0.10/side**, published
+only as a marketing floor ("as low as 0.02%"). At that floor alone the
+commission exceeds the whole exchange fee it sits on. Every "net" number in this
+log was therefore an exchange-fee-only floor, **optimistic by at least 0.04% of
+price a round trip** — larger than the 2026 stub of the signal. Deliverable:
+(a) source the schedule from a non-Coinbase channel; failing that, (b) state the
+**break-even commission** so the unsourced number has a bar to clear.
+
+### (a) THE PREMISE IN THE SENTENCE ABOVE IS FALSE, AND THAT IS THE ROUND'S FIRST OUTPUT
+
+`www.coinbase.com` and `help.coinbase.com` still 403 every unauthenticated
+request (R482's finding, re-confirmed). The page was read instead from the
+**Internet Archive**, snapshot `20251117042013` of Coinbase's own launch
+announcement *"Perpetual futures have arrived in the U.S."* (published
+2025-07-21). Verbatim, body and footnote:
+
+> "Low trading fees: We're making derivatives trading more accessible with fees
+> as low as 0.02%\* per contract."
+>
+> "\*Trading fees are inclusive of exchange, clearing, and NFA fees. A minimum of
+> $0.15 is charged per contract to cover these fixed costs."
+
+**The commission is not additive. It is INCLUSIVE**, and it carries a
+**per-contract MINIMUM the item never knew existed.** What the account pays is
+
+    per side  =  max( rate × notional , $0.15 )
+
+with CDE's sourced $0.10/side living **inside** it. Where the minimum binds,
+**CFM's own take over the exchange fee it collects is exactly five cents a
+side** — the number item 10 was trying to bound is a nickel, not a percentage.
+
+Base case is **per side**, on three grounds stated in the file: the exchange fee
+this figure is inclusive of is explicitly per side (CFTC submission #2025-75,
+R482); Coinbase's US futures documentation describes the older CFM futures fee as
+"per contract, per side"; and it is the conservative reading. **If it is per
+round turn instead, every fee number in this round halves** — stated, not buried.
+
+**Still UNSOURCED and given no invented value: the standing volume-tier ladder
+above the 0.02% floor.** Channels tried and what each gave, in full:
+
+| channel | result |
+|---|---|
+| Coinbase blog, via Internet Archive | **HIT** — floor rate, the $0.15 minimum, the inclusive footnote |
+| **CFTC Rule 1.55(k) FCM Specific Disclosure**, CFM, dated 2026-05-21, 12pp | fetched and text-extracted in full: **NO FEE SCHEDULE.** The only "charged" in the document is interest on account balances |
+| NFA BASIC record for CFM | registration and disciplinary record only; BASIC does not publish fees |
+| Lincoln Park Financial, BIP contract page | publishes the **exchange** fee ($.10/contract, independently corroborating R482 a second time) and margins; no FCM commission |
+| Tradovate, CDE nano page | "Exchange, clearing and NFA fees still apply" — a **different FCM's structure, additive not inclusive**; own commission not published |
+| docs.cdp.coinbase.com, US futures | "the same fee structure [as Advanced Trade]. During the introductory beta period, we are only charging **0.05%** (the lowest Advanced Trade tier)" — the older CFM futures, and the only published CFM percentage **above** the floor |
+| docs.cdp.coinbase.com, perpetuals | "0.00% maker and 0.03% taker" **plus a "10 USDC min notional"** — the INTERNATIONAL book. Independently re-confirms R482's strike of that figure from the US table |
+
+**Deliverable (a) is PARTIALLY met, and the item's own fallback clause is now
+answered: the full schedule is not knowable before signing up.** The FCM's
+mandatory public regulatory disclosure does not carry a rate card, and no
+third-party channel publishes CFM's commission.
+
+### The item's own bound, tested at live notional (BTC $80,130 / ETH $2,507.50 / SOL $108.74)
+
+Contract sizes read live off the public product endpoint: **0.01 BTC / 0.1 ETH /
+5 SOL** → notionals **$801 / $251 / $544**.
+
+| coin | 0.02% × N | what binds | $/side | fee RT % | exchange-only RT % | **CFM increment** | item said ≥0.04% |
+|---|---|---|---|---|---|---|---|
+| BTC | $0.160 | the **rate** | $0.160 | 0.0400 | 0.0250 | **+0.0150** | overstated |
+| ETH | $0.050 | the **MINIMUM** | $0.150 | 0.1196 | 0.0798 | **+0.0399** | right on this coin |
+| SOL | $0.109 | the **MINIMUM** | $0.150 | 0.0552 | 0.0368 | **+0.0184** | overstated |
+
+**On two coins of three the minimum binds, and there the 0.02% floor rate is
+irrelevant — the account pays $0.15 whatever the rate says, and would pay $0.15
+at a rate of zero.** The item's "optimistic by at least 0.04%" is **overstated
+by 2-3x on BTC and SOL and correct on ETH**.
+
+All-in, keeping this log's spread term exactly as published (R482's 9-day
+sample) and changing only the fee: **BTC 0.0556%, ETH 0.1463%, SOL 0.0816%**
+against R482's 0.0432 / 0.1126 / 0.0724. Part of each delta is the coin being
+cheaper today than on R482's day, not the fee changing — a fixed-dollar minimum
+is a percentage that **moves with the price of the coin**, and no round in this
+log had treated cost that way before.
+
+### (b) THE BREAK-EVEN COMMISSION — and it is two different answers, per R485
+
+    MEAN NET %      c* = mean(gross)                        ← the log's headline statistic
+    PER-TRADE R     c* = mean(gross/stop) / mean(1/stop)    ← what a risk-sized book earns
+
+| window | n | gross % | t by day | **BE, mean-net** | **BE, per-trade R** |
+|---|---|---|---|---|---|
+| FULL | 68,992 | +0.1309 | 14.14 | **0.1309%** | **0.0448%** |
+| 2021 | 11,893 | +0.2437 | 9.29 | 0.2437 | 0.0353 |
+| 2022 | 13,956 | +0.1800 | 8.12 | 0.1800 | 0.0662 |
+| 2023 | 11,314 | +0.0371 | 1.87 | 0.0371 | 0.0241 |
+| 2024 | 10,863 | +0.1320 | 5.58 | 0.1320 | 0.0443 |
+| 2025 | 13,609 | +0.1106 | 6.10 | 0.1106 | 0.0486 |
+| **2026** | 7,357 | +0.0358 | 1.85 | **0.0358** | **0.0581** |
+
+**Read the 2026 row before any other. On the per-trade statistic the 2026 stub's
+break-even is HIGHER than the full window's — 0.0581% against 0.0448%.** 2026 can
+afford *more* cost per trade than the average year of this method, not less. That
+is R485's "2026 is the second-best of the six years in per-trade net R" arriving
+from the opposite direction, and it means **"the 2026 stub cannot pay for
+itself" is a fact about the mean-net statistic only.** Anywhere this log uses
+that sentence, it needs the qualifier.
+
+**Per coin — the bar the unsourced tier ladder has to clear.** Subtract the
+spread from the break-even to get the fee budget; halve it for one side; price
+that side against the sourced $0.15 minimum. **If the budget is under $0.15, no
+commission rate clears — not even zero.**
+
+**On MEAN NET %:**
+
+| coin | BE all-in | spread | fee budget | $/side max | vs $0.15 | **max rate/side** | price needed |
+|---|---|---|---|---|---|---|---|
+| BTC | 0.0865% | 0.0156 | 0.0709% | $0.284 | CLEARS | **0.0355%** | $42,309 |
+| ETH | 0.1540% | 0.0267 | 0.1273% | $0.160 | CLEARS | **0.0637%** | $2,357 |
+| SOL | 0.1608% | 0.0264 | 0.1344% | $0.365 | CLEARS | **0.0672%** | $45 |
+
+**On PER-TRADE NET R:**
+
+| coin | BE all-in | spread | fee budget | $/side max | vs $0.15 | max rate/side | price needed |
+|---|---|---|---|---|---|---|---|
+| BTC | 0.0275% | 0.0156 | 0.0119% | $0.048 | **FAILS** | **none exists** | $251,590 |
+| ETH | 0.0525% | 0.0267 | 0.0258% | $0.032 | **FAILS** | **none exists** | $11,621 |
+| SOL | 0.0802% | 0.0264 | 0.0538% | $0.146 | **FAILS** | **none exists** | $112 |
+
+**THIS IS THE ROUND'S REAL OUTPUT.** In the units a risk-sized book actually
+earns, **the break-even commission does not exist on any of the three coins at
+today's prices.** The **$0.15 minimum alone**, before a single basis point of
+commission and before the exchange's own $0.10 is even considered separately,
+exceeds the whole per-trade fee budget. A CFM rate of **zero** would not save it.
+
+And because the minimum is a fixed dollar amount, the constraint has a price
+attached, which is the most useful single number this round produces: the
+minimum becomes payable at **BTC $251,590, ETH $11,621, or SOL $112.** SOL is at
+$108.74 — **within 4% of the level at which its own contract can carry the
+charge.** That is a fact about the SIZE of the contract relative to the size of
+the signal, which is exactly the shape the owner rule says a cost finding takes.
+
+### The one published CFM percentage above the floor, against the bar
+
+0.05% (the lowest Advanced Trade tier, quoted for the older CFM futures) —
+not the perp schedule, but the right order of magnitude for a real tier:
+
+| coin | $/side @0.02% | $/side @0.05% | all-in @0.02% | all-in @0.05% | BE mean-net | BE per-trade R |
+|---|---|---|---|---|---|---|
+| BTC | $0.160 | $0.401 | 0.0556% | **0.1156%** | 0.0865% | 0.0275% |
+| ETH | $0.150 | $0.150 | 0.1463% | 0.1463% | 0.1540% | 0.0525% |
+| SOL | $0.150 | $0.272 | 0.0816% | **0.1264%** | 0.1608% | 0.0802% |
+
+On the mean-net statistic the 0.02% floor tier clears on all three coins.
+**At 0.05% BTC goes negative** (0.1156% against a 0.0865% break-even) and SOL
+survives; **ETH is untouched by the rate change entirely, because the minimum
+binds at both rates.** On the per-trade statistic nothing clears at either rate,
+per the table above.
+
+### Honest limits
+
+1. **Every percentage here is a price snapshot** (2026-08-27, BTC $80,130). The
+   fee is a fixed dollar amount over a moving notional, so all of Section 3 and
+   the "$/side max" columns re-price whenever the coins do. The dollar figures
+   ($0.15, $0.10, $0.05 increment) and the "price needed" thresholds are the
+   stable ones; quote those, not the percentages.
+2. **Per side is an inference, not a quotation.** Coinbase's footnote says "per
+   contract" and does not say "per side". The three grounds for the base case are
+   in the file; the alternative halves every fee figure and is stated explicitly.
+3. **The tier ladder is still unsourced.** 0.02% is a floor, and the 0.05% used
+   as a probe belongs to a different CFM product. Nothing above the floor is
+   asserted as CFM's actual perp rate.
+4. The spread term is R482's 9-day sample, carried unchanged so that only the fee
+   moves. R480's full-clock medians are reported alongside as a sensitivity and
+   shift the all-in by hundredths of a percent.
+5. The break-evens are solved on step481's 68,992-entry population, which is
+   R476's family with funding coverage — five of six years match R476's gross to
+   four decimals and 2021 does not (85.6% coverage), exactly as R485 recorded.
+
+### Verdict
+
+**QUEUE ITEM 10 IS CLOSED. The cost side of this family is finished for the
+second time, and this time the account is in the number.**
+
+1. **The item's premise was wrong in the desk's favour on the structure and
+   against it on the mechanism.** CFM's fee is inclusive of the exchange's, not
+   additive, so the increment is a nickel a side rather than a percentage on top;
+   but it carries a **$0.15 per-contract minimum** that binds on two of three
+   coins and is invisible to every percentage-based cost model in this log.
+2. **"Optimistic by at least 0.04% a round trip" is overstated by 2-3x on BTC and
+   SOL and correct on ETH.** The corrected all-in is 0.0556 / 0.1463 / 0.0816%.
+3. **On the mean-net statistic there is a real bar and the sourced floor clears
+   it**: the method goes negative above roughly **0.036%/side on BTC, 0.064% on
+   ETH, 0.067% on SOL**. The unsourced ladder now has a number to beat.
+4. **On the per-trade statistic no bar exists to clear.** The $0.15 minimum alone
+   exceeds the fee budget on all three coins; a zero commission still leaves it
+   negative. The constraint is the **size of the contract against the size of the
+   signal**, and it prices out at BTC $251,590 / ETH $11,621 / SOL $112.
+5. **2026 is not the weak year on this statistic — it is the strongest of the
+   six.** Its per-trade break-even, 0.0581%, is above the full window's 0.0448%.
+
+Nothing here declines a trade, gates a strategy or ranks an instrument, and
+nothing here is offered as a reason this family is or is not deployable — it has
+no sealed slice left anywhere and cannot be a candidate on any evidence.
+
+**NOTHING PROPOSED FOR DEPLOYMENT. NOTHING DEPLOYED. NO LOOK CONSUMED. NO ORDER
+PLACED. NO ACCOUNT OPENED.**

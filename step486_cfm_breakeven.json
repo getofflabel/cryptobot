@@ -1,0 +1,178 @@
+{
+ "windows": {
+  "FULL": {
+   "n": 68992,
+   "days": 2031,
+   "gross": 0.1309279967557868,
+   "t_day": 14.135577095561338,
+   "be_mean_net": 0.1309279967557868,
+   "be_per_trade_R": 0.04478323766602783
+  },
+  "2021": {
+   "n": 11893,
+   "days": 365,
+   "gross": 0.2436975031304114,
+   "t_day": 9.293948506248425,
+   "be_mean_net": 0.2436975031304114,
+   "be_per_trade_R": 0.035260734630087325
+  },
+  "2022": {
+   "n": 13956,
+   "days": 365,
+   "gross": 0.17999840316504856,
+   "t_day": 8.118572219221319,
+   "be_mean_net": 0.17999840316504856,
+   "be_per_trade_R": 0.06618234534176742
+  },
+  "2023": {
+   "n": 11314,
+   "days": 365,
+   "gross": 0.03711897575371069,
+   "t_day": 1.873240982175346,
+   "be_mean_net": 0.03711897575371069,
+   "be_per_trade_R": 0.024084343702116245
+  },
+  "2024": {
+   "n": 10863,
+   "days": 366,
+   "gross": 0.1319562689985681,
+   "t_day": 5.581079172932909,
+   "be_mean_net": 0.1319562689985681,
+   "be_per_trade_R": 0.04429510685678596
+  },
+  "2025": {
+   "n": 13609,
+   "days": 365,
+   "gross": 0.11063200064692413,
+   "t_day": 6.102931559801464,
+   "be_mean_net": 0.11063200064692413,
+   "be_per_trade_R": 0.0485669397215454
+  },
+  "2026": {
+   "n": 7357,
+   "days": 205,
+   "gross": 0.035834755234596234,
+   "t_day": 1.8501926991714068,
+   "be_mean_net": 0.035834755234596234,
+   "be_per_trade_R": 0.05808976425607219
+  }
+ },
+ "per_coin": {
+  "BTC": {
+   "MEAN NET %": {
+    "be_allin": 0.08650637181406381,
+    "spread": 0.015600000000000003,
+    "fee_budget": 0.07090637181406381,
+    "usd_side_max": 0.28419273823076774,
+    "clears_minimum": true,
+    "max_rate_pct_per_side": 0.035453185907031906,
+    "price_needed_for_minimum": 42309.31470964038
+   },
+   "PER-TRADE NET R": {
+    "be_allin": 0.02752417264839379,
+    "spread": 0.015600000000000003,
+    "fee_budget": 0.011924172648393787,
+    "usd_side_max": 0.0477920839747623,
+    "clears_minimum": false,
+    "max_rate_pct_per_side": null,
+    "price_needed_for_minimum": 251589.7822398694
+   },
+   "at_rates": {
+    "usd_side_002": 0.16032000000000002,
+    "usd_side_005": 0.40080000000000005,
+    "allin_002": 0.05560000000000001,
+    "allin_005": 0.11560000000000001
+   }
+  },
+  "ETH": {
+   "MEAN NET %": {
+    "be_allin": 0.15400569970585118,
+    "spread": 0.0267,
+    "fee_budget": 0.12730569970585118,
+    "usd_side_max": 0.15960952100621092,
+    "clears_minimum": true,
+    "max_rate_pct_per_side": 0.06365284985292559,
+    "price_needed_for_minimum": 2356.532352386195
+   },
+   "PER-TRADE NET R": {
+    "be_allin": 0.05251452856563095,
+    "spread": 0.0267,
+    "fee_budget": 0.025814528565630948,
+    "usd_side_max": 0.0323649651891598,
+    "clears_minimum": false,
+    "max_rate_pct_per_side": null,
+    "price_needed_for_minimum": 11621.362723602679
+   },
+   "at_rates": {
+    "usd_side_002": 0.15,
+    "usd_side_005": 0.15,
+    "allin_002": 0.14634107676969094,
+    "allin_005": 0.14634107676969094
+   }
+  },
+  "SOL": {
+   "MEAN NET %": {
+    "be_allin": 0.16081080021771993,
+    "spread": 0.026400000000000007,
+    "fee_budget": 0.13441080021771992,
+    "usd_side_max": 0.36549656849203493,
+    "clears_minimum": true,
+    "max_rate_pct_per_side": 0.06720540010885996,
+    "price_needed_for_minimum": 44.63926998634888
+   },
+   "PER-TRADE NET R": {
+    "be_allin": 0.08019630671016487,
+    "spread": 0.026400000000000007,
+    "fee_budget": 0.05379630671016486,
+    "usd_side_max": 0.1462856070216158,
+    "clears_minimum": false,
+    "max_rate_pct_per_side": null,
+    "price_needed_for_minimum": 111.53182006203215
+   },
+   "at_rates": {
+    "usd_side_002": 0.15,
+    "usd_side_005": 0.27192500000000003,
+    "allin_002": 0.08156226900799854,
+    "allin_005": 0.1264
+   }
+  }
+ },
+ "specs": {
+  "BTC": {
+   "notional": 801.6,
+   "price": 80160.0,
+   "contract_size": 0.01,
+   "per_side_usd": 0.16032000000000002,
+   "binds": "rate",
+   "fee_rt": 0.04000000000000001,
+   "exch_rt": 0.0249500998003992,
+   "spread": 0.015600000000000003,
+   "allin": 0.05560000000000001,
+   "allin_fullclock": 0.054700000000000006
+  },
+  "ETH": {
+   "notional": 250.75,
+   "price": 2507.5,
+   "contract_size": 0.1,
+   "per_side_usd": 0.15,
+   "binds": "MIN",
+   "fee_rt": 0.11964107676969092,
+   "exch_rt": 0.07976071784646062,
+   "spread": 0.0267,
+   "allin": 0.14634107676969094,
+   "allin_fullclock": 0.16234107676969092
+  },
+  "SOL": {
+   "notional": 543.85,
+   "price": 108.77,
+   "contract_size": 5.0,
+   "per_side_usd": 0.15,
+   "binds": "MIN",
+   "fee_rt": 0.055162269007998525,
+   "exch_rt": 0.03677484600533235,
+   "spread": 0.026400000000000007,
+   "allin": 0.08156226900799854,
+   "allin_fullclock": 0.08266226900799853
+  }
+ }
+}
