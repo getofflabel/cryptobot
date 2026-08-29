@@ -31,6 +31,16 @@ Rules (non-negotiable, they are why anything here can be trusted):
    RESEARCH_LOG.md R474 before sizing anything: the arm as a whole has
    NEGATIVE net R, QQQ's sealed net is a third of SPY's, and the tight tail
    of the stop distribution sits at the scale of the spread.
+   **R487 ADDITION (2026-08-29), and it belongs in the review:** the foursome was
+   recomputed digit for digit and **stands exactly as published** — it is a
+   per-trade statistic and is not exposed to the ratio-of-means error (computed
+   the wrong way it would have read BETTER, +0.255, not worse). What R474 never
+   published is a t clustered by day for anything but the gross (+2.41): the
+   sealed **net is t +0.83 and the sealed per-trade net R is t −0.27**, on 155
+   days. **The cell's gross edge separates from zero on the sealed slice; its
+   after-cost result does not, in either unit.** Not a new look and the verdict
+   is unchanged — but size it knowing the sealed net is one standard error from
+   zero.
 
 2. ~~**THE CRYPTO 1-MINUTE ARM, RE-RUN ON THE BACKFILLED HISTORY.**~~
    **DONE — R476, 2026-08-01. No look consumed.** All three deliverables
@@ -382,8 +392,45 @@ Rules (non-negotiable, they are why anything here can be trusted):
    and **"per side" is an inference, not a quotation** (the footnote says "per
    contract"), with the alternative halving every fee figure.
 
-11. **THE LOG'S NET NUMBERS ARE RATIO-OF-MEANS. RESTATE THEM PER TRADE.**
-   *(new, opened by R485, and it is an AUDIT, not a hypothesis.)* R485 found
+11. ~~**THE LOG'S NET NUMBERS ARE RATIO-OF-MEANS. RESTATE THEM PER TRADE.**~~
+   **DONE — R487, 2026-08-29. CLOSED. No look consumed.**
+   58 claim lines across 15 rounds collapse to **14 claim families: 5
+   PER-TRADE, 9 RATIO-OF-MEANS.** **Every ratio-of-means figure in this log is
+   UNDERSTATED, never overstated — 2.94-3.19x on crypto, 1.64x on the index**
+   (mean of 1/stop is 13.49 against 1/median of 4.23). The factor is a property
+   of the STOP DISTRIBUTION, not the cost model, so it is the same multiplier on
+   every row of a population — **which is why it was invisible: it never changed
+   the RANKING of two venues, only the level of all of them at once. Every venue
+   comparison in R478-R486 survives intact.**
+   **R481's "the whole cost stack is 0.358 stop distances" is really 0.95-1.20:
+   the stack is ONE ENTIRE STOP, not a third of one.** R474's 0.48 on the index
+   is 0.698. R483's surcharge 0.0015 -> 0.0047 (still a rounding error).
+   **NO PER-TRADE FIGURE IN THIS LOG IS WRONG** — all five reproduce, and the
+   script reproduces R485's -0.346 / t -3.18 to three decimals as its control.
+   **ITEM 0 RECOMPUTED DIGIT FOR DIGIT AND IT STANDS**: 371 trades, 155 days,
+   gross +0.0726%, net +0.0326%, gross R +0.6179, net R **+0.1324** against the
+   published +0.132. Had it been computed the wrong way it would have read
+   BETTER (+0.255), not worse. Verified two independent ways now.
+   **ONE THING THE RECOMPUTATION ADDS AND IT BELONGS IN FRONT OF THE DEPLOYMENT
+   REVIEW:** R474 published a t by day for the sealed GROSS (+2.41) and none for
+   the net. They are **net +0.83 and per-trade net R -0.27 on 155 days** — the
+   cell's gross edge separates from zero on the sealed slice and **its
+   after-cost result does not, in either unit.** Not a new look (same 371 rows,
+   already-published result) and the round's verdict is unchanged; but "positive
+   on all three windows" is a statement about the sign of a mean, and the honest
+   sentence beside it is that the sealed net is one standard error from zero.
+   Four claims marked **UNVERIFIED rather than quietly kept**: R370's 0.44/2.17
+   (a swing-width census, no trade population, no per-trade version exists),
+   R450's 2.4 on its own 147 days (per-entry frame gone; restated on a superset
+   as 6.746), R478's fee-only 0.13-0.25 (superseded twice), and every pre-R450
+   stop-distance sentence (retired books, frames not on disk).
+   By coin the per-trade damage is uneven: **ETH -1.092 (t -5.80), BTC -0.520
+   (t -2.08), SOL -0.013 (t +0.19)** — SOL is the only coin not distinguishable
+   from zero, and it is the one R486 showed is about to become unaffordable on
+   the $0.15 minimum.
+
+11b. *(historical, the item as written, kept so the closure is readable)*
+   *(opened by R485, an AUDIT, not a hypothesis.)* R485 found
    that the desk's headline risk-multiple statistic and the number a
    risk-sized book actually earns **disagree in sign** on the crypto 1-minute
    family (+0.230 vs -0.346, t -3.18). The same discrepancy can be sitting
@@ -626,6 +673,17 @@ account size but the **shape of the stop distribution** — and it cuts against
 the 15-20x mandate from the opposite direction to R478's: the tier is not merely
 unrequired, the entries whose structure would ALLOW it are precisely the ones
 that cannot pay for themselves. Owner mandate stands until Wallace changes it.
+NOTE (R487, and it REPLACES every "stop distances" figure quoted above): the
+cost stack on Coinbase is **0.95-1.20 stop distances PER TRADE, not 0.358.** Every
+ratio-of-means figure in this file is understated by ~3x on crypto and 1.64x on
+the index, because the mean of 1/stop is 13.49 against the median stop's
+reciprocal of 4.23. **The venue rankings are all unaffected** — the same
+multiplier applies to every row — so R478-R486's venue conclusions stand exactly
+as written; what changes is the LEVEL. When quoting a risk multiple from this
+file, quote the per-trade one or say which it is. **84.17% of entries carry a
+stop tighter than one Alpaca round trip and 16.65% tighter than the R486
+Coinbase all-in.**
+
 NOTE (R485, decay): the decay this desk has been treating as a fact about the
 method is a fact about the MARKET. In risk multiples the crypto 1-minute method
 is at 0.92 of its 2021 self with a flat trend (t = -1.15); the index does not

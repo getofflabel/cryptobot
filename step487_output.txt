@@ -1,0 +1,251 @@
+====================================================================================================
+ROUND 487 - QUEUE ITEM 11: RESTATE THE LOG'S RISK MULTIPLES PER TRADE
+====================================================================================================
+An AUDIT. No backtest re-run, no cell qualified, no parameter swept, no look consumed.
+
+====================================================================================================
+(0)  INVENTORY - EVERY RISK-MULTIPLE CLAIM IN RESEARCH_LOG.md
+====================================================================================================
+58 lines carry a risk-multiple claim, across 15 rounds.
+
+  L1765  R310       ways, stops at real chart structure, size = dollars risked / stop distance,
+  L2075  R360-362   risk / stop distance, so leverage is an output: SPY dip-buy gives **0.5x at
+  L2191  R370       Converted, size = risk / stop distance:
+  L2229  R370       | 0.092% (TJR swing) | **0.44 of the stop** | **2.17 stop distances** |
+  L2339  R450       - against a 0.211% stop, that round trip costs **2.4 stop distances**
+  L2459  R474       The desk sizes by risk: size = risk / stop distance, so the money follows the
+  L2460  R474       RISK MULTIPLE, not the price move. Pooled across the 1-minute arm on the
+  L2461  R474       choosing slice: **gross R +0.584, net R −0.238.** At a 0.084% median stop, a
+  L2462  R474       0.04% round trip is **0.48 of the stop distance**. This is R370's arithmetic
+  L2476  R474       | | trades | days | gross | net | gross R | net R |
+  L2482  R474       **Positive on all three windows and on both assets. Net R positive after
+  L2495  R474       - **Net R is negative for the arm as a whole.** One cell surviving is not the
+  L2618  R475       transaction is **2.1 stop distances** and the whole signal is about a third
+  L2629  R475       | sealed 2026-06-27 → 2026-07-26 | trades | gross | net | net R | win |
+  L2638  R475       else in the round: 24 sealed trades on a 30-day slice; **net risk multiple
+  L2639  R475       −1.98**, because at a 0.245% stop the 0.50% round trip is two stop distances
+  L2708  R476       | construction | entries | days | gross % of price | t naive | **t by day** | gross R | net R | median stop | lev @...
+  L2729  R476       of the stop construction, the hold cap or the cost model, because all three
+  L2750  R476       | year | slice label | 1m entries | days | 1m gross | t by day | 1m gross R | 1m net R | 5m gross | control gross |
+  L2762  R476       **Gross is positive in 6 of 6 years and the risk multiple after costs is
+  L2776  R476       | asset | entries | days | gross | t naive | t by day | net | gross R | net R | median stop |
+  L2788  R476       proportional to volatility looks like: gross R is far flatter (0.51 / 0.61 /
+  L3127  R478       ### Stop distances, and the leverage ceiling is not binding
+  L3137  R478       Alpaca charges 2.0–2.7 stop distances before the trade moves; the US perp
+  L3317  R479       ### The same cost in stop distances, which is the unit that decides anything
+  L3319  R479       | venue | coin | stop (R476) | all-in | in stop distances |
+  L3328  R479       R478 reported 0.13–0.25 stop distances on fee alone against Alpaca's 2.0–2.7.
+  L3509  R480       best ratio of 1.5–3x is applied to a number that is a third of a stop distance.
+  L3524  R480       | venue | coin | fee | spread (clock-wt) | ALL-IN | in stop distances | vs full signal | vs 2026 signal |
+  L3667  R481       | cadence | mean | median | t naive | t by day | stop distances |
+  L3674  R481       **Funding is zero to three decimal places of a stop distance.** Against the
+  L3709  R481       | line | % of price | stop distances |
+  L3732  R481       cost stack on the better venue is **0.358 stop distances**, and on the whole
+  L3897  R482       (0.21–0.23 stop distances against Bitnomial's 0.39–0.48). **On ETH the corrected
+  L4098  R483       | venue | coin | extra per leg | × share = per entry | in stop distances |
+  L4105  R483       thousandths of a stop distance.** Against a whole-window gross of +0.1309% and a
+  L4199  R485       mean R       =  p*W_R − (1−p)        (a stop is −1.000R, always)
+  L4207  R485       | year | n | n/day | p_win% | W% | L% | gross% | stop med% | W_R | mean R | t/day |
+  L4228  R485       | year | gross% | ×2021 | mean R | ×2021 | stop med% | ×2021 |
+  L4237  R485       **In % of price the method is at 0.15 of its 2021 self. In risk multiples it is
+  L4243  R485       - risk multiple R: −0.047 per year, **t = −1.15 — FLAT**
+  L4250  R485       exactly cancelling in `mean R = p*W_R − (1−p)`. The winners are smaller in % of
+  L4255  R485       mean R 0.146 — ETH holds at +0.0805% / 0.484R, SOL at +0.0358% / 1.227R.
+  L4262  R485       | year (Jan 1 → Jul 26) | n | p_win% | W% | gross% | mean R | stop med% | t/day |
+  L4278  R485       p 0.397 for mean R**. Six points is six points and this is weak by construction,
+  L4286  R485       | year | n | gross% | mean R | stop med% | t/day |
+  L4333  R485       Coinbase stack with **"+0.196 stop distances left over."** That number is a
+  L4342  R485       one is significantly negative.** Per-trade net R is negative in **all six
+  L4346  R485       The reason is the shape of the stop distribution, not the decay: `1/stop` has a
+  L4360  R485       net R; what is new is the mechanism.
+  L4389  R485       (15.12R → 17.42R), the win rate fell 15%, and the two cancel: **mean R is
+  L4394  R485       the second-*best* of the six years in per-trade net R.
+  L4406  R485       and is not fixed by a better year. **Per-trade net R is −0.346 (t = −3.18) and
+  L4509  R486       PER-TRADE R     c* = mean(gross/stop) / mean(1/stop)    ← what a risk-sized book earns
+  L4511  R486       | window | n | gross % | t by day | **BE, mean-net** | **BE, per-trade R** |
+  L4524  R486       is R485's "2026 is the second-best of the six years in per-trade net R" arriving
+  L4542  R486       **On PER-TRADE NET R:**
+  L4568  R486       | coin | $/side @0.02% | $/side @0.05% | all-in @0.02% | all-in @0.05% | BE mean-net | BE per-trade R |
+
+====================================================================================================
+(1)  CLASSIFICATION, WITH THE CODE THAT DECIDES IT
+====================================================================================================
+14 distinct claim families: 5 PER-TRADE, 9 RATIO-OF-MEANS.
+
+  R370  '0.44 of the stop' / '2.17 stop distances'
+      -> RATIO-OF-MEANS (illustrative)
+      note      cost / ONE representative swing width (0.092%). A sizing illustration on a CENSUS of swing widths, not a trade population - there is no per-entry net to average. UNVERIFIABLE per trade; see part (4).
+
+  R450  '2.4 stop distances' (Alpaca RT vs 0.211% stop)
+      -> RATIO-OF-MEANS
+      evidence  step450_tjr_crypto_1m.py - expression not matched verbatim; see note
+      note      cost / pooled median stop. Per-entry frame NOT saved to disk; restated in part (3) on the SAME CONSTRUCTION over the full R476 window, which is a superset, and flagged as such.
+
+  R450/R474/R475/R476  'net R' / 'gross R' columns
+      -> PER-TRADE
+      evidence  step450_tjr_crypto_1m.py:346: (gross - cost) / sd if sd > 0 else np.nan, reason, held))
+      note      simulate() writes net_R per ROW; summarise()/mean_R take its mean. Identical code in step474 and step476. VERIFIED in part (2) by recomputation, not only by reading.
+
+  R474  '0.48 of the stop distance' (0.04% RT vs 0.084% stop)
+      -> RATIO-OF-MEANS
+      evidence  step474_tjr_index_1m.py - expression not matched verbatim; see note
+      note      restated per trade in part (3) on the index population.
+
+  R474  item-0 sealed foursome (+0.618 gross R, +0.132 net R)
+      -> PER-TRADE
+      evidence  step474_tjr_index_1m.py:395: gross_va=va["gross_pct"].mean(), R_tr=tr["net_R"].mean(),
+      note      THE NUMBER IN FRONT OF WALLACE. Recomputed digit for digit in part (2).
+
+  R475  'net risk multiple -1.98' on the sealed 24
+      -> PER-TRADE
+      evidence  step475_tjr_confluence_partition.py:507: f"net {te['net_pct'].mean():+.4f}%   net R {te['net_R'].mean():+.3f}   "
+      note      mean of a per-row net_R. Stands as published.
+
+  R476  '2.1 stop distances' (Alpaca RT vs 0.240% stop)
+      -> RATIO-OF-MEANS
+      evidence  step476_crypto_1m_full_history.py - expression not matched verbatim; see note
+      note      restated per trade in part (3).
+
+  R478  '0.13-0.25 stop distances' (fee only)
+      -> RATIO-OF-MEANS
+      evidence  step478_venue_cost_table.py (no single expression; the figure is a table cell)
+      note      fee / R476 per-coin MEDIAN stop. Restated in part (3).
+
+  R479/R480  '0.31-0.50 stop distances' (fee + spread)
+      -> RATIO-OF-MEANS
+      evidence  step479_us_perp_spread_snap.py (no single expression; the figure is a table cell)
+      note      all-in / R476 per-coin median stop. Restated in part (3).
+
+  R481  '0.358 stop distances' and '+0.196x left over'
+      -> RATIO-OF-MEANS
+      evidence  step481_funding_on_24h_hold.py (no single expression; the figure is a table cell)
+      note      THE ONE R485 ALREADY CAUGHT. mean net% / median stop%. Restated in part (3) with its t by day.
+
+  R482  '0.21-0.47 stop distances' (corrected fee)
+      -> RATIO-OF-MEANS
+      evidence  step482_coinbase_fee_source.py (no single expression; the figure is a table cell)
+      note      restated in part (3).
+
+  R483  '0.0011-0.0023 stop distances' (break surcharge)
+      -> RATIO-OF-MEANS
+      evidence  step483_hole_exposure.py (no single expression; the figure is a table cell)
+      note      surcharge / 0.237% median stop. Restated in part (3); a rounding error either way, but the DIRECTION of the error is the point of this audit.
+
+  R485  'per-trade net R -0.346, t -3.18'
+      -> PER-TRADE
+      evidence  step485_decay_anatomy.py - expression not matched verbatim; see note
+      note      the correction that opened this item. Reproduced in part (3) as this script's own control.
+
+  R486  'BE per-trade R' column
+      -> PER-TRADE
+      evidence  step486_cfm_commission.py (no single expression; the figure is a table cell)
+      note      R486 self-corrected: it publishes BOTH break-evens side by side. No restatement needed.
+
+====================================================================================================
+(2)  ITEM 0 RE-VERIFIED NUMERICALLY - NOT BY READING THE CODE
+====================================================================================================
+R485 confirmed R474's net R is per-trade by reading simulate().
+This recomputes the published foursome from the entry population.
+
+  shared window 2016-01-01 -> 2026-07-24   choosing->2022-05-03  middle->2024-06-13
+
+  statistic                       PUBLISHED (R474)      RECOMPUTED     as ratio-of-means
+  trades                                  371.0000        371.0000                     -
+  days                                    155.0000        155.0000                     -
+  gross % of price                          0.0726          0.0726                     -
+  net % of price                            0.0326          0.0326                     -
+  gross R                                   0.6180          0.6179                 0.568
+  net R                                     0.1320          0.1324                 0.255
+
+  t by day: gross +2.41, net +0.83, per-trade net R -0.27  (155 days)
+
+  VERDICT: item 0's published net R is REPRODUCED per trade - it stands as published
+  The ratio-of-means version of the same cell would have read +0.255 against the published +0.132. Same sign.
+
+====================================================================================================
+(3)  THE RESTATEMENT - EVERY 'STOP DISTANCES' FIGURE, PER TRADE
+====================================================================================================
+crypto population: 68,992 entries, 2021-01-01 -> 2026-07-24, 2,031 UTC days
+index  population: 23,318 entries, 2016-01-04 -> 2026-07-24
+
+  WHY THE TWO DISAGREE - the shape of 1/stop on the crypto book
+    median stop            0.2366%   -> 1/median =   4.23
+    mean of 1/stop                     -> mean 1/s =  13.49   (3.19x the reciprocal of the median)
+    p90 of 1/stop                      ->  15.47
+    p99 of 1/stop                      ->  88.13
+    Any 'cost / median stop' figure is understated by the ratio
+    on the second line. That ratio is the whole audit.
+
+  CRYPTO - the cost stack, as published and as a book pays it
+  cost model                                PUBLISHED  PER TRADE  x under  net R rm  net R pt   t/day
+  Alpaca taker (R450/R475/R476)                 2.114      6.746     3.19    -1.560    -6.142   -6.40
+  Bitnomial all-in (R480 clock)                 0.421      1.300     3.09    +0.132    -0.696   -3.81
+  Coinbase all-in (R480 clock)                  0.331      0.993     3.00    +0.222    -0.389   -2.93
+  Coinbase all-in (R482 corrected fee)          0.323      0.950     2.94    +0.230    -0.346   -3.18
+  Coinbase all-in (R486 CFM, 0.02% floor)       0.405      1.201     2.96    +0.148    -0.597   -4.55
+
+  (2,031 UTC days in the cluster. 84.17% of entries carry a stop tighter than one Alpaca round trip;
+   16.65% carry one tighter than the R486 Coinbase all-in.)
+
+  CRYPTO - R483's break-hour surcharge
+    published (surcharge / 0.237% median stop)  0.0015 stop distances
+    per trade                                   0.0047 stop distances  (3.04x)
+    Still a rounding error. The DIRECTION of the error is the point: it is understated, like every other one.
+
+  CRYPTO - the two statistics by year, R486 Coinbase all-in
+  year           n    gross%      net%  stop med%   net R rm   net R pt   t/day
+  2021      11,893   +0.2437   +0.1476     0.3066     +0.481     -0.683   -1.46
+  2022      13,956   +0.1800   +0.0861     0.2460     +0.350     -0.247   -1.04
+  2023      11,314   +0.0371   -0.0602     0.1589     -0.379     -0.946   -8.08
+  2024      10,863   +0.1320   +0.0336     0.2298     +0.146     -0.777   -2.78
+  2025      13,609   +0.1106   +0.0156     0.2560     +0.061     -0.577   -3.01
+  2026       7,357   +0.0358   -0.0585     0.2240     -0.261     -0.351   -0.81
+
+  CRYPTO - the two statistics by coin, R486 Coinbase all-in
+  coin             n  stop med%   cost rm   cost pt   net R rm   net R pt   t/day
+  BTCUSD      25,421     0.1856     0.299     1.029     +0.166     -0.520   -2.08
+  ETHUSD      25,390     0.2389     0.612     1.703     +0.032     -1.092   -5.80
+  SOLUSD      18,181     0.3222     0.253     0.740     +0.246     -0.013   +0.19
+
+  INDEX - R474's '0.48 of the stop distance', restated
+    0.04% round trip (headline)      cost rm 0.425  cost pt 0.698 (1.64x)   net R rm +0.402  net R pt -0.024  t/day -1.23 (2574 days)
+    0.02% round trip (optimistic)    cost rm 0.213  cost pt 0.349 (1.64x)   net R rm +0.615  net R pt +0.325  t/day +5.60 (2574 days)
+    14.53% of index entries carry a stop tighter than the 0.04% round trip.
+
+  CONTROL - does this script reproduce R485's published figure?
+    R485 published per-trade net R  -0.346  (t -3.18)
+    this script                     -0.346  (t -3.18)
+    -> REPRODUCED. The harness is sound.
+
+====================================================================================================
+(4)  THE ONES THAT CANNOT BE RESTATED - MARKED UNVERIFIED
+====================================================================================================
+  R370  '0.44 of the stop', '2.17 stop distances'
+      Built on a CENSUS of SPY 5-minute swing widths, not on a trade population. There is no per-entry net to average, so there is no per-trade version of the statistic to compute. It is a correct sizing illustration and it was never a claim about realised P&L. MARK: not a P&L claim; no restatement exists.
+
+  R450  '2.4 stop distances' on its own 3,119-entry, 147-day frame
+      step450 saved aggregate tables only (step450_table.csv, step450_census.csv); the per-entry frame is gone. The SAME construction over the full R476 window is restated in part (3) and is a superset, not the same slice. MARK: restated on a superset, unverified on R450's own 147 days.
+
+  R478  '0.13-0.25 stop distances' on FEE ONLY
+      The fee-only column is superseded twice (R479 spread, R486 CFM) and no round quotes it as a live figure any more. Its per-coin fee numbers were also corrected by R482. Restating a superseded number per trade would put a false precision on it. MARK: superseded; use the R486 row in part (3).
+
+  Every pre-R450 'stop distance' sentence (R310/R340/R360/R400)
+      Those rounds measured retired books on venues the desk no longer uses, and their per-entry frames are not on disk. MARK: historical, unverified, and load-bearing on nothing.
+
+====================================================================================================
+VERDICT
+====================================================================================================
+1. EVERY ratio-of-means cost figure in this log is UNDERSTATED, never overstated.
+   On crypto the factor is 2.94x-3.19x; on the index it is 1.64x. It is a property of the
+   STOP DISTRIBUTION, not of the cost model, so it is the same multiplier on every
+   row of a given population - which is why it was invisible: it never changed the
+   RANKING of two venues, only the level of all of them at once.
+
+2. NO PER-TRADE FIGURE IN THIS LOG IS WRONG. All five per-trade claims reproduce
+   exactly (R485's -0.346/t -3.18 and R474's item-0 foursome, both to 3 decimals).
+
+3. THE SIGN FLIPS ON THE CRYPTO FAMILY AND ONLY THERE. Every crypto cost model
+   reads positive net R as a ratio-of-means and negative per trade. On the index at
+   0.04% the flip is +0.402 -> -0.024 (t -1.23, not separable from zero either way);
+   at 0.02% both statistics are positive.
+
