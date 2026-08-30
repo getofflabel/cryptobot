@@ -4798,3 +4798,256 @@ beat; the control is the identity, and it holds.
 **NONE.** This round reads only published populations and recomputes published
 statistics. No sealed window was opened, and item 0's slice was re-read, not
 re-looked.
+
+---
+
+# R488 — IF THE GROSS IS A LINEAR FUNCTION OF VOLATILITY, WHAT IS THE STOP?
+
+**2026-08-30. Queue item 12. `step488_stop_scale_description.py`, full output
+in `step488_out.txt`. Research only, no orders, no live file touched.
+DESCRIPTION ONLY — no filter, gate or threshold is proposed or carried
+forward. NO LOOK CONSUMED, and none could be.**
+
+## Hypothesis / question
+
+Item 12, opened by R485, is a DESCRIPTION with a hard fence around it. R485
+established that this method's gross tracks realized 1-minute volatility at
+r = +0.92 on the index and +0.93 on crypto, and that the binding problem is
+the SHAPE of the stop distribution — 12.14% of crypto entries and 14.53% of
+index entries carry a stop tighter than the round trip they must pay. Three
+questions, no candidate permitted:
+
+- **(a)** The joint distribution of stop size and outcome. Do the
+  tightest-stop entries differ in gross R from the widest, or are they the
+  same trade at a different scale?
+- **(b)** Is the tight-stop share itself a function of volatility? If low
+  volatility manufactures unaffordable stops, then "the method degrades in
+  quiet markets" and "cost eats it" are one sentence, not two.
+- **(c)** The same two readings on the index, where volatility did not
+  compress.
+
+## Config — exactly as queued, nothing swept
+
+Two populations, both already fully published, both with no sealed slice left
+anywhere:
+
+| | population | source | window |
+|---|---|---|---|
+| crypto | 68,992 entries, BTC/ETH/SOL | `step481_entries_funding.csv` (R476/R481/R485) | 2021-01-01 → 2026-07-24, 2,031 days |
+| index | 23,318 entries, SPY + QQQ | `step485_index_entries.csv` (R485's rebuild of R474) | 2016-01-04 → 2026-07-24, 2,574 days |
+
+Costs are R482's measured Coinbase all-in per coin (BTC 0.0432% / ETH 0.1126%
+/ SOL 0.0724%) and R370/R474's 0.04% on the index — charged for honest P&L and
+used for nothing else. Deciles are cut **within symbol**, because the coins
+have different structural stop scales and a pooled decile would sort coins
+rather than stops; the pooled version is printed beside it and agrees.
+Realized volatility is the mean absolute 1-minute return per symbol per day,
+% of price — R485's scale, computed on regular-hours bars (13:30–20:00 UTC)
+for the index daily series.
+
+**Anchors reproduced before anything else was trusted:** crypto per-trade net
+R **−0.346** (R485: −0.346), index **−0.024** (R485: −0.024), crypto tight
+share **12.14%** (R485: 12.14), index **14.53%** (R485: 14.53).
+
+## (a) The joint distribution — and the raw means are a trap
+
+CRYPTO, deciles within coin:
+
+| dec | n | stop med% | p_win% | W_R | gross% | gross R | cost/stop | net R | t_day netR |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | 6,901 | 0.040 | 1.80 | 142.26 | 0.0236 | **+1.574** | **6.311** | **−4.736** | −3.61 |
+| 2 | 6,899 | 0.086 | 4.23 | 37.66 | 0.0557 | +0.636 | 0.856 | −0.220 | −1.38 |
+| 5 | 6,899 | 0.210 | 7.91 | 17.13 | 0.0945 | +0.435 | 0.352 | +0.083 | +0.96 |
+| 8 | 6,899 | 0.378 | 12.86 | 10.69 | 0.1918 | +0.503 | 0.195 | +0.308 | +4.54 |
+| 10 | 6,899 | 0.801 | 21.60 | 5.18 | 0.2446 | +0.335 | **0.092** | **+0.244** | +4.19 |
+
+Two of the four relationships are **perfect monotone mechanics** and should be
+recorded as such rather than as findings: the win rate rises with the stop
+(rho **+1.000**, 1.80% → 21.60% — a wider stop is harder to hit) and the
+winners' risk multiple falls with it (rho **−1.000**, 142.26R → 5.18R). The
+index reproduces both at rho ±1.000.
+
+**In % of price the answer to (a) is YES, the same trade at a different
+scale.** Gross% rises monotonically with the stop, rho **+0.988** on crypto
+and **+0.988** on the index.
+
+**In risk multiples the raw means say the tightest entries are the BEST in the
+population, and that reading is false.** D1's +1.574 gross R has a **median of
+−1.000**, an sd of 45.18 and a skew of 39.1. **73.6% of D1's entire gross R is
+carried by its top 0.1% of entries** — about seven trades. Remove the top 1%
+and D1 reads **−0.788**; remove 5% and it reads −1.000. This is the same
+`1/stop` heavy right tail R487 found on the net side, arriving on the gross
+side, and the round would have repeated R487's error had it stopped at the
+mean.
+
+**Winsorised at each decile's own p99, the picture inverts and flattens:**
+
+| | D1 | D2 | D3 | D4 | D5 | D6 | D7 | D8 | D9 | D10 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| crypto | **−0.276** | +0.293 | +0.450 | +0.275 | +0.341 | +0.386 | +0.445 | +0.396 | +0.372 | +0.281 |
+| index | **+0.442** | +0.618 | +0.741 | +0.582 | +0.608 | +0.638 | +0.598 | +0.577 | +0.565 | +0.476 |
+
+**Deciles 2–10 sit in a flat band on both asset classes** (crypto 0.275–0.450,
+index 0.476–0.741) and **the tightest decile is the only one outside it, on
+the wrong side.** On crypto it is the only negative decile in the population
+before a single cent of cost is charged.
+
+So the honest answer to (a) is a split one: **in price terms they are the same
+trade at a different scale; in risk terms deciles 2–10 are the same trade and
+the tightest tenth is a worse one, and its apparent superiority is an artifact
+of dividing by a near-zero denominator.**
+
+**Where the cost lands.** Cost/stop runs **6.311 in D1 against 0.092 in D10**
+— a 69x spread across one population paying one fee schedule. Net R goes
+**−4.736 → +0.244**; D10 − D1 paired by day is **+6.405, t +2.98** (1,362
+days). The 12.14% of crypto entries whose stop is under the round trip pay
+**5.48 stop distances** for it and return **−3.914 net R** against **+0.148**
+for the rest; on the index, 14.53% pay 2.39 and return −1.540 against +0.233.
+
+## (b) YES — and the mechanism is an elasticity of almost exactly one
+
+**The structural stop is a near-proportional function of realized 1-minute
+volatility.** Log-log, on daily observations:
+
+| | elasticity | se | t vs 1.0 | R² | days |
+|---|---|---|---|---|---|
+| crypto | **0.876** | 0.011 | −11.63 | 0.769 | 2,030 |
+| index | **0.973** | 0.015 | **−1.82** | 0.650 | 2,280 |
+
+**On the index the elasticity is not distinguishable from 1.0.** And the ratio
+itself is the same number on five instruments in two asset classes over eleven
+years: per-entry stop/vol median **3.60 (crypto), 3.67 (index)**; by year it
+sits in 2.94–3.61 on crypto and 2.97–3.58 on the index. **His structural stop
+is about three and a half 1-minute moves, everywhere, always.**
+
+Everything else follows mechanically. Monthly correlations:
+
+| | vol vs median stop | vol vs tight share | vol vs gross R | vol vs net R |
+|---|---|---|---|---|
+| crypto | r **+0.960**, rho +0.945 | r **−0.774**, rho **−0.914** | r +0.493 | r +0.391 |
+| index | r **+0.980**, rho +0.961 | r **−0.691**, rho **−0.899** | r **−0.053** | r +0.257 |
+
+Months ranked into fifths by realized volatility:
+
+| vol 5th | crypto vol% | stop/vol | tight% | gross R | net R | | index vol% | stop/vol | tight% | gross R | net R |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 (quietest) | 0.0450 | 3.54 | **21.90** | 0.274 | **−0.967** | | 0.0163 | 3.61 | **29.51** | 0.690 | **−0.343** |
+| 3 | 0.0719 | 3.35 | 11.00 | 0.616 | −0.160 | | 0.0259 | 3.38 | 13.95 | 0.622 | −0.074 |
+| 5 (wildest) | 0.1088 | 3.02 | **6.47** | 0.869 | **+0.273** | | 0.0539 | 3.38 | **3.90** | 0.700 | **+0.333** |
+
+**The index's net R is perfectly monotone in volatility** (−0.343, −0.161,
+−0.074, +0.165, +0.333) **while its gross R is flat** (r −0.053). That is the
+cleanest statement of the whole round: on the index, "quiet market" and "cost
+eats it" are **the same event**, and nothing about the trade changes.
+
+**On crypto it is one and a half sentences, not one.** Crypto's gross R also
+correlates with volatility (monthly r +0.493, rho +0.513), so quiet crypto
+markets damage the method on the gross side too, on top of the cost channel.
+
+## (c) The price of the constraint, in one coordinate
+
+Solving the fitted elasticity for the volatility at which the median stop
+equals the round trip:
+
+| | round trip | median stop = cost at a 1-minute move of | median day sits at | multiple |
+|---|---|---|---|---|
+| BTCUSD | 0.0432% | **0.0098%** | 0.0519% | 5.29x |
+| ETHUSD | 0.1126% | **0.0293%** | 0.0677% | 2.31x |
+| SOLUSD | 0.0724% | 0.0108% | 0.0903% | 8.34x |
+| SPY | 0.0400% | 0.0103% | 0.0213% | 2.07x |
+| QQQ | 0.0400% | 0.0102% | 0.0292% | 2.88x |
+
+**Four of five instruments converge on the same number: the 1-minute move has
+to be above about 0.010% of price for the median stop to clear the round
+trip.** ETH is the exception at 0.0293%, three times the others, entirely
+because the Coinbase ETH contract's $0.15 minimum (R486) makes its round trip
+three times BTC's. **ETH is the coin R487 found is the worst per trade
+(−1.092, t −5.80), and this is the mechanism: it sits 2.31x above its own
+break-even move while BTC sits 5.29x and SOL 8.34x.** Three independent rounds
+now point at the same coin for the same reason.
+
+## What this does to R485
+
+**R488 supplies the mechanism for R485's headline.** R485 found gross% decays
+while risk multiples do not (mean R 0.664 → 0.610, trend t −1.15, flat).
+That is exactly what an elasticity of ~1.0 predicts: if the stop is a fixed
+multiple of volatility, then gross R = gross% / stop is scale-free by
+construction and the whole "decay" is the denominator moving. **"The gross is
+a linear function of volatility" and "the stop is a linear function of
+volatility" are the same fact seen twice, and their ratio is the constant.**
+
+## Baseline stated in the same breath (R88/R100)
+
+The interesting null here — "the same trade at a different scale" — is the one
+the round had to be able to accept, so it got the strong tests, not the weak
+ones: a Spearman across ten decile means, a **paired-by-day** difference
+between the tightest and widest decile (which controls for a quiet day
+supplying mostly tight stops), an unpaired reading beside it, and a
+winsorised recomputation of every decile. The null **survives on deciles 2–10
+and fails on decile 1**, and the failure is in the direction the raw means
+concealed.
+
+## Honest limits, fixed before running
+
+- Deciles are cut within symbol; the pooled version is printed and agrees
+  (crypto D10 − D1 on gross R: −1.983 pooled vs −2.006 within-coin).
+- Per-symbol D10 − D1 paired tests are **not significant on any single
+  instrument** (BTC t −1.44, ETH −0.12, SOL −0.99, QQQ −0.43, SPY −0.68).
+  The decile effect is a pooled-population reading and is stated as one.
+- Realized volatility is a scale, not a model. The index daily series is
+  regular-hours only; the year table uses the whole tape so R485's published
+  figures reproduce, and both are printed.
+- A per-day tight share is a ratio of small counts, so daily correlations are
+  reported beside monthly ones and **the monthly readings are the ones to
+  trust**.
+- "Tight" means "stop smaller than the measured all-in round trip on the
+  venue" and nothing else.
+- Crypto's `vol` is that coin's own realized move on that UTC day; the index's
+  is that symbol's. 100% of entries in both populations matched a volatility
+  observation.
+
+## THE FENCE, AND IT HELD
+
+**This round found itself looking at a description that points directly at a
+minimum-stop rule, and did not make one.** Decile 1 is negative in winsorised
+gross R and −4.736 in net R; the quietest fifth of months is −0.967. A cut
+suggests itself on every table above. **It is barred, per queue item 12 and
+R485's bar, and the reason is not squeamishness: both families' sealed slices
+are spent** (crypto R475, index R474), so a minimum-stop threshold could never
+be validated out of sample on either population. It would be a swept parameter
+chosen after seeing the answer, on data with no honest window left to test it.
+**Nothing here is a candidate, nothing is carried forward, and no number
+produced in this round may be used to cut a population in a future one.**
+
+## Verdict
+
+1. **(a) SPLIT, and the raw means were a trap.** In % of price the stop
+   deciles are the same trade at a different scale (rho +0.988 on both asset
+   classes). In risk multiples, deciles 2–10 are flat (0.275–0.450 crypto,
+   0.476–0.741 index, winsorised) and **the tightest tenth is a worse trade**,
+   not a better one — its headline +1.574 gross R is 73.6% carried by seven
+   entries and its median is −1.000.
+2. **(b) YES, DECISIVELY, AND THE ELASTICITY IS ~1.** The structural stop is
+   3.6x the realized 1-minute move on five instruments in two asset classes
+   over eleven years, with a log-log elasticity of 0.876 (crypto) and 0.973
+   (index, not distinguishable from 1.0). **Low volatility manufactures
+   unaffordable stops mechanically.**
+3. **(c) ON THE INDEX THEY ARE ONE SENTENCE.** Net R is monotone in volatility
+   across the five fifths while gross R is flat (r −0.053). **"The method
+   degrades in quiet markets" IS "cost eats it" there.** On crypto it is one
+   and a half sentences: the cost channel plus a real gross-side degradation
+   (r +0.493).
+4. **The whole cost problem has one coordinate:** the 1-minute move must clear
+   about **0.010% of price** for the median stop to cover the round trip — the
+   same number on BTC, SOL, SPY and QQQ. **ETH's is 0.0293%, three times the
+   others, because of R486's $0.15 contract minimum**, which is why it is the
+   worst coin per trade in R487.
+5. **R485's flat risk multiple is now explained, not just observed.** An
+   elasticity of one makes gross R scale-free by construction.
+
+## Looks consumed
+
+**NONE, and none could be.** Both populations are fully published with no
+sealed slice remaining anywhere. Nothing was qualified, partitioned, swept or
+proposed. No order was placed and no live file was touched, imported or
+modified.

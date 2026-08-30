@@ -453,29 +453,149 @@ Rules (non-negotiable, they are why anything here can be trusted):
    published.**
    Reading and arithmetic on data already on disk. No new backtest, no look.
 
-12. **IF THE GROSS IS A LINEAR FUNCTION OF VOLATILITY, WHAT IS THE STOP?**
-   *(new, opened by R485, and it is a DESCRIPTION with a hard fence around
-   it.)* R485 established that this method's gross tracks realized 1-minute
-   volatility at r = +0.92 on the index over 11 years and r = +0.93 on crypto
-   over 6, and that the whole "decay" is that scale moving. It also
-   established that the binding problem is the **shape of the stop
-   distribution**: 12% of crypto entries and 14.5% of index entries carry a
-   stop tighter than the round trip they must pay, which is what drives
-   per-trade net R negative while the ratio-of-means looks positive.
-   Deliverable, purely descriptive:
-   (a) The joint distribution of stop size and outcome. Do the tightest-stop
-       entries differ in gross R from the widest, or are they the same trade
-       at a different scale? If they are the same trade, the cost problem is a
-       pure SIZING fact and can be stated as one.
-   (b) Is the tight-stop share itself a function of volatility? If low
-       volatility manufactures unaffordable stops, then "the method degrades
-       in quiet markets" and "cost eats it" are one sentence, not two.
-   (c) The same two readings on the index, where volatility did not compress.
-   **THE FENCE, non-negotiable:** this item may NOT propose, test or imply a
-   minimum-stop filter, a volatility gate, or any threshold. Both families'
-   sealed slices are spent; nothing here can become a candidate and no
-   parameter may be swept. If the round finds itself wanting to cut the
-   population, it has failed and must report the description only.
+12. ~~**IF THE GROSS IS A LINEAR FUNCTION OF VOLATILITY, WHAT IS THE STOP?**~~
+   **DONE — R488, 2026-08-30. CLOSED, all three legs. No look consumed. The
+   fence held.**
+   **THE STOP IS A LINEAR FUNCTION OF VOLATILITY TOO, AND THAT IS THE WHOLE
+   ANSWER.** Log-log elasticity of the structural stop to the realized
+   1-minute move is **0.876 on crypto (R2 0.769, 2,030 days) and 0.973 on the
+   index (R2 0.650, 2,280 days, NOT distinguishable from 1.0 at t -1.82)**.
+   The ratio is the same number on five instruments in two asset classes over
+   eleven years: **per-entry stop/vol median 3.60 crypto, 3.67 index**, by
+   year 2.94-3.61 and 2.97-3.58. **His structural stop is about three and a
+   half 1-minute moves, everywhere, always.**
+   **This EXPLAINS R485's headline rather than adding to it.** If the stop is
+   a fixed multiple of volatility then gross R = gross%/stop is scale-free by
+   construction, which is exactly why R485 found gross% decaying at t -6.05
+   while mean R sat flat at t -1.15. "The gross is a linear function of
+   volatility" and "the stop is a linear function of volatility" are one fact
+   seen twice; their ratio is the constant.
+   **(a) SPLIT, AND THE RAW MEANS WERE A TRAP.** In % of price the stop
+   deciles ARE the same trade at a different scale (Spearman rho **+0.988** on
+   both asset classes). In risk multiples the raw means say the tightest
+   decile is the best in the population (+1.574 gross R) and **that reading is
+   false**: its median is **-1.000**, its skew 39.1, and **73.6% of its entire
+   gross R is carried by its top 0.1% of entries** — about seven trades. It is
+   R487's `1/stop` tail arriving on the GROSS side. **Winsorised at each
+   decile's own p99 the picture inverts and flattens: deciles 2-10 sit in a
+   band (crypto 0.275-0.450, index 0.476-0.741) and the tightest tenth is the
+   only one outside it, on the wrong side** — on crypto it is the only
+   negative decile before a cent of cost. Two of the four decile relationships
+   are perfect monotone MECHANICS and are recorded as such, not as findings:
+   win rate rises with the stop (rho +1.000, 1.80% -> 21.60%) and winner size
+   in R falls (rho -1.000, 142R -> 5.2R).
+   Cost/stop runs **6.311 in D1 against 0.092 in D10** — a 69x spread inside
+   one population paying one fee schedule. Net R **-4.736 -> +0.244**; D10-D1
+   paired by day **+6.405, t +2.98** (1,362 days).
+   **(b) YES, DECISIVELY.** Monthly, volatility vs median stop r **+0.960**
+   (crypto) / **+0.980** (index); volatility vs tight share rho **-0.914** /
+   **-0.899**. Quietest fifth of months vs wildest: tight share **21.90% ->
+   6.47%** (crypto) and **29.51% -> 3.90%** (index), net R **-0.967 ->
+   +0.273** and **-0.343 -> +0.333**.
+   **(c) ON THE INDEX THEY ARE ONE SENTENCE.** Index net R is **perfectly
+   monotone** across the five volatility fifths while its gross R is **flat
+   (r -0.053)** — "the method degrades in quiet markets" IS "cost eats it"
+   there, and nothing about the trade changes. **On crypto it is one and a
+   half sentences**: the same cost channel PLUS a real gross-side degradation
+   (monthly r +0.493).
+   **THE ROUND'S MOST USEFUL NUMBER, and it is one coordinate:** solving the
+   fitted elasticity for where the median stop equals the round trip gives
+   **BTC 0.0098% / SOL 0.0108% / SPY 0.0103% / QQQ 0.0102%** — **four of five
+   instruments converge on a 1-minute move of about 0.010% of price.** ETH is
+   **0.0293%, three times the others**, entirely because R486's $0.15 contract
+   minimum makes its round trip three times BTC's. Median days sit at **5.29x
+   (BTC), 8.34x (SOL), 2.88x (QQQ), 2.31x (ETH), 2.07x (SPY)** of their own
+   break-even move. **ETH is the coin R487 found is worst per trade (-1.092,
+   t -5.80) and this is the mechanism** — three rounds now point at the same
+   coin for the same reason.
+   Honest limits: the decile effect is a POOLED reading — per-symbol D10-D1
+   paired tests reach significance on none of the five (BTC t -1.44, ETH
+   -0.12, SOL -0.99, QQQ -0.43, SPY -0.68); daily tight shares are ratios of
+   small counts, so the MONTHLY correlations are the ones to trust.
+   **THE FENCE HELD AND IT MATTERED.** Every table in this round points at a
+   minimum-stop rule and **none was made**. Barred permanently: both families'
+   sealed slices are spent (crypto R475, index R474), so a stop threshold
+   chosen after seeing these tables could never be validated out of sample on
+   either population. **No number produced in R488 may be used to cut a
+   population in any future round.**
+
+13. **WHICH INSTRUMENT SHOULD THE DESK SPEND ITS NEXT SEALED LOOK ON?**
+   *(new, opened by R488, and it is the highest-value item on this queue
+   because it is the only path to a result that could ever be deployed.)*
+   The standing position of this family is a dead end BY CONSTRUCTION, not by
+   evidence: the method reads positive gross on 5.5 years of crypto and 11 of
+   the index, and **neither population has a sealed slice left anywhere**
+   (R474 spent SPY/QQQ, R475 spent crypto). Per the standing transfer rule a
+   future candidate needs a NEW instrument or NEW data. Nobody has asked which
+   one.
+   R488 supplies the screen and it costs nothing to run. Its coordinate is
+   **the realized 1-minute move divided by the all-in round trip** — the
+   median day sits at 5.29x that break-even on BTC, 8.34x on SOL, 2.88x on
+   QQQ, 2.31x on ETH and 2.07x on SPY, and the per-trade net R ranking of
+   those five (R487: SOL -0.013, BTC -0.520, ETH -1.092) follows it.
+   Deliverable, and NO LOOK IS CONSUMED BY ANY PART OF IT:
+   (a) For every instrument this desk can actually reach and price — the
+       specialists' markets (gold XAUT/GLD/GC=F, oil CL=F/WTIOIL-USDT, index
+       ES=F/SPY/QQQ, FX if a venue exists per R484), more coins, and any US
+       perpetual on R482's CDE product list — measure the realized 1-minute
+       move on whatever history is on disk and pair it with a PRIMARY-SOURCED
+       all-in round trip. Rank by the R488 multiple. Say plainly where the
+       cost figure is unsourced rather than inventing one (R482/R486
+       discipline).
+   (b) Does **stop/vol ~ 3.6** transfer? Build the sweep-to-1m-BOS structural
+       stop on the top-ranked instruments and read the ratio. R488 has it on
+       five instruments in two asset classes; a sixth and seventh either make
+       it a constant of the method or expose it as a property of these five.
+   (c) Data honesty: for each ranked instrument, state whether a 60/20/20
+       split with an UNREAD final 20% actually exists, or whether the desk has
+       already read inside that window in some earlier round. An instrument
+       with a great multiple and no clean slice is not a candidate either.
+   Output is a RANKED SHORTLIST and nothing else. **No entry population is
+   qualified and no cell is tested in this round** — the point is to decide
+   where the one remaining look gets spent, before spending it.
+
+14. **THE COARSER TRIGGER, READ IN THE STATISTIC R487 ESTABLISHED.**
+   *(new, opened by R488.)* R476 compared the 5-minute and 1-minute triggers
+   and the 1-minute won by a paired daily difference of t = 9.17 — **on
+   GROSS**. R487 then established that gross is not the statistic that decides
+   anything on this desk and R488 established why: **the stop scales with the
+   trigger's timeframe at an elasticity of ~1 and the round trip does not
+   scale at all.** A 15-minute or 1-hour trigger therefore has a
+   proportionally SMALLER cost/stop by construction, and the comparison R476
+   ran has never been run in per-trade net R.
+   Deliverable: the same family at 1m / 5m / 15m / 1h resolution on the crypto
+   population, read in **per-trade net R with a t clustered by day**, with the
+   stop/vol ratio and the R488 break-even multiple printed for each
+   resolution. Plus the entry count, because a coarser trigger fires less
+   often and frequency is a separate fact from expectancy.
+   **THE FENCE:** this is a DESCRIPTION on spent slices and **cannot produce a
+   deployment candidate on crypto or SPY/QQQ under any outcome.** No
+   resolution may be "selected"; the round reports the profile. Its real
+   purpose is to tell item 13 **which resolution to carry to a new
+   instrument** — so it should run AFTER 13 has named the instrument, or
+   before it if 13 stalls on sourcing.
+
+15. **WHERE IN THE HOLD DOES THE GROSS ACTUALLY COME FROM?**
+   *(new, opened by R488, carried from R481/R482/R483.)* Three separate rounds
+   have landed on the same 9.7% of positions — the cap-runners — from three
+   directions: R481 (they produce the entire gross at +4.13% each, the stopped
+   90.3% are collectively negative), R482 (BTC and ETH are BELOW their
+   overnight margin ceiling, which bites exactly these), R483 (they straddle a
+   venue break 99.985% of the time, and ~57 exits a year land inside the
+   CLOSED Friday halt). **Nobody has read the gross as a function of how long
+   the position actually ran.**
+   Deliverable, purely descriptive: cumulative gross and cumulative net R as a
+   function of hold length across the whole 68,992-entry population; the R
+   distribution of the cap-runners by how many hours they ran; and the share
+   of total gross that is already banked before the first overnight boundary
+   and before the Friday halt. If most of the money is made in the first few
+   hours, R482's and R483's constraints bite the noise; if it is made in the
+   last few, they bite the money and this family is finished on venue grounds
+   independent of everything else.
+   **THE FENCE:** no exit rule, no hold cap and no time-of-day gate may be
+   proposed or implied. The 24-hour cap is the population's existing
+   construction and is not a parameter to be swept. This round describes where
+   the money sits inside a published population; it cuts nothing.
 
 ## Obsoleted by the 2026-07-25 strategy pivot — DO NOT RUN
 Wallace retired every self-derived strategy and rebuilt the desk on TJR's
@@ -683,6 +803,25 @@ as written; what changes is the LEVEL. When quoting a risk multiple from this
 file, quote the per-trade one or say which it is. **84.17% of entries carry a
 stop tighter than one Alpaca round trip and 16.65% tighter than the R486
 Coinbase all-in.**
+
+NOTE (R488): **the structural stop is not a fixed percentage of price, it is a
+fixed multiple of VOLATILITY — about 3.6 one-minute moves, on five instruments in
+two asset classes over eleven years** (log-log elasticity to realized 1-minute
+vol 0.876 on crypto, 0.973 on the index and not distinguishable from 1.0). Two
+consequences for this mandate. **First, the leverage the method asks for is not a
+constant** — R478's "5.4x BTC / 4.2x ETH / 2.9x SOL at 1% risked" is a reading
+taken at one volatility level, and in the quietest fifth of months the stop is
+roughly a third of what it is in the wildest, so the same risk budget asks for
+roughly three times the leverage. **A quiet market is where the 15-20x tier
+becomes REQUIRED rather than optional, and it is also where R488 shows the method
+is least able to pay for itself** (net R -0.967 in the quietest fifth against
++0.273 in the wildest on crypto; -0.343 against +0.333 on the index). The tier
+and the unaffordability arrive together. **Second, the tightest tenth of entries
+is not the tier's opportunity — it is a worse trade.** Winsorised at its own p99
+it is the ONLY negative decile on crypto before a cent of cost, and its headline
++1.574 gross R is 73.6% carried by seven entries. **Barred: none of this may
+become a stop-size or volatility filter** (R488's fence; both families' sealed
+slices are spent). Owner mandate stands until Wallace changes it.
 
 NOTE (R485, decay): the decay this desk has been treating as a fact about the
 method is a fact about the MARKET. In risk multiples the crypto 1-minute method

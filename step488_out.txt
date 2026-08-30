@@ -1,0 +1,284 @@
+====================================================================================================
+ROUND 488 - STOP SIZE, OUTCOME AND VOLATILITY  (queue item 12)
+RESEARCH ONLY. NO ORDERS. NO LOOK CONSUMED. NOTHING DEPLOYED.
+DESCRIPTION ONLY - no filter, no gate, no threshold is proposed,
+implied, or permitted to leave this file.
+====================================================================================================
+crypto population: 68,992 entries, 2021-01-01 -> 2026-07-24, 2,031 days, coins ['BTCUSD', 'ETHUSD', 'SOLUSD']
+index  population: 23,318 entries, 2016-01-04 -> 2026-07-24, 2,574 days, ['QQQ', 'SPY']
+published anchors reproduced: crypto per-trade net R -0.346 (R485 -0.346), index per-trade net R -0.024 (R485 -0.024)
+                              crypto tight share 12.14% (R485 12.14), index 14.53% (R485 14.53)
+
+attaching realized 1-minute volatility, per symbol per day ...
+  R485 year-scale check (mean |1m return|, % of price):
+    BTCUSD  2021:0.0827  2022:0.0562  2023:0.0385  2024:0.0587  2025:0.0516  2026:0.0441
+    ETHUSD  2021:0.1055  2022:0.0781  2023:0.0422  2024:0.0689  2025:0.0774  2026:0.0681
+    SOLUSD  2021:0.1949  2022:0.1174  2023:0.0972  2024:0.1007  2025:0.0879  2026:0.0728
+    SPY     2016:0.0189  2017:0.0113  2018:0.0224  2019:0.0170  2020:0.0337  2021:0.0172  2022:0.0312  2023:0.0188  2024:0.0160  2025:0.0194  2026:0.0181
+    QQQ     2016:0.0261  2017:0.0174  2018:0.0328  2019:0.0224  2020:0.0394  2021:0.0236  2022:0.0403  2023:0.0247  2024:0.0217  2025:0.0240  2026:0.0248
+  index daily series uses REGULAR HOURS only (13:30-20:00 UTC); the line above is the whole tape, matching R485.
+
+====================================================================================================
+(a)  THE JOINT DISTRIBUTION OF STOP SIZE AND OUTCOME
+====================================================================================================
+A decile here is a DESCRIPTION of the stop distribution. If mean
+gross R is flat across the ten and gross% of price rises with them,
+then the tight entries are the SAME TRADE AT A SMALLER SCALE and
+the cost problem is a pure sizing fact. If gross R falls with the
+stop, they are a different, worse trade. Nothing is cut either way.
+
+CRYPTO  (68,992 entries, 3 coins, 2021-2026)  (deciles cut WITHIN COIN/SYMBOL)
+dec        n  stop lo%  stop med%  stop hi%   p_win%     W_R   gross%   grossR   t_day  cost/stop     netR   t_day    bars    vol%
+----------------------------------------------------------------------------------------------------------------------------------
+1      6,901     0.000      0.040     0.094     1.80  142.26   0.0236    1.574    2.66      6.311   -4.736   -3.61       4  0.0589
+2      6,899     0.054      0.086     0.160     4.23   37.66   0.0557    0.636    3.57      0.856   -0.220   -1.38      11  0.0606
+3      6,899     0.088      0.125     0.216     5.90   26.95   0.0917    0.649    4.59      0.575    0.074    0.71      18  0.0629
+4      6,899     0.120      0.167     0.268     6.70   20.53   0.0849    0.442    4.23      0.437    0.004    0.19      27  0.0656
+5      6,899     0.151      0.210     0.322     7.91   17.13   0.0945    0.435    4.82      0.352    0.083    0.96      35  0.0689
+6      6,899     0.186      0.257     0.387     9.26   15.00   0.1265    0.482    6.23      0.289    0.192    3.16      46  0.0719
+7      6,899     0.227      0.311     0.462    11.61   12.33   0.1788    0.548    7.57      0.239    0.309    5.10      60  0.0756
+8      6,899     0.278      0.378     0.567    12.86   10.69   0.1918    0.503    7.14      0.195    0.308    4.54      79  0.0801
+9      6,899     0.351      0.482     0.767    15.42    8.33   0.2171    0.440    7.03      0.151    0.288    4.87     108  0.0871
+10     6,899     0.483      0.801   136.647    21.60    5.18   0.2446    0.335    6.11      0.092    0.244    4.19     184  0.1141
+
+  Spearman decile vs mean gross R   rho -0.721  p  0.019   (10 points, weak by construction)
+  Spearman decile vs win rate p     rho +1.000  p  0.000
+  Spearman decile vs winner size W_R rho -1.000  p  0.000
+  Spearman decile vs gross% of price rho +0.988  p  0.000   (this one MUST rise if R is flat - gross% = R x stop)
+  D10 - D1 on gross R          paired by day   -2.006 t  -2.22 (1,362 days)   unpaired   -1.506 t  -2.20
+  D10 - D1 on gross% of price  paired by day   +0.065 t  +0.93 (1,362 days)   unpaired   +0.137 t  +2.17
+  D10 - D1 on net R            paired by day   +6.405 t  +2.98 (1,362 days)   unpaired   +6.589 t  +3.73
+
+  dispersion of gross R by decile (if it is the same trade at a different scale, this is flat too)
+dec      meanR      sdR      p10      p50      p90     skew
+1        1.574   45.177   -1.000   -1.000   -1.000    39.12
+2        0.636   10.554   -1.000   -1.000   -1.000    10.30
+3        0.649    8.313   -1.000   -1.000   -1.000     6.75
+4        0.442    6.909   -1.000   -1.000   -1.000     6.94
+5        0.435    6.030   -1.000   -1.000   -1.000     5.42
+6        0.482    5.770   -1.000   -1.000   -1.000     5.38
+7        0.548    5.411   -1.000   -1.000    3.643     4.87
+8        0.503    5.040   -1.000   -1.000    4.022     4.89
+9        0.440    4.297   -1.000   -1.000    4.710     4.09
+10       0.335    3.421   -1.000   -1.000    4.330     3.99
+
+CRYPTO  same table, pooled deciles (sanity)  (deciles cut POOLED)
+dec        n  stop lo%  stop med%  stop hi%   p_win%     W_R   gross%   grossR   t_day  cost/stop     netR   t_day    bars    vol%
+----------------------------------------------------------------------------------------------------------------------------------
+1      6,900     0.000      0.040     0.065     2.01  129.67   0.0272    1.632    2.72      6.279   -4.646   -3.60       4  0.0546
+2      6,899     0.065      0.087     0.108     4.41   35.74   0.0539    0.619    3.71      0.855   -0.236   -0.26      11  0.0555
+3      6,899     0.108      0.128     0.149     5.90   23.99   0.0608    0.474    3.80      0.573   -0.099   -0.37      19  0.0591
+4      6,899     0.149      0.169     0.191     6.99   20.49   0.0867    0.502    5.16      0.439    0.063    0.92      28  0.0636
+5      6,899     0.191      0.213     0.237     7.90   16.83   0.0864    0.409    4.77      0.359    0.050    1.08      34  0.0684
+6      6,899     0.237      0.261     0.288    10.19   15.18   0.1696    0.649    7.07      0.296    0.353    4.15      45  0.0725
+7      6,899     0.288      0.319     0.354    11.09   12.63   0.1622    0.512    6.71      0.246    0.265    3.58      56  0.0768
+8      6,899     0.354      0.395     0.445    13.07   10.59   0.2046    0.516    7.22      0.201    0.314    4.45      77  0.0829
+9      6,899     0.445      0.513     0.611    14.63    8.41   0.1953    0.377    6.86      0.157    0.220    4.86     105  0.0912
+10     6,900     0.611      0.801   136.647    21.10    5.42   0.2626    0.354    6.69      0.094    0.260    5.04     171  0.1210
+
+  Spearman decile vs mean gross R   rho -0.600  p  0.067   (10 points, weak by construction)
+  Spearman decile vs win rate p     rho +1.000  p  0.000
+  Spearman decile vs winner size W_R rho -1.000  p  0.000
+  Spearman decile vs gross% of price rho +0.964  p  0.000   (this one MUST rise if R is flat - gross% = R x stop)
+  D10 - D1 on gross R          paired by day   -1.983 t  -2.23 (1,375 days)   unpaired   -1.434 t  -2.11
+  D10 - D1 on gross% of price  paired by day   +0.164 t  +2.20 (1,375 days)   unpaired   +0.209 t  +3.18
+  D10 - D1 on net R            paired by day   +6.490 t  +3.04 (1,375 days)   unpaired   +6.669 t  +3.77
+
+  dispersion of gross R by decile (if it is the same trade at a different scale, this is flat too)
+dec      meanR      sdR      p10      p50      p90     skew
+1        1.632   45.209   -1.000   -1.000   -1.000    39.04
+2        0.619   10.458   -1.000   -1.000   -1.000    10.39
+3        0.474    7.544   -1.000   -1.000   -1.000     6.74
+4        0.502    7.081   -1.000   -1.000   -1.000     7.16
+5        0.409    6.305   -1.000   -1.000   -1.000     6.59
+6        0.649    6.198   -1.000   -1.000    1.050     5.10
+7        0.512    5.500   -1.000   -1.000    2.603     4.96
+8        0.516    4.954   -1.000   -1.000    4.160     4.52
+9        0.377    4.254   -1.000   -1.000    4.380     4.44
+10       0.354    3.535   -1.000   -1.000    4.374     3.98
+
+CRYPTO - PER SYMBOL, decile 1 vs decile 10 on gross R
+sym             n  D1 stopmed%  D1 grossR  D10 stopmed%  D10 grossR   D10-D1  t paired   days
+BTCUSD     25,421        0.033      1.366         0.638       0.247   -2.465     -1.44    586
+ETHUSD     25,390        0.042      0.852         0.765       0.467   -0.100     -0.12    601
+SOLUSD     18,181        0.055      2.873         0.998       0.273   -1.624     -0.99    449
+
+INDEX  (SPY + QQQ, 2016-2026)  (deciles cut WITHIN COIN/SYMBOL)
+dec        n  stop lo%  stop med%  stop hi%   p_win%     W_R   gross%   grossR   t_day  cost/stop     netR   t_day    bars    vol%
+----------------------------------------------------------------------------------------------------------------------------------
+1      2,333     0.000      0.023     0.039    13.59   11.55   0.0189    0.705    2.81      2.954   -2.249   -4.34       5  0.0193
+2      2,332     0.029      0.041     0.057    22.38    6.95   0.0308    0.781    5.06      0.985   -0.204   -2.40      17  0.0198
+3      2,331     0.042      0.054     0.074    26.47    5.98   0.0485    0.848    6.23      0.724    0.124    0.74      27  0.0215
+4      2,332     0.054      0.067     0.091    28.26    4.82   0.0442    0.643    6.14      0.575    0.068    0.62      33  0.0237
+5      2,331     0.067      0.080     0.111    31.45    4.30   0.0593    0.668    6.16      0.472    0.197    1.50      39  0.0260
+6      2,332     0.080      0.097     0.134    33.06    4.15   0.0727    0.703    6.84      0.392    0.310    2.85      46  0.0282
+7      2,331     0.098      0.122     0.166    35.61    3.73   0.0884    0.683    7.08      0.319    0.363    3.62      56  0.0312
+8      2,332     0.122      0.155     0.209    37.18    3.35   0.1024    0.617    6.61      0.254    0.362    3.58      68  0.0356
+9      2,331     0.156      0.211     0.289    39.55    3.03   0.1257    0.594    6.11      0.193    0.401    3.68      71  0.0412
+10     2,333     0.217      0.343     3.313    44.88    2.34   0.1873    0.498    6.20      0.114    0.385    4.54      94  0.0609
+
+  Spearman decile vs mean gross R   rho -0.842  p  0.002   (10 points, weak by construction)
+  Spearman decile vs win rate p     rho +1.000  p  0.000
+  Spearman decile vs winner size W_R rho -1.000  p  0.000
+  Spearman decile vs gross% of price rho +0.988  p  0.000   (this one MUST rise if R is flat - gross% = R x stop)
+  D10 - D1 on gross R          paired by day   -1.187 t  -1.34 (154 days)   unpaired   -0.090 t  -0.43
+  D10 - D1 on gross% of price  paired by day   +0.084 t  +1.71 (154 days)   unpaired   +0.146 t  +5.48
+  D10 - D1 on net R            paired by day   +5.911 t  +1.37 (154 days)   unpaired   +3.168 t  +4.82
+
+  dispersion of gross R by decile (if it is the same trade at a different scale, this is flat too)
+dec      meanR      sdR      p10      p50      p90     skew
+1        0.705    6.889   -1.000   -1.000    4.130     7.53
+2        0.781    5.346   -1.000   -1.000    5.245     7.98
+3        0.848    4.995   -1.000   -1.000    5.123     5.40
+4        0.643    3.647   -1.000   -1.000    5.097     3.76
+5        0.668    3.492   -1.000   -1.000    4.805     3.95
+6        0.703    3.544   -1.000   -1.000    4.594     3.72
+7        0.683    3.375   -1.000   -1.000    4.638     3.93
+8        0.617    2.972   -1.000   -1.000    4.258     2.74
+9        0.594    2.685   -1.000   -1.000    4.090     2.42
+10       0.498    2.273   -1.000   -1.000    3.913     1.85
+
+INDEX - PER SYMBOL, decile 1 vs decile 10 on gross R
+sym             n  D1 stopmed%  D1 grossR  D10 stopmed%  D10 grossR   D10-D1  t paired   days
+QQQ        11,576        0.027      0.914         0.391       0.459   -0.506     -0.43     55
+SPY        11,742        0.021      0.499         0.294       0.536   -1.244     -0.68     57
+
+----------------------------------------------------------------------------------------------------
+WHERE THE COST LANDS ON THAT DISTRIBUTION
+----------------------------------------------------------------------------------------------------
+  crypto  stop under the round trip: 12.14% of entries.  gross R tight +1.566 vs rest +0.471, paired by day -1.289 (t -2.47, 1,872 days)
+          their cost/stop mean   5.48 against  0.32 for the rest; they are -3.914 net R against +0.148
+  index   stop under the round trip: 14.53% of entries.  gross R tight +0.851 vs rest +0.644, paired by day -0.052 (t -0.31, 1,253 days)
+          their cost/stop mean   2.39 against  0.41 for the rest; they are -1.540 net R against +0.233
+  Reported, not acted on. No minimum-stop rule follows from this
+  and none is permitted (queue item 12's fence, R485's bar).
+
+====================================================================================================
+(b)  IS THE TIGHT-STOP SHARE A FUNCTION OF VOLATILITY?  [CRYPTO]
+====================================================================================================
+  'tight' = stop smaller than the measured all-in round trip (R482 all-in, per coin: BTC 0.0432% / ETH 0.1126% / SOL 0.0724%).
+  It is the VENUE's number, not a proposed cut. Continuous relationships are
+  printed beside it so that no cut point is manufactured.
+
+  volatility attached to 100.0% of entries (68,992 of 68,992)
+
+year        n     vol%  stopmed%  stop/vol   tight%   grossR     netR  cost/stop
+2021   11,893   0.1013     0.307      3.03     6.52    0.664   -0.394      1.058
+2022   13,956   0.0836     0.246      2.94    11.00    0.814   -0.039      0.854
+2023   11,314   0.0509     0.159      3.12    21.26    0.319   -0.675      0.994
+2024   10,863   0.0687     0.230      3.35    12.86    0.603   -0.471      1.074
+2025   13,609   0.0731     0.256      3.50    10.60    0.572   -0.343      0.915
+2026    7,357   0.0621     0.224      3.61    11.19    0.610   -0.161      0.771
+  stop/vol is the structural stop expressed in units of that year's 1-minute move.
+  If it is FLAT, the stop is a fixed multiple of volatility and the tight share
+  is mechanical: the market shrank past a fee that did not.
+
+  CORRELATIONS  (daily: 2,030 days with >=3 entries; monthly: 67 months)
+pair                                     daily r        p   daily rho   monthly r        p  monthly rho
+realized vol  vs  median stop             +0.850    0.000      +0.846      +0.960    0.000       +0.945
+realized vol  vs  tight share             -0.535    0.000      -0.671      -0.774    0.000       -0.914
+median stop   vs  tight share             -0.612    0.000      -0.743      -0.852    0.000       -0.944
+realized vol  vs  mean gross R            +0.045    0.043      +0.133      +0.493    0.000       +0.513
+realized vol  vs  mean net R              +0.051    0.021      +0.295      +0.391    0.001       +0.621
+
+  THE SAME THING AS A PICTURE: months ranked by realized volatility, in fifths
+vol 5th    months     vol%  stopmed%  stop/vol   tight%   grossR     netR
+1              14   0.0450     0.159      3.54    21.90    0.274   -0.967
+2              13   0.0613     0.211      3.44    14.01    0.449   -0.611
+3              13   0.0719     0.241      3.35    11.00    0.616   -0.160
+4              13   0.0836     0.271      3.25     9.05    0.805   -0.465
+5              14   0.1088     0.329      3.02     6.47    0.869    0.273
+  Months are the unit here because a per-day tight share is a ratio of small counts.
+  Nothing is selected by this table and nothing may be.
+
+====================================================================================================
+(b)  IS THE TIGHT-STOP SHARE A FUNCTION OF VOLATILITY?  [INDEX]
+====================================================================================================
+  'tight' = stop smaller than the measured all-in round trip (R370/R474 headline 0.04%).
+  It is the VENUE's number, not a proposed cut. Continuous relationships are
+  printed beside it so that no cut point is manufactured.
+
+  volatility attached to 100.0% of entries (23,318 of 23,318)
+
+year        n     vol%  stopmed%  stop/vol   tight%   grossR     netR  cost/stop
+2016    2,314   0.0255     0.082      3.20    15.13    0.570   -0.160      0.731
+2017    2,242   0.0153     0.055      3.58    33.23    0.600   -0.511      1.112
+2018    2,462   0.0345     0.107      3.09    12.96    0.802   -0.126      0.928
+2019    2,061   0.0227     0.079      3.48    17.86    0.841    0.094      0.747
+2020    2,192   0.0462     0.137      2.97     8.44    0.636    0.134      0.503
+2021    2,096   0.0264     0.082      3.12    17.41    0.629   -0.082      0.710
+2022    2,209   0.0508     0.166      3.27     3.26    0.607    0.260      0.346
+2023    2,322   0.0298     0.096      3.21    10.77    0.673    0.071      0.601
+2024    2,249   0.0249     0.084      3.39    13.74    0.883    0.203      0.680
+2025    2,064   0.0308     0.100      3.26    14.39    0.561   -0.085      0.646
+2026    1,107   0.0306     0.106      3.45    11.56    0.526   -0.071      0.597
+  stop/vol is the structural stop expressed in units of that year's 1-minute move.
+  If it is FLAT, the stop is a fixed multiple of volatility and the tight share
+  is mechanical: the market shrank past a fee that did not.
+
+  CORRELATIONS  (daily: 2,280 days with >=3 entries; monthly: 127 months)
+pair                                     daily r        p   daily rho   monthly r        p  monthly rho
+realized vol  vs  median stop             +0.786    0.000      +0.793      +0.980    0.000       +0.961
+realized vol  vs  tight share             -0.411    0.000      -0.610      -0.691    0.000       -0.899
+median stop   vs  tight share             -0.357    0.000      -0.684      -0.692    0.000       -0.933
+realized vol  vs  mean gross R            +0.036    0.090      +0.031      -0.053    0.557       +0.082
+realized vol  vs  mean net R              +0.119    0.000      +0.249      +0.257    0.004       +0.481
+
+  THE SAME THING AS A PICTURE: months ranked by realized volatility, in fifths
+vol 5th    months     vol%  stopmed%  stop/vol   tight%   grossR     netR
+1              26   0.0163     0.059      3.61    29.51    0.690   -0.343
+2              25   0.0214     0.077      3.58    18.21    0.583   -0.161
+3              25   0.0259     0.088      3.38    13.95    0.622   -0.074
+4              25   0.0347     0.120      3.47     8.01    0.806    0.165
+5              26   0.0539     0.182      3.38     3.90    0.700    0.333
+  Months are the unit here because a per-day tight share is a ratio of small counts.
+  Nothing is selected by this table and nothing may be.
+
+====================================================================================================
+ADDENDUM - IS THE TIGHT DECILE'S GROSS R REAL, AND HOW HARD IS
+THE STOP TIED TO VOLATILITY?
+====================================================================================================
+(a)'s raw means are exposed to the SAME 1/stop tail R487 found on
+the net side. Both checks below exist so the round does not repeat
+that error on the gross side. Nothing here is a cut or a candidate.
+
+CRYPTO
+  (1) IS THE TIGHT DECILE'S HIGH GROSS R REAL, OR THE 1/stop TAIL?
+      Spearman decile vs mean gross R, deciles 2-10 only: rho -0.617  p 0.077   (band 0.335 to 0.649)
+      D1 mean gross R +1.574 vs its MEDIAN -1.000; D10 mean +0.335 median -1.000
+      D1 mean gross R with the top   0.1% of R removed: +0.415   (share of D1's total R carried by them:  73.6%)
+      D1 mean gross R with the top   1.0% of R removed: -0.788   (share of D1's total R carried by them: 149.5%)
+      D1 mean gross R with the top   5.0% of R removed: -1.000   (share of D1's total R carried by them: 162.4%)
+      the same table with each decile's R winsorised at its own p99:
+      D1 -0.276  D2 +0.293  D3 +0.450  D4 +0.275  D5 +0.341  D6 +0.386  D7 +0.445  D8 +0.396  D9 +0.372  D10 +0.281
+  (2) HOW HARD IS THE STOP TIED TO VOLATILITY?  (log-log elasticity)
+      log(median stop) = +0.899 + 0.876 * log(vol)   elasticity 0.876 (se 0.011, t vs 1.0 = -11.63), R2 0.769, 2,030 days
+      per-entry stop/vol: p10 1.16  p25 2.18  p50 3.60  p75 5.51  p90 8.01
+  (3) THE PRICE OF THE CONSTRAINT (a description, not a gate):
+      BTCUSD   round trip 0.0432% -> the median stop equals it at a 1-minute move of 0.0098%; the median day sits at 0.0519% (5.29x it)
+      ETHUSD   round trip 0.1126% -> the median stop equals it at a 1-minute move of 0.0293%; the median day sits at 0.0677% (2.31x it)
+      SOLUSD   round trip 0.0724% -> the median stop equals it at a 1-minute move of 0.0108%; the median day sits at 0.0903% (8.34x it)
+
+INDEX
+  (1) IS THE TIGHT DECILE'S HIGH GROSS R REAL, OR THE 1/stop TAIL?
+      Spearman decile vs mean gross R, deciles 2-10 only: rho -0.833  p 0.005   (band 0.498 to 0.848)
+      D1 mean gross R +0.705 vs its MEDIAN -1.000; D10 mean +0.498 median -1.000
+      D1 mean gross R with the top   0.1% of R removed: +0.581   (share of D1's total R carried by them:  17.7%)
+      D1 mean gross R with the top   1.0% of R removed: +0.138   (share of D1's total R carried by them:  80.7%)
+      D1 mean gross R with the top   5.0% of R removed: -0.486   (share of D1's total R carried by them: 165.5%)
+      the same table with each decile's R winsorised at its own p99:
+      D1 +0.442  D2 +0.618  D3 +0.741  D4 +0.582  D5 +0.608  D6 +0.638  D7 +0.598  D8 +0.577  D9 +0.565  D10 +0.476
+  (2) HOW HARD IS THE STOP TIED TO VOLATILITY?  (log-log elasticity)
+      log(median stop) = +1.194 + 0.973 * log(vol)   elasticity 0.973 (se 0.015, t vs 1.0 = -1.82), R2 0.650, 2,280 days
+      per-entry stop/vol: p10 1.65  p25 2.49  p50 3.67  p75 5.39  p90 7.63
+  (3) THE PRICE OF THE CONSTRAINT (a description, not a gate):
+      QQQ      round trip 0.0400% -> the median stop equals it at a 1-minute move of 0.0102%; the median day sits at 0.0292% (2.88x it)
+      SPY      round trip 0.0400% -> the median stop equals it at a 1-minute move of 0.0103%; the median day sits at 0.0213% (2.07x it)
+
+  Descriptions only. No cut, no gate, no candidate. The fence holds.
+
+====================================================================================================
+END OF ROUND 488. NO CELL QUALIFIED, NONE COULD - THIS ROUND
+DESCRIBES TWO PUBLISHED POPULATIONS. NO LOOK CONSUMED. NO ORDER.
+NO FILTER, GATE OR THRESHOLD IS PROPOSED OR CARRIED FORWARD.
+====================================================================================================
