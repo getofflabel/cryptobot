@@ -1,0 +1,236 @@
+============================================================================================================
+ROUND 489 - WHICH INSTRUMENT SHOULD THE DESK SPEND ITS NEXT SEALED LOOK ON?   (queue item 13)
+============================================================================================================
+A SCREEN. No look is consumed and none can be: `simulate()` is never called in this file,
+no return or expectancy is computed for any instrument, and every measurement stops at the
+80% boundary of each instrument's own window. The final 20% of every candidate stays sealed.
+
+============================================================================================================
+(a1) THE VENUE, POLLED LIVE AND KEYLESS - every US perpetual Coinbase Derivatives lists
+============================================================================================================
+  sampling each book 7x, 12s apart (one poll is not a measurement) ...
+29 perpetual contracts listed. Fee is CFM's SOURCED FORMULA at its SOURCED FLOOR (R486):
+  per side = max(0.02% x notional, $0.15), exchange+clearing+NFA inclusive. The volume ladder above the floor is UNSOURCED and is not invented here, so every
+  fee below is the CHEAPEST the account can possibly be.
+  Break point: the $0.15 minimum binds below a notional of $750. Above it the rate binds and the round trip is a flat 0.04%.
+
+contract       code        size        mark  notional$   fee%RT  min?  spr%med       spr lo-hi   n  allin%RT      24h $vol
+BTC PERP       BIP         0.01  78810.0000     788.10   0.0400     -   0.0127   0.0063-0.0127   7    0.0527   304,475,342
+ETH PERP       ETP          0.1   2474.0000     247.40   0.1213   yes   0.0404   0.0202-0.0404   7    0.1616    78,476,270
+XRP PERP       XPP          500      1.3861     693.05   0.0433   yes   0.0216   0.0144-0.0360   7    0.0649    38,230,717
+SOL PERP       SLP            5    103.7200     518.60   0.0578   yes   0.0289   0.0289-0.0289   7    0.0868    31,428,197
+ZCASH PERP     ZEC            1    861.8000     861.80   0.0400     -   0.0579   0.0464-0.0638   7    0.0979    24,605,252
+TECH PERP      TEK            1   3950.3000    3950.30   0.0400     -   0.0354   0.0329-0.0380   7    0.0754    17,385,270
+HYPE PERP      HYP           10     84.5000     845.00   0.0400     -   0.0591   0.0473-0.0592   7    0.0991    12,942,865
+NEAR PERP      NER          500      1.9688     984.40   0.0400     -   0.0915   0.0763-0.1373   7    0.1315     9,341,956
+US 500 PERP    US5            1   3104.5000    3104.50   0.0400     -   0.0322   0.0322-0.0419   7    0.0722     8,180,358
+ENA PERP       ENA         5000      0.1511     755.30   0.0400     -   0.0661   0.0595-0.0728   7    0.1061     7,138,340
+SUI PERP       SUP          500      0.7340     367.00   0.0817   yes   0.0545   0.0545-0.0682   7    0.1363     5,481,512
+XLM PERP       XLP         5000      0.1778     889.00   0.0400     -   0.0562   0.0281-0.0618   7    0.0962     5,413,121
+LINK PERP      LNP           50     11.4970     574.85   0.0522   yes   0.0522   0.0435-0.0608   7    0.1043     5,334,608
+DOGE PERP      DOP         5000      0.0836     417.90   0.0718   yes   0.0599   0.0359-0.0718   7    0.1317     4,765,732
+CHINA PERP     CHN            1   2972.2000    2972.20   0.0400     -   0.0872   0.0772-0.0905   7    0.1272     4,395,884
+PAXG PERP      PAU            1   4435.6000    4435.60   0.0400     -   0.0451   0.0226-0.0496   6    0.0851     3,779,131
+ADA PERP       ADP         1000      0.2018     201.80   0.1487   yes   0.0993   0.0497-0.0994   6    0.2480     3,418,492
+ONDO PERP      OND         1000      0.3516     351.60   0.0853   yes   0.0852   0.0568-0.1138   7    0.1706     2,587,424
+DFNSE PERP     DEF            1   2825.7000    2825.70   0.0400     -   0.0177   0.0177-0.0283   7    0.0577     2,520,524
+DOT PERP       POP          100      0.8690      86.90   0.3452   yes   0.1152   0.1151-0.1155   7    0.4604     2,368,720
+BCH PERP       BCP            1    249.2500     249.25   0.1204   yes   0.0800   0.0800-0.1001   7    0.2004     1,923,961
+AI PERP        AIP            1   2920.5000    2920.50   0.0400     -   0.0308   0.0274-0.0342   7    0.0708     1,790,266
+HBAR PERP      HEP         5000      0.0750     375.20   0.0800   yes   0.0400   0.0400-0.0667   7    0.1200     1,410,752
+AAVE PERP      AVE            5    126.6500     633.25   0.0474   yes   0.0474   0.0395-0.0631   7    0.0947       808,027
+1000PEPE PERP  PEP        1e+05      0.0035     353.50   0.0849   yes   0.0565   0.0283-0.0566   7    0.1414       759,672
+LTC PERP       LCP            5     49.0700     245.35   0.1223   yes   0.0816   0.0612-0.0817   7    0.2039       601,108
+1000SHIB PERP  SHP        1e+04      0.0052      51.60   0.5814   yes   0.1931   0.1931-0.1931   7    0.7744       383,904
+BNB PERP       BNB            1    690.9500     690.95   0.0434   yes   0.0506   0.0434-0.0579   6    0.0941       285,362
+AVAX PERP      AVP           10      7.3000      73.00   0.4110   yes   0.2736   0.2736-0.2736   6    0.6846       284,773
+
+  CALIBRATION OF THIS RUN'S 7-SAMPLE MEDIAN AGAINST R479/R480's FULL-CLOCK MEDIANS (the three contracts where the clock is known):
+    BIP   sampled median 0.0127%  vs  R480 full-clock median 0.0147%   ratio 0.86x
+    ETP   sampled median 0.0404%  vs  R480 full-clock median 0.0427%   ratio 0.95x
+    SLP   sampled median 0.0289%  vs  R480 full-clock median 0.0275%   ratio 1.05x
+  Seven samples over a minute is not a 24-hour clock. Read the ratios above, and the lo-hi column,
+  before trusting any spread in this table to two decimals.
+
+============================================================================================================
+(a2) THE REALIZED 1-MINUTE MOVE, ON THE FIRST 80% OF EACH INSTRUMENT'S OWN WINDOW
+============================================================================================================
+Gap-clean: only consecutive bars exactly 60s apart contribute, so a session break or a tape
+hole is never counted as a one-minute move. R488's raw definition is printed beside it.
+
+instrument kind     bars(80%)   dayswindow (80% slice)          vol%med  vol%mean  raw%med
+BTCUSD     crypto   2,084,756   1627  2021-01-01->2025-06-15     0.0546    0.0596   0.0540
+ETHUSD     crypto   2,121,411   1627  2021-01-01->2025-06-15     0.0687    0.0754   0.0674
+SOLUSD     crypto   1,506,765   1209  2021-01-01->2025-06-15     0.1059    0.1312   0.1060
+LINKUSD    crypto   1,879,664   1627  2021-01-01->2025-06-15     0.1037    0.1138   0.1058
+LTCUSD     crypto   1,707,218   1627  2021-01-01->2025-06-15     0.0923    0.1031   0.0948
+XRPUSD     crypto     591,053    751  2024-01-01->2026-01-20     0.0829    0.0993   0.0895
+ADAUSD     crypto     134,687    132  2026-02-13->2026-06-24     0.0799    0.0838   0.0764
+DOTUSD     crypto     129,397    118  2026-03-01->2026-06-26     0.0824    0.0859   0.0809
+PAXGUSD    crypto      63,091    118  2026-03-01->2026-06-26     0.0467    0.0462   0.0447
+AVAXUSD    crypto       1,883      3  DATA ABSENT - not a candidate
+DOGEUSD    crypto       1,711      3  DATA ABSENT - not a candidate
+SPY        index    1,665,986   2157  2016-01-01->2024-06-13     0.0173    0.0208   0.0173
+QQQ        index    1,568,098   2156  2016-01-01->2024-06-13     0.0237    0.0275   0.0237
+GLD        etf         62,913     81  2026-03-02->2026-06-25     0.0336    0.0385   0.0346
+IAU        etf         45,494     81  2026-03-02->2026-06-25     0.0358    0.0411   0.0410
+GBPUSD     fx         163,269    138  2026-01-05->2026-06-14     0.0075    0.0080   0.0077
+GBPJPY     fx         163,357    138  2026-01-05->2026-06-14     0.0072    0.0080   0.0074
+
+  The gap-clean and raw columns agree on 24/7 crypto and diverge on session instruments,
+  which is the whole reason the clean one is the coordinate used below.
+
+============================================================================================================
+(a3) THE R488 MULTIPLE - the median day's 1-minute move divided by the all-in round trip
+============================================================================================================
+R488: four of five instruments break even at a 1-minute move of about 0.010% of price. The
+multiple below is how many times the median day CLEARS the round trip it must pay. It ranks;
+it does not qualify. Cost is a coordinate here and declines nothing (owner rule 2026-07-25).
+
+#   instrument venue                       vol%med  allin%RT  multiple   dayssealed 20%?   
+1   XRPUSD     CDE XRP PERP                 0.0829    0.0649      1.28    751  INTACT      
+2   SOLUSD     CDE SOL PERP                 0.1059    0.0868      1.22   1209  SPENT       
+3   BTCUSD     CDE BTC PERP                 0.0546    0.0527      1.04   1627  SPENT       
+4   LINKUSD    CDE LINK PERP                0.1037    0.1043      0.99   1627  INTACT      
+5   QQQ        Alpaca equity (R370/R474)    0.0237    0.0400      0.59   2156  SPENT       
+6   PAXGUSD    CDE PAXG PERP                0.0467    0.0851      0.55    118  INTACT      
+7   LTCUSD     CDE LTC PERP                 0.0923    0.2039      0.45   1627  INTACT      
+8   SPY        Alpaca equity (R370/R474)    0.0173    0.0400      0.43   2157  SPENT       
+9   ETHUSD     CDE ETH PERP                 0.0687    0.1616      0.42   1627  SPENT       
+10  ADAUSD     CDE ADA PERP                 0.0799    0.2480      0.32    132  INTACT      
+11  QQQ        CDE TECH PERP                0.0237    0.0754      0.31   2156  SPENT       
+12  SPY        CDE US 500 PERP              0.0173    0.0722      0.24   2157  SPENT       
+13  SOLUSD     Alpaca crypto taker          0.1059    0.5000      0.21   1209  SPENT       
+14  LINKUSD    Alpaca crypto taker          0.1037    0.5000      0.21   1627  INTACT      
+15  LTCUSD     Alpaca crypto taker          0.0923    0.5000      0.18   1627  INTACT      
+16  DOTUSD     CDE DOT PERP                 0.0824    0.4604      0.18    118  INTACT      
+17  XRPUSD     Alpaca crypto taker          0.0829    0.5000      0.17    751  INTACT      
+18  DOTUSD     Alpaca crypto taker          0.0824    0.5000      0.16    118  INTACT      
+19  ADAUSD     Alpaca crypto taker          0.0799    0.5000      0.16    132  INTACT      
+20  ETHUSD     Alpaca crypto taker          0.0687    0.5000      0.14   1627  SPENT       
+21  BTCUSD     Alpaca crypto taker          0.0546    0.5000      0.11   1627  SPENT       
+22  PAXGUSD    Alpaca crypto taker          0.0467    0.5000      0.09    118  INTACT      
+
+  COST UNSOURCED, THEREFORE UNRANKED (not estimated, not invented):
+    GLD       etf    vol 0.0336%  - no primary-sourced round trip exists for this instrument on a venue the desk can reach
+    IAU       etf    vol 0.0358%  - no primary-sourced round trip exists for this instrument on a venue the desk can reach
+    GBPUSD    fx     vol 0.0075%  - no primary-sourced round trip exists for this instrument on a venue the desk can reach
+    GBPJPY    fx     vol 0.0072%  - no primary-sourced round trip exists for this instrument on a venue the desk can reach
+
+  RANKED AMONG INSTRUMENTS WITH AN INTACT SEALED SLICE ONLY - the only rows a next look could use:
+#   instrument venue                       vol%med  allin%RT  multiple   days
+1   XRPUSD     CDE XRP PERP                 0.0829    0.0649      1.28    751
+2   LINKUSD    CDE LINK PERP                0.1037    0.1043      0.99   1627
+3   PAXGUSD    CDE PAXG PERP                0.0467    0.0851      0.55    118
+4   LTCUSD     CDE LTC PERP                 0.0923    0.2039      0.45   1627
+5   ADAUSD     CDE ADA PERP                 0.0799    0.2480      0.32    132
+6   LINKUSD    Alpaca crypto taker          0.1037    0.5000      0.21   1627
+7   LTCUSD     Alpaca crypto taker          0.0923    0.5000      0.18   1627
+8   DOTUSD     CDE DOT PERP                 0.0824    0.4604      0.18    118
+9   XRPUSD     Alpaca crypto taker          0.0829    0.5000      0.17    751
+10  DOTUSD     Alpaca crypto taker          0.0824    0.5000      0.16    118
+11  ADAUSD     Alpaca crypto taker          0.0799    0.5000      0.16    132
+12  PAXGUSD    Alpaca crypto taker          0.0467    0.5000      0.09    118
+
+============================================================================================================
+(a4) HOW MUCH OF THE RANKING IS THE SPREAD SAMPLE? - two robustness reads, neither of which invents a number
+============================================================================================================
+READ 1 - FEE ONLY, NO SPREAD AT ALL. Fully sourced, sample-free, and a hard FLOOR on cost:
+the account cannot pay less than this on any clock, so a multiple here is the best case that
+exists rather than a best guess.
+
+#   instrument contract         vol%med   fee%RT  multiple  sealed 20%?
+1   LINKUSD    LINK PERP         0.1037   0.0522      1.99  INTACT
+2   XRPUSD     XRP PERP          0.0829   0.0433      1.91  INTACT
+3   SOLUSD     SOL PERP          0.1059   0.0578      1.83  SPENT
+4   BTCUSD     BTC PERP          0.0546   0.0400      1.37  SPENT
+5   PAXGUSD    PAXG PERP         0.0467   0.0400      1.17  INTACT
+6   LTCUSD     LTC PERP          0.0923   0.1223      0.75  INTACT
+7   QQQ        TECH PERP         0.0237   0.0400      0.59  SPENT
+8   ETHUSD     ETH PERP          0.0687   0.1213      0.57  SPENT
+9   ADAUSD     ADA PERP          0.0799   0.1487      0.54  INTACT
+10  SPY        US 500 PERP       0.0173   0.0400      0.43  SPENT
+11  DOTUSD     DOT PERP          0.0824   0.3452      0.24  INTACT
+
+READ 2 - SENSITIVITY, AND IT IS LABELLED AS ONE. The sampled median reads 0.95x R480's full-clock
+medians on the three contracts where the clock is known (0.86x / 0.95x / 1.05x). Scaling every sampled
+spread by 1/0.95 = 1.05x asks what the ranking looks like if the whole table is
+optimistic by the same factor. IT IS NOT A SOURCED COST and no decision may rest on it; the
+only question it answers is whether the ORDER survives.
+
+#   instrument contract         vol%med  allin%RT  multiple  sealed 20%?
+1   XRPUSD     XRP PERP          0.0829    0.0660      1.26  INTACT
+2   SOLUSD     SOL PERP          0.1059    0.0882      1.20  SPENT
+3   BTCUSD     BTC PERP          0.0546    0.0533      1.02  SPENT
+4   LINKUSD    LINK PERP         0.1037    0.1069      0.97  INTACT
+5   PAXGUSD    PAXG PERP         0.0467    0.0873      0.53  INTACT
+6   LTCUSD     LTC PERP          0.0923    0.2079      0.44  INTACT
+7   ETHUSD     ETH PERP          0.0687    0.1636      0.42  SPENT
+8   ADAUSD     ADA PERP          0.0799    0.2528      0.32  INTACT
+9   QQQ        TECH PERP         0.0237    0.0772      0.31  SPENT
+10  SPY        US 500 PERP       0.0173    0.0738      0.23  SPENT
+11  DOTUSD     DOT PERP          0.0824    0.4661      0.18  INTACT
+
+  intact-slice order, snapshot   : XRPUSD > LINKUSD > PAXGUSD > LTCUSD > ADAUSD > DOTUSD
+  intact-slice order, fee only   : LINKUSD > XRPUSD > PAXGUSD > LTCUSD > ADAUSD > DOTUSD
+  intact-slice order, sensitivity: XRPUSD > LINKUSD > PAXGUSD > LTCUSD > ADAUSD > DOTUSD
+  Where these three disagree, the ranking is a statement about the spread and not about the
+  instrument, and the disagreement is the honest answer.
+
+============================================================================================================
+(b) DOES stop/vol ~ 3.6 TRANSFER?   R488: 3.60 on crypto (BTC/ETH/SOL), 3.67 on the index (SPY/QQQ)
+============================================================================================================
+The structural stop only. NO OUTCOME IS READ - `simulate()` is not called, and the distance
+from the fill to the chart structure is a property of the chart, not of what happened next.
+Entries before the 80% boundary only.
+
+instrument   entries   days  stopmed%  vol%med  stop/vol     p25     p75note                              
+LINKUSD        28482   1627    0.3686   0.1037      3.57    2.13    5.54  no round in this log has ever bu
+LTCUSD         27805   1627    0.3418   0.0920      3.76    2.19    5.91  no round in this log has ever bu
+XRPUSD         10389    750    0.3987   0.0841      4.50    2.51    7.33  no round in this log has ever bu
+PAXGUSD          871    101    0.7035   0.0519     13.35    5.50   19.15  no round in this log has ever bu
+ADAUSD          2183    132    0.3175   0.0799      3.78    2.26    5.88  no round in this log has ever bu
+DOTUSD          2117    118    0.3024   0.0824      3.59    2.20    5.40  no round in this log has ever bu
+BTCUSD         26771   1627    0.2054   0.0545      3.83    2.34    5.99  R488 control, published 3.60 pooled
+
+  Across 7 instruments the per-entry stop/vol median runs 3.57 to 13.35, mean 5.20.
+  R488 measured 3.60 (crypto, pooled) and 3.67 (index). Read the spread above before
+  calling it a constant of the method rather than a property of the five it was measured on.
+
+  Split the way the tape splits it: the 6 crypto majors and alts sit in 3.57-4.50 (mean 3.84), astride
+  R488's 3.60. GOLD (PAXGUSD) sits at 13.35 - roughly FOUR TIMES the constant, on the thinnest
+  population in the table. That is the one instrument here that says the ratio is a property
+  of the tape and not of the method, and it is the reason the ratio must be RE-DERIVED on any
+  new instrument rather than ported (standing rule R89/R100/R170/R190).
+
+============================================================================================================
+(c) DATA HONESTY - does an UNREAD final 20% actually exist?
+============================================================================================================
+Established by reading the step files, not from memory. Every round in this family iterates
+`R.PRIMARY` = BTC/ETH/SOL (R450, R475, R476, R477, R481, R488) or SPY/QQQ (R474, R485).
+R450's eight-pair table is a SWING-WIDTH CENSUS - chart structure, no entries, no fills, no
+outcomes - so it spends nothing on the five pairs it measured.
+
+instrument 1m window                    days  status
+BTCUSD     2021-01-01 -> 2026-07-26     1627  SPENT - R475 took the one look (4h swing low -> 1m BOS + FVG)
+ETHUSD     2021-01-01 -> 2026-07-26     1627  SPENT - same population as BTC, R475
+SOLUSD     2021-01-01 -> 2026-07-26     1209  SPENT - same population as BTC, R475
+LINKUSD    2021-01-01 -> 2026-07-26     1627  INTACT - no round in this log has ever built an entry population on this instrument for this family
+LTCUSD     2021-01-01 -> 2026-07-26     1627  INTACT - no round in this log has ever built an entry population on this instrument for this family
+XRPUSD     2024-01-01 -> 2026-07-26      751  INTACT - no round in this log has ever built an entry population on this instrument for this family
+ADAUSD     2026-02-13 -> 2026-07-26      132  INTACT - no round in this log has ever built an entry population on this instrument for this family
+DOTUSD     2026-03-01 -> 2026-07-26      118  INTACT - no round in this log has ever built an entry population on this instrument for this family
+PAXGUSD    2026-03-01 -> 2026-07-25      118  INTACT - no round in this log has ever built an entry population on this instrument for this family
+SPY        2016-01-01 -> 2026-07-24     2157  SPENT - R474 took the one look (prev day low -> 1m BOS)
+QQQ        2016-01-01 -> 2026-07-24     2156  SPENT - same population as SPY, R474
+GLD        2026-03-02 -> 2026-07-24       81  INTACT - no round in this log has ever built an entry population on this instrument for this family
+IAU        2026-03-02 -> 2026-07-24       81  INTACT - no round in this log has ever built an entry population on this instrument for this family
+GBPUSD     2026-01-05 -> 2026-07-24      138  INTACT - no round in this log has ever built an entry population on this instrument for this family
+GBPJPY     2026-01-05 -> 2026-07-24      138  INTACT - no round in this log has ever built an entry population on this instrument for this family
+
+============================================================================================================
+WHAT THIS ROUND DID NOT DO
+============================================================================================================
+No cell was qualified. No population was partitioned, swept, filtered or selected. No return,
+expectancy, win rate or risk multiple was computed for any instrument. No sealed slice was
+opened. No order was placed, no account was created, no live file was touched or imported.

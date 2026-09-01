@@ -5051,3 +5051,252 @@ produced in this round may be used to cut a population in a future one.**
 sealed slice remaining anywhere. Nothing was qualified, partitioned, swept or
 proposed. No order was placed and no live file was touched, imported or
 modified.
+
+# R489 — WHICH INSTRUMENT SHOULD THE DESK SPEND ITS NEXT SEALED LOOK ON?
+
+**2026-09-01. Queue item 13. `step489_next_look_screen.py`, full output in
+`step489_output.txt`. Research only, no orders, no account, no live file
+touched or imported. A SCREEN — no entry population is qualified and no cell
+is tested. NO LOOK CONSUMED, and none could be.**
+
+## Hypothesis / question
+
+Item 13, opened by R488, and it is the only path this family has to a result
+that could ever be deployed. The method reads positive gross on 5.5 years of
+crypto and 11 of the index, and **neither population has a sealed slice left
+anywhere** — R474 spent SPY/QQQ, R475 spent crypto. Per the standing transfer
+rule a future candidate needs a NEW instrument or NEW data, and nobody has
+asked which one. Three deliverables, none of which consumes a look:
+
+- **(a)** For every instrument the desk can reach and price, measure the
+  realized 1-minute move and pair it with a PRIMARY-SOURCED all-in round trip.
+  Rank by the R488 multiple. Say plainly where the cost is unsourced.
+- **(b)** Does stop/vol ≈ 3.6 transfer to a sixth and seventh instrument?
+- **(c)** For each ranked instrument, does an UNREAD final 20% actually exist?
+
+## The fence, fixed before the run and enforced as code
+
+1. **`simulate()` is never called in this file.** Not once, on any instrument.
+   No return, P&L, expectancy, win rate or risk multiple is computed for any
+   instrument anywhere in the round. The only thing read off an entry is the
+   distance from the fill to the structural stop, which is a property of the
+   chart and not of what happened next. That is what makes (b) free.
+2. **Every measurement stops at the 80% boundary of each instrument's own
+   1m/5m overlap window.** The final 20% of every candidate is not read, not
+   summarised and not touched — the whole point of the round is to hand the
+   next round an instrument whose sealed slice is intact. Applied to the
+   incumbents too so the comparison is like for like.
+3. **Nothing is selected.** The output is a ranking, not a qualification.
+
+## (a1) THE ROUND'S FIRST REAL FINDING: THE US PERPETUAL UNIVERSE IS 29 CONTRACTS, NOT 3
+
+Polled live, keyless, read-only, off the same public endpoint R479/R482 used.
+**Coinbase Derivatives lists 29 perpetual contracts**, and this desk has spent
+R478 through R488 reasoning as though it listed three. Among them, and all
+tradeable by a US person through the same FCM: **LINK, XRP, LTC, ADA, DOT,
+DOGE, AVAX, BCH, BNB, PAXG (gold), US 500 (index), TECH (Nasdaq-like), plus
+CHINA, AI, DFNSE, ZCASH, HYPE, NEAR, ENA, SUI, XLM, ONDO, HBAR, AAVE, PEPE,
+SHIB.** Nine of them map onto 1-minute tape already on this disk.
+
+**And the fee formula collapses to one number and one break point.** R486
+sourced the account's charge as `max(rate × notional, $0.15)` per contract per
+side at a sourced rate FLOOR of 0.02%. Solving the two branches against each
+other:
+
+> **The $0.15 minimum binds below a contract notional of $750. Above $750 the
+> rate binds and the round trip is a flat 0.04% of price on every contract,
+> whatever the coin is.**
+
+That is a cleaner statement of R486's per-coin arithmetic and it generalises
+to all 29. R486 reported BTC/ETH/SOL as three unrelated numbers; they are one
+rule read at three notionals. Contracts at or above the break point today —
+PAXG $4,436, TECH $3,952, US500 $3,105, CHINA $2,972, AI $2,921, DFNSE $2,826,
+NEAR $981, XLM $891, ZCASH $863, HYPE $845, BTC $788, ENA $758 — all pay the
+same 0.04%. Below it the fee rises as the notional falls, to **0.35% on DOT
+($86.50) and 0.58% on SHIB ($51.60)**, which is Alpaca territory on a venue
+that is otherwise ten times cheaper. **Contract size, not coin, is the cost
+variable**, and R486's standing warning applies to every figure here: these
+are price snapshots and re-price whenever the coin does.
+
+**The spread half needed fixing before it could be used.** Two SINGLE polls of
+this book ten minutes apart disagreed by **2x on BTC PERP** during
+development. One poll is not a measurement, so each contract is sampled seven
+times twelve seconds apart and the MEDIAN is carried with its lo-hi range
+printed. Calibrated against R480's 24-hour clock on the three contracts where
+the clock is known, the one-minute sample reads **0.86x / 0.95x / 1.05x**
+(mean 0.95) — close, but not a clock, and the round says so rather than
+pretending otherwise.
+
+## (a2) The realized 1-minute move, first 80% of each instrument's own window
+
+Gap-clean: only consecutive bars exactly 60s apart contribute, so a session
+break or a tape hole is never counted as a one-minute move. R488's raw
+definition is printed beside it and the two agree on 24/7 crypto.
+
+| instrument | window (80% slice) | days | vol% median |
+|---|---|---|---|
+| SOLUSD | 2021-01-01 → 2025-06-15 | 1,209 | 0.1059 |
+| LINKUSD | 2021-01-01 → 2025-06-15 | 1,627 | 0.1037 |
+| LTCUSD | 2021-01-01 → 2025-06-15 | 1,627 | 0.0923 |
+| XRPUSD | 2024-01-01 → 2026-01-20 | 751 | 0.0829 |
+| DOTUSD | 2026-03-01 → 2026-06-26 | 118 | 0.0824 |
+| ADAUSD | 2026-02-13 → 2026-06-24 | 132 | 0.0799 |
+| ETHUSD | 2021-01-01 → 2025-06-15 | 1,627 | 0.0687 |
+| BTCUSD | 2021-01-01 → 2025-06-15 | 1,627 | 0.0546 |
+| PAXGUSD | 2026-03-01 → 2026-06-26 | 118 | 0.0467 |
+| IAU / GLD | 2026-03-02 → 2026-06-25 | 81 | 0.0358 / 0.0336 |
+| QQQ | 2016-01-01 → 2024-06-13 | 2,156 | 0.0237 |
+| SPY | 2016-01-01 → 2024-06-13 | 2,157 | 0.0173 |
+| GBPUSD / GBPJPY | 2026-01-05 → 2026-06-14 | 138 | 0.0075 / 0.0072 |
+
+**AVAXUSD and DOGEUSD hold about four days of 1-minute tape each** and are
+reported as data-absent, not as candidates, despite both having a live CDE
+perpetual. That is a data gap, not a verdict.
+
+## (a3)/(a4) THE RANKING, AND THE HEADLINE
+
+The R488 coordinate is the median day's 1-minute move divided by the all-in
+round trip. Restricted to instruments with an **INTACT** sealed slice — the
+only rows a next look could ever use — and read three ways so the reader can
+see how much of the answer is the spread sample:
+
+| # | instrument | contract | vol%med | all-in %RT | multiple | fee-only multiple | days |
+|---|---|---|---|---|---|---|---|
+| 1 | **XRPUSD** | XRP PERP | 0.0829 | 0.0649 | **1.28** | 1.91 | 751 |
+| 2 | **LINKUSD** | LINK PERP | 0.1037 | 0.1043 | **0.99** | **1.99** | 1,627 |
+| 3 | PAXGUSD | PAXG PERP | 0.0467 | 0.0851 | 0.55 | 1.17 | 118 |
+| 4 | LTCUSD | LTC PERP | 0.0923 | 0.2039 | 0.45 | 0.75 | 1,627 |
+| 5 | ADAUSD | ADA PERP | 0.0799 | 0.2480 | 0.32 | 0.54 | 132 |
+| 6 | DOTUSD | DOT PERP | 0.0824 | 0.4604 | 0.18 | 0.24 | 118 |
+
+For scale, the incumbents on the same coordinate: **SOL 1.22, BTC 1.04, ETH
+0.49, QQQ 0.59, SPY 0.43** — all SPENT.
+
+> **THE ANSWER TO THE ITEM: XRP and LINK, and they are not a step down from
+> what the desk already has — they sit in the same band as SOL and BTC.**
+> XRP is the best all-in multiple of any instrument on this disk with an
+> intact slice (1.28 against SOL's 1.22 and BTC's 1.04). LINK is the best
+> **fee-only** multiple of ANY instrument, spent or not (1.99), because it
+> pairs the second-highest volatility on the disk with a contract that is
+> only just under the $750 break point.
+
+The top two swap places depending on which cost read is used — XRP wins on
+all-in, LINK wins on fee-only — and the multiples move roughly ±10% between
+runs on the spread sample. **Everything below the top two is stable in every
+read**, and the full intact-slice order is identical across all three
+(snapshot, fee-only, sensitivity) except for that top-two flip. Where the
+three disagree the ranking is a statement about the spread and not about the
+instrument, and the disagreement is the honest answer.
+
+**Three things the ranking kills, and they are worth as much as what it
+promotes:**
+
+- **LTC is out on cost, not on tape.** Its 1-minute move (0.0923%) is
+  essentially SOL's, and it has 1,627 days of history. It ranks 4th because
+  its contract is $245 — the $0.15 minimum binds hard and the fee alone is
+  0.12%. **A different contract size would make LTC a first-rank candidate;
+  nothing about the instrument disqualifies it.**
+- **DOT is out for the same reason, worse.** An $86.50 contract pays 0.35%
+  in fees — on a venue whose best case is 0.04%.
+- **The FX pairs and the gold ETFs are UNRANKED, not ranked last.** No
+  primary-sourced round trip exists for GLD, IAU, GBPUSD or GBPJPY on a venue
+  this desk can reach, and none was invented (R482/R486 discipline). For
+  context and not as a ranking: GBPUSD's median 1-minute move is **0.0075%**,
+  which is under R488's ~0.010% break-even coordinate before a single cost is
+  named. **FX is the lowest-volatility instrument on this disk by a factor of
+  two**, and item 13's FX leg is answered by that number rather than by a
+  missing venue.
+
+## (b) DOES stop/vol ≈ 3.6 TRANSFER? YES ON CRYPTO — AND GOLD BREAKS IT
+
+R488 measured the per-entry structural-stop-to-volatility ratio at 3.60
+pooled on crypto and 3.67 on the index, over eleven years and five
+instruments, and asked whether a sixth and seventh make it a constant of the
+method or expose it as a property of those five. Six new instruments, R450's
+machinery unchanged, entries before the 80% boundary only, **no outcome read
+on any of them**:
+
+| instrument | entries | days | stop%med | vol%med | **stop/vol** | p25 | p75 |
+|---|---|---|---|---|---|---|---|
+| LINKUSD | 28,482 | 1,627 | 0.3686 | 0.1037 | **3.57** | 2.13 | 5.54 |
+| DOTUSD | 2,117 | 118 | 0.3024 | 0.0824 | **3.59** | 2.20 | 5.40 |
+| LTCUSD | 27,805 | 1,627 | 0.3418 | 0.0920 | **3.76** | 2.19 | 5.91 |
+| ADAUSD | 2,183 | 132 | 0.3175 | 0.0799 | **3.78** | 2.26 | 5.88 |
+| BTCUSD *(control)* | 26,771 | 1,627 | 0.2054 | 0.0545 | **3.83** | 2.34 | 5.99 |
+| XRPUSD | 10,389 | 750 | 0.3987 | 0.0841 | **4.50** | 2.51 | 7.33 |
+| PAXGUSD *(gold)* | 871 | 101 | 0.7035 | 0.0519 | **13.35** | 5.50 | 19.15 |
+
+**The constant holds and then it doesn't, and the split is exactly where the
+tape splits.** Five crypto instruments — two majors' worth of history and
+three alts, 87,000 entries between them — sit in **3.57 to 3.83**, astride
+R488's 3.60, and the BTC control reproduces at 3.83 (R488's 3.60 is the
+BTC/ETH/SOL pool over the full window; BTC alone on the first 80% reading
+higher is consistent, not contradictory). XRP at 4.50 is a modest outlier.
+
+**Gold sits at 13.35 — roughly four times the constant.** Its structural stop
+is 0.70% of price against a 0.052% one-minute move: gold's chart structure is
+wide relative to how fast it moves, which is the opposite of what every crypto
+instrument does. It is also the thinnest population in the table (871 entries,
+101 days) so the magnitude is indicative rather than measured.
+
+> **The honest reading: `stop/vol ≈ 3.6` is a property of crypto-like tape,
+> not a constant of the method.** Seven instruments now say so — six agree
+> and the one from a different asset class is off by 4x. This is a direct
+> vindication of the standing transfer rule (R89/R100/R170/R190): **the ratio
+> must be RE-DERIVED on any new instrument, never ported.** Anyone sizing a
+> gold book off a crypto-derived 3.6 would have been wrong by four times.
+
+## (c) DATA HONESTY — the sealed-slice audit
+
+Established by **reading the step files, not from memory**. Every round in
+this family iterates `R.PRIMARY` = BTC/ETH/SOL (R450, R475, R476, R477, R481,
+R485, R488) or SPY/QQQ (R474, R485). R450's eight-pair leverage table is a
+**SWING-WIDTH CENSUS** — chart structure only, no entries, no fills, no
+outcomes — so it spends nothing on the five pairs it measured.
+
+| status | instruments |
+|---|---|
+| **SPENT** | BTCUSD, ETHUSD, SOLUSD (R475's one look), SPY, QQQ (R474's one look) |
+| **INTACT** | LINKUSD, LTCUSD, XRPUSD, ADAUSD, DOTUSD, PAXGUSD, GLD, IAU, GBPUSD, GBPJPY |
+
+**No round in this log has ever built an entry population on any of the ten
+INTACT instruments for this family.** LINKUSD and LTCUSD carry the same
+2021-01-01 → 2026-07-26 window as BTC — **1,627 days, 2.3M and 2.1M 1-minute
+bars, a full 60/20/20 with a genuinely unread final 20%.** That is not a
+consolation prize for a spent family; it is the same length of history the
+family's best evidence was built on, on instruments it has never touched.
+
+## Honest limits
+
+- **The spread is a one-minute sample, not R480's clock.** Seven polls twelve
+  seconds apart, calibrated at 0.86-1.05x of the known full-clock medians.
+  Good enough to rank; not good enough to quote to two decimals, and the
+  round prints the lo-hi range on every contract so the noise is visible.
+- **Every CFM figure is the FLOOR.** The standing volume-tier ladder above
+  0.02% remains UNSOURCED after three attempts (R482, R486, and this round),
+  and no value was invented for it. Every multiple above is therefore the
+  best case that can exist, not the likely one.
+- **History length is not volatility and not cost.** ADA, DOT, PAXG, GLD, IAU
+  and the FX pairs are ranked off 81-138 days. A great multiple on four
+  months of tape is not the same object as one on four and a half years, and
+  the day count is printed in every table so the two are never confused.
+- **The R488 multiple is a screen, not a prediction.** It says how many times
+  the median day clears the round trip it must pay. It says nothing about
+  whether the method has an edge on that instrument — that is precisely the
+  question the next round's one look would answer.
+- **PAXG's 13.35 rests on 871 entries over 101 days.** The direction is
+  established (gold's structure is wide relative to its 1-minute move); the
+  factor of four is indicative.
+- **AVAX and DOGE have live contracts and no tape.** Four days each. If
+  1-minute history were backfilled they would enter this screen, and DOGE's
+  $418 contract puts it in the same fee band as SOL.
+
+## Looks consumed
+
+**NONE, and none could be.** `simulate()` is never called in the file. No
+return, expectancy, win rate or risk multiple was computed for any instrument.
+Every measurement stops at the 80% boundary of each instrument's own window,
+so the final 20% of all ten INTACT candidates remains unread and unspent. No
+cell was qualified, no population partitioned, swept, filtered or selected. No
+order was placed, no account was created, no live file was touched or
+imported.

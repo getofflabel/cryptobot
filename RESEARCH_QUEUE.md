@@ -519,8 +519,60 @@ Rules (non-negotiable, they are why anything here can be trusted):
    either population. **No number produced in R488 may be used to cut a
    population in any future round.**
 
-13. **WHICH INSTRUMENT SHOULD THE DESK SPEND ITS NEXT SEALED LOOK ON?**
-   *(new, opened by R488, and it is the highest-value item on this queue
+13. ~~**WHICH INSTRUMENT SHOULD THE DESK SPEND ITS NEXT SEALED LOOK ON?**~~
+   **DONE — R489, 2026-09-01. CLOSED, all three legs. No look consumed, and
+   none could be: `simulate()` is never called in the file and every
+   measurement stops at the 80% boundary of each instrument's own window.**
+   **THE ANSWER IS XRP AND LINK, AND THEY ARE NOT A STEP DOWN FROM WHAT THE
+   DESK ALREADY HAS.** On the R488 coordinate (median day's 1-minute move /
+   all-in round trip) **XRPUSD reads 1.28 and LINKUSD 0.99 against the spent
+   incumbents SOL 1.22, BTC 1.04, ETH 0.49, QQQ 0.59, SPY 0.43.** On the
+   fee-only read — fully sourced, sample-free, a hard floor on cost — **LINK
+   is the best multiple of ANY instrument on this disk, spent or not (1.99),
+   XRP second (1.91).** The top two swap on which cost read is used; every
+   rank below them is identical in all three reads. Both carry a **genuinely
+   unread final 20%** and LINK carries the SAME 1,627-day 2021-2026 window
+   BTC does, at 2.3M 1-minute bars.
+   **(a) THE US PERPETUAL UNIVERSE IS 29 CONTRACTS, NOT 3**, polled live and
+   keyless. LINK, XRP, LTC, ADA, DOT, DOGE, AVAX, BCH, BNB, **PAXG (gold),
+   US 500, TECH (Nasdaq-like)**, plus 14 more. This desk spent R478-R488
+   reasoning as though CDE listed three coins.
+   **AND R486'S FEE COLLAPSES TO ONE RULE: the $0.15 minimum binds below a
+   contract notional of $750; above $750 the round trip is a flat 0.04% of
+   price on every contract, whatever the coin is.** R486's three per-coin
+   numbers are one rule read at three notionals. **CONTRACT SIZE, NOT COIN,
+   IS THE COST VARIABLE** — and it is what kills LTC (a $245 contract, 0.12%
+   in fees on a 0.0923% tape that is otherwise SOL's) and DOT ($86.50,
+   0.35%). Nothing about either INSTRUMENT disqualifies it.
+   **(b) `stop/vol ~ 3.6` IS A PROPERTY OF CRYPTO-LIKE TAPE, NOT A CONSTANT
+   OF THE METHOD.** Five crypto instruments over 87,000 entries sit in
+   **3.57-3.83** astride R488's 3.60 (LINK 3.57, DOT 3.59, LTC 3.76, ADA
+   3.78, BTC control 3.83); XRP 4.50 is a modest outlier; **GOLD (PAXG) sits
+   at 13.35 — four times the constant**, on 871 entries. Direct vindication
+   of the standing transfer rule: **the ratio must be RE-DERIVED on any new
+   instrument, never ported.** Sizing a gold book off a crypto 3.6 would have
+   been wrong by 4x.
+   **(c) TEN INSTRUMENTS HAVE AN INTACT SEALED SLICE** — LINK, LTC, XRP, ADA,
+   DOT, PAXG, GLD, IAU, GBPUSD, GBPJPY. Established by READING the step
+   files: every round in this family iterates `R.PRIMARY` = BTC/ETH/SOL or
+   SPY/QQQ, and R450's eight-pair table is a swing-width census with no
+   entries, no fills and no outcomes, so it spent nothing.
+   **UNRANKED, NOT RANKED LAST: GLD, IAU, GBPUSD, GBPJPY.** No primary-sourced
+   round trip exists for any of them on a venue the desk can reach and none
+   was invented. For context and not as a ranking: **GBPUSD's median 1-minute
+   move is 0.0075%, UNDER R488's ~0.010% break-even coordinate before a single
+   cost is named.** FX is the lowest-volatility instrument on this disk by a
+   factor of two, and item 13's FX leg is answered by that number rather than
+   by a missing venue.
+   Honest limits: the spread half is a seven-poll one-minute median (a single
+   poll disagreed by 2x on BTC PERP ten minutes later), calibrated at
+   0.86-1.05x of R480's full-clock figures; every CFM number is the UNSOURCED
+   ladder's FLOOR, so every multiple is the best case that can exist; ADA,
+   DOT, PAXG, GLD, IAU and FX are ranked off 81-138 days; **AVAX and DOGE have
+   live contracts and four days of tape each.** See new items 16, 17, 18.
+
+13b. *(historical, the item as written, kept so the closure is readable)*
+   *(opened by R488, and it was the highest-value item on this queue
    because it is the only path to a result that could ever be deployed.)*
    The standing position of this family is a dead end BY CONSTRUCTION, not by
    evidence: the method reads positive gross on 5.5 years of crypto and 11 of
@@ -574,6 +626,15 @@ Rules (non-negotiable, they are why anything here can be trusted):
    purpose is to tell item 13 **which resolution to carry to a new
    instrument** — so it should run AFTER 13 has named the instrument, or
    before it if 13 stalls on sourcing.
+   **R489 UPDATE (2026-09-01): item 13 is CLOSED and has named the
+   instruments — XRPUSD and LINKUSD.** This item is now unblocked and should
+   run BEFORE item 16 spends either slice, because its whole purpose is to
+   say WHICH RESOLUTION the one look carries. Reading the resolution profile
+   on the spent crypto population costs nothing; spending a clean slice at
+   the wrong resolution costs everything. **The fence is unchanged: it
+   describes, it cannot select, and no resolution may be "chosen" on the
+   strength of its own numbers — item 16 states its resolution in advance
+   either way.**
 
 15. **WHERE IN THE HOLD DOES THE GROSS ACTUALLY COME FROM?**
    *(new, opened by R488, carried from R481/R482/R483.)* Three separate rounds
@@ -596,6 +657,77 @@ Rules (non-negotiable, they are why anything here can be trusted):
    proposed or implied. The 24-hour cap is the population's existing
    construction and is not a parameter to be swept. This round describes where
    the money sits inside a published population; it cuts nothing.
+
+16. **SPEND THE LOOK: THE FAMILY'S PARENT ON LINK AND XRP, 60/20/20, FOR REAL.**
+   *(new, opened by R489, and it is now the highest-value item on this queue
+   — it is the first item since R474 that CAN produce a deployment candidate.)*
+   R489 answered "which instrument" and the answer is XRPUSD and LINKUSD:
+   they sit in the same R488 band as the spent incumbents (XRP 1.28 all-in /
+   1.91 fee-only, LINK 0.99 / 1.99 against SOL 1.22, BTC 1.04), and **both
+   have an unread final 20%.** LINK carries BTC's own 1,627-day window at
+   2.3M 1-minute bars; XRP carries 751 days.
+   Deliverable: run the family's PARENT — R450/R476's sweep -> 1-minute break
+   of structure, the machinery imported unchanged, all eight levels, all four
+   target settings, both directions — on LINKUSD and XRPUSD under the full
+   protocol. 60/20/20 on each instrument's OWN window. Qualification is
+   positive expectancy on train AND val with min 30 train / 8 val trades,
+   read in **per-trade net R with a t clustered by UTC day** (R487's
+   statistic, not the ratio of means), against the R450 random-entry control
+   on the same machinery. Only then ONE test look.
+   **NO TUNING OF ANY KIND.** Not the pending expiry, not the hold cap, not
+   the swing definition, not the level set, not the stop. Every constant is
+   R450's and is imported, not retyped. **Cost is R489's sourced per-contract
+   figure for that instrument's own CDE contract** (XRP PERP, LINK PERP),
+   charged for honest P&L and used to decide nothing.
+   **THE FENCE, AND IT IS THE WHOLE POINT OF THE ITEM:** these are the last
+   two clean slices this family has on instruments with real history. If a
+   cell qualifies, ONE look is taken and the slice is spent forever. If none
+   qualifies, the slice stays sealed and the round logs the failure. **No
+   second cell, no re-cut, no "best of" across the two instruments** — a
+   result on LINK does not license a second look on XRP for the same cell
+   family, and the round must say in advance which instrument it is spending
+   and why. **`stop/vol` must be RE-DERIVED on each, never ported** (R489's
+   gold result: the crypto 3.6 is wrong by 4x off crypto-like tape).
+
+17. **THE CONTRACT-SIZE FINDING IS A DESK-WIDE COST RULE. WHO ELSE DOES IT MOVE?**
+   *(new, opened by R489.)* R489 collapsed R486's per-coin fee arithmetic into
+   one rule: **the $0.15 minimum binds below a $750 contract notional; above
+   it the round trip is a flat 0.04% on every contract.** Two consequences
+   nobody has priced.
+   (a) **The cost of an instrument on this venue moves with its PRICE**, and
+   a contract can cross the break point without anything about the method
+   changing. LTC at $245 notional pays 0.12%; the same contract at a coin
+   price 3.1x higher pays 0.04%. **Compute, for every one of the 29 CDE
+   perpetuals, the coin price at which its contract crosses $750**, and say
+   which are within a plausible move of it in either direction. R486 did this
+   for three coins ("BTC $251,590 / ETH $11,621 / SOL $112") as a fee-minimum
+   threshold; R489's rule makes it computable for all 29 in one line.
+   (b) **PAXG PERP, US 500 PERP and TECH PERP all sit above the break point
+   and pay the floor 0.04%** — the cheapest fee on the venue, on gold and two
+   index-like instruments. The gold and index specialists have never had a
+   sourced US perpetual cost. **Hand them one.**
+   Reading and arithmetic on a live public endpoint plus data already on
+   disk. **No backtest, no entry population, no look**, and no candidate may
+   be proposed by this item under any outcome.
+
+18. **BACKFILL THE TAPE THAT THE SCREEN SAYS IS MISSING.**
+   *(new, opened by R489, and it is plumbing, not a hypothesis.)*
+   R489's screen was limited by data, not by ideas, in four places:
+   **AVAXUSD and DOGEUSD have live CDE perpetuals and about four days of
+   1-minute tape each** (DOGE's $418 contract puts it in SOL's fee band);
+   **ADAUSD, DOTUSD and PAXGUSD are ranked off 118-132 days**; GLD/IAU off
+   81; the FX pairs off 138. Alpaca served 5.5 years of BTC/ETH/SOL/LINK/LTC
+   1-minute bars to this repo already, so the history very likely exists for
+   the rest.
+   Deliverable: backfill 1-minute and 5-minute tape as far back as the source
+   will serve for AVAXUSD, DOGEUSD, ADAUSD, DOTUSD and PAXGUSD, write the
+   parquets in the existing `data_alpaca_<SYM>_<tf>.parquet` convention, and
+   **re-run `step489_next_look_screen.py` unchanged** to see whether the
+   ranking moves. **No look, no entry population, no candidate** — the screen
+   consumes nothing by construction and re-running it is free.
+   **THE FENCE:** backfilling data for an instrument does NOT reset a spent
+   slice and must never be used to argue that it does. This item may only
+   touch instruments R489 marked INTACT.
 
 ## Obsoleted by the 2026-07-25 strategy pivot — DO NOT RUN
 Wallace retired every self-derived strategy and rebuilt the desk on TJR's
@@ -840,6 +972,29 @@ size: it is (i) ~57 exits a year into the CLOSED Friday 16:00-16:50 CT halt, and
 (ii) the fact that the 9.7% cap-runner tail — which carries the entire gross —
 straddles a break 99.985% of the time, the same trades R482's overnight margin
 schedule will not finance. Two independent constraints, one population.
+
+NOTE (R489): **the venue is nine times larger than this file has assumed, and
+the cost variable is CONTRACT SIZE, not the coin.** Coinbase Derivatives lists
+**29 US perpetuals**, not three — LINK, XRP, LTC, ADA, DOT, DOGE, AVAX, BCH,
+BNB, **PAXG (gold), US 500 and TECH** among them. And R486's per-coin fee
+arithmetic collapses to one rule: **the $0.15 minimum binds below a $750
+contract notional; above $750 the round trip is a flat 0.04% of price on every
+contract, whatever the coin is.** Consequences for this mandate. **The
+leverage question and the cost question are now separable in a way they were
+not**: cost is set by the contract's notional and leverage by the venue's
+margin schedule (R482), and an instrument can be cheap and unfinanced or
+expensive and financed independently. **LTC is the clean case** — its
+1-minute tape is essentially SOL's (0.0923% vs 0.1059%) and it ranks 4th of 6
+purely because its contract is $245. Nothing about the instrument is the
+problem. Owner mandate stands until Wallace changes it; what is recorded here
+is that **the desk should read a candidate's cost off its CONTRACT, and
+re-read it whenever the coin's price moves**, because a fixed-dollar minimum
+over a moving notional re-prices without anything about the method changing.
+NOTE (R489, transfer): **`stop/vol ~ 3.6` is a property of crypto-like tape,
+not a constant of the method.** Five crypto instruments over 87,000 entries
+sit in 3.57-3.83 astride R488's 3.60, and **gold (PAXG) sits at 13.35 — four
+times it.** Any risk budget that ports the crypto ratio to a new asset class
+would have been wrong by 4x. The ratio is RE-DERIVED, never copied.
 
 ## STANDING RULE (R89/R100/R170/R190): TRANSFER IS PART OF VALIDATION
 Single-asset sealed tests do not catch asset-specific overfitting. Any
