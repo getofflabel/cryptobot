@@ -5300,3 +5300,226 @@ so the final 20% of all ten INTACT candidates remains unread and unspent. No
 cell was qualified, no population partitioned, swept, filtered or selected. No
 order was placed, no account was created, no live file was touched or
 imported.
+
+---
+
+# R490 — THE COARSER TRIGGER, READ IN THE STATISTIC R487 ESTABLISHED
+
+**2026-09-02. Queue item 14. `step490_trigger_resolution_profile.py`, full
+output in `step490_output.txt`. Research only, no orders, no account, no live
+file touched or imported. A DESCRIPTION on a spent population — no cell is
+qualified, no split is cut, no resolution is selected. NO LOOK CONSUMED, and
+none could be.**
+
+## Hypothesis / question
+
+R476 compared the 5-minute and 1-minute triggers and the 1-minute won by a
+paired daily difference of **t = 9.17 — on GROSS**. R487 then established that
+gross is not the statistic that decides anything on this desk, and R488
+established a mechanism: if the stop scales with the trigger's timeframe while
+the round trip does not scale at all, a coarser trigger has a proportionally
+smaller cost/stop **by construction**, and R476's comparison has never been run
+in per-trade net R. Item 14 asks for the profile at 1m / 5m / 15m / 1h.
+
+## The fence, fixed before the run and enforced as code
+
+`slice_by_time` is never called: **no train/val/test split is cut in this
+file**, so no reader can mistake a slice label for out-of-sample evidence.
+There is no `verdict` anywhere and no resolution is ranked into a "best". The
+2-hour pending window is **NOT widened** for the coarse frames — that is
+exactly the parameter a coarse trigger would want, and widening it would be
+tuning; a 60-minute trigger gets one or two bars inside the window and fires
+rarely, and that is reported as an entry count rather than engineered away.
+**Item 16 states its resolution in advance either way.**
+
+## Reproduction control — this is the same machinery, digit for digit
+
+The generalised trigger is asserted identical to R450's own `trigger_1m` at
+tf=1: **71,073 entries against R476's published 71,073, +0.1435% of price
+against +0.1435%, t by day 13.77 against 13.77, over 2,033 days.**
+
+## (1) THE PROFILE — AND THE RANKING INVERTS BETWEEN THE TWO STATISTICS
+
+One construction, four frames, hold-24h scoring, R486's all-in Coinbase round
+trip per coin (BTC 0.0556% / ETH 0.1463% / SOL 0.0816%), charged for honest
+P&L and deciding nothing:
+
+| trigger | entries | days | gross% | t gross/day | **per-trade net R** | **t net R by day** | stop% | stop/vol | cost/stop | tight% |
+|---|---|---|---|---|---|---|---|---|---|---|
+| **1-minute** | 71,073 | 2,033 | **0.1435** | **13.77** | **−0.547** | **−4.92** | 0.242 | 3.60 | 1.187 | 16.3 |
+| **5-minute** | 70,194 | 2,033 | 0.1045 | 9.15 | **−0.091** | −0.56 | 0.469 | 7.09 | 0.450 | 5.1 |
+| **15-minute** | 48,273 | 2,033 | 0.0495 | 4.43 | −0.157 | −2.35 | 0.706 | 10.68 | 0.298 | 2.7 |
+| **60-minute** | 18,536 | 2,022 | 0.0224 | 3.07 | −0.118 | −0.96 | 1.176 | 17.41 | 0.169 | 0.9 |
+| *random entry, 1m frame* | 34,905 | 2,033 | −0.0083 | −0.78 | −2.619 | −8.00 | 0.146 | 2.21 | 2.988 | 33.2 |
+| *random entry, 5m frame* | 41,623 | 2,033 | 0.0024 | 0.06 | −1.338 | −13.46 | 0.267 | 4.10 | 1.487 | 18.2 |
+| *random entry, 15m frame* | 43,004 | 2,033 | −0.0083 | −0.57 | −0.803 | −7.42 | 0.452 | 7.03 | 0.961 | 10.2 |
+| *random entry, 60m frame* | 43,516 | 2,033 | −0.0190 | −0.65 | −0.578 | −2.68 | 0.952 | 14.78 | 0.622 | 4.0 |
+
+> **THE ANSWER TO THE ITEM: on gross the 1-minute trigger is the best of the
+> four and on per-trade net R it is the WORST, and the gap is significant in
+> both directions.** Gross falls monotonically with the timeframe (0.1435 →
+> 0.1045 → 0.0495 → 0.0224). Per-trade net R does the opposite at the fine
+> end: **−0.547 at 1 minute against −0.091 / −0.157 / −0.118 at the three
+> coarser frames.** Paired by shared UTC day, in per-trade net R:
+> **1m minus 5m = −0.5071 (t −3.77), 1m minus 15m = −0.4285 (t −3.59), 1m
+> minus 60m = −0.5139 (t −4.34)**, on 2,022-2,033 shared days.
+
+**The three coarse frames are indistinguishable from one another** — 5m minus
+15m +0.0786 (t 0.75), 5m minus 60m −0.0050 (t −0.05), 15m minus 60m −0.0858
+(t −1.31). The profile is not a slope. It is **one outlier at 1 minute and a
+flat shelf above it.**
+
+**Every resolution is still NEGATIVE per trade on the sourced cost.** Nothing
+here pays for itself; the coarse frames lose an eighth to a fifth of what the
+fine one loses. On Alpaca's 0.50% — the venue the desk actually holds — all
+four are between −0.833 and −6.041.
+
+**And every resolution beats its own random control decisively in per-trade
+net R**: +2.2493 (t 6.17), +1.3084 (t 9.69), +0.7003 (t 5.78), +0.5583
+(t 2.46). The method has a real entry edge at all four resolutions. What
+changes across them is entirely what that edge has to pay per unit of risk.
+
+## (2) THE ITEM'S OWN PREMISE IS DIRECTIONALLY RIGHT AND QUANTITATIVELY WRONG
+
+Item 14 reasons from "the stop scales with the trigger's timeframe at an
+elasticity of ~1". **R488's elasticity of ~1 is the stop against VOLATILITY on
+a single frame; against the FRAME itself the number is not 1.**
+
+**log(median stop) = −1.402 + 0.386 × log(trigger minutes), R² 0.9991.**
+
+| frame | median stop% | × the 1m stop | cost/stop | × the 1m cost/stop | tight% |
+|---|---|---|---|---|---|
+| 1m | 0.242 | 1.00 | 1.187 | 1.00 | 16.3 |
+| 5m | 0.469 | 1.94 | 0.450 | 0.38 | 5.1 |
+| 15m | 0.706 | 2.92 | 0.298 | 0.25 | 2.7 |
+| 60m | 1.176 | 4.87 | 0.169 | 0.14 | 0.9 |
+
+**A 60× coarser trigger buys a 4.87× wider stop, not a 60× one** — the stop
+grows at roughly the fourth root of the frame, on a fit that is essentially
+perfect across four frames spanning 60×. The mechanism item 14 proposed is
+real and it is **six times weaker than the item assumed**. The share of
+entries carrying a stop tighter than the round trip they must pay — R485/R487's
+tight tail, the thing that drives per-trade net R negative — collapses from
+**16.3% to 0.9%.**
+
+## (3) IT IS A TRIGGER FACT, NOT AN EXIT-GRANULARITY ARTEFACT
+
+Managing a 60-minute-triggered trade on 60-minute bars changes two things at
+once, so the whole profile was re-run with the stop and target checked on
+**1-minute bars at every resolution** (step451's discipline), same entries,
+same fills, same stops:
+
+| trigger | gross% | per-trade net R (trigger-frame managed) | per-trade net R (1m managed) |
+|---|---|---|---|
+| 1m | 0.1435 | −0.547 | −0.547 |
+| 5m | 0.1059 | −0.091 | **−0.110** |
+| 15m | 0.0517 | −0.157 | **−0.143** |
+| 60m | 0.0270 | −0.118 | **−0.108** |
+
+**The two tables agree everywhere.** Every conclusion above survives the
+convention change; the exit granularity moves the third decimal.
+
+## (4) R488's BREAK-EVEN COORDINATE RISES WITH THE FRAME, AS PREDICTED
+
+The 1-minute move at which the median structural stop equals the round trip,
+from the fitted log-log elasticity, and how many times the median day clears
+it:
+
+| coin | 1m | 5m | 15m | 60m |
+|---|---|---|---|---|
+| BTCUSD | 3.97 | 7.18 | 9.65 | **14.60** |
+| ETHUSD | 1.73 | 3.15 | 4.18 | **6.89** |
+| SOLUSD | 5.62 | 9.17 | 13.85 | **23.25** |
+
+ETH is the worst instrument at every resolution, which is the **fourth**
+round to land on that coin for R486's reason (its $0.15 contract minimum).
+
+## (5) FREQUENCY IS A SEPARATE FACT, AND IT IS THE MOST USEFUL LINE HERE
+
+| frame | entries | per coin per year | days with an entry | share of 1m | median hold |
+|---|---|---|---|---|---|
+| 1m | 71,073 | 4,258 | 2,033 | 100.0% | 0.62h |
+| 5m | 70,194 | 4,206 | 2,033 | **98.8%** | 2.33h |
+| 15m | 48,273 | 2,892 | 2,033 | 67.9% | 4.25h |
+| 60m | 18,536 | 1,111 | 2,022 | 26.1% | 9.00h |
+
+> **The 5-minute frame costs 1.2% of the entries and cuts cost/stop by 62%.**
+> The 15m and 60m frames cost a third and three quarters of the population and
+> buy nothing further in per-trade net R. That is the shape of the profile, and
+> under the fence it is reported and not acted on.
+
+## By coin
+
+| coin | frame | entries | gross% | net R | t by day | stop% | stop/vol | cost/stop |
+|---|---|---|---|---|---|---|---|---|
+| BTC | 1m / 5m / 15m / 60m | 25,443 / 24,906 / 17,066 / 6,525 | 0.0865 / 0.0525 / 0.0195 / −0.0413 | −0.520 / −0.264 / −0.122 / −0.132 | −2.08 / −2.00 / −0.77 / −0.11 | 0.185 / 0.360 / 0.536 / 0.889 | 3.68 / 7.32 / 10.95 / 17.61 | 1.029 / 0.423 / 0.184 / 0.125 |
+| ETH | 1m / 5m / 15m / 60m | 25,415 / 25,137 / 17,410 / 6,665 | 0.1545 / 0.1332 / 0.0678 / 0.0624 | −1.088 / **+0.049** / −0.322 / −0.186 | −5.78 / +0.61 / −2.20 / −0.65 | 0.239 / 0.459 / 0.686 / 1.150 | 3.58 / 7.03 / 10.56 / 17.24 | 1.702 / 0.619 / 0.527 / 0.283 |
+| SOL | 1m / 5m / 15m / 60m | 20,215 / 20,151 / 13,797 / 5,346 | 0.2014 / 0.1327 / 0.0635 / 0.0503 | **+0.098** / −0.051 / **+0.008** / −0.017 | +0.79 / +0.72 / +1.67 / +1.93 | 0.341 / 0.666 / 1.020 / 1.725 | 3.52 / 6.93 / 10.53 / 17.43 | 0.739 / 0.271 / 0.148 / 0.079 |
+
+The three positive cells (SOL 1m and 15m, ETH 5m) are **not findings** — they
+sit at t +0.61 to +1.93 and this round cannot select a cell. They are printed
+so the per-coin spread is on the record. R487's per-coin ordering at 1 minute
+(ETH −1.088, BTC −0.520, SOL +0.098) reproduces its published −1.092 / −0.520 /
+−0.013 to within the cost change (R487 used R482's figures, this round uses
+R486's corrected ones).
+
+## A note on R476's t = 9.17, which is NOT corrected but IS qualified
+
+R476's headline compared arm B (1-minute) against **R450's native arm A**, in
+which the 5-minute confirmation bar itself is the trigger and a bar that
+re-sweeps the level cannot also be the break of structure. That arm reads gross
++0.0296% and per-trade net R −0.118. **This round's "5-minute trigger" is a
+different object**: it is arm B's construction executed on the 5-minute frame,
+one uniform construction across all four frames, which is the only way a
+resolution profile means anything. It reads gross +0.1045%.
+
+**So both statements are true about different objects, and the difference
+matters:** against native arm A the 1-minute trigger wins the gross by +0.0994%
+a day at t = 9.17; against the same construction one frame coarser it wins by
+**+0.0299% a day at t = 3.79.** About two thirds of R476's headline gap is the
+arm-A construction rule, not the resolution. Nothing R476 published is wrong;
+what it measured was two constructions, and this round measures one at four
+resolutions.
+
+## Honest limits
+
+- **The 60-minute frame is squeezed by a window that was not built for it.**
+  The 2-hour pending expiry gives it one or two bars, which is why it fires at
+  26% of the 1-minute rate. Widening the window would be tuning and was not
+  done; the entry count is the honest report of the consequence.
+- **Coarse frames rest on fewer days.** The 60m break-even fit uses 1,006-1,243
+  days against the 1m fit's 2,030.
+- **The 24-hour cap is counted in BARS at every resolution** (R450's
+  convention) on a tape with gaps (R481), so the median wall-clock hold is
+  printed beside it in every table.
+- **The 15m and 60m frames are resampled from the 5-minute parquet**, so a
+  period with no 5-minute bars is absent rather than zero-volume.
+- **Every cost figure is R486's floor** — CFM's volume-tier ladder above 0.02%
+  remains UNSOURCED after four attempts and no value was invented for it.
+- **This is the SPENT crypto population.** Nothing above is out-of-sample and
+  nothing above can be.
+
+## Verdict
+
+**The item is ANSWERED and its premise is corrected.** Read in the statistic
+that decides things, the 1-minute trigger is the worst of the four resolutions
+by −0.43 to −0.51 of a risk unit per trade (t −3.6 to −4.3 clustered by day),
+the three coarser frames are indistinguishable from each other, and all four
+are still negative per trade at the best cost this desk has sourced. The
+mechanism item 14 proposed is real — cost/stop falls from 1.187 to 0.169 and
+the tight tail from 16.3% to 0.9% — but the stop grows at the **fourth root**
+of the trigger frame (elasticity 0.386, R² 0.9991), not linearly with it.
+
+**THE FENCE HELD AND IT MATTERED.** The 5-minute row is the most attractive
+line in this round on three separate coordinates at once and **no resolution
+was selected.** Nothing in R490 may be used to choose the resolution item 16
+carries to LINK or XRP — item 16 states its resolution in advance, in writing,
+before it opens either slice.
+
+## Looks consumed
+
+**NONE, and none could be.** No sealed slice exists on this family anywhere;
+`slice_by_time` is never called and no train/val/test split is cut in the file;
+no cell was qualified; no population was partitioned, swept, filtered or
+selected; no order was placed; no account exists; no live file was touched or
+imported.

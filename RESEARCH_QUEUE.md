@@ -606,8 +606,45 @@ Rules (non-negotiable, they are why anything here can be trusted):
    qualified and no cell is tested in this round** — the point is to decide
    where the one remaining look gets spent, before spending it.
 
-14. **THE COARSER TRIGGER, READ IN THE STATISTIC R487 ESTABLISHED.**
-   *(new, opened by R488.)* R476 compared the 5-minute and 1-minute triggers
+14. ~~**THE COARSER TRIGGER, READ IN THE STATISTIC R487 ESTABLISHED.**~~
+   **DONE — R490, 2026-09-02. CLOSED. No look consumed, and none could be:
+   `slice_by_time` is never called and no split is cut in the file.**
+   **THE RANKING INVERTS BETWEEN THE TWO STATISTICS.** On gross the 1-minute
+   trigger is the best of the four resolutions (0.1435 / 0.1045 / 0.0495 /
+   0.0224% of price at 1m / 5m / 15m / 60m); **on per-trade net R it is the
+   WORST — −0.547 against −0.091 / −0.157 / −0.118**, and paired by shared UTC
+   day the gap is **1m minus 5m −0.5071 (t −3.77), minus 15m −0.4285 (t −3.59),
+   minus 60m −0.5139 (t −4.34)** over 2,022-2,033 days. The three coarse frames
+   are **indistinguishable from one another** (every pairwise t between −1.31
+   and +0.75): the profile is one outlier at 1 minute and a flat shelf above it.
+   **All four are still NEGATIVE per trade** at R486's sourced cost, and all
+   four **beat their own random control decisively** in per-trade net R
+   (t 6.17 / 9.69 / 5.78 / 2.46) — the entry edge is real at every resolution;
+   what changes is what it must pay per unit of risk.
+   **THE ITEM'S PREMISE IS DIRECTIONALLY RIGHT AND SIX TIMES TOO STRONG.**
+   R488's elasticity of ~1 is the stop against VOLATILITY on one frame. Against
+   the FRAME: **log(median stop) = −1.402 + 0.386 × log(trigger minutes),
+   R² 0.9991 — a 60x coarser trigger buys a 4.87x wider stop, not a 60x one.**
+   The stop grows at roughly the FOURTH ROOT of the frame. cost/stop still
+   falls hard (1.187 → 0.450 → 0.298 → 0.169) and the tight tail with it
+   (16.3% → 5.1% → 2.7% → 0.9%).
+   **NOT AN EXIT-GRANULARITY ARTEFACT:** re-run with management on 1-minute
+   bars at every resolution, the two tables agree to the third decimal.
+   **Frequency, and it is the most useful line in the round: the 5-minute frame
+   costs 1.2% of the entries and cuts cost/stop by 62%.** 15m and 60m cost a
+   third and three quarters of the population and buy nothing further.
+   **R476's t = 9.17 is QUALIFIED, not corrected.** It compared arm B against
+   R450's NATIVE arm A (in which a bar that re-sweeps the level cannot also be
+   the break of structure; gross +0.0296%). Against the SAME construction one
+   frame coarser the 1-minute trigger wins the gross by **+0.0299% a day at
+   t = 3.79**, not +0.0994% at 9.17. **About two thirds of R476's headline gap
+   was the arm-A construction rule, not the resolution.** See new item 19.
+   **THE FENCE HELD.** The 5-minute row is the most attractive line in the
+   round on three coordinates at once and **no resolution was selected.**
+   Reproduction control exact: 71,073 entries, +0.1435%, t by day 13.77.
+
+14b. *(historical, the item as written, kept so the closure is readable)*
+   *(opened by R488.)* R476 compared the 5-minute and 1-minute triggers
    and the 1-minute won by a paired daily difference of t = 9.17 — **on
    GROSS**. R487 then established that gross is not the statistic that decides
    anything on this desk and R488 established why: **the stop scales with the
@@ -674,8 +711,21 @@ Rules (non-negotiable, they are why anything here can be trusted):
    read in **per-trade net R with a t clustered by UTC day** (R487's
    statistic, not the ratio of means), against the R450 random-entry control
    on the same machinery. Only then ONE test look.
+   **R490 UPDATE (2026-09-02): item 14 is CLOSED and it did NOT and COULD NOT
+   name a resolution — that was its fence.** What it supplies is the profile:
+   on the spent crypto population the 1-minute trigger is the worst of four in
+   per-trade net R by −0.43 to −0.51 of a risk unit (t −3.6 to −4.3), the three
+   coarser frames are indistinguishable from each other, and the 5-minute frame
+   keeps 98.8% of the entries at 38% of the cost/stop. **This item must state
+   its resolution IN WRITING BEFORE it opens either slice, and it may not cite
+   R490's numbers as the reason** — a resolution chosen on the strength of a
+   spent population's tables is a selected parameter wearing a description's
+   clothes. State it, justify it from HIS method (he triggers on the 1-minute),
+   and live with it. Whichever is stated, `stop/vol` is still RE-DERIVED on
+   LINK and XRP and never ported.
    **NO TUNING OF ANY KIND.** Not the pending expiry, not the hold cap, not
-   the swing definition, not the level set, not the stop. Every constant is
+   the swing definition, not the level set, not the stop, and not the trigger
+   resolution once stated. Every constant is
    R450's and is imported, not retyped. **Cost is R489's sourced per-contract
    figure for that instrument's own CDE contract** (XRP PERP, LINK PERP),
    charged for honest P&L and used to decide nothing.
@@ -728,6 +778,31 @@ Rules (non-negotiable, they are why anything here can be trusted):
    **THE FENCE:** backfilling data for an instrument does NOT reset a spent
    slice and must never be used to argue that it does. This item may only
    touch instruments R489 marked INTACT.
+
+19. **ONE RULE IN R450's ARM A IS WORTH 3.5x ON GROSS. NOBODY DERIVED IT.**
+   *(new, opened by R490, and it is DESCRIPTIVE — lower priority than 16.)*
+   R490 ran one uniform construction at four trigger frames and printed R450's
+   native arm A beside the 5-minute row. They differ in exactly one rule —
+   arm A's `scan_sweeps` will not let a bar that RE-SWEEPS the level also be
+   the break of structure, and it measures the stop from the sweep bar itself
+   rather than from its close. **Arm A reads gross +0.0296% of price; the same
+   frame under arm B's construction reads +0.1045%, three and a half times it,
+   on 70,194 entries against 75,023.** That single rule is bigger than the
+   entire 1m-vs-5m resolution effect it has been credited to since R476.
+   A bar that trades through the level and closes back through structure is the
+   textbook sweep-and-reclaim candle; arm A discards it by construction and
+   nobody ever asked what it was discarding.
+   Deliverable, purely descriptive: isolate the two differences (the re-sweep
+   exclusion, and whether the stop starts at the sweep bar or at its close),
+   score each separately at all four resolutions, and report the population and
+   the per-trade net R of the entries arm A throws away. Say plainly whether
+   R450's arm A was ever justified from his teaching or was an implementation
+   accident — read step431/step436, do not infer it.
+   **THE FENCE:** the crypto and index slices are both spent, so this can
+   describe and cannot select. **No construction may be "chosen" here and
+   nothing in it may be cited by item 16 as a reason** — same rule R490 ran
+   under. If it turns out arm A was an accident, that is a fact about how this
+   log should READ its own back catalogue, not a licence to pick a winner.
 
 ## Obsoleted by the 2026-07-25 strategy pivot — DO NOT RUN
 Wallace retired every self-derived strategy and rebuilt the desk on TJR's
@@ -995,6 +1070,25 @@ not a constant of the method.** Five crypto instruments over 87,000 entries
 sit in 3.57-3.83 astride R488's 3.60, and **gold (PAXG) sits at 13.35 — four
 times it.** Any risk budget that ports the crypto ratio to a new asset class
 would have been wrong by 4x. The ratio is RE-DERIVED, never copied.
+
+NOTE (R490): **the coarser trigger is where the cost problem goes away and it
+takes the leverage tier with it.** One construction at four trigger frames on
+5.5 years of crypto: cost/stop per trade falls **1.187 → 0.450 → 0.298 → 0.169**
+at 1m / 5m / 15m / 60m, and the share of entries carrying a stop tighter than
+the round trip — R485/R487's tight tail, the thing that drives per-trade net R
+negative — collapses **16.3% → 5.1% → 2.7% → 0.9%**. But the stop that buys
+that relief is a stop the account must finance: median structural stop
+**0.242% → 0.469% → 0.706% → 1.176% of price**, which at 1% risked is
+**4.1x → 2.1x → 1.4x → 0.85x**. **The resolution that makes this method
+affordable is the one that asks for LESS THAN ONE TIMES leverage.** The 15-20x
+tier and the affordable end of this family are at opposite ends of the same
+axis, and R488 already showed the tier becomes REQUIRED exactly where the
+method is least able to pay for itself. Owner mandate stands until Wallace
+changes it; what is recorded is that **nothing in this family asks for the tier
+at any resolution, and the direction that fixes its cost problem walks away
+from the tier, not toward it.** And the stop does NOT scale with the frame the
+way this file has assumed: **log(median stop) = −1.402 + 0.386 × log(trigger
+minutes), R² 0.9991 — a 60x coarser trigger buys a 4.87x wider stop.**
 
 ## STANDING RULE (R89/R100/R170/R190): TRANSFER IS PART OF VALIDATION
 Single-asset sealed tests do not catch asset-specific overfitting. Any

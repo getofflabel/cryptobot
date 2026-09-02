@@ -1,0 +1,200 @@
+========================================================================================================
+ROUND 490 - THE TRIGGER RESOLUTION PROFILE, IN PER-TRADE NET R
+========================================================================================================
+QUEUE ITEM 14. THIS ROUND CANNOT QUALIFY ANYTHING AND CANNOT SELECT
+A RESOLUTION. The crypto sweep-to-break-of-structure population has
+no sealed slice left anywhere (R450 and R475 read inside every
+boundary of this window; R475 spent the one look). No split is cut
+in this file, no cell is qualified, no resolution is ranked into a
+'best'. Item 16 states its resolution in advance either way.
+
+cost charged: R486 all-in per coin, BTC 0.0556% / ETH 0.1463% / SOL 0.0816% of price, round trip.
+Alpaca's 0.5% - the venue the desk actually holds - is printed at the end. Costs decide nothing here.
+pending window fixed at 120 minutes at EVERY resolution (OURS, never swept, and NOT widened for the coarse frames).
+
+attaching realized 1-minute volatility, per coin per day (R488's yardstick, held fixed across all four frames) ...
+  BTCUSD: 578,831 5-minute bars, 2,597,036 1-minute bars, 2021-01-01 -> 2026-07-26
+     tf= 1m  2,597,036 bars    25,443 entries   control 13,019
+     tf= 5m    578,831 bars    24,906 entries   control 15,003
+     tf=15m    194,901 bars    17,066 entries   control 15,462
+     tf=60m     48,767 bars     6,525 entries   control 15,683
+  ETHUSD: 580,432 5-minute bars, 2,538,368 1-minute bars, 2021-01-01 -> 2026-07-26
+     tf= 1m  2,538,368 bars    25,415 entries   control 12,437
+     tf= 5m    580,432 bars    25,137 entries   control 14,915
+     tf=15m    194,967 bars    17,410 entries   control 15,483
+     tf=60m     48,765 bars     6,665 entries   control 15,630
+  SOLUSD: 457,955 5-minute bars, 1,955,709 1-minute bars, 2021-01-01 -> 2026-07-26
+     tf= 1m  1,955,709 bars    20,215 entries   control  9,449
+     tf= 5m    457,955 bars    20,151 entries   control 11,705
+     tf=15m    154,566 bars    13,797 entries   control 12,059
+     tf=60m     38,685 bars     5,346 entries   control 12,203
+
+========================================================================================================
+REPRODUCTION CONTROLS - is this the same machinery R476 published?
+========================================================================================================
+generalised tf=1 entries 71,073   R450's native trigger_1m entries 71,073   identical: True
+generalised tf=1 gross +0.1435%   native arm B gross +0.1435%
+R476 published for this population: 71,073 entries, +0.1435% of price, t by day 13.77
+this file reads:                   71,073 entries, +0.1435%, t by day 13.77 over 2,033 days
+
+generalised tf=5 entries 70,194  vs  R450's NATIVE arm A (the 5-minute confirmation bar itself) 75,023
+  the two differ only in R450's arm-A rule that a bar which re-sweeps the level cannot also be the break of structure;
+  both are printed in the profile so the difference is visible rather than assumed.
+
+========================================================================================================
+THE PROFILE - MANAGED ON THE TRIGGER FRAME (R450's own precedent)
+========================================================================================================
+One row per distinct entry, hold-24h scoring (the four target settings score
+the SAME entries). netR is the mean of PER-TRADE net/stop - R487's statistic,
+not a ratio of means. t by day pools BTC+ETH+SOL into one observation per UTC
+day. stop/vol is the structural stop in units of that day's 1-MINUTE move at
+every resolution. tight% is the share of entries whose stop is smaller than the
+round trip they must pay.
+
+trigger frame                   entries   days   gross%  tG/day  grossR    netR  t naive  t by day   stop% stop/vol cost/stop  tight%  hold h
+1-minute trigger                 71,073  2,033  0.1435%   13.77   0.640  -0.547    -5.19     -4.92  0.242%     3.60     1.187   16.3%    0.62
+5-minute trigger                 70,194  2,033  0.1045%    9.15   0.359  -0.091    -0.97     -0.56  0.469%     7.09     0.450    5.1%    2.33
+15-minute trigger                48,273  2,033  0.0495%    4.43   0.141  -0.157    -4.00     -2.35  0.706%    10.68     0.298    2.7%    4.25
+60-minute trigger                18,536  2,022  0.0224%    3.07   0.050  -0.118    -4.02     -0.96  1.176%    17.41     0.169    0.9%    9.00
+  [R450 native arm A, 5m]        75,023  2,033  0.0296%    3.30   0.080  -0.118    -9.75     -4.04  0.663%     9.76     0.198    1.1%    3.58
+  [random entry, 1m frame]       34,905  2,033 -0.0083%   -0.78   0.369  -2.619    -7.56     -8.00  0.146%     2.21     2.988   33.2%    0.18
+  [random entry, 5m frame]       41,623  2,033  0.0024%    0.06   0.149  -1.338   -13.67    -13.46  0.267%     4.10     1.487   18.2%    0.75
+  [random entry, 15m frame]      43,004  2,033 -0.0083%   -0.57   0.159  -0.803    -7.26     -7.42  0.452%     7.03     0.961   10.2%    2.00
+  [random entry, 60m frame]      43,516  2,033 -0.0190%   -0.65   0.045  -0.578    -2.96     -2.68  0.952%    14.78     0.622    4.0%    8.00
+
+========================================================================================================
+SENSITIVITY - THE SAME ENTRIES, MANAGED ON 1-MINUTE BARS THROUGHOUT
+========================================================================================================
+Only the TRIGGER moves; the stop and the target are checked on 1-minute bars at
+every resolution (step451's discipline). If the profile above is an artefact of
+coarser exit granularity rather than of the trigger, these two tables disagree.
+
+trigger frame                   entries   days   gross%  tG/day  grossR    netR  t naive  t by day   stop% stop/vol cost/stop  tight%  hold h
+1-minute trigger                 71,073  2,033  0.1435%   13.77   0.640  -0.547    -5.19     -4.92  0.242%     3.60     1.187   16.3%    0.62
+5-minute trigger                 70,194  2,033  0.1059%    8.87   0.340  -0.110    -1.50     -0.94  0.469%     7.09     0.450    5.1%    1.92
+15-minute trigger                48,273  2,033  0.0517%    4.38   0.155  -0.143    -3.76     -2.04  0.706%    10.68     0.298    2.7%    3.38
+60-minute trigger                18,536  2,022  0.0270%    3.23   0.061  -0.108    -3.63     -0.62  1.176%    17.41     0.169    0.9%    7.30
+
+========================================================================================================
+THE ITEM'S PREMISE, MEASURED: HOW FAST DOES THE STOP GROW WITH THE
+TRIGGER TIMEFRAME?
+========================================================================================================
+Queue item 14 reasons from 'the stop scales with the trigger's
+timeframe at an elasticity of ~1 and the round trip does not scale
+at all'. R488's elasticity of ~1 is the stop against VOLATILITY, on
+one frame. Against the FRAME itself it is a different number and it
+is measured here.
+
+  log(median stop) = -1.402 + 0.386 * log(trigger minutes)   R2 0.9991
+  a 60x coarser trigger buys a 4.87x wider stop, not a 60x one.
+
+frame     median stop%  x the 1m stop  cost/stop  x the 1m cost/stop   tight%
+  1m            0.242%           1.00      1.187                1.00    16.3%
+  5m            0.469%           1.94      0.450                0.38     5.1%
+ 15m            0.706%           2.92      0.298                0.25     2.7%
+ 60m            1.176%           4.87      0.169                0.14     0.9%
+
+  The premise is DIRECTIONALLY right and QUANTITATIVELY wrong:
+  cost/stop does fall with the timeframe, but at the rate the stop
+  actually grows, which is far slower than the frame does.
+
+========================================================================================================
+PAIRED ON SHARED UTC DAYS - THE NUMBERS TO QUOTE
+========================================================================================================
+R476's headline was the GROSS difference: the 1-minute trigger beat
+the 5-minute one by +0.0994% a day at t = 9.17. Item 14 asks for the
+same comparison in the statistic that decides things.
+
+IN % OF PRICE PER DAY:
+  1m trigger                 minus 5m trigger                   +0.0299   t   3.79   2,033 shared days
+  1m trigger                 minus 15m trigger                  +0.0691   t   5.18   2,033 shared days
+  1m trigger                 minus 60m trigger                  +0.0289   t   0.80   2,022 shared days
+  5m trigger                 minus 15m trigger                  +0.0393   t   3.87   2,033 shared days
+  5m trigger                 minus 60m trigger                  -0.0005   t  -0.01   2,022 shared days
+  15m trigger                minus 60m trigger                  -0.0401   t  -1.31   2,022 shared days
+  1m trigger                 minus 1m RANDOM entry              +0.1576   t  13.89   2,033 shared days
+  5m trigger                 minus 5m RANDOM entry              +0.1205   t   9.57   2,033 shared days
+  15m trigger                minus 15m RANDOM entry             +0.0898   t   5.54   2,033 shared days
+  60m trigger                minus 60m RANDOM entry             +0.1395   t   4.06   2,022 shared days
+
+IN PER-TRADE NET R PER DAY:
+  1m trigger                 minus 5m trigger                   -0.5071   t  -3.77   2,033 shared days
+  1m trigger                 minus 15m trigger                  -0.4285   t  -3.59   2,033 shared days
+  1m trigger                 minus 60m trigger                  -0.5139   t  -4.34   2,022 shared days
+  5m trigger                 minus 15m trigger                  +0.0786   t   0.75   2,033 shared days
+  5m trigger                 minus 60m trigger                  -0.0050   t  -0.05   2,022 shared days
+  15m trigger                minus 60m trigger                  -0.0858   t  -1.31   2,022 shared days
+  1m trigger                 minus 1m RANDOM entry              +2.2493   t   6.17   2,033 shared days
+  5m trigger                 minus 5m RANDOM entry              +1.3084   t   9.69   2,033 shared days
+  15m trigger                minus 15m RANDOM entry             +0.7003   t   5.78   2,033 shared days
+  60m trigger                minus 60m RANDOM entry             +0.5583   t   2.46   2,022 shared days
+
+========================================================================================================
+R488's BREAK-EVEN COORDINATE, PER RESOLUTION
+========================================================================================================
+The 1-minute move at which the median structural stop EQUALS the
+round trip, from the fitted log-log elasticity, and how many times
+the median day clears it. A coarser trigger buys a wider stop against
+an unchanged round trip, so the multiple should RISE with the timeframe.
+
+coin       frame  round trip%    vol* %  median day %  multiple    days
+BTCUSD        1m       0.0556    0.0130        0.0517      3.97   2,031
+BTCUSD        5m       0.0556    0.0072        0.0516      7.18   2,032
+BTCUSD       15m       0.0556    0.0054        0.0520      9.65   1,995
+BTCUSD       60m       0.0556    0.0036        0.0522     14.60   1,227
+ETHUSD        1m       0.1463    0.0391        0.0677      1.73   2,030
+ETHUSD        5m       0.1463    0.0214        0.0673      3.15   2,031
+ETHUSD       15m       0.1463    0.0161        0.0673      4.18   2,007
+ETHUSD       60m       0.1463    0.0099        0.0679      6.89   1,243
+SOLUSD        1m       0.0816    0.0168        0.0945      5.62   1,614
+SOLUSD        5m       0.0816    0.0102        0.0935      9.17   1,615
+SOLUSD       15m       0.0816    0.0068        0.0941     13.85   1,601
+SOLUSD       60m       0.0816    0.0041        0.0947     23.25   1,006
+
+========================================================================================================
+BY COIN - a number that only holds on one coin is a coin fact
+========================================================================================================
+coin       frame  entries   days   gross%    netR  t by day   stop% stop/vol cost/stop
+BTCUSD        1m   25,443  2,033  0.0865%  -0.520     -2.08  0.185%     3.68     1.029
+BTCUSD        5m   24,906  2,033  0.0525%  -0.264     -2.00  0.360%     7.32     0.423
+BTCUSD       15m   17,066  2,032  0.0195%  -0.122     -0.77  0.536%    10.95     0.184
+BTCUSD       60m    6,525  1,889 -0.0413%  -0.132     -0.11  0.889%    17.61     0.125
+ETHUSD        1m   25,415  2,033  0.1545%  -1.088     -5.78  0.239%     3.58     1.702
+ETHUSD        5m   25,137  2,033  0.1332%   0.049      0.61  0.459%     7.03     0.619
+ETHUSD       15m   17,410  2,033  0.0678%  -0.322     -2.20  0.686%    10.56     0.527
+ETHUSD       60m    6,665  1,898  0.0624%  -0.186     -0.65  1.150%    17.24     0.283
+SOLUSD        1m   20,215  1,615  0.2014%   0.098      0.79  0.341%     3.52     0.739
+SOLUSD        5m   20,151  1,615  0.1327%  -0.051      0.72  0.666%     6.93     0.271
+SOLUSD       15m   13,797  1,612  0.0635%   0.008      1.67  1.020%    10.53     0.148
+SOLUSD       60m    5,346  1,517  0.0503%  -0.017      1.93  1.725%    17.43     0.079
+
+========================================================================================================
+FREQUENCY - EXPECTANCY AND FREQUENCY ARE SEPARATE FACTS
+========================================================================================================
+window 2021-01-01 -> 2026-07-26  (2,032 days)
+
+frame      entries  per coin/yr  days w/ entry  share of 1m  median hold h
+  1m        71,073        4,258          2,033       100.0%           0.62
+  5m        70,194        4,206          2,033        98.8%           2.33
+ 15m        48,273        2,892          2,033        67.9%           4.25
+ 60m        18,536        1,111          2,022        26.1%           9.00
+
+========================================================================================================
+THE SAME PROFILE ON THE VENUE THE DESK ACTUALLY HOLDS (Alpaca 0.50%)
+========================================================================================================
+Charged for honesty and deciding nothing. Printed because the desk
+has no US perpetual account and every R486 number above is a
+hypothetical venue's floor.
+
+frame       netR @ R486 all-in   netR @ Alpaca 0.50%   cost/stop @ Alpaca
+  1m                    -0.547                -6.041                6.681
+  5m                    -0.091                -2.226                2.585
+ 15m                    -0.157                -1.354                1.495
+ 60m                    -0.118                -0.833                0.883
+
+========================================================================================================
+LOOKS CONSUMED: NONE, AND NONE COULD BE. No sealed slice exists on
+this family; no split was cut in this file; no cell was qualified;
+no resolution was selected. THE FENCE HOLDS: nothing above may be
+used to choose the resolution item 16 carries to LINK or XRP.
+========================================================================================================
