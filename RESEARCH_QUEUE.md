@@ -673,7 +673,46 @@ Rules (non-negotiable, they are why anything here can be trusted):
    strength of its own numbers — item 16 states its resolution in advance
    either way.**
 
-15. **WHERE IN THE HOLD DOES THE GROSS ACTUALLY COME FROM?**
+15. ~~**WHERE IN THE HOLD DOES THE GROSS ACTUALLY COME FROM?**~~
+   **DONE — R491, 2026-09-03. No look consumed, and none could be:
+   `slice_by_time` is never called, no split is cut, and no exit rule, hold
+   cap or time gate is proposed anywhere in the file.**
+   **NEITHER OF THE ITEM'S TWO BRANCHES IS EARNED, and the disagreement
+   between them is the finding.** The path of all 68,992 positions was
+   reconstructed on the 1-minute tape (reproduction control EXACT: marked at
+   h = 1440 it returns every published gross to 0.0e+00, 0 rows off by more
+   than 1e-9).
+   **Pooled, the book looks front-loaded: 74.3% of the final total is marked
+   by hour 1, 88.0% by 2, 90.5% by 4.** But that is the LOSERS finishing:
+   **54.1% of all stop-loss is realised inside hour 1**, 78.6% by hour 4,
+   median time to stop 0.45h. Realised-only money runs −112.1% of the final
+   total at 1h and −205.7% at 22h; it crosses to +100% only when the
+   cap-runners close.
+   **The engine accrues its money EVENLY.** The 6,712 cap-runners (9.73%, all
+   at exactly 1440 bars) hold **21.3% of their +4.134% at hour 1, 46.7% by 4,
+   65.2% by 8, 77.3% by 12, 88.1% by 16, 94.5% by 20** — roughly linear, with
+   quartiles widening monotonically the whole way.
+   **The boundaries: every one of the 68,992 positions meets a 16:00 CT break
+   inside its hold (100.00%), median 10.80h after the fill. The whole book is
+   at 89.3% of its final value there — but the cap-runners are at 72.1%.
+   27.9% of the money this family makes has not arrived when the first venue
+   break lands.** The **Friday halt does not bite**: only 14.16% of positions
+   meet one, and marked there they read 100.8% of their own final.
+   So R482/R483 bite **noise and money at the same time**. The family is not
+   finished on venue grounds by this round and is not cleared by it either.
+   Per-trade net R is **negative at all 24 horizons on both cost schedules**
+   (R486 sourced −0.981 → −0.597, t by day −9.26 → −4.15; Alpaca −6.53 →
+   −6.11). R490's verdict stands untouched.
+   **Two honest limits that must travel with these numbers:** "banked" is a
+   MARK, not money (open rows are marked at the close of h and many go on to
+   stop); and the cap-runner table is **conditional on survival** — a
+   cap-runner is defined as one that never touched its stop, so 94.7% being
+   green at hour 1 is selection, not a forecast.
+   **NO FOLLOW-UP MAY PROPOSE AN EXIT AT A BOUNDARY.** Closing at 16:00 CT is
+   a different population with different stops; nothing in R491 licenses
+   simulating it, and doing so on this family's spent slices would be tuning.
+
+15b. *(historical, the item as written, kept so the closure is readable)*
    *(new, opened by R488, carried from R481/R482/R483.)* Three separate rounds
    have landed on the same 9.7% of positions — the cap-runners — from three
    directions: R481 (they produce the entire gross at +4.13% each, the stopped

@@ -5523,3 +5523,128 @@ before it opens either slice.
 no cell was qualified; no population was partitioned, swept, filtered or
 selected; no order was placed; no account exists; no live file was touched or
 imported.
+
+---
+
+# R491 — WHERE IN THE HOLD DOES THE GROSS ACTUALLY COME FROM
+
+**2026-09-03. Queue item 15. `step491_hold_anatomy.py`, full output in
+`step491_output.txt`. Research only, no orders, no account, no live file
+touched or imported. A DESCRIPTION of an already-published population — no
+cell is qualified, no split is cut, no exit rule, hold cap or time gate is
+proposed or implied. NO LOOK CONSUMED, and none could be.**
+
+## Hypothesis / question
+
+Three rounds have converged on the same 9.7% of positions from three
+directions — R481 (the cap-runners produce the entire gross at +4.13% each,
+the stopped 90.3% are collectively negative), R482 (BTC and ETH sit below
+their overnight margin ceiling, which bites exactly these), R483 (they
+straddle a venue break 99.985% of the time). Nobody had read the gross as a
+function of **how long the position actually ran**. The queue's own test:
+"if most of the money is made in the first few hours, R482's and R483's
+constraints bite the noise; if it is made in the last few, they bite the
+money and this family is finished on venue grounds."
+
+## Config, exactly as queued, nothing added
+
+Population: R476/R481's published arm-B hold-24h entries, read from
+`step481_entries_funding.csv` — **68,992 chargeable entries** (BTC 25,421,
+ETH 25,390, SOL 18,181), mean gross **+0.1309% of price**, total 9,033
+percentage points. Cost is R486's sourced all-in Coinbase Derivatives round
+trip per coin (BTC 0.0556 / ETH 0.1463 / SOL 0.0816% of price), the same
+constants R490 used, imported by value; Alpaca's 0.50% carried alongside.
+Venue clocks imported from `step483_hole_exposure.py` unchanged: the
+participant break is 16:00–17:00 CT daily, the Friday all-markets halt is
+16:00–16:50 CT.
+
+The one thing that had to be built: the published table records only what
+each position was worth **at its exit**, so the round reconstructs the
+mark-to-market **path** of all 68,992 positions on the same 1-minute tape,
+under the population's own rule (a closed row is frozen at its realised
+gross; an open row is marked at the close of the horizon bar).
+
+**REPRODUCTION CONTROL, and it is exact:** marked at h = 1440 the rebuilt
+path returns every published gross with **max |error| = 0.0e+00 percentage
+points over 68,992 rows, 0 rows disagreeing by more than 1e-9.**
+
+## Result — the two profiles disagree, and the disagreement IS the finding
+
+**(1) The pooled book looks strongly front-loaded.** Marked at h, as a share
+of the final total: **74.3% at 1 hour, 88.0% at 2, 90.5% at 4**, then flat
+(88.4% at 8h, 89.3% at 12h, 95.3% at 16h) to 100% at 24. Read alone this
+says the money is made in the first two to four hours.
+
+**(2) It looks that way because the LOSERS finish early, not because the
+winners do.** 54.1% of all stop-loss is realised inside hour 1, 78.6% by
+hour 4 (39,671 of the 62,280 stop-outs are done inside the first hour;
+median time to stop 0.45h). The `settled` column — realised money only —
+runs **−5.1% of the final total at 1m, −112.1% at 1h, −162.8% at 4h,
+−205.7% at 22h**, and only crosses to +100% when the cap-runners close.
+
+**(3) The engine that produces the entire gross accrues it EVENLY across all
+24 hours.** The 6,712 cap-runners (9.73%, every one at exactly 1440 bars) go
+**+0.880% at hour 1 → 21.3% of their final; 46.7% by hour 4; 65.2% by hour
+8; 77.3% by hour 12; 88.1% by hour 16; 94.5% by hour 20; 100% at 24
+(+4.134%)**. Roughly linear. Their p25/median/p75 widen monotonically the
+whole way (hour 1: 0.298 / 0.628 / 1.139%; hour 24: 1.633 / 3.191 / 5.581%).
+Wall clock, because Alpaca's tape has gaps: median 25.16h, p75 30.07h, max
+81.28h, and **72.27% of cap-runners span more than 24.05 wall-clock hours.**
+
+## The venue boundaries — the queue's actual question
+
+**First 16:00 CT participant break: every one of the 68,992 positions meets
+one inside its hold (100.00%)**, median 10.80 hours after the fill.
+- Whole book marked at that boundary: **8,063 of 9,033 points = 89.3% of the
+  final total.**
+- **The cap-runners at that boundary: 19,995 of 27,749 points = 72.1%.**
+  **27.9% of the money that this family makes has not arrived yet when the
+  first venue break lands.**
+
+**First Friday 16:00 CT halt: only 9,769 positions (14.16%) meet one inside
+24 hours.** Marked there the whole book reads 9,042 points = **100.1%** of
+its final, and the subset that meets it reads **100.8%** of its own final.
+Cap-runners among them (1,124) read 82.9%. **The Friday halt does not bite
+the money in the aggregate** — it lands on a slice that is, on average,
+already at its final value.
+
+## Verdict
+
+**NEITHER of the queue's two branches is earned, and the round says so
+rather than picking one.** "Most of the money is made in the first few
+hours" is TRUE of the pooled mark and FALSE of the population that makes it.
+R482's and R483's constraints bite **noise and money at the same time**: the
+daily break arrives with 89.3% of the book's value present but only **72.1%
+of the cap-runners'**, and the cap-runners are the entire gross. This family
+is **not** finished on venue grounds by this round — and it is not cleared
+by it either.
+
+Per-trade net R is **NEGATIVE at every one of the 24 horizons on both cost
+schedules** (R486 sourced: −0.981 at 1m rising to −0.597 at 24h, t by day
+−9.26 to −4.15; Alpaca 0.50%: −6.53 to −6.11, t −7.44 to −6.37). Nothing
+here moves R490's verdict, which stands untouched.
+
+## Honest limits — read before quoting any number above
+
+1. **"Banked" is a MARK, not money.** For a row still open at h it is the
+   close of bar h. Those rows are not closed and many go on to stop. Only
+   the `settled` column is realised.
+2. **The cap-runner table is CONDITIONAL ON SURVIVAL.** A cap-runner is
+   *defined* as a position that never touched its stop in 24 hours, so of
+   course 94.7% of them are green at hour 1. That is selection, not a
+   forecast: at hour 1 nothing on the tape says which of the 29,321 rows
+   still open will turn out to be one.
+3. **No exit is implied anywhere.** "x% of the money has arrived by the
+   boundary" is a statement about WHEN. Closing at a boundary is a different
+   population with different stops, and this round did not and may not
+   simulate it.
+4. The 24-hour cap is the population's existing construction. It was not
+   swept, varied, or evaluated as a parameter.
+
+## Looks consumed
+
+**NONE, and none could be.** No sealed slice exists on this family anywhere;
+`slice_by_time` is never called and no train/val/test split is cut in the
+file; no cell was qualified; no population was partitioned, swept, filtered
+or selected; no exit rule, hold cap or time-of-day gate was proposed; no
+order was placed; no account exists; no live file was touched or imported.

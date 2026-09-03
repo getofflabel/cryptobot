@@ -1,0 +1,193 @@
+========================================================================================================
+ROUND 491 - WHERE IN THE HOLD DOES THE GROSS COME FROM  (queue item 15)
+========================================================================================================
+NO LOOK CONSUMED, and none can be: this is a time-profile DESCRIPTION
+of R476/R481's already-published population. slice_by_time is never
+called and no split is cut anywhere in this file.
+FENCE, restated so it is on the record with the numbers: no exit rule,
+no hold cap and no time-of-day gate is proposed or implied here. The
+horizons are a READING GRID over an existing 24-hour hold; they are
+not candidate exits and they are not ranked.
+
+population: 68,992 entries ({'BTCUSD': 25421, 'ETHUSD': 25390, 'SOLUSD': 18181})
+published gross, mean +0.1309% of price, total 9,033 percentage points
+
+REPRODUCTION CONTROL. Marking every position at h = 1440 must
+return its published gross exactly.
+  max |rebuilt - published| = 0.000e+00 percentage points over 68,992 rows
+  rows disagreeing by > 1e-9: 0
+
+========================================================================================================
+1. GROSS AND NET R AS A FUNCTION OF HOLD LENGTH - WHOLE POPULATION
+========================================================================================================
+banked  = what the book is worth marked at h (closed rows frozen at
+          their realised gross, open rows marked at the close of h).
+settled = the share of the final total already contributed by rows
+          that have EXITED by h. netR is per trade at R486's sourced
+          cost; t is clustered by UTC day.
+
+at R486's sourced all-in cost per coin:
+      h   banked gross  % of final  settled gross  % of final     open  mean netR  t by day
+     1m            240        2.7%           -464       -5.1%   65,843     -0.981     -9.26
+     5m          1,521       16.8%         -2,609      -28.9%   55,217     -0.901     -7.51
+    15m          3,359       37.2%         -5,620      -62.2%   43,823     -0.809     -6.81
+    30m          5,022       55.6%         -7,827      -86.7%   36,461     -0.747     -6.27
+    60m          6,714       74.3%        -10,123     -112.1%   29,321     -0.644     -5.50
+   120m          7,948       88.0%        -12,425     -137.5%   22,663     -0.621     -5.20
+   180m          8,114       89.8%        -13,818     -153.0%   18,987     -0.584     -4.82
+   240m          8,176       90.5%        -14,702     -162.8%   16,638     -0.582     -4.82
+   360m          8,029       88.9%        -15,870     -175.7%   13,563     -0.638     -5.07
+   480m          7,983       88.4%        -16,642     -184.2%   11,748     -0.634     -4.94
+   600m          7,991       88.5%        -17,145     -189.8%   10,500     -0.624     -4.76
+   720m          8,070       89.3%        -17,511     -193.9%    9,609     -0.635     -4.81
+   840m          8,295       91.8%        -17,805     -197.1%    8,867     -0.629     -4.87
+   960m          8,606       95.3%        -18,065     -200.0%    8,261     -0.605     -4.75
+  1080m          8,427       93.3%        -18,278     -202.3%    7,757     -0.607     -4.73
+  1200m          8,483       93.9%        -18,440     -204.1%    7,365     -0.587     -4.32
+  1320m          8,663       95.9%        -18,583     -205.7%    7,024     -0.569     -4.15
+  1440m          9,033      100.0%          9,033      100.0%        0     -0.597     -4.55
+
+the same book at Alpaca's 0.50% - the venue the desk holds:
+      h   banked gross  % of final  settled gross  % of final     open  mean netR  t by day
+     1m            240        2.7%           -464       -5.1%   65,843     -6.526     -7.44
+     5m          1,521       16.8%         -2,609      -28.9%   55,217     -6.446     -6.75
+    15m          3,359       37.2%         -5,620      -62.2%   43,823     -6.354     -6.66
+    30m          5,022       55.6%         -7,827      -86.7%   36,461     -6.293     -6.60
+    60m          6,714       74.3%        -10,123     -112.1%   29,321     -6.189     -6.51
+   120m          7,948       88.0%        -12,425     -137.5%   22,663     -6.167     -6.47
+   180m          8,114       89.8%        -13,818     -153.0%   18,987     -6.130     -6.44
+   240m          8,176       90.5%        -14,702     -162.8%   16,638     -6.128     -6.44
+   360m          8,029       88.9%        -15,870     -175.7%   13,563     -6.184     -6.48
+   480m          7,983       88.4%        -16,642     -184.2%   11,748     -6.179     -6.46
+   600m          7,991       88.5%        -17,145     -189.8%   10,500     -6.170     -6.45
+   720m          8,070       89.3%        -17,511     -193.9%    9,609     -6.180     -6.45
+   840m          8,295       91.8%        -17,805     -197.1%    8,867     -6.175     -6.45
+   960m          8,606       95.3%        -18,065     -200.0%    8,261     -6.151     -6.42
+  1080m          8,427       93.3%        -18,278     -202.3%    7,757     -6.152     -6.42
+  1200m          8,483       93.9%        -18,440     -204.1%    7,365     -6.133     -6.39
+  1320m          8,663       95.9%        -18,583     -205.7%    7,024     -6.114     -6.37
+  1440m          9,033      100.0%          9,033      100.0%        0     -6.142     -6.40
+
+========================================================================================================
+2. THE CAP-RUNNERS, HOUR BY HOUR
+========================================================================================================
+cap-runners: 6,712 of 68,992 = 9.73% of the population, and every one of them ran
+the full 1440-bar cap (min = max = 1440 bars), so 'how many hours
+they ran' has ONE answer in bars. What varies is WALL CLOCK, because
+Alpaca's 1-minute tape has gaps, and what varies far more is where in
+those hours the money arrived. Both are printed.
+
+  wall-clock hours for the 6,712 cap-runners: min 24.00  p25 24.05  median 25.16  p75 30.07  max 81.28
+  of these, 4,851 (72.27%) span more than 24.05 wall-clock hours (gapped tape).
+
+  hour   mean gross  % of their       p25    median       p75  mean netR    % >0
+                          final
+     1      0.8797%       21.3%    0.298%    0.628%    1.139%      2.996   94.7%
+     2      1.3434%       32.5%    0.509%    0.985%    1.775%      4.591   97.0%
+     3      1.6642%       40.3%    0.646%    1.255%    2.245%      5.964   97.8%
+     4      1.9325%       46.7%    0.776%    1.473%    2.557%      6.976   98.4%
+     5      2.1613%       52.3%    0.873%    1.667%    2.888%      7.842   98.3%
+     6      2.3682%       57.3%    0.970%    1.843%    3.174%      8.877   98.7%
+     7      2.5542%       61.8%    1.072%    2.014%    3.423%      9.428   99.0%
+     8      2.6950%       65.2%    1.130%    2.118%    3.619%     10.088   99.0%
+     9      2.8295%       68.4%    1.183%    2.233%    3.827%     10.602   99.0%
+    10      2.9578%       71.5%    1.257%    2.339%    3.955%     11.104   98.9%
+    11      3.0754%       74.4%    1.330%    2.458%    4.101%     11.486   99.0%
+    12      3.1956%       77.3%    1.389%    2.530%    4.273%     11.881   99.1%
+    13      3.3215%       80.3%    1.453%    2.633%    4.409%     12.331   99.2%
+    14      3.4424%       83.3%    1.496%    2.752%    4.573%     12.692   99.3%
+    15      3.5441%       85.7%    1.557%    2.850%    4.672%     13.042   99.4%
+    16      3.6420%       88.1%    1.590%    2.906%    4.812%     13.365   99.3%
+    17      3.7172%       89.9%    1.588%    2.950%    4.898%     13.741   99.3%
+    18      3.7848%       91.5%    1.638%    3.007%    5.016%     13.999   99.3%
+    19      3.8624%       93.4%    1.644%    3.032%    5.135%     14.392   99.4%
+    20      3.9075%       94.5%    1.642%    3.071%    5.210%     14.640   99.3%
+    21      3.9576%       95.7%    1.642%    3.118%    5.306%     14.833   99.3%
+    22      4.0198%       97.2%    1.639%    3.149%    5.404%     15.165   99.1%
+    23      4.0969%       99.1%    1.653%    3.186%    5.501%     15.411   99.1%
+    24      4.1342%      100.0%    1.633%    3.191%    5.581%     15.101   99.0%
+
+And the 90.3% that stopped, for contrast - their contribution is
+fixed the moment they stop, so the only question is WHEN.
+  62,280 stop-outs, mean gross -0.3005%, total -18,716 points
+  hours to the stop: p25 0.12  median 0.45  p75 2.08  max 24.00
+
+  by hour h   stops by h   their gross  % of all stop loss
+         1h       39,671       -10,123               54.1%
+         2h       46,329       -12,425               66.4%
+         3h       50,005       -13,818               73.8%
+         4h       52,354       -14,702               78.6%
+         5h       54,099       -15,370               82.1%
+         6h       55,429       -15,870               84.8%
+         7h       56,462       -16,311               87.2%
+         8h       57,244       -16,642               88.9%
+         9h       57,946       -16,919               90.4%
+        10h       58,492       -17,145               91.6%
+        11h       58,956       -17,340               92.6%
+        12h       59,383       -17,511               93.6%
+        13h       59,753       -17,652               94.3%
+        14h       60,125       -17,805               95.1%
+        15h       60,463       -17,951               95.9%
+        16h       60,731       -18,065               96.5%
+        17h       60,999       -18,179               97.1%
+        18h       61,235       -18,278               97.7%
+        19h       61,427       -18,362               98.1%
+        20h       61,627       -18,440               98.5%
+        21h       61,807       -18,517               98.9%
+        22h       61,968       -18,583               99.3%
+        23h       62,140       -18,650               99.7%
+        24h       62,280       -18,716              100.0%
+
+========================================================================================================
+3. HOW MUCH IS BANKED BEFORE THE VENUE'S OWN BOUNDARIES
+========================================================================================================
+Clocks imported from step483 unchanged: the participant break is
+16:00-17:00 CT daily; Friday 16:00-16:50 CT is an all-markets halt.
+A position's first overnight boundary is the first 16:00 CT mark
+strictly after its fill. Only some positions reach a FRIDAY 16:00 CT
+inside the 24-hour hold; the rest never meet the halt at all.
+
+first 16:00 CT break
+  positions that MEET it inside the 24h hold: 68,992 of 68,992 = 100.00%
+  hours from fill to it (those that meet it): p25 5.75  median 10.80  p75 17.72
+  book value marked AT that boundary: 8,063 points = 89.3% of the final total
+  restricted to the 68,992 that meet it: marked 8,063 vs final 9,033 points = 89.3%
+  the cap-runners among them (6,712): marked 19,995 vs final 27,749 points = 72.1%
+
+first FRIDAY 16:00 CT halt
+  positions that MEET it inside the 24h hold: 9,769 of 68,992 = 14.16%
+  hours from fill to it (those that meet it): p25 6.05  median 10.60  p75 17.57
+  book value marked AT that boundary: 9,042 points = 100.1% of the final total
+  restricted to the 9,769 that meet it: marked 1,179 vs final 1,170 points = 100.8%
+  the cap-runners among them (1,124): marked 3,203 vs final 3,864 points = 82.9%
+
+========================================================================================================
+HONEST LIMITS OF EVERY NUMBER ABOVE - read before quoting any of them
+========================================================================================================
+1. 'BANKED' IS A MARK, NOT MONEY. For a position still open at h it is
+   the close of bar h. Those rows are not closed and many of them go on
+   to stop; the column says what the book is WORTH at h, never what it
+   has collected. Only the 'settled' column is realised.
+2. THE CAP-RUNNER TABLE IS CONDITIONAL ON SURVIVAL. A cap-runner is
+   DEFINED as a position that never touched its stop in 24 hours, so of
+   course it is in the green at hour 1 (94.7% of them). That is
+   selection, not a forecast: at hour 1 nothing on the tape says which
+   of the 29,321 positions still open will be one of them.
+3. THE TWO PROFILES DISAGREE AND THE DISAGREEMENT IS THE FINDING. The
+   pooled book looks front-loaded because the LOSERS finish early -
+   54.1% of all stop-loss is realised inside hour 1 - while the winners
+   are still marked and still climbing. The engine that produces the
+   entire gross accrues it roughly evenly across all 24 hours.
+4. NO EXIT IS IMPLIED ANYWHERE. 'x% of the money has arrived by the
+   boundary' is a statement about WHEN, not an argument for closing
+   there. Closing at a boundary is a different population with
+   different stops and this round did not and may not simulate it.
+5. Per-trade net R is NEGATIVE at every horizon on both cost schedules
+   (R486 sourced and Alpaca), t by day -4.1 to -9.3. Nothing in this
+   round moves that; R490's verdict stands untouched.
+
+========================================================================================================
+REPRODUCTION CONTROL, restated: h=1440 returns every published gross
+to 0.0e+00 percentage points. Population 68,992 entries, mean gross +0.1309%.
+NOTHING IS PROPOSED. No exit rule, no cap, no gate, no resolution.
+========================================================================================================
