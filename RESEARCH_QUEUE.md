@@ -734,9 +734,46 @@ Rules (non-negotiable, they are why anything here can be trusted):
    construction and is not a parameter to be swept. This round describes where
    the money sits inside a published population; it cuts nothing.
 
-16. **SPEND THE LOOK: THE FAMILY'S PARENT ON LINK AND XRP, 60/20/20, FOR REAL.**
-   *(new, opened by R489, and it is now the highest-value item on this queue
-   — it is the first item since R474 that CAN produce a deployment candidate.)*
+16. ~~**SPEND THE LOOK: THE FAMILY'S PARENT ON LINK AND XRP, 60/20/20, FOR REAL.**~~
+   **DONE — R492, 2026-09-04. CLOSED. ONE LOOK CONSUMED. LINKUSD's final 20%
+   is SPENT. The cell FAILED. XRPUSD's final 20% is INTACT and was never read.**
+   Pre-registered before any slice was opened, per the item: **instrument
+   spent = LINKUSD** (406-day sealed slice against XRP's 187; stop/vol 3.57
+   inside the crypto band while XRP is the 4.50 outlier; best sourced-fee
+   multiple on the disk), **trigger = 1 MINUTE** justified from step436
+   ("1-minute: the entry only") and step431 §0 with **R490 not cited and no
+   number from it in the file**, and **selection = highest choosing-slice
+   per-trade net R t clustered by UTC day**.
+   LINK: 32 cells, **11 qualify against ~8 expected by chance**. XRP
+   (companion, train/val only): 15 of 32 against the same ~8 — **and nothing
+   was done with it; the spend was declared before either table existed.**
+   The rule pointed at `last session low → 1m BOS, target 3R`: choosing
+   +0.076 net R (t/day +5.50), middle **+0.006** (t/day +2.53).
+   **SEALED: per-trade net R −0.131, t/day +0.47, on 912 trades over 326
+   days. FAIL.**
+   **The failure is a COST failure, not a signal failure, and that is the
+   round's real output.** Sealed per-trade GROSS R is **+0.299** — larger
+   than the middle slice's +0.284, gross t/day +2.52 — and the mean
+   cost-per-risk-unit rose to **0.430**. 0.299 − 0.430 = −0.131 exactly.
+   LINK's median structural stop tightened 0.423% → 0.338% → **0.319%** of
+   price across the three windows while the round trip did not tighten at
+   all. **R488's elasticity arriving as a live out-of-sample failure.**
+   **And it is a working demonstration of why R487 changed the statistic:**
+   on the sealed slice the ratio of means reads **+0.178** and the per-trade
+   mean reads **−0.131** — *they disagree in sign*. Scored the pre-R487 way
+   this round would be reporting a survivor.
+   Two limits recorded so nobody misreads the round: the middle-slice gate
+   was cleared by **+0.006 of a risk unit** (a protocol that gates on sign
+   and selects on t can point its one look at a coin-flip gate — see new
+   item 20), and **the random control did not discriminate on LINK**
+   (−0.660 choosing / −0.713 middle: every positive cell clears it
+   automatically). The cell does beat the control on the sealed slice by
+   0.85 of a risk unit; losing less than chance is not an edge and was not
+   treated as one.
+   *(original item text below, kept so the pre-registration can be audited
+   against what was run)*
+   *(was: new, opened by R489, and it was the highest-value item on this
+   queue — the first item since R474 that CAN produce a deployment candidate.)*
    R489 answered "which instrument" and the answer is XRPUSD and LINKUSD:
    they sit in the same R488 band as the spent incumbents (XRP 1.28 all-in /
    1.91 fee-only, LINK 0.99 / 1.99 against SOL 1.22, BTC 1.04), and **both
@@ -843,6 +880,62 @@ Rules (non-negotiable, they are why anything here can be trusted):
    under. If it turns out arm A was an accident, that is a fact about how this
    log should READ its own back catalogue, not a licence to pick a winner.
 
+20. **THE GATE IS A SIGN TEST AND THE SELECTOR IS A t. THAT MISMATCH JUST
+    AIMED A LOOK.**
+    *(new, opened by R492, and it is a PROTOCOL question, not a strategy one.)*
+    R492's selected cell cleared the middle-slice gate by **+0.006 of a risk
+    unit** and was then chosen for the one look because it had the highest
+    CHOOSING-slice t. Both halves were pre-registered and both were followed
+    exactly; the problem is that they measure different things. A cell whose
+    confirmation is a coin flip can outrank a cell that confirmed by half a
+    risk unit, purely on choosing-slice sample size.
+    Deliverable, purely descriptive and on populations that are ALREADY
+    SPENT: for every round in this log that qualified more than one cell
+    (R450, R474, R475, R492), re-read which cell each of four selection rules
+    would have pointed at — (i) choosing-slice t, the standing rule; (ii)
+    middle-slice expectancy; (iii) the minimum of the two slices' expectancy;
+    (iv) choosing-slice expectancy — and say how often they disagree and
+    whether the standing rule was ever the worst of the four. Where the
+    sealed slice was subsequently read and published, report what each rule
+    would have shown, **from the numbers already in this log**.
+    **THE FENCE, and it is strict:** every slice involved is spent, so this
+    can DESCRIBE and cannot re-look. **No sealed slice is re-opened, no new
+    entry population is built, and no cell that was never looked at may be
+    looked at now** — R474's other 22 qualifying cells and R492's other 10
+    stay unverified forever. If the standing rule turns out to be poor, the
+    output is a PROPOSED protocol change for Wallace to accept in an
+    interactive session, applied to FUTURE rounds only. **Nothing in this
+    item may be used to re-interpret a published verdict**, and a rule may
+    not be chosen by how well it would have performed on the sealed slices
+    it can now see — that is selecting a protocol on out-of-sample data,
+    which is the exact error the protocol exists to prevent. State the
+    preferred rule from first principles first, then report the tally.
+
+21. **XRP IS THE LAST CLEAN SLICE THIS FAMILY OWNS. DECIDE WHAT IT IS FOR
+    BEFORE ANYONE SPENDS IT.**
+    *(new, opened by R492, and it is a DECISION memo, not a backtest.)*
+    After R492 the sweep-to-break-of-structure family has exactly one unread
+    out-of-sample window on an instrument with real history: **XRPUSD's final
+    20%, 2026-01-20 → 2026-07-26, 187 days.** Everything else is spent (BTC,
+    ETH, SOL, SPY, QQQ, LINK) or is ranked off four months of tape.
+    R492 established that on this family the binding constraint is **cost per
+    unit of risk, not signal** — sealed gross R +0.299 against a cost of
+    0.430 risk units. Spending XRP's 187 days on the same parent construction
+    would therefore be spending the last slice on a question the log has
+    already answered twice.
+    Deliverable, and **no look and no entry population under any outcome**:
+    write the case, from evidence already published, for what XRP's slice
+    should be spent on — or for leaving it sealed indefinitely. Price the
+    alternatives honestly, including the one nobody has costed: **187 days is
+    a small slice, and a construction that fires ~103 times a year per asset
+    may not clear the minimum trade counts on it at all.** Compute, from
+    XRP's already-read first 80%, how many entries each of the eight levels
+    would be expected to produce in 187 days, and say plainly which cells are
+    even *testable* there. A slice you cannot power is not an asset.
+    **THE FENCE:** this item reads XRP's first 80% only (already read in
+    R492), never its final 20%. It proposes; it does not run. Any actual
+    spend of XRP's slice is a separate, later, pre-registered round.
+
 ## Obsoleted by the 2026-07-25 strategy pivot — DO NOT RUN
 Wallace retired every self-derived strategy and rebuilt the desk on TJR's
 method; BloFin was dropped. The four items that topped this queue on
@@ -885,6 +978,20 @@ use. They are recorded, not deleted, so nobody re-opens them by accident.
   other 22 qualifying cells of that round are unverified out of sample and
   must stay that way. **Never re-open the SPY/QQQ 1-minute final window for
   this family.**
+- **LINKUSD 1-minute sweep-to-BOS: the sealed 20% is SPENT (R492).** One
+  look, taken on `last session low → 1m BOS, target 3R`, which **FAILED**:
+  sealed per-trade net R −0.131 (t/day +0.47) on 912 trades over 326 days,
+  against +0.076 choosing and +0.006 middle. **Never re-open LINKUSD's final
+  20% (2025-06-15 → 2026-07-26) for this family.** The other 10 cells that
+  qualified on LINK are unverified out of sample and must stay that way.
+  The sealed GROSS was fine (+0.299 per-trade R, t/day +2.52) — the cost per
+  risk unit (0.430) is what killed it, so **do not re-test this family on any
+  instrument by making the signal better; the signal was never the binding
+  constraint.**
+- **XRPUSD's final 20% is the family's LAST clean slice** (2026-01-20 →
+  2026-07-26, 187 days). R492 built and read its first 80% as a companion and
+  **did not touch the final 20%.** It stays sealed until a round pre-registers
+  a spend for it — see item 21.
 - **CRYPTO 1-minute sweep-to-BOS: the sealed 20% is now SPENT TOO (R475).**
   One look, taken on `4h swing low → 1m BOS, hold 24h` + fair value gap.
   Positive in price terms (+0.0726% gross per trade... 24 trades, net R

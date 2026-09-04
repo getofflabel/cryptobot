@@ -5648,3 +5648,214 @@ here moves R490's verdict, which stands untouched.
 file; no cell was qualified; no population was partitioned, swept, filtered
 or selected; no exit rule, hold cap or time-of-day gate was proposed; no
 order was placed; no account exists; no live file was touched or imported.
+
+---
+
+# R492 — SPEND THE LOOK: THE FAMILY'S PARENT ON LINK AND XRP, 60/20/20, FOR REAL
+
+**2026-09-04. Queue item 16. `step492_link_xrp_sealed_look.py`, full output in
+`step492_output.txt`. Research only, no orders, no account, no live file
+touched or imported.**
+
+**ONE LOOK CONSUMED. LINKUSD's final 20% is SPENT. The cell FAILED.
+XRPUSD's final 20% is INTACT and was never read.**
+
+## What this round was for
+
+Item 16 was the first item since R474 that could produce a deployment
+candidate, and the reason was arithmetic rather than optimism: R474 spent
+SPY/QQQ's sealed slice and R475 spent crypto's, so the sweep-to-break-of-
+structure family had no clean out-of-sample window left on any instrument it
+had ever touched. R489 answered "which instrument next" with XRPUSD and
+LINKUSD — both in the same R488 cost/volatility band as the spent incumbents,
+both with a genuinely unread final 20%. This round ran the family's parent on
+them under the full protocol and took the one look the item authorised.
+
+## Pre-registration — fixed in the file's docstring before any slice was read
+
+Item 16 required three things to be stated in writing in advance. They were,
+and they are reproduced verbatim in `step492_link_xrp_sealed_look.py`:
+
+1. **The instrument being spent: LINKUSD.** Three reasons, all properties of
+   the instrument and all available before a single entry existed. **History**
+   — LINK carries the same 1,627-day window BTC's evidence was built on, and
+   its sealed 20% is ~406 days against XRP's ~187. **Geometry** — R489(b)
+   measured LINK's structural-stop-to-one-minute-move at 3.57, inside the
+   3.57–3.83 band five crypto instruments share, while XRP is the 4.50
+   outlier; the machinery is carried unchanged, so it is carried to the tape
+   whose chart width matches what it was built on. **Cost basis** — on the
+   sourced fee-only figure this item mandates, LINK is the best multiple of
+   any instrument on this disk, spent or intact (1.99).
+2. **The trigger resolution: 1 MINUTE**, justified from him and from nothing
+   else — step436's timeframe table ("**1-minute**: the entry only.
+   Explicitly NOT where sweeps are hunted") and step431 §0 plus its worked
+   example step 5 ("Wait for a break of structure to the downside on the
+   1-minute"). **R490's resolution profile is not cited and no number from it
+   appears anywhere in the file**, which was R490's own fence.
+3. **The selection rule if more than one cell qualified:** the highest
+   **choosing-slice** per-trade net R t clustered by UTC day, ties broken by
+   trade count. Choosing on the choosing slice; the middle slice is the gate,
+   not the chooser; the sealed slice is never asked which cell to point at it.
+
+Cost: R489's sourced per-contract CDE figure, **LINK PERP 0.0522% round trip**
+(50 LINK, $574.85 notional, binding on the $0.15/contract/side minimum) and
+**XRP PERP 0.0433%**, with R489's all-in figures (0.1043% / 0.0649%) carried
+beside them as a sanity column. Charged for honest P&L and used to decide
+nothing. No tuning of any kind: every constant — the two-candle swing, levels
+on the high timeframes only, the sweep hunted on the 5-minute, break of
+structure as a body close, the structural stop, the 2-hour pending expiry, the
+24-hour hold cap, the UTC day boundary, all eight levels, all four targets,
+both directions — is imported from `step450_tjr_crypto_1m`, not retyped.
+
+## The windows, cut on each instrument's OWN overlap (item 16)
+
+| instrument | own window | days | choosing 60% | middle 20% | final 20% |
+|---|---|---|---|---|---|
+| LINKUSD | 2021-01-01 → 2026-07-26 | 2,032 | → 2024-05-04 | → 2025-06-15 | 2025-06-15 → 2026-07-26 (406d) |
+| XRPUSD | 2024-01-01 → 2026-07-26 | 937 | → 2025-07-16 | → 2026-01-20 | 2026-01-20 → 2026-07-26 |
+
+Both 80% boundaries reproduce R489's to the day, which is the check that this
+round cut the same window R489 audited as intact.
+
+## `stop/vol` RE-DERIVED, never ported
+
+Measured on each instrument's own choosing slice, per item 16 and R489's gold
+result:
+
+| instrument | entries | days | stop% med | vol% med | **stop/vol** | p25 | p75 |
+|---|---|---|---|---|---|---|---|
+| LINKUSD | 15,647 | 1,220 | 0.3672 | 0.1143 | **3.37** | 1.95 | 5.24 |
+| XRPUSD | 5,169 | 562 | 0.4048 | 0.1000 | **3.99** | 2.15 | 6.36 |
+
+Both sit inside the crypto band and both differ from R489's own reads (3.57
+and 4.50) because R489 measured over the first **80%** and this measures over
+the first **60%**. The direction is preserved — LINK below XRP — and neither
+is anywhere near gold's 13.35. Descriptive; used to size and select nothing.
+
+## The choosing and middle slices
+
+**LINKUSD: 32 cells scored, 11 qualify.** The expected-by-chance baseline in
+the same breath (R88/R100): a zero-edge symmetric cell clears two slices about
+one time in four, so **roughly 8 of 32 would qualify on luck alone.** Eleven
+against eight is not a signal, and it was never treated as one.
+
+**XRPUSD (companion, reported because item 16 asks for both): 32 cells scored,
+15 qualify** against the same ~8 baseline. **Nothing was done with this.** The
+spend was declared before any table existed, and XRP's final 20% is not read
+in this round under any outcome — including this one, where its train/val
+table is the better-looking of the two.
+
+**A limit that must be stated because it changes how the qualification reads:
+the "beat the random control" condition was very nearly non-binding on LINK.**
+R450's same-machinery random entry returned per-trade net R **−0.660** on
+LINK's choosing slice and **−0.713** on its middle slice (t by day −4.74 and
+−4.92). Any cell with positive expectancy clears a bar that far below zero
+automatically. The control did its real job — it establishes that a random
+entry on this machinery **loses badly**, which is the thing that would have
+killed the family outright — but it did not discriminate between cells, and no
+cell was rejected by it on LINK.
+
+## THE LOOK
+
+The pre-registered rule pointed at exactly one cell, with no discretion
+exercised at any point:
+
+> **`last session low → 1m BOS, target 3R`, on LINKUSD.**
+> choosing: 2,877 trades, per-trade net R **+0.076**, t by day **+5.50**, 1,045 days.
+> middle: 1,073 trades, per-trade net R **+0.006**, t by day **+2.53**, 344 days.
+
+The middle-slice expectancy is **+0.006 of a risk unit** — positive by a hair,
+and the bar says positive, so it qualified. That is the protocol working as
+written, not a complaint about it.
+
+**The sealed 20% of LINKUSD was opened once, for this one cell.**
+
+| slice | n | days | gross% | net% | **per-trade net R** | t by day | all-in R | stop% med | win% |
+|---|---|---|---|---|---|---|---|---|---|
+| choosing | 2,877 | 1,045 | +0.2282 | +0.1760 | **+0.076** | +5.50 | −0.308 | 0.423 | 36.3 |
+| middle | 1,073 | 344 | +0.0842 | +0.0320 | **+0.006** | +2.53 | −0.272 | 0.338 | 31.9 |
+| **SEALED** | **912** | **326** | **+0.1228** | **+0.0706** | **−0.131** | **+0.47** | **−0.560** | **0.319** | **31.9** |
+
+Sealed slice 2025-06-15 → 2026-07-26, 406 days, 326 of them carrying an entry.
+Sealed **gross** t clustered by UTC day **+2.52**; sealed **per-trade net R** t
+by day **+0.47**. Same-machinery random control on the same sealed slice:
+per-trade net R **−0.978** (t by day −6.54, n 2,127).
+
+> ### VERDICT: FAIL. The cell is negative on the sealed slice in the statistic it was qualified in. Nothing is proposed and nothing could be.
+
+## What the failure actually is, because it is not what it looks like
+
+**The method did not stop working on the sealed slice. The gross barely moved
+and the cost ate it.**
+
+| slice | per-trade **gross** R | mean cost / stop | per-trade **net** R |
+|---|---|---|---|
+| choosing | +0.462 | 0.385 | +0.076 |
+| middle | +0.284 | 0.278 | +0.006 |
+| SEALED | **+0.299** | **0.430** | **−0.131** |
+
+The sealed slice's gross risk multiple (+0.299) is **larger** than the middle
+slice's (+0.284) and its gross t by day (+2.52) is the second-strongest of the
+three. The entire sign flip is the cost line: **0.299 − 0.430 = −0.131**,
+exactly. LINK's chart structure tightened on the last 406 days — median stop
+0.423% → 0.338% → 0.319% of price — and the round trip does not tighten with
+it, so the same trade pays half again as much per unit of risk. This is R488's
+elasticity result arriving as a live out-of-sample failure rather than as a
+description: **the stop scales with the tape and the fee does not.**
+
+**And this cell is a working demonstration of exactly why R487 changed the
+statistic.** On the sealed slice the ratio of means reads **+0.178** and the
+per-trade mean reads **−0.131**. *They disagree in sign.* Had this round been
+scored the way this log scored things before R487, it would be reporting a
+survivor right now and item 16 would have produced a deployment candidate.
+It did not, because the qualification statistic was fixed in advance and the
+per-trade reading is the one that was fixed.
+
+The failure is also not a rout: the cell **beats the random control on the
+sealed slice by 0.85 of a risk unit** (−0.131 against −0.978). Losing less
+than chance is not an edge and is not treated as one — the bar is positive
+expectancy and the cell is below it — but it is the honest shape of the
+result, and it says the entries are selecting something real that is smaller
+than what it must pay.
+
+## Honest limits
+
+- **The middle-slice qualification was +0.006 of a risk unit.** One cell in
+  eleven cleared the gate by a margin indistinguishable from zero and then
+  went on to be the selected cell, because the choosing-slice t is what
+  selects. A protocol that gates on sign and selects on t can point its one
+  look at a cell whose gate was a coin flip. **That is a property of the
+  protocol as written, it was written before the run, and the fix is a queue
+  item and not a retroactive re-read.**
+- **11 of 32 against ~8 by chance is a weak count**, and it was weak before
+  the look was taken. Nothing here should be read as "the family nearly
+  worked on LINK."
+- **The random control did not discriminate on LINK** (−0.660 / −0.713). It
+  proves the machinery is not free money; it did not filter a single cell.
+- **The cost is the sourced FEE ONLY.** R482/R486/R489's standing warning
+  holds: CFM's volume-tier ladder above the 0.02% floor remains UNSOURCED
+  after four attempts, and the spread half of the all-in figure is a
+  seven-poll sample, not R480's clock. The all-in column (sealed −0.560) is
+  the pessimistic read and the fee column (−0.131) is the optimistic one.
+  **The cell fails in both.**
+- **This is one cell on one instrument.** It says nothing about the other ten
+  cells that qualified on LINK, and they must stay unverified out of sample
+  forever — the slice is spent.
+
+## Looks consumed
+
+**ONE.** LINKUSD's final 20% (2025-06-15 → 2026-07-26) is opened and **SPENT
+FOREVER for the sweep-to-break-of-structure family.** No second cell was read
+on it, no re-cut was taken, and no "best of" was computed across the two
+instruments. **XRPUSD's final 20% (2026-01-20 → 2026-07-26) was never read,
+never summarised and never touched, and remains INTACT** despite XRP's
+train/val table being the stronger of the two. No order was placed, no account
+exists, no live file was touched or imported, and nothing is proposed for
+deployment.
+
+## What this closes
+
+**The sweep-to-break-of-structure family now has exactly one clean slice left
+on an instrument with real history: XRPUSD's final 187 days.** Every other
+instrument this family can reach is either spent (BTC, ETH, SOL, SPY, QQQ,
+LINK) or is ranked off four months of tape. Item 16 is CLOSED.

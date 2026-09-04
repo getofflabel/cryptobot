@@ -1,0 +1,147 @@
+======================================================================================================================
+ROUND 492 - QUEUE ITEM 16: THE FAMILY'S PARENT ON LINK AND XRP, 60/20/20, FOR REAL
+======================================================================================================================
+PRE-REGISTERED BEFORE ANY SLICE WAS READ (full text in the docstring):
+  instrument being SPENT      : LINKUSD   (history / stop-vol geometry / sourced-fee multiple)
+  companion, train+val ONLY   : XRPUSD   (final 20% not read under ANY outcome)
+  trigger resolution          : 1 MINUTE, from step436 ('1-minute: the entry only') and step431 s0. R490 not cited.
+  selection if >1 qualifies   : highest CHOOSING-slice per-trade net R t clustered by UTC day; ties -> more trades
+  qualification               : mean per-trade net R > 0 on train AND val, >=30 train / >=8 val trades, and
+                                beating the R450 random-entry control on the same machinery on BOTH slices
+  cost (decides nothing)      : sourced CDE fee round trip LINK 0.0522% / XRP 0.0433%;  all-in 0.1043% / 0.0649% carried beside it
+  tuning                      : none. Every constant imported from step450 (pending 2h, hold 24h, 8 levels, 4 targets).
+
+----------------------------------------------------------------------------------------------------------------------
+LINKUSD  own window 2021-01-01 -> 2026-07-26 UTC   (2,032 days)
+   choosing 60%  2021-01-01 -> 2024-05-04
+   middle   20%  2024-05-04 -> 2025-06-15   read once
+   final    20%  2025-06-15 -> 2026-07-26   SEALED - opened only if a cell qualifies
+   5m bars 571,524   1m bars 2,325,622   cells built 32
+
+----------------------------------------------------------------------------------------------------------------------
+XRPUSD  own window 2024-01-01 -> 2026-07-26 UTC   (937 days)
+   choosing 60%  2024-01-01 -> 2025-07-16
+   middle   20%  2025-07-16 -> 2026-01-20   read once
+   final    20%  2026-01-20 -> 2026-07-26   SEALED - NOT OPENED UNDER ANY OUTCOME (companion)
+   5m bars 235,561   1m bars 770,145   cells built 32
+
+======================================================================================================================
+stop/vol RE-DERIVED ON EACH INSTRUMENT'S OWN CHOOSING SLICE (never ported - R489's gold result)
+======================================================================================================================
+instrument       entries    days   stop%med   vol%med   stop/vol     p25     p75
+LINKUSD           15,647   1,220     0.3672    0.1143       3.37    1.95    5.24
+XRPUSD             5,169     562     0.4048    0.1000       3.99    2.15    6.36
+
+======================================================================================================================
+LINKUSD  -  all 32 cells, choosing and middle slices only
+======================================================================================================================
+this instrument's sealed slice may be opened for ONE cell
+
+cell                                       n_tr  n_va  grossTR%   netTR%   netVA%    R_tr  t_tr/day    R_va  t_va/day   stop%   win%  status
+last session low -> 1m BOS, target 3R     2,877 1,073    0.2282   0.1760   0.0320   0.076      5.50   0.006      2.53   0.423   36.3  QUALIFIES
+4h swing high -> 1m BOS, target 3R        1,906   660    0.1517   0.0995  -0.1454   0.123      4.36   0.100      1.95   0.349   37.1  QUALIFIES
+prev day low -> 1m BOS, target 3R         1,347   484    0.2336   0.1814   0.1742   0.101      4.03   0.288      3.64   0.441   35.6  QUALIFIES
+4h swing low -> 1m BOS, hold 24h          1,836   656    0.4175   0.3653   0.3079   0.748      3.06   0.618      3.00   0.407   12.4  QUALIFIES
+last session high -> 1m BOS, target 3R    2,918 1,085    0.1262   0.0740  -0.0832   0.045      3.02   0.035      2.68   0.361   35.0  QUALIFIES
+last session high -> 1m BOS, hold 24h     2,918 1,085    0.1208   0.0686  -0.0897   0.082      2.98  -0.055      2.31   0.361    8.7  reject
+4h swing high -> 1m BOS, hold 24h         1,906   660    0.1405   0.0883  -0.1741   0.249      2.41  -0.013      1.17   0.349    9.1  reject
+last session low -> 1m BOS, target 2R     2,877 1,073    0.1723   0.1201   0.0302  -0.061      2.38  -0.027      1.96   0.423   43.4  reject
+1h swing low -> 1m BOS, hold 24h          4,160 1,440    0.1691   0.1169   0.1244   0.354      2.38   0.149      2.16   0.419    9.6  QUALIFIES
+1h swing low -> 1m BOS, target 3R         4,160 1,440    0.1546   0.1024   0.0593   0.036      2.26   0.063      1.75   0.419   33.6  QUALIFIES
+last session low -> 1m BOS, hold 24h      2,877 1,073    0.3374   0.2852   0.1454   0.428      2.15   0.149      2.77   0.423   11.2  QUALIFIES
+1h swing high -> 1m BOS, target 3R        4,262 1,521    0.1306   0.0784  -0.0914   0.023      2.02   0.034      2.59   0.357   34.4  QUALIFIES
+prev day low -> 1m BOS, target 2R         1,347   484    0.1867   0.1345   0.1187  -0.009      2.00   0.140      2.87   0.441   43.1  reject
+prev day high -> 1m BOS, hold 24h         1,551   533    0.1860   0.1338  -0.2176   0.097      1.86  -0.122      0.54   0.376    9.2  reject
+prev day low -> 1m BOS, hold 24h          1,347   484    0.4379   0.3857   0.2855   1.117      1.80   0.664      2.71   0.441   12.1  QUALIFIES
+4h swing high -> 1m BOS, target 2R        1,906   660    0.1163   0.0641  -0.1780  -0.011      1.71   0.002      0.19   0.349   44.9  reject
+1h swing high -> 1m BOS, hold 24h         4,262 1,521    0.0985   0.0463  -0.1608   1.027      1.70   0.016      1.77   0.357    8.2  QUALIFIES
+last session high -> 1m BOS, target 2R    2,918 1,085    0.1093   0.0571  -0.1244  -0.005      1.08  -0.069      0.60   0.361   44.7  reject
+4h swing low -> 1m BOS, target 3R         1,836   656    0.2495   0.1973   0.0926  -0.023      0.22   0.145      3.07   0.407   36.5  reject
+1h swing low -> 1m BOS, target 2R         4,160 1,440    0.1274   0.0752   0.0460  -0.043      0.14  -0.005      0.31   0.419   41.8  reject
+prev day high -> 1m BOS, target 3R        1,551   533    0.1433   0.0911  -0.0671  -0.098     -0.09   0.018      1.33   0.376   35.3  reject
+1h swing high -> 1m BOS, target 2R        4,262 1,521    0.1095   0.0573  -0.1143  -0.061     -0.31  -0.059      0.47   0.357   42.9  reject
+4h swing low -> 1m BOS, target 2R         1,836   656    0.2068   0.1546   0.0539  -0.137     -0.70   0.032      1.97   0.407   44.3  reject
+prev day high -> 1m BOS, target 2R        1,551   533    0.1241   0.0719  -0.0566  -0.179     -1.39   0.044      0.88   0.376   44.2  reject
+4h swing low -> 1m BOS, target 1R         1,836   656    0.1395   0.0873   0.0306  -0.291     -1.72  -0.102     -0.93   0.407   58.0  reject
+last session low -> 1m BOS, target 1R     2,877 1,073    0.1215   0.0693   0.0047  -0.208     -2.22  -0.123     -1.62   0.423   57.0  reject
+prev day low -> 1m BOS, target 1R         1,347   484    0.1253   0.0731   0.0672  -0.193     -2.78  -0.023      1.48   0.441   55.2  reject
+1h swing low -> 1m BOS, target 1R         4,160 1,440    0.0685   0.0163   0.0127  -0.184     -3.56  -0.118     -3.17   0.419   55.3  reject
+prev day high -> 1m BOS, target 1R        1,551   533    0.0645   0.0123  -0.1282  -0.356     -3.77  -0.155     -1.71   0.376   57.0  reject
+4h swing high -> 1m BOS, target 1R        1,906   660    0.0530   0.0008  -0.2133  -0.201     -4.02  -0.180     -3.11   0.349   56.6  reject
+last session high -> 1m BOS, target 1R    2,918 1,085    0.0595   0.0073  -0.1721  -0.176     -4.12  -0.222     -3.25   0.361   57.5  reject
+1h swing high -> 1m BOS, target 1R        4,262 1,521    0.0571   0.0049  -0.1277  -0.208     -4.39  -0.163     -2.98   0.357   56.0  reject
+
+  R450 RANDOM-ENTRY CONTROL, same machinery, LINKUSD: choosing per-trade net R -0.660 (t/day -4.74, n 6,464)   middle -0.713 (t/day -4.92, n 2,325)
+  32 cells scored, 11 qualify.
+  EXPECTED BY CHANCE (R88/R100): a zero-edge symmetric cell clears two slices about 1 time in 4, so roughly 8 of 32 would qualify on luck alone. Read 11 against that number, not against zero.
+
+======================================================================================================================
+XRPUSD  -  all 32 cells, choosing and middle slices only
+======================================================================================================================
+COMPANION - no look is available here under any outcome
+
+cell                                       n_tr  n_va  grossTR%   netTR%   netVA%    R_tr  t_tr/day    R_va  t_va/day   stop%   win%  status
+1h swing low -> 1m BOS, target 3R         1,429   610    0.2599   0.2166   0.0568   0.210      4.92   0.087      2.85   0.466   35.3  QUALIFIES
+last session high -> 1m BOS, target 3R      980   400    0.1246   0.0813   0.1506   0.164      4.02   0.160      2.81   0.444   34.3  QUALIFIES
+1h swing low -> 1m BOS, target 2R         1,429   610    0.2183   0.1750   0.0170   0.135      3.92   0.002      1.34   0.466   43.9  QUALIFIES
+1h swing high -> 1m BOS, target 3R        1,452   584    0.0424  -0.0009   0.0237   0.110      3.65  -0.043      1.03   0.436   32.6  reject
+1h swing high -> 1m BOS, target 2R        1,452   584    0.0712   0.0279   0.0225   0.081      3.35  -0.067      0.99   0.436   42.1  reject
+last session high -> 1m BOS, target 2R      980   400    0.1181   0.0748   0.1012   0.103      3.24   0.013      1.41   0.444   42.9  QUALIFIES
+last session low -> 1m BOS, target 3R       939   412    0.1868   0.1435   0.0809   0.128      3.00   0.108      1.03   0.441   34.2  QUALIFIES
+1h swing low -> 1m BOS, hold 24h          1,429   610    0.6087   0.5654   0.0316   1.896      2.78   0.154      1.64   0.466   13.2  QUALIFIES
+4h swing high -> 1m BOS, hold 24h           653   250    0.2253   0.1820   0.1859   0.580      2.48   0.758      1.54   0.415   11.3  QUALIFIES
+last session low -> 1m BOS, target 2R       939   412    0.1732   0.1299   0.0842   0.081      2.47   0.096      0.99   0.441   43.6  QUALIFIES
+last session high -> 1m BOS, hold 24h       980   400    0.1472   0.1039   0.2651   0.452      2.02   0.983      2.63   0.444   11.4  QUALIFIES
+4h swing high -> 1m BOS, target 3R          653   250    0.0323  -0.0110   0.1468   0.101      1.84   0.278      2.06   0.415   33.2  QUALIFIES
+4h swing high -> 1m BOS, target 2R          653   250    0.0775   0.0342   0.1120   0.059      1.82   0.154      1.79   0.415   42.4  QUALIFIES
+1h swing high -> 1m BOS, hold 24h         1,452   584    0.0511   0.0078   0.1194   0.833      1.71   0.299      2.26   0.436   10.5  QUALIFIES
+4h swing low -> 1m BOS, target 3R           628   284    0.1794   0.1361   0.0775  -0.025      1.66   0.086      1.04   0.404   34.2  reject
+last session high -> 1m BOS, target 1R      980   400    0.1038   0.0605   0.0520   0.006      1.64  -0.105     -0.91   0.444   58.5  reject
+last session low -> 1m BOS, hold 24h        939   412    0.4672   0.4239  -0.0218   1.248      1.57  -0.348     -0.29   0.441   12.1  reject
+4h swing low -> 1m BOS, target 2R           628   284    0.1823   0.1390   0.0721  -0.061      1.40   0.068      0.87   0.404   43.0  reject
+prev day high -> 1m BOS, target 3R          478   187    0.0663   0.0230   0.1217   0.042      1.27   0.143      1.81   0.450   34.9  QUALIFIES
+4h swing low -> 1m BOS, hold 24h            628   284    0.2329   0.1896   0.0002   0.965      1.26   0.273      1.00   0.404   10.7  QUALIFIES
+prev day high -> 1m BOS, target 2R          478   187    0.0838   0.0405   0.0610  -0.001      1.26  -0.018      0.92   0.450   44.6  reject
+prev day high -> 1m BOS, hold 24h           478   187    0.1935   0.1502   0.1063   0.114      1.10   0.948      1.27   0.450   10.9  QUALIFIES
+prev day low -> 1m BOS, target 3R           522   216    0.1231   0.0798   0.0368  -0.030      0.70  -0.163     -1.08   0.428   32.6  reject
+1h swing low -> 1m BOS, target 1R         1,429   610    0.1339   0.0906   0.0075  -0.011      0.48  -0.086     -1.07   0.466   58.0  reject
+prev day low -> 1m BOS, hold 24h            522   216    0.0834   0.0401  -0.1183  -0.082      0.43  -0.621     -0.72   0.428   10.3  reject
+prev day low -> 1m BOS, target 2R           522   216    0.1699   0.1266   0.0184  -0.072      0.25  -0.149     -1.38   0.428   41.2  reject
+prev day high -> 1m BOS, target 1R          478   187    0.0857   0.0424   0.0165  -0.104      0.16  -0.126      0.05   0.450   60.5  reject
+4h swing high -> 1m BOS, target 1R          653   250    0.0689   0.0256   0.0365  -0.057      0.00  -0.026      0.87   0.415   57.1  reject
+last session low -> 1m BOS, target 1R       939   412    0.1240   0.0807   0.0429  -0.035     -0.38  -0.084     -1.23   0.441   58.1  reject
+1h swing high -> 1m BOS, target 1R        1,452   584    0.0346  -0.0087   0.0085  -0.059     -0.43  -0.139     -1.22   0.436   55.9  reject
+prev day low -> 1m BOS, target 1R           522   216    0.1291   0.0858  -0.0136  -0.172     -1.14  -0.283     -2.44   0.428   55.7  reject
+4h swing low -> 1m BOS, target 1R           628   284    0.1237   0.0804   0.0578  -0.220     -1.21  -0.041     -0.50   0.404   55.6  reject
+
+  R450 RANDOM-ENTRY CONTROL, same machinery, XRPUSD: choosing per-trade net R +0.037 (t/day -0.06, n 1,734)   middle -0.448 (t/day -0.37, n 970)
+  32 cells scored, 15 qualify.
+  EXPECTED BY CHANCE (R88/R100): a zero-edge symmetric cell clears two slices about 1 time in 4, so roughly 8 of 32 would qualify on luck alone. Read 15 against that number, not against zero.
+
+======================================================================================================================
+THE LOOK
+======================================================================================================================
+The declared spend is LINKUSD. XRPUSD's final 20% is not read here and is not read below, whatever XRPUSD's table says above.
+
+11 cell(s) qualified. The pre-registered selection rule (highest choosing-slice per-trade net R t clustered by UTC day) points at exactly one:
+
+    last session low -> 1m BOS, target 3R   on LINKUSD
+    choosing: n 2,877  per-trade net R +0.076  t/day +5.50  over 1,045 days
+    middle  : n 1,073  per-trade net R +0.006  t/day +2.53  over 344 days
+
+>>> OPENING THE SEALED 20% OF LINKUSD, ONCE, FOR THIS ONE CELL. THE SLICE IS SPENT FROM THIS LINE ON. <<<
+
+    slice              n   days    gross%      net%    net R   t/day   allin R    stop%   win%
+    choosing       2,877  1,045    0.2282    0.1760    0.076    5.50    -0.308    0.423   36.3
+    middle         1,073    344    0.0842    0.0320    0.006    2.53    -0.272    0.338   31.9
+    SEALED           912    326    0.1228    0.0706   -0.131    0.47    -0.560    0.319   31.9
+
+    sealed slice 2025-06-15 -> 2026-07-26   406 days, 326 of them with an entry
+    sealed gross t clustered by UTC day : +2.52
+    sealed per-trade net R t by day     : +0.47
+    same-machinery random control there : per-trade net R -0.978  (t/day -6.54, n 2,127)
+
+----------------------------------------------------------------------------------------------------------------------
+VERDICT: the cell FAILS on the sealed slice. Nothing is proposed and nothing could be.
+THE LOOK IS SPENT. LINKUSD's final 20% is now closed to this family forever. XRPUSD's remains INTACT and unread.
+----------------------------------------------------------------------------------------------------------------------
