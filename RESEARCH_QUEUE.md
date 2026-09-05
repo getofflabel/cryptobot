@@ -815,26 +815,58 @@ Rules (non-negotiable, they are why anything here can be trusted):
    and why. **`stop/vol` must be RE-DERIVED on each, never ported** (R489's
    gold result: the crypto 3.6 is wrong by 4x off crypto-like tape).
 
-17. **THE CONTRACT-SIZE FINDING IS A DESK-WIDE COST RULE. WHO ELSE DOES IT MOVE?**
-   *(new, opened by R489.)* R489 collapsed R486's per-coin fee arithmetic into
-   one rule: **the $0.15 minimum binds below a $750 contract notional; above
-   it the round trip is a flat 0.04% on every contract.** Two consequences
-   nobody has priced.
-   (a) **The cost of an instrument on this venue moves with its PRICE**, and
-   a contract can cross the break point without anything about the method
-   changing. LTC at $245 notional pays 0.12%; the same contract at a coin
-   price 3.1x higher pays 0.04%. **Compute, for every one of the 29 CDE
-   perpetuals, the coin price at which its contract crosses $750**, and say
-   which are within a plausible move of it in either direction. R486 did this
-   for three coins ("BTC $251,590 / ETH $11,621 / SOL $112") as a fee-minimum
-   threshold; R489's rule makes it computable for all 29 in one line.
-   (b) **PAXG PERP, US 500 PERP and TECH PERP all sit above the break point
-   and pay the floor 0.04%** — the cheapest fee on the venue, on gold and two
-   index-like instruments. The gold and index specialists have never had a
-   sourced US perpetual cost. **Hand them one.**
-   Reading and arithmetic on a live public endpoint plus data already on
-   disk. **No backtest, no entry population, no look**, and no candidate may
-   be proposed by this item under any outcome.
+17. ~~**THE CONTRACT-SIZE FINDING IS A DESK-WIDE COST RULE. WHO ELSE DOES IT MOVE?**~~
+   **DONE — R493, 2026-09-05. CLOSED. No look consumed, and none could be:
+   `simulate()` is never called in the file and no entry population exists.**
+   Both deliverables landed and (b) came back different from how the item
+   assumed it.
+   **(a) THE CENSUS.** 29 contracts, **13 above the break point, 16 below.**
+   The break price is arithmetic — `$750 / contract size` — and because CDE
+   sizes are round numbers every break price is one: BTC **$75,000**, ETH
+   **$7,500**, SOL/LTC/AAVE **$150**, LINK **$15**, XRP/SUI/NEAR **$1.50**,
+   ADA/ONDO **$0.75**, DOGE/HBAR/XLM/ENA **$0.15**.
+   **THE HEADLINE IS ABOUT THE DESK'S OWN FLAGSHIP: BTC PERP's notional is
+   $798.50, six per cent of price above the break.** A 6% fall and bitcoin
+   stops paying the venue's floor. On the pooled crypto base rate (11 coins,
+   16,244 90-day windows, built from disk and the horizons fixed in source
+   before the table existed) a move that far happened **45.8% of the time**.
+   BNB is 3% away at 49.1%. Going the other way, **XRP PERP needs 1.06x to
+   reach the floor (41.0%) and LINK PERP 1.25x (26.4%)** — so R489's top-two
+   ranking, XRP on all-in and LINK on fee-only, is **one ordinary quarter of
+   coin price from changing in either direction** with nothing about the
+   method or the venue moving.
+   **The directions are NOT symmetric.** Below the break the fee is a fixed
+   $0.30 per contract round trip, so cost = 0.30/notional: it falls
+   hyperbolically as the coin rises and rises **without limit** as it falls.
+   Not a step — a curve with a floor welded on at $750. DOT PERP at half
+   today's price pays **0.653%**, worse than the Alpaca taker schedule the
+   desk left behind; 1000SHIB already pays 0.5445% today. And **BTC is at the
+   floor and cannot get cheaper on this venue at any price** — all of
+   bitcoin's remaining cost improvement has to come from the spread.
+   **(b) THE HANDOFF, and the item's premise was wrong on two of three.**
+   **GOLD GETS A REAL NUMBER: PAXG PERP, 0.0806% of price all-in** (0.0400%
+   sourced fee floor + 0.0406% seven-poll spread median), OPEN, $399k of
+   24-hour volume, on the crypto calendar. First sourced US perpetual cost
+   gold has ever had here, **6.2x cheaper than the 0.50% Alpaca schedule**
+   every gold figure in this log implicitly carried. It also kills the obvious
+   next thought: paired with PAXG's own 1-minute tape (0.0467% median day) the
+   R488 multiple is **0.58 — gold's median minute does not clear its own round
+   trip.**
+   **US 500 PERP and TECH PERP get a FEE and not a COST.** Unasked-for finding
+   that caused it: **the venue runs two calendars.** Polled Saturday
+   2026-09-05 21:31 UTC, 24 contracts were OPEN (all crypto, continuous
+   through the weekend) and **five were CLOSED with $0 of 24-hour volume —
+   TECH, US 500, AI, CHINA, DFNSE, reopening 2026-09-07 21:00 UTC.** The
+   index-like perpetuals are **not 24/7 instruments**; nothing in R478-R489
+   says so. Their 0.0400% fee is sourced and stands; their spread is
+   **UNMEASURED, not measured-and-wide.**
+   **The methodological catch, recorded because the discipline caught it:** a
+   first pass polled the shut books anyway and returned 0.78% (US 500) and
+   2.09% (TECH), identical across all seven polls — frozen weekend quotes.
+   Published as costs they would have read as an order-of-magnitude finding
+   and been an artifact of polling a closed exchange on a Saturday. Book-age
+   and session-state checks are now in the file.
+   Opens new items 22 and 23.
 
 18. **BACKFILL THE TAPE THAT THE SCREEN SAYS IS MISSING.**
    *(new, opened by R489, and it is plumbing, not a hypothesis.)*
@@ -935,6 +967,49 @@ Rules (non-negotiable, they are why anything here can be trusted):
     **THE FENCE:** this item reads XRP's first 80% only (already read in
     R492), never its final 20%. It proposes; it does not run. Any actual
     spend of XRP's slice is a separate, later, pre-registered round.
+
+22. **RE-POLL THE FIVE INDEX-CALENDAR PERPETUALS INSIDE THEIR OWN SESSION.**
+    *(new, opened by R493, and it is the unfinished half of item 17(b).)*
+    R493 could not price US 500 PERP or TECH PERP because both — along with AI,
+    CHINA and DFNSE — were CLOSED for the whole poll with $0 of 24-hour volume,
+    and it refused to quote a stale book rather than publish a frozen weekend
+    quote as a cost. Their 0.0400% fee floor is sourced and stands; the spread
+    half does not exist yet.
+    Deliverable: run `step493_break_point_census.py`'s sampler against those
+    five contracts **during their own session** (they reopen 21:00 UTC on the
+    US futures calendar), seven polls twelve seconds apart with the book-age
+    and session-state gates the file already enforces, and publish an all-in
+    round trip for each — or report plainly that the book is too thin to
+    quote. Pair US 500 and TECH with SPY/QQQ 1-minute tape for an R488
+    coordinate, **labelled a proxy**, and hand the result to the index
+    specialist.
+    While the session is open, also record the **24-hour volume and top-of-book
+    depth** on all five: R480/R483 established that depth, not spread, is what
+    caps account size, and a contract with $0 of daily volume is an operational
+    fact before it is a cost.
+    **THE FENCE:** reading and arithmetic on a live public endpoint. No entry
+    population, no backtest, no look, no candidate, and a book that is stale or
+    shut is reported UNPRICED — never quoted.
+
+23. **THE BREAK-POINT DISTANCE BELONGS ON EVERY COST TABLE THIS DESK WRITES.**
+    *(new, opened by R493, and it is a BOOKKEEPING change, not a hypothesis.)*
+    R493 showed that a CDE cost figure is not a constant: BTC PERP is 6% of
+    price from paying more, XRP PERP is 6% from paying less, and on the pooled
+    crypto base rate both of those happen in roughly 40-46% of 90-day windows.
+    Every cost number in R478 through R492 was written down as though it were a
+    property of the instrument. It is a property of the instrument **at that
+    day's price**.
+    Deliverable, purely editorial and on numbers already published: add a
+    standing `break px / need / base rate` column to the cost tables this desk
+    reuses, and write the one-paragraph rule that any future round quoting a
+    CDE cost must state the coin price it was quoted at and how far that price
+    is from $750 of notional. Re-state R489's ranking with the column attached
+    so the top-two flip it already reported is visible as a price fact rather
+    than a spread-sample artifact.
+    **THE FENCE:** this re-reads published numbers and re-runs the live
+    endpoint. **No verdict in this log may be re-interpreted by it** — R489's
+    ranking stands as published and this adds a column to it, nothing more. No
+    entry population, no look, no candidate.
 
 ## Obsoleted by the 2026-07-25 strategy pivot — DO NOT RUN
 Wallace retired every self-derived strategy and rebuilt the desk on TJR's

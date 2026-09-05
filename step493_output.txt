@@ -1,0 +1,203 @@
+============================================================================================================
+ROUND 493 - THE CONTRACT-SIZE FINDING IS A DESK-WIDE COST RULE. WHO ELSE DOES IT MOVE?
+Queue item 17. Reading and arithmetic only. No backtest, no entry population, NO LOOK, and
+no candidate may be proposed by this round under any outcome.
+============================================================================================================
+
+THE RULE BEING APPLIED (R486 sourced, R489 collapsed):
+  fee per contract per side = max(0.0002 x notional, $0.15)
+  the two branches cross at notional = $0.15 / 0.0002 = $750
+  above it the round trip is a flat 0.04% of price on EVERY contract;
+  below it the fee is a fixed number of dollars and the percentage rises as the notional falls.
+  Contract size is set by the exchange, so where a contract sits is a fact about the COIN PRICE.
+
+============================================================================================================
+(a) THE CENSUS - every CDE perpetual, and the coin price at which it crosses $750
+============================================================================================================
+Polled live, keyless, read-only. 29 perpetual contracts listed.
+  ABOVE the break point today (paying the 0.04% floor): 13 of 29
+  BELOW it (the $0.15 minimum binds, fee > floor):        16 of 29
+
+THE YARDSTICK for 'a plausible move', declared before the numbers and built from disk:
+  pooled forward price ratios across 11 Bybit-history coins, each fenced at its own 80%
+      90d:  16,244 coin-days sampled | p10 0.59x  median 0.97x  p90 1.69x
+     365d:  13,219 coin-days sampled | p10 0.31x  median 1.01x  p90 2.67x
+  A crossing frequency below is the share of those coin-days whose forward move was at least
+  as far as the crossing needs, in the direction it needs. It is a base rate, not a forecast.
+
+============================================================================================================
+EVERY CONTRACT, SORTED BY NOTIONAL. 'need' is the price ratio that moves it ACROSS the break;
+'90d'/'365d' are how often a crypto coin-day historically delivered a move at least that far.
+============================================================================================================
+contract          size      mark $  notional $  fee RT%   side  break px $    need    90d   365d
+------------------------------------------------------------------------------------------------
+PAXG PERP            1  4,435.4000    4,435.40   0.0400  floor    750.0000    0.17x     --     --
+TECH PERP            1  3,962.5000    3,962.50   0.0400  floor    750.0000    0.19x     --     --
+US 500 PERP          1  3,108.4000    3,108.40   0.0400  floor    750.0000    0.24x     --     --
+AI PERP              1  2,957.8000    2,957.80   0.0400  floor    750.0000    0.25x     --     --
+CHINA PERP           1  2,947.5000    2,947.50   0.0400  floor    750.0000    0.25x     --     --
+DFNSE PERP           1  2,752.9000    2,752.90   0.0400  floor    750.0000    0.27x     --     --
+NEAR PERP          500      2.1733    1,086.65   0.0400  floor      1.5000    0.69x  17.5%  34.4%
+ZCASH PERP           1  1,012.6000    1,012.60   0.0400  floor    750.0000    0.74x  22.3%  36.9%
+XLM PERP          5000      0.1855      927.40   0.0400  floor      0.1500    0.81x  30.0%  40.4%
+HYPE PERP           10     85.9300      859.30   0.0400  floor     75.0000    0.87x  37.4%  43.1%
+ENA PERP          5000      0.1710      855.05   0.0400  floor      0.1500    0.88x  37.9%  43.3%
+BTC PERP          0.01 79,850.0000      798.50   0.0400  floor 75,000.0000    0.94x  45.8%  46.2%
+BNB PERP             1    776.2500      776.25   0.0400  floor    750.0000    0.97x  49.1%  47.7%
+XRP PERP           500      1.4220      711.00   0.0422    MIN      1.5000    1.05x  41.2%  46.9%
+AAVE PERP            5    133.5800      667.90   0.0449    MIN    150.0000    1.12x  35.3%  43.6%
+LINK PERP           50     12.0730      603.65   0.0497    MIN     15.0000    1.24x  26.9%  38.7%
+SOL PERP             5    103.8500      519.25   0.0578    MIN    150.0000    1.44x  17.4%  32.4%
+DOGE PERP         5000      0.0911      455.45   0.0659    MIN      0.1500    1.65x  11.0%  26.8%
+HBAR PERP         5000      0.0810      405.15   0.0740    MIN      0.1500    1.85x   7.6%  21.9%
+SUI PERP           500      0.8081      404.05   0.0742    MIN      1.5000    1.86x   7.6%  21.8%
+ONDO PERP         1000      0.3718      371.80   0.0807    MIN      0.7500    2.02x   6.1%  18.9%
+1000PEPE PERP    100000      0.0036      363.50   0.0825    MIN      0.0075    2.06x   5.6%  18.1%
+LTC PERP             5     54.2000      271.00   0.1107    MIN    150.0000    2.77x   2.3%   9.3%
+BCH PERP             1    256.1500      256.15   0.1171    MIN    750.0000    2.93x   1.9%   8.5%
+ETH PERP           0.1  2,483.0000      248.30   0.1208    MIN  7,500.0000    3.02x   1.8%   8.2%
+ADA PERP          1000      0.2203      220.30   0.1362    MIN      0.7500    3.40x   1.3%   7.2%
+DOT PERP           100      0.9190       91.90   0.3264    MIN      7.5000    8.16x   0.0%   0.7%
+AVAX PERP           10      7.5800       75.80   0.3958    MIN     75.0000    9.89x   0.0%   0.1%
+1000SHIB PERP     10000      0.0055       55.10   0.5445    MIN      0.0750   13.61x   0.0%   0.0%
+
+'--' means the crypto yardstick is the WRONG distribution for that contract and none was
+borrowed. Those rows are handled on their own tape below or reported unmeasured.
+
+============================================================================================================
+A SECOND SPLIT NOBODY ON THIS DESK HAD WRITTEN DOWN: THE VENUE RUNS TWO CALENDARS
+============================================================================================================
+Polled 2026-09-05 21:34 UTC, a Saturday.
+  24 contracts OPEN, all crypto, one continuous session across the weekend.
+  5 contracts CLOSED: TECH PERP, US 500 PERP, AI PERP, CHINA PERP, DFNSE PERP
+     24-hour volume on every one of them: $0 (i.e. zero). Next open 2026-09-07T21:00:00Z.
+
+The five index-like perpetuals are NOT 24/7 instruments. They keep an equity-like calendar and
+were shut for the whole of this poll. Anything read off their book right now is a leftover quote.
+**Item 17(b) named two of them as instruments to hand the index specialist. They can be handed a
+FEE and they cannot be handed a COST**, and the difference is the whole point of R479/R480.
+
+============================================================================================================
+WHO IS WITHIN A PLAUSIBLE MOVE OF THE BREAK POINT - the item's actual question
+============================================================================================================
+
+GETTING CHEAPER - below the break today, a RISE crosses it. Fee falls to 0.04% on crossing:
+  contract      fee now   needs   =  break px $     90d    365d
+  XRP PERP       0.042%   1.05x          1.5000   41.2%   46.9%
+  AAVE PERP      0.045%   1.12x        150.0000   35.3%   43.6%
+  LINK PERP      0.050%   1.24x         15.0000   26.9%   38.7%
+  SOL PERP       0.058%   1.44x        150.0000   17.4%   32.4%
+  DOGE PERP      0.066%   1.65x          0.1500   11.0%   26.8%
+  HBAR PERP      0.074%   1.85x          0.1500    7.6%   21.9%
+  SUI PERP       0.074%   1.86x          1.5000    7.6%   21.8%
+  ONDO PERP      0.081%   2.02x          0.7500    6.1%   18.9%
+  1000PEPE PERP   0.083%   2.06x          0.0075    5.6%   18.1%
+  LTC PERP       0.111%   2.77x        150.0000    2.3%    9.3%
+  BCH PERP       0.117%   2.93x        750.0000    1.9%    8.5%
+  ETH PERP       0.121%   3.02x      7,500.0000    1.8%    8.2%
+  ADA PERP       0.136%   3.40x          0.7500    1.3%    7.2%
+  DOT PERP       0.326%   8.16x          7.5000    0.0%    0.7%
+  AVAX PERP      0.396%   9.89x         75.0000    0.0%    0.1%
+  1000SHIB PERP   0.544%  13.61x          0.0750    0.0%    0.0%
+
+GETTING DEARER - above the break today, a FALL crosses it. Fee rises above 0.04% on crossing:
+  contract      fee now   needs   =  break px $     90d    365d
+  BNB PERP       0.040%   0.97x        750.0000   49.1%   47.7%
+  BTC PERP       0.040%   0.94x     75,000.0000   45.8%   46.2%
+  ENA PERP       0.040%   0.88x          0.1500   37.9%   43.3%
+  HYPE PERP      0.040%   0.87x         75.0000   37.4%   43.1%
+  XLM PERP       0.040%   0.81x          0.1500   30.0%   40.4%
+  ZCASH PERP     0.040%   0.74x        750.0000   22.3%   36.9%
+  NEAR PERP      0.040%   0.69x          1.5000   17.5%   34.4%
+
+============================================================================================================
+WHAT A CROSSING IS WORTH, AND WHY THE TWO DIRECTIONS ARE NOT SYMMETRIC
+============================================================================================================
+Below the break the fee is a FIXED $0.30 round trip per contract, so the percentage is
+0.30 / notional. The cost therefore falls hyperbolically as the coin rises and rises without
+limit as it falls - it is not a step, it is a curve with a floor welded on at $750.
+
+  coin price vs today          0.50x     0.75x     1.00x     1.50x     2.00x     3.00x
+  LTC PERP                   0.221%   0.148%   0.111%   0.074%   0.055%   0.040%
+  ADA PERP                   0.272%   0.182%   0.136%   0.091%   0.068%   0.045%
+  DOT PERP                   0.653%   0.435%   0.326%   0.218%   0.163%   0.109%
+  XRP PERP                   0.084%   0.056%   0.042%   0.040%   0.040%   0.040%
+  BTC PERP                   0.075%   0.050%   0.040%   0.040%   0.040%   0.040%
+
+  Read the BTC row: it is already at the floor and CANNOT get cheaper on this venue at any
+  price. Read the DOT row: the same contract is a different instrument, cost-wise, at 3x.
+
+============================================================================================================
+(b) THE HANDOFF - a sourced US perpetual cost for the gold and index specialists
+============================================================================================================
+Sampling top of book 7x, 12s apart, median carried with its lo-hi range.
+R489's discipline: one poll is not a measurement (two single polls ten minutes apart disagreed
+by 2x on BTC PERP). This is still not R480's 24-hour clock and is not presented as one.
+
+contract    session      24h $vol  book age  notional $  fee RT%  spread%  all-in RT%
+PAXG PERP   OPEN          399,186        0m    4,435.40   0.0400   0.0406      0.0806
+US 500 PERP CLOSE               0     1090m    3,108.40   0.0400  UNPRICED    UNPRICED
+TECH PERP   CLOSE               0      187m    3,962.50   0.0400  UNPRICED    UNPRICED
+BTC PERP    OPEN       48,772,380        0m      798.50   0.0400   0.0063      0.0463
+ETH PERP    OPEN        8,043,430        0m      248.30   0.1208   0.0403      0.1611
+SOL PERP    OPEN        5,929,835        0m      519.25   0.0578   0.0674      0.1252
+
+*** THE ROUND'S BIGGEST CORRECTION, AND IT IS AGAINST THE ITEM'S OWN PREMISE ***
+2 of the 6 contracts polled here were NOT TRADING at poll time. Their books are
+stale by hours, their 24-hour volume is ZERO, and the numbers a naive poll returns for them
+are frozen quotes, not costs. No all-in figure is published for them by this round.
+  US 500 PERP  session CLOSE          24h $vol            0  book age    18.2h  next open 2026-09-07T21:00:00Z
+  TECH PERP    session CLOSE          24h $vol            0  book age     3.1h  next open 2026-09-07T21:00:00Z
+
+PAIRED WITH THE INSTRUMENT'S OWN 1-MINUTE MOVE (R488's coordinate, R489's definition).
+Every tape is cut at its own 80% boundary. This is a property of the price series - no entry
+is built, no outcome is read, nothing is spent.
+
+contract    tape                         days  vol% med  all-in RT%  multiple
+PAXG PERP   PAXGUSD 1m tape               118    0.0467      0.0806      0.58
+US 500 PERP SPY daily (proxy)            2126   (daily)    UNPRICED       n/a
+TECH PERP   QQQ daily (proxy)            2126   (daily)    UNPRICED       n/a
+
+FOR SCALE, the incumbents this desk already prices, same run:
+  BTC PERP   notional $    798.50  fee 0.0400%  spread 0.0063%  all-in 0.0463%
+  ETH PERP   notional $    248.30  fee 0.1208%  spread 0.0403%  all-in 0.1611%
+  SOL PERP   notional $    519.25  fee 0.0578%  spread 0.0674%  all-in 0.1252%
+
+WHAT THE SPECIALISTS ARE BEING HANDED, in one line each:
+  PAXG PERP    round trip 0.0806% of price (0.0400% fee at the sourced FLOOR + 0.0406% spread snapshot)
+  US 500 PERP  FEE 0.0400% of price round trip is SOURCED and real. The SPREAD is NOT MEASURED -
+               the contract was CLOSE at poll time (0 of 24h volume). No all-in exists yet.
+  TECH PERP    FEE 0.0400% of price round trip is SOURCED and real. The SPREAD is NOT MEASURED -
+               the contract was CLOSE at poll time (0 of 24h volume). No all-in exists yet.
+  Alpaca crypto taker, for comparison, is 0.50% and the desk's index rounds charge 0.04%.
+
+============================================================================================================
+HONEST LIMITS
+============================================================================================================
+1. EVERY FEE HERE IS THE FLOOR. The 0.02%/side rate is published as a minimum and the volume
+   ladder above it is UNSOURCED after four attempts. Nothing was invented to fill it, so every
+   number above is the cheapest the account can be, not the likeliest.
+2. THE SPREAD IS A SNAPSHOT, NOT A CLOCK. Seven polls twelve seconds apart. R480 showed these
+   books move by hours of the day and that Coinbase's empties for one hour daily; none of that
+   is in these figures.
+3. MARKS RE-PRICE. Every notional, fee and crossing above is true for this run's snapshot only.
+   That is the finding, not a caveat: the whole point is that the cost moves with the price.
+4. THE CROSSING FREQUENCIES ARE A CRYPTO BASE RATE, NOT A FORECAST. They say how often a
+   coin-day in 2020-2026 was followed by a move that far. They are pooled across eleven coins,
+   so a specific contract's own volatility is not in them, and they are not applied to the
+   non-crypto contracts at all.
+5. US 500 / TECH WERE SHUT AT POLL TIME, so their spread and therefore their all-in cost is
+   UNMEASURED, not measured-and-wide. The fee half is sourced and stands. Re-polling them inside
+   their own session is a free follow-up and is queued as such - and their SPY/QQQ pairing would
+   still be a proxy, not the thing.
+6. NOTHING HERE SAYS AN INSTRUMENT HAS AN EDGE. A cheap round trip is a cost fact. Whether the
+   method works on gold or an index perpetual is a question this round did not and could not ask.
+
+============================================================================================================
+WHAT THIS ROUND DID NOT DO
+============================================================================================================
+No entry population was built. No sweep was scanned, no break of structure detected, no fill
+modelled, no stop measured. `simulate()` was never called. No return, expectancy, win rate or
+risk multiple was computed for any instrument. No sealed slice was opened - every tape read
+stops at its own 80% boundary. NO LOOK WAS CONSUMED. No candidate is proposed and none could
+be. No order was placed, no account was created, no live file was touched or imported.

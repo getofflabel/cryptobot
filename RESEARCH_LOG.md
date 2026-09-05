@@ -5859,3 +5859,196 @@ deployment.
 on an instrument with real history: XRPUSD's final 187 days.** Every other
 instrument this family can reach is either spent (BTC, ETH, SOL, SPY, QQQ,
 LINK) or is ranked off four months of tape. Item 16 is CLOSED.
+
+---
+
+# R493 — THE CONTRACT-SIZE FINDING IS A DESK-WIDE COST RULE. WHO ELSE DOES IT MOVE?
+
+**2026-09-05. Queue item 17. `step493_break_point_census.py`, full output in
+`step493_output.txt`. Research only, no orders, no account, no live file
+touched or imported. Reading and arithmetic on a live public endpoint plus
+data already on disk. NO ENTRY POPULATION, NO BACKTEST, NO LOOK CONSUMED, and
+no candidate is proposed — the item forbade one under any outcome and this
+file cannot produce one: it never scores a strategy on anything.**
+
+## Hypothesis / question
+
+Item 17, opened by R489. R489 collapsed R486's per-coin fee arithmetic into
+one rule — **the $0.15 minimum binds below a $750 contract notional; above it
+the round trip is a flat 0.04% on every contract** — and the item asked for
+the two consequences nobody had priced. (a) Compute, for all 29 CDE
+perpetuals, the coin price at which the contract crosses $750, and say who is
+within a plausible move of it in either direction. (b) PAXG, US 500 and TECH
+all sit above the break and pay the floor; the gold and index specialists have
+never had a sourced US perpetual cost, so hand them one.
+
+## The fence, fixed before the run
+
+`simulate()` is never called and neither is any entry builder — no sweep
+scanned, no break of structure detected, no fill modelled, no stop measured.
+The only things read off tape are the size of a one-minute move and the
+distribution of forward price ratios, both properties of the price series
+itself. Every tape measurement stops at that instrument's own 80% boundary,
+R489's fence, applied to the spent instruments too. Nothing is selected.
+
+**The one judgement call, declared in the file before the numbers existed:**
+"within a plausible move" is scored against an EMPIRICAL yardstick built from
+disk — the pooled distribution of forward price ratios over 90 and 365
+calendar days across the eleven Bybit-history coins (16,244 and 13,219
+coin-days; 90d p10 0.59x / median 0.97x / p90 1.69x). The horizons were fixed
+in the source before the table was computed so the answer could not be tuned
+by picking a horizon afterwards. The crypto distribution is **not** applied to
+the non-crypto contracts; where their own tape is absent the round prints
+"unmeasured" rather than borrowing a number.
+
+## (a) THE CENSUS — 29 contracts, 13 above the break, 16 below
+
+The break price is arithmetic, not a measurement: contract size is set by the
+exchange, so `break price = $750 / size`. Because CDE sizes are round numbers
+(0.01, 0.1, 1, 5, 10, 50, 100, 500, 1000, 5000, 10000, 100000) every break
+price is a round number too — BTC crosses at **$75,000**, ETH at **$7,500**,
+SOL and LTC and AAVE at **$150**, LINK at **$15**, XRP and SUI and NEAR at
+**$1.50**, ADA and ONDO at **$0.75**, DOGE and HBAR and XLM and ENA at
+**$0.15**. Those are not levels anybody chose; they fall out of the fee
+formula and the contract spec.
+
+> **THE HEADLINE, AND IT IS ABOUT THE DESK'S OWN FLAGSHIP: BTC PERP's notional
+> is $798.50 — six per cent of price above the break point.** A 6% fall in
+> bitcoin and the contract stops paying the venue's floor and starts paying a
+> fixed $0.30 a round trip that only gets worse from there. On the pooled
+> crypto base rate a move of 0.94x or further **happened in 45.8% of 90-day
+> windows.** BNB PERP is worse: 0.97x, a 3% fall, 49.1%.
+
+The two nearest contracts on the other side are the two R489 promoted.
+**XRP PERP needs 1.06x to reach the floor (41.0% of 90-day windows) and LINK
+PERP needs 1.25x (26.4%).** R489 ranked XRP first on all-in cost and LINK
+first on fee-only; this round says both of those rankings are **one ordinary
+quarter of coin price away from changing**, in either direction, with nothing
+about the method or the venue moving at all.
+
+Full table in the output. The extremes: NEAR PERP is furthest above the break
+(needs 0.69x to fall through it) and 1000SHIB PERP is furthest below (needs
+13.61x to rise through it, paying **0.5445%** meanwhile — worse than Alpaca's
+0.50% taker on a venue whose best case is 0.04%).
+
+**And the two directions are not symmetric, which nobody had written down.**
+Below the break the fee is a FIXED $0.30 per contract round trip, so the
+percentage is `0.30 / notional`: cost falls hyperbolically as the coin rises
+and rises **without limit** as it falls. It is not a step; it is a curve with
+a floor welded on at $750.
+
+| contract | 0.50x | 0.75x | today | 1.50x | 2.00x | 3.00x |
+|---|---|---|---|---|---|---|
+| LTC PERP | 0.221% | 0.148% | **0.111%** | 0.074% | 0.055% | 0.040% |
+| ADA PERP | 0.272% | 0.182% | **0.136%** | 0.091% | 0.068% | 0.045% |
+| DOT PERP | 0.653% | 0.435% | **0.326%** | 0.218% | 0.163% | 0.109% |
+| XRP PERP | 0.084% | 0.056% | **0.042%** | 0.040% | 0.040% | 0.040% |
+| BTC PERP | 0.075% | 0.050% | **0.040%** | 0.040% | 0.040% | 0.040% |
+
+Read the BTC row: **it is already at the floor and cannot get cheaper on this
+venue at any price.** All of bitcoin's remaining cost improvement has to come
+from the spread, not the fee. Read the DOT row: at half today's price DOT PERP
+pays 0.653% a round trip, worse than the Alpaca taker schedule this desk left
+behind. **The same contract is a different instrument, cost-wise, at 3x.**
+
+## (a2) UNASKED FOR, AND IT IS THE REASON (b) CAME OUT DIFFERENT: THE VENUE RUNS TWO CALENDARS
+
+Polled 2026-09-05 21:31 UTC, a Saturday. **24 of the 29 contracts were OPEN —
+all crypto, one continuous session straight through the weekend, consistent
+with R480's clock. Five were CLOSED: TECH PERP, US 500 PERP, AI PERP, CHINA
+PERP and DFNSE PERP, every one of them with $0 of 24-hour volume and a next
+open of 2026-09-07 21:00 UTC.**
+
+**The index-like perpetuals on this venue are not 24/7 instruments.** They
+keep an equity-like calendar. Nothing in R478 through R489 says so, and item
+17(b) was written on the assumption that PAXG, US 500 and TECH were three of a
+kind. They are not: PAXG trades on the crypto calendar and the other two do
+not.
+
+## (b) THE HANDOFF — one specialist gets a cost, two get a fee and a caveat
+
+Top of book sampled seven times twelve seconds apart, median carried, R489's
+discipline unchanged. **A contract whose session is closed or whose book
+timestamp is stale is reported UNPRICED rather than quoted**, which is the
+R482/R486 rule applied to a case nobody had hit before.
+
+| contract | session | 24h $vol | book age | notional | fee RT% | spread% | **all-in RT%** |
+|---|---|---|---|---|---|---|---|
+| **PAXG PERP** | OPEN | $399,186 | 0m | $4,435.40 | 0.0400 | 0.0406 | **0.0806** |
+| US 500 PERP | CLOSE | $0 | 18.2h | $3,108.40 | 0.0400 | — | **UNPRICED** |
+| TECH PERP | CLOSE | $0 | 3.1h | $3,962.50 | 0.0400 | — | **UNPRICED** |
+| BTC PERP *(context)* | OPEN | $48.8M | 0m | $798.50 | 0.0400 | 0.0063 | 0.0463 |
+| ETH PERP *(context)* | OPEN | $8.0M | 0m | $248.30 | 0.1208 | 0.0403 | 0.1611 |
+| SOL PERP *(context)* | OPEN | $5.9M | 0m | $519.25 | 0.0578 | 0.0674 | 0.1252 |
+
+> **THE GOLD SPECIALIST GETS A REAL NUMBER: PAXG PERP, 0.0806% of price a
+> round trip, all-in, on a CFTC-regulated venue a US person can use, trading
+> the crypto calendar rather than the metals one.** That is the first sourced
+> US perpetual cost gold has ever had on this desk. For scale it is 1.7x
+> bitcoin's round trip on the same venue in the same minute, and **6.2x
+> cheaper than the 0.50% Alpaca schedule** every gold figure in this log has
+> implicitly been carrying.
+
+**And the same line kills the obvious next thought.** Paired with PAXG's own
+1-minute tape (median day 0.0467% of price, 118 days, R489's gap-clean
+definition, fenced at the 80% boundary) the R488 coordinate is **0.58** —
+**gold's median minute does not clear its own round trip.** That is a cost
+fact about gold on this venue, not a verdict on any strategy, and it belongs
+in front of the gold specialist before any perpetual is proposed.
+
+**The index specialists get half a handoff and the honest reason why.** The
+0.0400% fee is sourced, real and stands: US 500 PERP and TECH PERP do sit
+above the break point and do pay the venue's floor. **Their spread — and
+therefore their all-in cost — is UNMEASURED, not measured-and-wide**, because
+both contracts were shut for the entire poll. Re-polling them inside their own
+session is free and is queued.
+
+**A methodological catch worth recording, because the log's own discipline is
+what caught it.** A first pass of this file polled those books anyway and
+returned spreads of **0.78% for US 500 and 2.09% for TECH** — identical across
+all seven polls, which is the tell. Those were frozen weekend quotes off a
+shut market. Had they been published as costs they would have read as an
+order-of-magnitude finding ("the index perps are the most expensive things on
+the venue") and they would have been **an artifact of polling a closed
+exchange on a Saturday.** The book-age and session-state checks were added
+because of it and both are now in the file.
+
+## Honest limits
+
+- **Every fee here is the FLOOR.** The 0.02%/side rate is published as a
+  minimum and the volume ladder above it remains **UNSOURCED after four
+  attempts** (R482, R486, R489, this round). Nothing was invented to fill it,
+  so every figure above is the cheapest the account can be, not the likeliest.
+- **The spread is a seven-poll snapshot, not R480's 24-hour clock.** BTC's
+  0.0063% here against R480's 0.0147% full-clock median is the size of that
+  noise, and R480's documented 21:00-22:00 UTC hole is in none of it.
+- **Marks re-price, and that is the finding rather than a caveat.** Every
+  notional, fee and crossing above is true for this run's snapshot. The whole
+  point of the round is that the cost moves with the price.
+- **The crossing frequencies are a crypto base rate, not a forecast.** They
+  say how often a coin-day in 2020-2026 was followed by a move that far,
+  pooled across eleven coins, so a specific contract's own volatility is not
+  in them. They are not applied to the non-crypto contracts at all.
+- **PAXG's 0.0467% rests on 118 days of tape** (R489's limit, unchanged), and
+  PAXGUSD spot tape is a proxy for PAXG PERP, not the contract itself.
+- **Nothing here says any instrument has an edge.** A cheap round trip is a
+  cost fact. Whether the method works on gold or an index perpetual is a
+  question this round did not and could not ask.
+
+## Looks consumed
+
+**NONE, and none could be.** No entry population was built. No sweep was
+scanned, no break of structure detected, no fill modelled, no stop measured.
+`simulate()` was never called. No return, expectancy, win rate or risk
+multiple was computed for any instrument. Every tape read stops at its own 80%
+boundary, so **XRPUSD's final 20% and every other INTACT slice remain unread
+and unspent.** No candidate is proposed. No order was placed, no account was
+created, no live file was touched or imported.
+
+## What this opens
+
+Two follow-ups, both free and both queued: re-poll the five index-calendar
+perpetuals **inside their own session** so the index specialists get a real
+all-in, and carry the break-point distance as a standing column on every cost
+table this desk produces — a cost that is one ordinary quarter's move from
+changing is not a constant and should stop being written down as one.
