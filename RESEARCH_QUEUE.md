@@ -552,6 +552,18 @@ Rules (non-negotiable, they are why anything here can be trusted):
    of the standing transfer rule: **the ratio must be RE-DERIVED on any new
    instrument, never ported.** Sizing a gold book off a crypto 3.6 would have
    been wrong by 4x.
+   **⚠️ R494 CORRECTION (2026-09-06): THE GOLD ROW IS WITHDRAWN. It was a
+   101-day artifact.** On 8,462 entries over 756 days — the same code, the
+   same instrument, 7x the tape — PAXGUSD reads **3.79, not 13.35**, inside
+   the crypto band. Nine crypto instruments and ~165,000 entries now sit in
+   **3.54-4.50** with R488's 3.60 inside it, and **nothing in this log shows
+   the ratio departing from that band anywhere.** The transfer rule is
+   unchanged and was the discipline that caught this; but **"gold sits at four
+   times the constant" and "sizing a gold book off a crypto 3.6 would have
+   been wrong by 4x" may not be cited again.** The surviving lesson is
+   narrower and still useful: **101 days is not enough tape to read this
+   ratio** — the two instruments that moved most between R489 and R494 are the
+   two with the fewest days.
    **(c) TEN INSTRUMENTS HAVE AN INTACT SEALED SLICE** — LINK, LTC, XRP, ADA,
    DOT, PAXG, GLD, IAU, GBPUSD, GBPJPY. Established by READING the step
    files: every round in this family iterates `R.PRIMARY` = BTC/ETH/SOL or
@@ -868,7 +880,56 @@ Rules (non-negotiable, they are why anything here can be trusted):
    and session-state checks are now in the file.
    Opens new items 22 and 23.
 
-18. **BACKFILL THE TAPE THAT THE SCREEN SAYS IS MISSING.**
+18. ~~**BACKFILL THE TAPE THAT THE SCREEN SAYS IS MISSING.**~~
+   **DONE — R494, 2026-09-06. CLOSED. No look consumed, and none could be:
+   `simulate()` is never called in the file or in the screen it ran, and every
+   measurement stops at R489's own 80% boundary.**
+   **NINE OF TEN FILES GREW. AVAX went from 3 days of 1-minute tape to 1,711
+   and DOGE from 3 to 2,033; DOT gained 926 days and PAXG 1,886.** Every write
+   passed an integrity gate and every superseded parquet was copied to
+   `data_pre494/`, so R489's published numbers stay reproducible off the exact
+   bytes they were computed from. **ADA did not move and that is a fact about
+   the VENDOR** — Alpaca serves no ADA/USD bar of any resolution before
+   2026-02-13, probed from 2015. Every file capped at the corpus boundary
+   2026-07-26 so the screen stayed like-for-like; backfill means BACKWARD.
+   **THE RANKING MOVED AND THE TOP TWO DID NOT.** R489's answer to item 13,
+   XRP and LINK, survives on 8x to 700x more tape: XRP still first on the
+   snapshot read, LINK still first fee-only. Underneath it, three changes.
+   **DOGEUSD arrives as a real candidate — 1,627 days, INTACT, third among
+   intact instruments on the snapshot read (0.65) and fifth fee-only (1.51)**,
+   with the second-highest 1-minute move on the disk (0.1007%). **PAXGUSD's
+   coordinate was wrong by 69%** (0.0467% → 0.0791% on 850 days instead of
+   118) and, paying the flat 0.04% floor on its $4,433 contract, it goes
+   **fee-only 1.17 (5th) → 1.98 (2nd), ahead of XRP** — so R493's "gold's
+   median minute does not clear its own round trip" (0.58) was true of 118
+   days and is false of 850. **AVAXUSD arrives and ranks LAST for exactly the
+   reason R493 predicted**: fine tape (0.0973%), $76.60 contract, 0.3916% a
+   round trip on the $0.15 minimum. Contract size, not coin.
+   **THE ROUND'S REAL OUTPUT IS A CORRECTION TO R489. The gold `stop/vol`
+   headline was a 101-day artifact.** R489 published PAXGUSD at **13.35,
+   "roughly four times the constant", "direct vindication of the standing
+   transfer rule"** on 871 entries over 101 days. On **8,462 entries over 756
+   days the same code returns 3.79.** Nine crypto instruments and ~165,000
+   entries now sit in a band of **3.54 to 4.50** (DOT 3.54, LINK 3.57, AVAX
+   3.72, LTC 3.76, ADA 3.78, PAXG 3.79, BTC 3.83, DOGE 4.07, XRP 4.50), with
+   R488's 3.60/3.67 inside it. **There is no longer ANY instrument in this log
+   where his structural stop departs from ~3.5-4.5 one-minute moves.**
+   The transfer rule is **unchanged and not weakened** — it is the discipline
+   that caught this, since porting 13.35 forward is exactly what it forbade —
+   but **its one piece of direct evidence is withdrawn, and no round may cite
+   "gold sits at four times the constant" again.** The honest replacement is
+   narrower: the ratio is stable across nine instruments, and **101 days is
+   not enough tape to read it.** The two instruments that moved most between
+   R489 and R494 are the two with the fewest days.
+   **A STALE SENTENCE IS IN THE PUBLISHED OUTPUT ON PURPOSE.**
+   `step494_output.txt` reads "GOLD (PAXGUSD) sits at 3.79 — roughly FOUR
+   TIMES the constant": step489 prints a hard-coded SENTENCE beside a COMPUTED
+   number, the number moved and the prose did not. The screen was run
+   unchanged per the fence, so the contradiction is captured and flagged
+   rather than quietly edited. **Nobody may quote that sentence.**
+   Opens new items 24, 25 and 26.
+
+18b. *(historical, the item as written, kept so the closure is readable)*
    *(new, opened by R489, and it is plumbing, not a hypothesis.)*
    R489's screen was limited by data, not by ideas, in four places:
    **AVAXUSD and DOGEUSD have live CDE perpetuals and about four days of
@@ -945,6 +1006,14 @@ Rules (non-negotiable, they are why anything here can be trusted):
 
 21. **XRP IS THE LAST CLEAN SLICE THIS FAMILY OWNS. DECIDE WHAT IT IS FOR
     BEFORE ANYONE SPENDS IT.**
+    ⚠️ **ITS PREMISE IS OUT OF DATE — SUPERSEDED IN FRAMING BY ITEM 24
+    (R494, 2026-09-06). Run 24 instead; this text is kept because everything
+    below the premise still holds.** XRP is no longer the last clean slice
+    with real history: **DOGEUSD carries 1,627 days with an INTACT final 20%,
+    nearly nine times XRP's sealed window, plus AVAXUSD 1,370 and DOTUSD
+    860** — none of which existed as usable tape when this item was written.
+    The powering worry below is specific to 187 days and does not transfer to
+    a 325-day slice.
     *(new, opened by R492, and it is a DECISION memo, not a backtest.)*
     After R492 the sweep-to-break-of-structure family has exactly one unread
     out-of-sample window on an instrument with real history: **XRPUSD's final
@@ -1010,6 +1079,90 @@ Rules (non-negotiable, they are why anything here can be trusted):
     endpoint. **No verdict in this log may be re-interpreted by it** — R489's
     ranking stands as published and this adds a column to it, nothing more. No
     entry population, no look, no candidate.
+
+24. **ITEM 21 WAS WRITTEN WHEN XRP WAS THE ONLY CLEAN SLICE WITH REAL HISTORY.
+    IT IS NOT ANY MORE.**
+    *(new, opened by R494, and it SUPERSEDES the framing of item 21 without
+    cancelling it. It is a DECISION memo, not a backtest.)*
+    Item 21 opens "after R492 the family has exactly one unread out-of-sample
+    window on an instrument with real history: XRPUSD's 187 days." That
+    sentence was true on 2026-09-04 and is false now. **DOGEUSD carries 1,627
+    days with an INTACT final 20% — nearly nine times XRP's sealed window —
+    and ranks third among intact instruments on the snapshot read and fifth
+    fee-only. AVAXUSD carries 1,370 and DOTUSD 860, both intact.** The
+    specific worry item 21 was built around, that 187 days may not power a
+    construction firing ~103 times a year, **does not apply to a 325-day
+    sealed slice.**
+    Deliverable, and **no look and no entry population under any outcome**:
+    redo item 21's arithmetic across the four instruments that now have real
+    history and intact slices (XRP, DOGE, AVAX, DOT), from each one's
+    already-read first 80% only. For each: how many entries would each of the
+    eight levels be expected to produce in its own sealed window, which cells
+    are even TESTABLE there at the 30-train/8-val bar, and what the sealed
+    window's calendar span actually is. Then write the case for which slice —
+    if any — should be spent, or for leaving all of them sealed.
+    **R492 IS THE THING TO ARGUE AGAINST, NOT AROUND.** It established that on
+    this family the binding constraint is **cost per unit of risk, not
+    signal**: sealed gross R +0.299 against a cost of 0.430 risk units, and
+    the queue's own note says *"do not re-test this family on any instrument
+    by making the signal better; the signal was never the binding
+    constraint."* A memo that recommends spending DOGE's slice on the same
+    parent construction must say what is different about DOGE's COST, not
+    about its tape. Its fee multiple (1.51) is below LINK's (2.12), which
+    already failed — **say that plainly or recommend against.**
+    **THE FENCE:** first 80% only, on every instrument, always. It proposes;
+    it does not run. Any actual spend is a separate, later, pre-registered
+    round. **Nothing in R494's ranking may be treated as a qualification** —
+    a screen ranks, it does not select.
+
+25. **RESTATE R493's GOLD HANDOFF ON 850 DAYS INSTEAD OF 118.**
+    *(new, opened by R494, and it is a CORRECTION, not a hypothesis.)*
+    R493 gave the gold specialist the first sourced US perpetual cost gold has
+    ever had here — **PAXG PERP, 0.0806% all-in** — and killed the obvious next
+    thought with it: paired with PAXG's own 1-minute tape the R488 multiple
+    read **0.58, "gold's median minute does not clear its own round trip."**
+    That pairing used **118 days**. On the 850 now on disk PAXG's 1-minute move
+    reads **0.0791% instead of 0.0467%, and the fee-only multiple is 1.98 —
+    second among every intact instrument on the disk, ahead of XRP.** R493's
+    cost figure is untouched and stands; the tape it was divided by does not.
+    Deliverable, arithmetic on numbers already published plus tape already on
+    disk: restate R493(b)'s gold paragraph with the 850-day coordinate,
+    re-poll PAXG PERP's book for a same-day all-in, and hand the corrected
+    pair to the gold specialist with **the caveat that decides how much it is
+    worth: PAXG's 1-minute coverage is 10.6% — about 153 bars a day out of
+    1,440 — and it is the only 24/7 crypto row where the gap-clean and raw
+    volatility columns disagree (0.0791% vs 0.1103%).** Say plainly whether a
+    tenth-full tape can carry a coordinate at all, and if the answer is no,
+    the correction is that **the 0.58 was unreadable rather than wrong.**
+    While there, give **GLD and IAU their first `stop/vol` reading** — they
+    have never had one, and after R494 they are the only instruments left on
+    this disk that could still show the ratio departing from 3.5-4.5 off
+    crypto-like tape.
+    **THE FENCE:** first 80% only. No entry population is scored, `simulate()`
+    is not called, no look, no candidate. This corrects a coordinate; it does
+    not propose trading gold.
+
+26. **A CONCLUSION BAKED INTO A PRINT STATEMENT OUTLIVED ITS MEASUREMENT.
+    FIND THE OTHERS.**
+    *(new, opened by R494, and it is HYGIENE — lowest priority on this queue,
+    and genuinely cheap.)*
+    R494 re-ran step489 unchanged on 8x the tape and it printed **"GOLD
+    (PAXGUSD) sits at 3.79 — roughly FOUR TIMES the constant"**: a hard-coded
+    interpretive SENTENCE sitting next to a recomputed NUMBER that had moved
+    under it. Published as-is because the fence required running the file
+    unchanged, and flagged in R494 so nobody quotes it. **This desk writes a
+    lot of print statements and re-runs a lot of screens.**
+    Deliverable, purely editorial: grep the step files for print statements
+    that assert an interpretation of a value computed in the same file —
+    "roughly four times", "the tightest", "does not clear", "the only
+    instrument that" — and either make the sentence derive from the number or
+    move it out of the code and into the log where a stale claim is dated.
+    Report how many were found and how many were live wrong today.
+    **THE FENCE:** touches PRINTING only. **No measurement, threshold,
+    universe list, boundary or fee formula may be changed by this item**, and
+    step489's `probe` list stays exactly as it is — R494 got around it by
+    importing the module rather than editing it, and that is the pattern.
+    No re-run of any round's verdict, no look, no candidate.
 
 ## Obsoleted by the 2026-07-25 strategy pivot — DO NOT RUN
 Wallace retired every self-derived strategy and rebuilt the desk on TJR's
@@ -1286,11 +1439,28 @@ problem. Owner mandate stands until Wallace changes it; what is recorded here
 is that **the desk should read a candidate's cost off its CONTRACT, and
 re-read it whenever the coin's price moves**, because a fixed-dollar minimum
 over a moving notional re-prices without anything about the method changing.
-NOTE (R489, transfer): **`stop/vol ~ 3.6` is a property of crypto-like tape,
-not a constant of the method.** Five crypto instruments over 87,000 entries
-sit in 3.57-3.83 astride R488's 3.60, and **gold (PAXG) sits at 13.35 — four
-times it.** Any risk budget that ports the crypto ratio to a new asset class
-would have been wrong by 4x. The ratio is RE-DERIVED, never copied.
+NOTE (R489, transfer, SUPERSEDED BY R494 — kept so the correction is
+readable): **`stop/vol ~ 3.6` is a property of crypto-like tape, not a
+constant of the method.** Five crypto instruments over 87,000 entries sit in
+3.57-3.83 astride R488's 3.60, and **gold (PAXG) sits at 13.35 — four times
+it.** Any risk budget that ports the crypto ratio to a new asset class would
+have been wrong by 4x. The ratio is RE-DERIVED, never copied.
+NOTE (R494, transfer, and it REPLACES the note above): **the gold row was a
+101-day artifact and is withdrawn.** On 756 days instead of 101, PAXGUSD reads
+**3.79, not 13.35.** Nine crypto instruments and ~165,000 entries sit in
+**3.54-4.50** (DOT 3.54, LINK 3.57, AVAX 3.72, LTC 3.76, ADA 3.78, PAXG 3.79,
+BTC 3.83, DOGE 4.07, XRP 4.50) with R488's 3.60/3.67 inside it. **There is no
+instrument anywhere in this log where his structural stop departs from about
+three and a half to four and a half one-minute moves.**
+**THE RULE IS UNCHANGED: RE-DERIVE, NEVER PORT.** It is right whether or not
+the ratio has ever been caught moving, and it is what caught this — porting
+13.35 forward is exactly what it forbade. What is gone is its one piece of
+direct EVIDENCE: PAXG's tape is crypto-venue tape, and GLD and IAU, the only
+two real equity-gold instruments on this disk, have never had a stop/vol
+reading taken at all (queue item 25). The replacement claim is narrower and
+load-bearing: **a ~100-day population is not enough tape to read this ratio.**
+The two instruments that moved most between R489 and R494 are the two with the
+fewest days.
 
 NOTE (R490): **the coarser trigger is where the cost problem goes away and it
 takes the leverage tier with it.** One construction at four trigger frames on
