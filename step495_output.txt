@@ -1,0 +1,268 @@
+================================================================================================================
+ROUND 495 - THE ANATOMY OF R450's ARM A: TWO RULES, FOUR RESOLUTIONS, NOTHING SELECTED
+================================================================================================================
+QUEUE ITEM 19. THIS ROUND CANNOT QUALIFY ANYTHING AND CANNOT SELECT A CONSTRUCTION.
+The crypto sweep-to-break-of-structure population has no sealed slice left anywhere
+(R450 and R475 read inside every boundary of this window; R475 spent the one look).
+`slice_by_time` is never called in this file, no split is cut, no cell is qualified,
+and nothing here may be cited by item 16 as a reason to prefer a construction.
+
+cost charged: R486 all-in per coin, BTC 0.0556% / ETH 0.1463% / SOL 0.0816% of price, round trip. Alpaca's 0.5% noted, not used.
+pending window fixed at 120 minutes at EVERY resolution (OURS, never swept, never widened).
+
+attaching realized 1-minute volatility, per coin per day (R488's yardstick, held fixed across all four frames) ...
+
+  BTCUSD: 578,831 5-minute bars, 2,597,036 1-minute bars, 2021-01-01 -> 2026-07-26
+     pending sweeps found on the 5-minute chart: rule 1 ON 34,324   rule 1 OFF 156,576
+     tf= 1m  frame 2,597,036 bars   armA-style  27,694 entries   armB-style  25,443   discarded-by-armA 13,898
+     tf= 5m  frame   578,831 bars   armA-style  26,491 entries   armB-style  24,906   discarded-by-armA 11,930
+     tf=15m  frame   194,901 bars   armA-style  16,185 entries   armB-style  17,066   discarded-by-armA  6,478
+     tf=60m  frame    48,767 bars   armA-style   6,635 entries   armB-style   6,525   discarded-by-armA  1,833
+
+  ETHUSD: 580,432 5-minute bars, 2,538,368 1-minute bars, 2021-01-01 -> 2026-07-26
+     pending sweeps found on the 5-minute chart: rule 1 ON 34,283   rule 1 OFF 168,239
+     tf= 1m  frame 2,538,368 bars   armA-style  28,073 entries   armB-style  25,415   discarded-by-armA 14,065
+     tf= 5m  frame   580,432 bars   armA-style  26,921 entries   armB-style  25,137   discarded-by-armA 12,154
+     tf=15m  frame   194,967 bars   armA-style  16,630 entries   armB-style  17,410   discarded-by-armA  6,704
+     tf=60m  frame    48,765 bars   armA-style   6,842 entries   armB-style   6,665   discarded-by-armA  1,852
+
+  SOLUSD: 457,955 5-minute bars, 1,955,709 1-minute bars, 2021-01-01 -> 2026-07-26
+     pending sweeps found on the 5-minute chart: rule 1 ON 28,005   rule 1 OFF 136,956
+     tf= 1m  frame 1,955,709 bars   armA-style  22,328 entries   armB-style  20,215   discarded-by-armA 11,110
+     tf= 5m  frame   457,955 bars   armA-style  21,611 entries   armB-style  20,151   discarded-by-armA  9,811
+     tf=15m  frame   154,566 bars   armA-style  13,124 entries   armB-style  13,797   discarded-by-armA  5,419
+     tf=60m  frame    38,685 bars   armA-style   5,481 entries   armB-style   5,346   discarded-by-armA  1,478
+
+================================================================================================================
+REPRODUCTION CONTROLS - is this the same machinery the log published?
+================================================================================================================
+R476 published (tf=1, rule 1 OFF, rule 2 OFF): 71,073 entries, +0.1435% of price, t by day 13.77
+this file reads:                              71,073 entries, +0.1435%, t by day 13.77 over 2,033 days
+
+R490 published (tf=5, arm-B construction):    75,023 entries, +0.1045% of price
+this file reads:                              70,194 entries, +0.1045%
+
+R450's NATIVE arm A, run unchanged:           75,023 entries, +0.0296% of price
+tf=5 with rule 1 ON and rule 2 ON:            75,023 entries, +0.0296%
+  the residual is the ONE-BAR pending-window offset described in the honest limits;
+  R490's convention is kept so these rows stay comparable to R490's published ones.
+
+================================================================================================================
+PART A - THE 2x2 AT A 1-MINUTE TRIGGER
+================================================================================================================
+rule 1 = the re-sweep exclusion (a bar through the level cannot be the break of structure).
+rule 2 = the stop origin (ON = from the sweep bar, the extreme printed while taking the level).
+netR is the mean of PER-TRADE net/stop (R487's statistic, not a ratio of means); t/day pools
+BTC+ETH+SOL into one observation per UTC day.
+
+construction                                  entries   days   gross%  tG/day  grossR    netR   t/day   stop%  st/vol cost/st  tight%  hold h
+ 1m  rule1 ON  + rule2 ON   (= arm A)          78,095  2,033   0.1220    9.30   0.307  -0.021    0.48   0.458    6.67   0.328    3.9%    2.05
+ 1m  rule1 ON  + rule2 OFF                     77,855  2,033   0.1262   10.14   0.354  -0.304   -3.60   0.381    5.65   0.658    9.0%    1.47
+ 1m  rule1 OFF + rule2 ON                      70,778  2,033   0.1448   12.53   0.538  -0.018   -0.40   0.312    4.53   0.556    8.0%    1.10
+ 1m  rule1 OFF + rule2 OFF  (= arm B)          71,073  2,033   0.1435   13.77   0.640  -0.547   -4.92   0.242    3.60   1.187   16.3%    0.62
+ 1m  [random entry control]                    34,905  2,033  -0.0083   -0.78   0.369  -2.619   -8.00   0.146    2.21   2.988   33.2%    0.18
+
+================================================================================================================
+PART A - THE 2x2 AT A 5-MINUTE TRIGGER
+================================================================================================================
+rule 1 = the re-sweep exclusion (a bar through the level cannot be the break of structure).
+rule 2 = the stop origin (ON = from the sweep bar, the extreme printed while taking the level).
+netR is the mean of PER-TRADE net/stop (R487's statistic, not a ratio of means); t/day pools
+BTC+ETH+SOL into one observation per UTC day.
+
+construction                                  entries   days   gross%  tG/day  grossR    netR   t/day   stop%  st/vol cost/st  tight%  hold h
+ 5m  rule1 ON  + rule2 ON   (= arm A)          75,023  2,033   0.0296    3.30   0.080  -0.118   -4.04   0.663    9.76   0.198    1.1%    3.58
+ 5m  rule1 ON  + rule2 OFF                     77,032  2,033   0.0358    3.85   0.075  -0.193   -6.69   0.603    9.01   0.268    2.5%    3.00
+ 5m  rule1 OFF + rule2 ON                      66,746  2,033   0.0973    8.22   0.245  -0.074   -1.08   0.523    7.72   0.319    2.7%    2.83
+ 5m  rule1 OFF + rule2 OFF  (= arm B)          70,194  2,033   0.1045    9.15   0.359  -0.091   -0.56   0.469    7.09   0.450    5.1%    2.33
+ 5m  [random entry control]                    41,623  2,033   0.0024    0.06   0.149  -1.338  -13.46   0.267    4.10   1.487   18.2%    0.75
+
+================================================================================================================
+PART A - THE 2x2 AT A 15-MINUTE TRIGGER
+================================================================================================================
+rule 1 = the re-sweep exclusion (a bar through the level cannot be the break of structure).
+rule 2 = the stop origin (ON = from the sweep bar, the extreme printed while taking the level).
+netR is the mean of PER-TRADE net/stop (R487's statistic, not a ratio of means); t/day pools
+BTC+ETH+SOL into one observation per UTC day.
+
+construction                                  entries   days   gross%  tG/day  grossR    netR   t/day   stop%  st/vol cost/st  tight%  hold h
+15m  rule1 ON  + rule2 ON   (= arm A)          45,939  2,033   0.0218    3.08   0.059  -0.088   -1.95   0.909   13.38   0.146    0.5%    6.25
+15m  rule1 ON  + rule2 OFF                     47,371  2,033   0.0226    3.15   0.051  -0.167   -3.74   0.803   12.08   0.219    1.7%    5.00
+15m  rule1 OFF + rule2 ON                      46,981  2,033   0.0497    4.29   0.115  -0.073   -1.35   0.799   11.86   0.188    1.1%    5.25
+15m  rule1 OFF + rule2 OFF  (= arm B)          48,273  2,033   0.0495    4.43   0.141  -0.157   -2.35   0.706   10.68   0.298    2.7%    4.25
+15m  [random entry control]                    43,004  2,033  -0.0083   -0.57   0.159  -0.803   -7.42   0.452    7.03   0.961   10.2%    2.00
+
+================================================================================================================
+PART A - THE 2x2 AT A 60-MINUTE TRIGGER
+================================================================================================================
+rule 1 = the re-sweep exclusion (a bar through the level cannot be the break of structure).
+rule 2 = the stop origin (ON = from the sweep bar, the extreme printed while taking the level).
+netR is the mean of PER-TRADE net/stop (R487's statistic, not a ratio of means); t/day pools
+BTC+ETH+SOL into one observation per UTC day.
+
+construction                                  entries   days   gross%  tG/day  grossR    netR   t/day   stop%  st/vol cost/st  tight%  hold h
+60m  rule1 ON  + rule2 ON   (= arm A)          18,958  2,022   0.0205    3.02   0.041  -0.046    0.81   1.506   21.70   0.087    0.1%   15.00
+60m  rule1 ON  + rule2 OFF                     17,961  2,022   0.0213    2.89   0.049  -0.113   -0.82   1.236   18.16   0.162    0.8%   10.00
+60m  rule1 OFF + rule2 ON                      20,369  2,022   0.0173    3.05   0.042  -0.052    0.64   1.429   20.83   0.094    0.2%   14.00
+60m  rule1 OFF + rule2 OFF  (= arm B)          18,536  2,022   0.0224    3.07   0.050  -0.118   -0.96   1.176   17.41   0.169    0.9%    9.00
+60m  [random entry control]                    43,516  2,033  -0.0190   -0.65   0.045  -0.578   -2.68   0.952   14.78   0.622    4.0%    8.00
+
+================================================================================================================
+PART A - R450's ARM A EXACTLY AS THE LOG RAN IT
+================================================================================================================
+
+construction                                  entries   days   gross%  tG/day  grossR    netR   t/day   stop%  st/vol cost/st  tight%  hold h
+ 5m  [R450 native arm A, verbatim]             75,023  2,033   0.0296    3.30   0.080  -0.118   -4.04   0.663    9.76   0.198    1.1%    3.58
+
+================================================================================================================
+PART A2 - EACH RULE'S OWN EFFECT, HELD AGAINST THE OTHER RULE'S TWO SETTINGS
+================================================================================================================
+A main effect that flips sign when the other rule moves is an interaction, not an effect.
+
+          rule          other rule      d entries   d gross%    d netR   d stop%
+tf=1m     rule 1 (re-sweep)rule 2 ON          -7,317    +0.0228    +0.003    -0.146
+tf=1m     rule 1 (re-sweep)rule 2 OFF         -6,782    +0.0172    -0.244    -0.139
+tf=1m     rule 2 (stop) rule 1 ON            -240    +0.0042    -0.283    -0.076
+tf=1m     rule 2 (stop) rule 1 OFF           +295    -0.0013    -0.530    -0.070
+tf=5m     rule 1 (re-sweep)rule 2 ON          -8,277    +0.0677    +0.044    -0.140
+tf=5m     rule 1 (re-sweep)rule 2 OFF         -6,838    +0.0686    +0.102    -0.134
+tf=5m     rule 2 (stop) rule 1 ON          +2,009    +0.0062    -0.075    -0.059
+tf=5m     rule 2 (stop) rule 1 OFF         +3,448    +0.0072    -0.017    -0.054
+tf=15m    rule 1 (re-sweep)rule 2 ON          +1,042    +0.0279    +0.015    -0.110
+tf=15m    rule 1 (re-sweep)rule 2 OFF           +902    +0.0269    +0.010    -0.097
+tf=15m    rule 2 (stop) rule 1 ON          +1,432    +0.0008    -0.080    -0.106
+tf=15m    rule 2 (stop) rule 1 OFF         +1,292    -0.0003    -0.084    -0.093
+tf=60m    rule 1 (re-sweep)rule 2 ON          +1,411    -0.0032    -0.006    -0.078
+tf=60m    rule 1 (re-sweep)rule 2 OFF           +575    +0.0011    -0.005    -0.060
+tf=60m    rule 2 (stop) rule 1 ON            -997    +0.0008    -0.068    -0.270
+tf=60m    rule 2 (stop) rule 1 OFF         -1,833    +0.0051    -0.067    -0.253
+
+(d = the OFF setting minus the ON setting, so a positive number means turning the rule OFF raised it.)
+
+================================================================================================================
+PART A3 - SENSITIVITY: THE EXCLUSION'S OTHER HOME, THE SWEEP SCAN'S PENDING BOOKKEEPING
+================================================================================================================
+Held OUT of the 2x2 on purpose: lifting it here changes the SWEEP LIST, not just which bar
+triggers, because a confirmation clears the pending state and lets the next sweep open
+sooner. Every round in this family since R450 has run this half ON. Reported so the full
+cost of the `continue` is on the record; NOT a construction and NOT selectable.
+
+construction                                  entries   days   gross%  tG/day  grossR    netR   t/day   stop%  st/vol cost/st  tight%  hold h
+ 1m  2x2 arm B (sweep scan strict)             71,073  2,033   0.1435   13.77   0.640  -0.547   -4.92   0.242    3.60   1.187   16.3%    0.62
+ 1m  + exclusion lifted in sweep scan         205,152  2,033   0.0208    2.87   0.438  -1.799   -4.24   0.195    2.83   2.237   23.9%    0.27
+ 1m  + same, stop from sweep bar              205,110  2,033   0.0168    1.60   0.222  -0.697  -10.62   0.257    3.64   0.919   13.5%    0.45
+ 5m  2x2 arm B (sweep scan strict)             70,194  2,033   0.1045    9.15   0.359  -0.091   -0.56   0.469    7.09   0.450    5.1%    2.33
+ 5m  + exclusion lifted in sweep scan         198,363  2,033   0.0055    0.46   0.242  -1.218   -9.10   0.329    4.98   1.460   15.1%    0.92
+ 5m  + same, stop from sweep bar              189,598  2,033   0.0024   -0.09   0.239  -0.654   -4.67   0.375    5.52   0.893    9.7%    1.17
+15m  2x2 arm B (sweep scan strict)             48,273  2,033   0.0495    4.43   0.141  -0.157   -2.35   0.706   10.68   0.298    2.7%    4.25
+15m  + exclusion lifted in sweep scan          98,623  2,033  -0.0015    0.52   0.073  -0.541   -8.93   0.558    8.40   0.614    6.3%    2.50
+15m  + same, stop from sweep bar              121,396  2,033  -0.0045   -0.09   0.045  -0.381  -10.31   0.584    8.56   0.426    4.6%    2.75
+60m  2x2 arm B (sweep scan strict)             18,536  2,022   0.0224    3.07   0.050  -0.118   -0.96   1.176   17.41   0.169    0.9%    9.00
+60m  + exclusion lifted in sweep scan          26,326  2,025   0.0184    2.77   0.037  -0.147   -2.05   1.116   16.50   0.184    1.4%    8.00
+60m  + same, stop from sweep bar               46,326  2,025   0.0437    2.83   0.026  -0.101   -1.35   1.241   17.67   0.127    0.6%   10.00
+
+================================================================================================================
+PART B - THE ENTRIES ARM A THROWS AWAY, ON A COMMON DENOMINATOR
+================================================================================================================
+The sweep list is held FIXED at arm A's own, so both trigger rules see the SAME pending
+windows. `earlier` = the permissive rule fires sooner inside the window; `only_B` = arm A
+never fires in that window at all. The discarded entries are scored under both stop rules.
+
+frame       sweeps  identical   earlier   only_B   only_A   neither  % touched
+1m          96,612     45,174    51,025      329        0        84      53.2%
+5m          96,612     52,311    44,301        0        0         0      45.9%
+15m         96,612     45,392    18,704    6,886        0    25,630      26.5%
+60m         96,612     22,357     4,564    3,448        0    66,243       8.3%
+
+================================================================================================================
+PART B - HOW THE DISCARDED ENTRIES ACTUALLY SCORED
+================================================================================================================
+
+construction                                  entries   days   gross%  tG/day  grossR    netR   t/day   stop%  st/vol cost/st  tight%  hold h
+ 1m  discarded, stop from close                39,073  2,033   0.2192   14.46   0.907  -0.286   -2.44   0.246    3.57   1.193   15.5%    0.72
+ 1m  discarded, stop from sweep bar            39,405  2,033   0.2418   14.82   0.745   0.105    0.17   0.288    4.10   0.640    9.3%    1.07
+ 1m    [arm A, for reference]                  78,095  2,033   0.1220    9.30   0.307  -0.021    0.48   0.458    6.67   0.328    3.9%    2.05
+ 5m  discarded, stop from close                33,895  2,033   0.2350   12.51   0.733   0.196    1.04   0.463    6.85   0.537    5.9%    2.83
+ 5m  discarded, stop from sweep bar            33,611  2,033   0.2456   12.94   0.486   0.083    1.34   0.494    7.18   0.403    3.6%    3.17
+ 5m    [arm A, for reference]                  75,023  2,033   0.0296    3.30   0.080  -0.118   -4.04   0.663    9.76   0.198    1.1%    3.58
+15m  discarded, stop from close                18,601  2,033   0.1456    5.69   0.340  -0.015   -0.29   0.670    9.90   0.355    3.4%    4.00
+15m  discarded, stop from sweep bar            18,689  2,033   0.1722    6.26   0.271   0.038    1.02   0.717   10.51   0.233    2.0%    4.75
+15m    [arm A, for reference]                  45,939  2,033   0.0218    3.08   0.059  -0.088   -1.95   0.909   13.38   0.146    0.5%    6.25
+60m  discarded, stop from close                 5,163  1,663   0.0476    1.63   0.061  -0.063   -0.09   1.268   17.85   0.123    0.7%   10.00
+60m  discarded, stop from sweep bar             5,470  1,663   0.0420    1.67   0.057  -0.053   -0.03   1.347   18.91   0.110    0.5%   11.50
+60m    [arm A, for reference]                  18,958  2,022   0.0205    3.02   0.041  -0.046    0.81   1.506   21.70   0.087    0.1%   15.00
+
+================================================================================================================
+PART B2 - THE DISCARDED ENTRIES AGAINST ARM A's OWN, PAIRED BY UTC DAY
+================================================================================================================
+A pooled difference of two populations is not a test; the paired one is.
+
+frame     shared days   d gross%       t    d netR       t
+1m              2,033    +0.0731    5.84    -0.414   -2.55
+5m              2,033    +0.1783   13.77    +0.304    1.49
+15m             2,033    +0.0908    4.22    +0.021    0.26
+60m             1,663    +0.0230    0.40    -0.015   -0.35
+
+(positive = the entries arm A discards did BETTER than the ones it keeps, on the same days.)
+
+================================================================================================================
+PART C - THE 5-MINUTE FRAME BY COIN, SO ONE COIN CANNOT CARRY THE RESULT
+================================================================================================================
+
+coin      construction                  entries    gross%     netR   t/day    stop%
+BTCUSD    rule1 ON  + rule2 ON   (= arm A)   26,491    0.0012   -0.122   -1.88    0.506
+BTCUSD    rule1 ON  + rule2 OFF          27,269    0.0109   -0.184   -3.29    0.460
+BTCUSD    rule1 OFF + rule2 ON           23,665    0.0447   -0.124   -0.59    0.401
+BTCUSD    rule1 OFF + rule2 OFF  (= arm B)   24,906    0.0525   -0.264   -2.00    0.360
+ETHUSD    rule1 ON  + rule2 ON   (= arm A)   26,921    0.0705   -0.181   -3.57    0.646
+ETHUSD    rule1 ON  + rule2 OFF          27,651    0.0664   -0.259   -4.81    0.592
+ETHUSD    rule1 OFF + rule2 ON           23,859    0.1335   -0.141   -1.51    0.508
+ETHUSD    rule1 OFF + rule2 OFF  (= arm B)   25,137    0.1332    0.049    0.61    0.459
+SOLUSD    rule1 ON  + rule2 ON   (= arm A)   21,611    0.0135   -0.035    1.21    0.947
+SOLUSD    rule1 ON  + rule2 OFF          22,112    0.0283   -0.123   -1.11    0.864
+SOLUSD    rule1 OFF + rule2 ON           19,222    0.1171    0.070    3.30    0.739
+SOLUSD    rule1 OFF + rule2 OFF  (= arm B)   20,151    0.1327   -0.051    0.72    0.666
+
+================================================================================================================
+PART D - WAS ARM A EVER JUSTIFIED FROM HIS TEACHING? (READ, NOT INFERRED)
+================================================================================================================
+
+RULE 1, the re-sweep exclusion. NOT IN THE SPEC, ANYWHERE.
+  step431 section 7.4 tabulates sweep against break of structure and the only
+  thing it says about the candle is which part of it counts: "trading through
+  with a wick is enough to open the pending state" for the sweep, "wick is
+  never enough, body close required" for the break. Nothing forbids one
+  candle from doing both. step431 section 4b defines the disqualifier and it
+  is about REACTION, not about candle bookkeeping: a level traded through
+  with no subsequent break of structure "is not a sweep and never becomes
+  one". step436 section 4 assigns the timeframes and says nothing about it.
+  His own worked short (step431 section 8.1) is a sequence of events, not a
+  constraint on which bar may carry them.
+  VERDICT: an implementation accident. It is a `continue` statement whose
+  position in R450's loop skips the break-of-structure test for any bar that
+  is through the level. Nobody wrote it down as a rule because it was never
+  read as one.
+
+RULE 2, the stop origin. THE SPEC IS EXPLICIT, AND IT IS ARM A's SIDE.
+  step431 section 9.1: "For a short taken after a high was swept: the
+  protective exit sits above the extreme reached during the sweep, that is
+  above the highest price printed while taking the level. For a long after a
+  low was swept: below the lowest price printed while taking the level."
+  Arm A measures from the sweep bar and therefore contains the extreme
+  printed while taking the level. Arm B starts at the sweep bar's CLOSE and
+  can miss it entirely.
+  VERDICT: arm A is FAITHFUL here and arm B is not. Every round in this
+  family since R450 - R475, R476, R477, R485, R487, R488, R490, R491, R492 -
+  has scored arm B's stop. That is recorded as a fact about the back
+  catalogue; the table above prices it.
+
+NEITHER VERDICT SELECTS ANYTHING. The crypto slices are spent, so a
+construction preferred on the strength of these tables could never be
+validated out of sample. Item 16 states its construction in advance.
+
+================================================================================================================
+LOOKS CONSUMED: NONE, AND NONE COULD BE. `slice_by_time` is never
+called in this file, no train/val/test split is cut, no cell is
+qualified and no construction is selected. No order was placed, no
+account touched, no live file imported or edited.
+================================================================================================================

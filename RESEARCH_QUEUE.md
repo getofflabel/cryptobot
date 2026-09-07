@@ -948,7 +948,82 @@ Rules (non-negotiable, they are why anything here can be trusted):
    slice and must never be used to argue that it does. This item may only
    touch instruments R489 marked INTACT.
 
-19. **ONE RULE IN R450's ARM A IS WORTH 3.5x ON GROSS. NOBODY DERIVED IT.**
+19. ~~**ONE RULE IN R450's ARM A IS WORTH 3.5x ON GROSS. NOBODY DERIVED IT.**~~
+   **DONE — R495, 2026-09-07. CLOSED, all three legs. No look consumed, and
+   none could be: `slice_by_time` is never called in the file and no split is
+   cut anywhere in it.**
+   **REPRODUCTION EXACT, THREE WAYS.** R476's tf=1 arm B (71,073 entries,
+   +0.1435%, t/day 13.77), R490's generalised tf=5 (70,194, +0.1045%) and
+   **R450's native arm A (75,023, +0.0296%, netR −0.118, t/day −4.04, stop
+   0.663%) all reproduce digit for digit.** The one-bar pending-window offset
+   the file warned about changes **nothing**: the generalised (rule 1 ON,
+   rule 2 ON) cell IS arm A. **One correction to this item's own arithmetic —
+   arm A has 75,023 entries and arm B 70,194, not the other way round.** The
+   exclusion does not shrink the population; it pushes the trigger later and
+   the dedupe then collapses fewer entries.
+   **(a) THE 3.5x IS REAL, IT IS RULE 1, AND IT LIVES ONLY ON THE 5-MINUTE
+   FRAME.** At tf=5 the gap decomposes **~90% re-sweep exclusion, ~10% stop
+   origin** (lifting rule 1 is worth +0.0677 / +0.0686% of price against rule
+   2's +0.0062 / +0.0072). The item's attribution is correct. But it does not
+   travel: the arm A / arm B gross gap is **1.18x at 1 minute** (0.1220 vs
+   0.1435), +0.027% at 15 minutes and **nothing at 60 (−0.003%).**
+   **(b) THE ROUND'S REAL OUTPUT IS RULE 2 — THE ONE THIS ITEM CALLED MINOR.**
+   On gross rule 2 is worth −0.001% to +0.007% anywhere. **On per-trade net R
+   it is the dominant term of the whole family at every resolution**, and the
+   biggest single effect in the table is at 1 minute: **−0.283 of a risk unit
+   with rule 1 ON, −0.530 with it OFF.** Mechanism exact: arm B starts the
+   stop at the sweep bar's CLOSE and cannot see the extreme printed while the
+   level was taken. On the 1-minute frame the median stop goes **0.242% →
+   0.458% of price**, cost/stop **1.187 → 0.328**, entries with a stop
+   tighter than the round trip **16.3% → 3.9%**, and per-trade net R
+   **−0.547 (t/day −4.92) → −0.021 (t/day +0.48).**
+   **⚠️ THIS IS A FACT ABOUT THE BACK CATALOGUE. R485's 12.14%, R487's
+   84.17% / 16.65% and "0.95–1.20 stop distances per trade", R488's
+   tight-decile pathology and R490's 1.187 are ALL measured on a stop origin
+   that is NOT the one he teaches** (step431 §9.1: "above the extreme reached
+   during the sweep, that is above the highest price printed while taking the
+   level"). **Say the honest thing beside it: −0.021 at t +0.48 is ZERO, not
+   positive.** The family is not revived. What changes is the size of the hole.
+   **(c) WHAT ARM A THROWS AWAY: the biggest gross entries in the family, for
+   nothing.** On arm A's own 96,612 sweeps, **53.2% of pending windows are
+   touched at 1 minute and 45.9% at 5** (the permissive rule fires EARLIER;
+   arm A never fires where it does not, and at 5m loses no window entirely).
+   The discarded entries read **+0.2192% of price at 1m against arm A's
+   +0.1220%** and **+0.2350% at 5m against +0.0296%**; paired by UTC day
+   **+0.0731% (t 5.84)** and **+0.1783% (t 13.77)**. In per-trade net R they
+   are NOT better — paired by day 1m **−0.414 (t −2.55)**, 5m +0.304 (1.49),
+   15m +0.021 (0.26), 60m −0.015 (−0.35) — and it is the same rule-2 story:
+   a sweep-and-reclaim candle measured from its own close has a 0.246% stop.
+   **Scored with the stop he teaches those same entries read +0.105 net R at
+   1 minute instead of −0.286.**
+   **(d) THE ANSWER TO "WAS IT JUSTIFIED", READ NOT INFERRED.**
+   **RULE 1 IS AN IMPLEMENTATION ACCIDENT.** step431 §7.4's table says only
+   which PART of the candle counts (wick opens the sweep's pending state,
+   body close required for the break) and **nothing forbids one candle from
+   doing both**; §4b's disqualifier is about REACTION, not candle
+   bookkeeping; step436 §4 is silent; his worked short (§8.1) is a sequence
+   of events, not a constraint on which bar carries them. The rule exists
+   because a `continue` sits above the break test in R450's loop.
+   **RULE 2 IS EXPLICIT IN THE SPEC AND ARM A IS THE FAITHFUL SIDE** —
+   and **every round in this family since R450 (R475, R476, R477, R485, R487,
+   R488, R490, R491, R492) has scored arm B's stop.**
+   **(e) UNASKED-FOR, AND BIGGER THAN EITHER RULE: the `continue` has a
+   SECOND home nobody has ever varied** — the sweep scan's pending
+   bookkeeping, where a confirmation clears the pending state. Lifting it
+   takes the sweep count **96,612 → 461,771** and the 1-minute population
+   **71,073 → 205,152 entries**, and the gross **collapses +0.1435% →
+   +0.0208%** (5m 0.1045 → 0.0055, 15m 0.0495 → −0.0015). Held ON throughout
+   the 2x2 because every round since R450 has. Opens item 28.
+   **NOTHING IS SELECTED AND NOTHING MAY BE RE-SCORED. No sealed slice may be
+   re-read under the corrected stop origin** — R492's LINK failure was
+   `gross R +0.299 against cost 0.430 risk units` and rule 2 is exactly the
+   term that moves it, so re-scoring LINK, BTC/ETH/SOL (R475) or SPY/QQQ
+   (R474) with arm A's stop would be a SECOND LOOK at a spent slice however
+   good the reason sounds. The corrected stop is a fact about how this log
+   READS its back catalogue and about how a FUTURE pre-registered round is
+   built. Opens items 27 and 28.
+
+19b. *(historical, the item as written, kept so the closure is readable)*
    *(new, opened by R490, and it is DESCRIPTIVE — lower priority than 16.)*
    R490 ran one uniform construction at four trigger frames and printed R450's
    native arm A beside the 5-minute row. They differ in exactly one rule —
@@ -1163,6 +1238,69 @@ Rules (non-negotiable, they are why anything here can be trusted):
     step489's `probe` list stays exactly as it is — R494 got around it by
     importing the module rather than editing it, and that is the pattern.
     No re-run of any round's verdict, no look, no candidate.
+
+27. **THE STOP THIS DESK HAS BEEN MEASURING IS NOT THE STOP HE TEACHES.
+    THE STANDING NOTES STILL SAY IT IS.**
+    *(new, opened by R495, and it is a BOOKKEEPING correction, not a
+    hypothesis — the same shape as item 23.)*
+    R495 established that arm B measures the protective exit from the sweep
+    bar's CLOSE, while step431 §9.1 puts it at **the extreme printed while
+    taking the level** — which is arm A's origin. Every round in this family
+    since R450 has scored arm B's. On the 1-minute crypto population the two
+    origins differ by a factor of **1.9 on the median stop** (0.242% vs
+    0.458%), **3.6x on cost/stop** (1.187 vs 0.328), **4.2x on the share of
+    entries whose stop is tighter than the round trip** (16.3% vs 3.9%) and
+    **half a risk unit on per-trade net R** (−0.547 vs −0.021).
+    This desk's STANDING PRIORITY notes quote the arm-B figures as though
+    they were properties of his method: R485's "12.14% of crypto entries
+    carry a stop tighter than the entire round trip", R487's "84.17% /
+    16.65%" and "0.95–1.20 stop distances PER TRADE", R488's tightest-decile
+    pathology, R490's cost/stop profile, and every "stop/vol ≈ 3.6" reading
+    including the nine-instrument band in R494.
+    Deliverable, purely editorial and on numbers already published: go
+    through the STANDING PRIORITY block and the R485–R494 entries, mark every
+    stop-derived figure with **which origin it was measured on**, and attach
+    the one-sentence rule that any future round quoting a structural stop
+    must state the origin. Where R495 supplies the corrected figure, print
+    both side by side; where it does not (the index, LINK, XRP, the nine-
+    instrument stop/vol band), **say the number is arm-B-origin and leave it
+    at that rather than inventing a correction.**
+    **THE FENCE:** editorial. **No verdict in this log may be re-interpreted
+    by it and NO SEALED SLICE MAY BE RE-SCORED** — R492's LINK window,
+    R475's crypto window and R474's SPY/QQQ window stay spent, and re-reading
+    any of them under the corrected origin is a second look. No entry
+    population, no backtest, no look, no candidate. **`stop/vol ≈ 3.6` is
+    not "wrong"; it is a measurement of arm B's object and needs the label,
+    which is a different claim.**
+
+28. **THE `continue` HAS A SECOND HOME AND IT IS THE BIGGER ONE. NOBODY HAS
+    DERIVED THAT ONE EITHER.**
+    *(new, opened by R495, and it is DESCRIPTIVE — same shape and same fence
+    as item 19.)*
+    R495 isolated the re-sweep exclusion at the TRIGGER step and found it
+    worth 3.5x on gross at 5 minutes and 1.2x at 1 minute. The same
+    `continue` has a second job in `scan_sweeps`: it governs the PENDING
+    BOOKKEEPING, because a confirmation clears the pending state and lets the
+    next sweep open. **That half is far bigger.** Lifted, the sweep count
+    goes **96,612 → 461,771**, the 1-minute population **71,073 → 205,152
+    entries**, and the gross **collapses +0.1435% → +0.0208% of price**.
+    R495 measured it and stopped there, because varying it changes the sweep
+    list rather than the entry and it does not belong inside a 2x2 about
+    which bar triggers.
+    Deliverable, purely descriptive: separate what that half actually does.
+    A permissive scan confirms sooner, so it (i) opens the next pending sweep
+    sooner, (ii) re-uses the same level many times inside one move, and (iii)
+    changes what the 2-hour expiry is counted from. **Score those three
+    consequences apart from one another**, report how much of the 7x
+    population growth is level re-use inside a single move versus genuinely
+    new sweeps, and read step431 §4b and §5 to say whether his teaching
+    licenses one confirmed sweep per level per move or many. Print the
+    per-trade net R of the added entries beside their gross, because R495
+    showed the two statistics disagree on exactly this kind of population.
+    **THE FENCE:** the crypto and index slices are both spent, so this can
+    describe and cannot select. **No construction may be chosen, no sealed
+    slice re-read, and nothing in it may be cited by a future spending round
+    as a reason.** Same rule R490 and R495 ran under.
 
 ## Obsoleted by the 2026-07-25 strategy pivot — DO NOT RUN
 Wallace retired every self-derived strategy and rebuilt the desk on TJR's

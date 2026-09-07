@@ -6277,3 +6277,236 @@ than the one R493 handed the specialist six days ago, and item 21 was written
 when XRP was the only clean slice with real history and is now factually out
 of date. **R493's gold handoff needs restating** on 850 days instead of 118.
 And **the stale-prose failure has a cheap general fix** worth doing once.
+
+---
+
+# R495 — ONE RULE IN R450's ARM A IS WORTH 3.5x ON GROSS. NOBODY DERIVED IT.
+
+**2026-09-07. Queue item 19. `step495_arm_a_anatomy.py`, full output in
+`step495_output.txt`, tables in `step495_table_factorial.csv`,
+`step495_table_rule_effects.csv`, `step495_table_sweepscan.csv`,
+`step495_table_discarded.csv`, `step495_table_paired.csv`,
+`step495_table_by_coin.csv`. Research only, no orders, no account, no live
+file touched, imported or edited. A DESCRIPTION on a spent population — no
+cell is qualified, no split is cut, no construction is selected. NO LOOK
+CONSUMED, and none could be: `slice_by_time` is never called in the file.**
+
+## Hypothesis / question
+
+R490 printed R450's native arm A beside its own generalised 5-minute row and
+said they differ in exactly two things: arm A's `scan_sweeps` will not let a
+bar that RE-SWEEPS the level also be the break of structure (**rule 1**), and
+it measures the stop from the sweep bar itself rather than from its close
+(**rule 2**). Arm A reads gross +0.0296% of price and the same frame under arm
+B's construction reads +0.1045%, three and a half times it. The item asked for
+the two rules isolated, scored separately at four trigger resolutions, the
+discarded entries priced, and a plain answer on whether arm A was ever
+justified from his teaching.
+
+## The fence, fixed before the run and enforced as code
+
+`slice_by_time` is never called; no train/val/test split is cut anywhere in
+the file. There is no `verdict` and nothing is ranked into a "best". Both
+crypto and index slices are spent, so **a construction preferred on the
+strength of these tables could never be validated out of sample**, and
+**nothing here may be cited by item 16 as a reason.** The 2-hour pending
+window and the 24-hour cap are R450's and were not touched.
+
+## Reproduction control — exact, three ways, and one caveat dissolved
+
+| what | published | this file |
+|---|---|---|
+| R476, tf=1, arm B | 71,073 entries, +0.1435%, t/day 13.77 | **71,073, +0.1435%, 13.77** |
+| R490, generalised tf=5 | 70,194 entries, +0.1045% | **70,194, +0.1045%** |
+| R450 native arm A | 75,023 entries, +0.0296%, netR −0.118, t/day −4.04, stop 0.663% | **identical, digit for digit** |
+
+The file warned in advance that its generalised (rule 1 ON, rule 2 ON) cell
+might differ from native arm A by a one-bar pending-window offset. **It does
+not differ at all** — the bar at `pend` is excluded by rule 1 anyway and the
+extra bar at the far end never fires first. The generalised cell **is** arm A,
+not an approximation of it.
+
+**One correction to the item's own arithmetic.** It reads "on 70,194 entries
+against 75,023" as though arm A had the smaller population. It is the other
+way round: **arm A has 75,023 entries and arm B has 70,194.** The exclusion
+does not shrink the population — it pushes the trigger to a later bar, and
+R476's dedupe then collapses fewer of them.
+
+## (1) The 3.5x is real, it IS rule 1, and it lives only on the 5-minute frame
+
+Holding the other rule fixed at both its settings (the OFF setting minus the
+ON setting, so positive means lifting the rule raised it):
+
+| frame | rule 1, gross | rule 2, gross | rule 1, netR | rule 2, netR |
+|---|---|---|---|---|
+| 1m | +0.0228 / +0.0172 | +0.0042 / −0.0013 | +0.003 / −0.244 | **−0.283 / −0.530** |
+| 5m | **+0.0677 / +0.0686** | +0.0062 / +0.0072 | +0.044 / +0.102 | −0.075 / −0.017 |
+| 15m | +0.0279 / +0.0269 | +0.0008 / −0.0003 | +0.015 / +0.010 | −0.080 / −0.084 |
+| 60m | −0.0032 / +0.0011 | +0.0008 / +0.0051 | −0.006 / −0.005 | −0.068 / −0.067 |
+
+At 5 minutes the 3.53x gross gap decomposes **~90% rule 1, ~10% rule 2**. The
+item's attribution is correct. But the effect does not travel: at 1 minute the
+arm A / arm B gross gap is **1.18x, not 3.5x** (0.1220% against 0.1435%), at
+15 minutes it is +0.027%, and **at 60 minutes it is nothing at all (−0.003%).**
+The re-sweep exclusion's damage to the gross is a property of the 5-MINUTE
+frame specifically — the frame on which the sweep is hunted, where a bar that
+re-takes the level and closes through structure is the same object twice.
+
+## (2) THE ROUND'S REAL OUTPUT IS RULE 2 — THE ONE THE ITEM TREATED AS MINOR
+
+On gross, rule 2 is worth between −0.001% and +0.007% of price anywhere. **On
+per-trade net R it is the dominant term of this entire family, at every
+resolution**, and the largest single effect in the table is at 1 minute:
+turning rule 2 OFF costs **−0.283** of a risk unit with rule 1 ON and
+**−0.530** with it OFF.
+
+The mechanism is exact and it is not subtle. Arm B starts the stop at the
+sweep bar's **CLOSE**, so it cannot see the extreme printed while the level
+was being taken. On the 1-minute frame:
+
+| | arm A (rule 2 ON) | arm B (rule 2 OFF) |
+|---|---|---|
+| median structural stop | 0.458% of price | 0.242% |
+| stop / 1-minute move | 6.67 | 3.60 |
+| cost / stop, per trade | 0.328 | **1.187** |
+| entries with a stop tighter than the round trip | 3.9% | **16.3%** |
+| per-trade net R | **−0.021 (t/day +0.48)** | **−0.547 (t/day −4.92)** |
+
+**This is a fact about the back catalogue and it is the reason this round
+exists.** R485's "12.14% of crypto entries carry a stop tighter than the whole
+round trip", R487's "84.17% are tighter than one Alpaca round trip / 16.65%
+tighter than the Coinbase all-in", R487's "the cost stack is 0.95–1.20 stop
+distances per trade, not 0.358", R488's tight-decile pathology and R490's
+cost/stop of 1.187 at 1 minute are **all measured on a stop origin that is not
+the one he teaches.** On the stop step431 §9.1 actually specifies, the same
+71,073-entry population's per-trade net R moves from −0.547 to −0.021.
+
+**Say the honest thing beside it: −0.021 with t by day +0.48 is ZERO, not
+positive.** The family is not revived by this and nothing here proposes that
+it is. What changes is the size of the hole — this log has spent four rounds
+quoting "deeply negative per trade" for a construction that reads
+indistinguishable from zero once the stop is measured where he puts it.
+
+## (3) What arm A throws away, on a common denominator
+
+The sweep list held FIXED at arm A's own 96,612 pending sweeps, so both
+trigger rules see the same windows:
+
+| frame | identical | permissive fires EARLIER | only permissive fires | arm A only | neither | % touched |
+|---|---|---|---|---|---|---|
+| 1m | 45,174 | 51,025 | 329 | 0 | 84 | **53.2%** |
+| 5m | 52,311 | 44,301 | 0 | 0 | 0 | **45.9%** |
+| 15m | 45,392 | 18,704 | 6,886 | 0 | 25,630 | 26.5% |
+| 60m | 22,357 | 4,564 | 3,448 | 0 | 66,243 | 8.3% |
+
+**Arm A never fires where the permissive rule does not** (arm-A-only is 0 at
+every frame, by construction), and at 5 minutes it loses no window entirely —
+it just enters later, in nearly half of them.
+
+**The discarded entries are the biggest gross trades in the family.** At 1
+minute they read **+0.2192% of price** against arm A's +0.1220%; at 5 minutes
+**+0.2350%** against +0.0296%. Paired by UTC day the gross difference is
+**+0.0731% (t 5.84)** at 1 minute and **+0.1783% (t 13.77)** at 5 minutes.
+
+**In per-trade net R they are not better, and that is the same rule-2 story
+again.** Paired by day: 1m **−0.414 (t −2.55)**, 5m +0.304 (t 1.49), 15m
++0.021 (t 0.26), 60m −0.015 (t −0.35). One of four reaches 2 and it is on the
+wrong side. The reason is mechanical: a sweep-and-reclaim candle measured from
+its own close has a tiny stop — 0.246% at 1 minute, cost/stop 1.193, 15.5%
+tighter than the round trip. **Scored with the stop he teaches, the very same
+discarded entries read +0.105 net R at 1 minute instead of −0.286.**
+
+So the answer to "what was arm A discarding": **the largest gross entries in
+the population, and it was discarding them for nothing — what stops them
+paying is the stop origin, not the entries.**
+
+## (4) The exclusion's OTHER home is bigger than both rules, and has never been varied
+
+The `continue` sits inside `scan_sweeps`, so it also governs the **pending
+bookkeeping**: a confirmation clears the pending state and lets the next sweep
+open. Every round in this family since R450 has run that half ON — R450's arm
+B calls `scan_sweeps` unchanged — so it was held ON for the whole 2x2 and
+lifted only as a labelled sensitivity. Lifting it takes the sweep count from
+**96,612 to 461,771** and the 1-minute population from 71,073 to **205,152
+entries**, and the gross **collapses from +0.1435% to +0.0208%** (5m: 0.1045%
+→ 0.0055%; 15m: 0.0495% → −0.0015%). The `continue` is doing far more work as
+a pending-state gate than as a trigger gate. Recorded; **not a construction
+and not selectable.**
+
+## (5) By coin — no single coin carries any of it
+
+5-minute frame, rule 1 lifted with rule 2 held ON: gross goes **+0.0012% →
++0.0447% on BTC, +0.0705% → +0.1335% on ETH, +0.0135% → +0.1171% on SOL** —
+the same direction on all three, largest on SOL. Arm A's own per-trade net R
+is negative on BTC (−0.122, t/day −1.88) and ETH (−0.181, −3.57) and about
+zero on SOL (−0.035, +1.21).
+
+## (6) Was arm A justified from his teaching? Read, not inferred.
+
+**RULE 1 — NOT IN THE SPEC ANYWHERE. An implementation accident.**
+step431 §7.4 tabulates the sweep against the break of structure and the only
+thing it says about the candle is which part of it counts: for the sweep,
+"trading through with a wick is enough to open the pending state"; for the
+break, "wick is never enough, body close required". **Nothing forbids one
+candle from doing both.** §4b's disqualifier is about REACTION, not candle
+bookkeeping — a level traded through with no subsequent break of structure
+"is not a sweep and never becomes one". step436 §4 assigns the timeframes and
+is silent. His worked short (§8.1) is a sequence of events, not a constraint
+on which bar may carry them. The rule exists because a `continue` statement
+sits above the break-of-structure test in R450's loop. **Nobody wrote it down
+as a rule because nobody ever read it as one.**
+
+**RULE 2 — THE SPEC IS EXPLICIT, AND IT IS ARM A's SIDE.**
+step431 §9.1, verbatim: *"the protective exit sits above the extreme reached
+during the sweep, that is above the highest price printed while taking the
+level."* Arm A's stop contains that extreme. Arm B's starts at the sweep bar's
+close and can miss it entirely. **Arm A is faithful here and arm B is not**,
+and **every round in this family since R450 — R475, R476, R477, R485, R487,
+R488, R490, R491, R492 — has scored arm B's stop.**
+
+## What this does NOT license, stated because it is the obvious next move
+
+**No sealed slice may be re-read under the corrected stop origin.** R492's
+LINK failure was `sealed gross R +0.299 against a cost of 0.430 risk units`,
+and rule 2 is precisely the term that moves cost-per-risk-unit. Re-scoring
+LINK's spent window with arm A's stop would be a **second look at a spent
+slice**, which the protocol forbids however good the reason sounds. The same
+bar applies to BTC/ETH/SOL (R475) and SPY/QQQ (R474). **The corrected stop is
+a fact about how this log should READ its back catalogue and about how a
+FUTURE pre-registered round should be built — it is not a re-scoring
+licence.**
+
+## Honest limits
+
+- Everything here is the **spent** crypto population. Nothing is out of
+  sample, and the whole window is read at once precisely so no reader can
+  mistake a slice label for evidence.
+- Rule 1 at 1 / 15 / 60 minutes is an **analogue** chosen before running (a
+  trigger bar through the level cannot be the break). At 5 minutes it is exact
+  and reproduces R450's arm A digit for digit; that is the only frame where
+  the analogue can be verified against the original.
+- The "from the sweep bar" stop folds in the **5-minute** sweep bar's extreme
+  at every resolution. That is exactly what §9.1 asks for — the extreme
+  printed while taking the level — but at a 1-minute trigger it attaches a
+  5-minute object to a 1-minute-managed trade.
+- Part B's paired tests compare two populations that share **sweeps**, not
+  trades. A matched-pair-by-sweep test was not run.
+- The 60-minute rows rest on far fewer entries, and the 60-minute discarded
+  population on 1,663 days rather than 2,033.
+- Costs are R486's sourced all-in Coinbase round trip, charged for honest P&L
+  and used to decide nothing (owner rule, 2026-07-25).
+
+## Looks consumed
+
+**NONE, and none could be.** `slice_by_time` is never called in the file, no
+train/val/test split is cut, no cell is qualified, no construction is
+selected, and no sealed slice was opened or argued to be reset. No order was
+placed, no account created, no live file touched, imported or edited.
+
+## What this opens
+
+Two follow-ups, queued as items 27 and 28. **The stop-origin finding needs to
+be written into the standing notes** so that no future round quotes R485's or
+R487's tight-stop figures without the qualifier, and **the pending-bookkeeping
+half of the `continue` has never been derived from his teaching either** — it
+is a larger effect than the trigger half and this round only measured it.
