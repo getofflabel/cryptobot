@@ -1,0 +1,349 @@
+
+step496_selector_audit.py - ROUND 496, QUEUE ITEM 20
+
+THE GATE IS A SIGN TEST AND THE SELECTOR IS A t. WHAT DID THAT MISMATCH
+ACTUALLY AIM, AND HOW OFTEN DO THE CANDIDATE RULES DISAGREE?
+
+WHAT THIS FILE IS
+-----------------
+A PROTOCOL AUDIT. It reads numbers this log has ALREADY PUBLISHED and
+re-ranks them under four selection rules. It runs no backtest, loads no
+price data, builds no entry population, cuts no train/val/test split,
+qualifies no cell, opens no sealed slice, and proposes nothing for
+deployment. It imports nothing from the live desk.
+
+Its only inputs are two artifacts already on disk:
+    step474_table.csv    (R474, 64 pooled cells, 23 qualifiers)
+    step492_output.txt   (R492, 32 cells x 2 instruments, 11 + 15 qualifiers)
+
+THE FENCE, restated from queue item 20 and obeyed literally
+-----------------------------------------------------------
+  * No sealed slice is re-opened. The only sealed numbers that appear here
+    are the two ALREADY PUBLISHED in RESEARCH_LOG.md (R474's surviving cell,
+    R492's failing cell), quoted verbatim.
+  * No cell that was never looked at may be looked at now. R474's other 22
+    qualifiers and R492's other 10 stay unverified out of sample FOREVER.
+    Where an alternative rule points at one of them, this file says so and
+    STOPS. It does not, and cannot, say whether that pick would have done
+    better.
+  * A rule may NOT be chosen by how well it would have performed on a sealed
+    slice it can now see. That is selecting a protocol on out-of-sample data
+    - the exact error the protocol exists to prevent.
+  * Output is a PROPOSED protocol change for Wallace to accept in an
+    interactive session, applied to FUTURE rounds only. Nothing here
+    re-interprets a published verdict.
+
+=======================================================================
+PART 0 - THE PREFERRED RULE, FROM FIRST PRINCIPLES, WRITTEN BEFORE THE
+          TALLY WAS COMPUTED (item 20 requires this ordering)
+=======================================================================
+
+The four rules under audit:
+  (i)   choosing-slice t                      <- R492's standing rule
+  (ii)  middle-slice expectancy
+  (iii) min(choosing, middle) expectancy
+  (iv)  choosing-slice expectancy              <- R474's actual rule
+
+1. THE UNIT COMES FIRST. R487 settled that the statistic the account earns
+   is the PER-TRADE NET RISK MULTIPLE, not percent of price. A selector in
+   percent of price ranks cells by a quantity nobody collects: a cell with
+   twice the price edge and three times the stop is worse, not better.
+   Every rule below is therefore defined in per-trade net R. (R474 predates
+   R487 and selected in percent of price. That is chronology, not a fault.)
+
+2. WHAT A SELECTOR IS FOR. At selection time the desk holds two read slices
+   and one unread one, and has exactly ONE look. The selector's job is to
+   maximise the chance the look lands on the cell with the best TRUE
+   expectancy. That is an estimation problem under a winner's curse:
+   whichever cell tops a noisy statistic is upward-biased, and the bias
+   grows with the number of candidates and with the noise of the statistic.
+
+3. WHY A t IS THE WRONG RANKER. t = mean / (sd / sqrt(n)). Two cells with
+   identical true edge and identical dispersion differ in t by sqrt(n)
+   alone - and n here is a property of HOW OFTEN A LEVEL FIRES (1-hour
+   swings fire roughly three times as often as previous-day levels), not of
+   how good the edge is. Ranking on t therefore imports the level's firing
+   rate into the choice. A t answers "which cell am I most confident is not
+   zero" - which is the GATE's question, and every candidate has already
+   passed the gate. Asking it twice is not a second test.
+
+4. WHY CHOOSING-SLICE EXPECTANCY IS ALSO WRONG. It is measured on the slice
+   the candidates were ENUMERATED on, it is the noisiest estimator on offer,
+   and the maximum of k of them is the most upward-biased of the four.
+
+5. WHY MIDDLE-SLICE EXPECTANCY ALONE IS WRONG. The middle slice IS the gate.
+   Using the gate as the chooser spends the same 20% of tape twice and turns
+   a sign test into a ranking on the smaller of the two read samples.
+
+6. THEREFORE THE PREFERRED RULE IS (iii): min(choosing, middle) per-trade
+   net R. It cannot be carried by either slice alone; it is a lower bound on
+   what the two read slices jointly support; it is MONOTONE IN THE GATE, so
+   a cell that cleared by a hair can never outrank one that cleared by half
+   a risk unit; and it is scale-free in n, so a level's firing rate buys no
+   rank. Its cost is that it is conservative and will sometimes pass over a
+   cell whose middle slice was merely unlucky. With exactly one look
+   available, that is the right side to err on.
+   Second choice (ii). The standing rule (i) is preferred by no principle
+   available once a gate exists.
+
+7. TRADE COUNT STAYS A GATE (30 train / 8 val), NEVER A CHOOSER. Ties on
+   (iii) broken by the smaller slice's trade count.
+
+Everything below PART 0 was computed after PART 0 was written.
+
+======================================================================================================================
+PART A - THE CENSUS. HOW MANY ROUNDS EVER HAD A CHOICE TO MAKE?
+======================================================================================================================
+
+Item 20 names four rounds as having qualified more than one cell: R450,
+R474, R475, R492. Every stored round table on this disk was re-counted
+before anything was ranked. The premise is half right.
+
+  R450  step450_table.csv         0 of 64 qualified  -> NO SELECTION EXISTED. The sealed slice was never opened.
+  R474  step474_table.csv        23 of 64 qualified  -> A REAL CHOICE. One look taken, cell SURVIVED.
+  R475  step475_table_r450window  1 of 96 qualified  -> ONE candidate. Every rule agrees trivially. Not a choice.
+  R492  LINKUSD                 11 of 32 qualified  -> A REAL CHOICE. One look taken, cell FAILED.
+  R492  XRPUSD                  15 of 32 qualified  -> companion. Qualified but NO look existed under any outcome.
+
+  Also swept, for completeness, every other stored table with a verdict
+  column: R370 (1 survivor of 277) and R410 (1 of 10). Single candidates,
+  no choice.
+
+  FINDING A. In the entire log, exactly TWO rounds have ever had more than
+  one qualifying cell to choose between: R474 (23) and R492 (11 on LINK).
+  R450 qualified nothing and R475 qualified exactly one. The mismatch item
+  20 describes has therefore been exercised twice, not four times.
+
+  FINDING B, and it is the one that changes the question. THE TWO ROUNDS
+  DID NOT USE THE SAME RULE.
+     R474: step474b_significance.py, verbatim -
+           q.sort_values("mean_tr", ascending=False).iloc[0]
+           "the single best cell by choosing-slice NET" - that is rule (iv),
+           an EXPECTANCY, in percent of price.
+     R492: pre-registered in its docstring - "the highest choosing-slice
+           per-trade net R t clustered by UTC day" - that is rule (i).
+  There is no standing rule. There are two rounds and two different rules,
+  each fixed before its own run and each followed exactly. Item 20's
+  premise that a t "aimed the look" is true of R492 and FALSE of R474.
+
+======================================================================================================================
+PART B1 - R474, SPY/QQQ, 23 QUALIFIERS. THE ROUND THAT SURVIVED.
+======================================================================================================================
+  qualifying cells: 23     ranking unit: percent of price (R474's own unit)
+  NOTE: rule (i) IS NOT COMPUTABLE HERE AND NEVER WILL BE. R474 computed a t for each ARM,
+  not for each cell; no per-cell t exists in step474_table.csv or anywhere in the log. Producing one
+  would mean rebuilding the entry population, which item 20's fence forbids. Three rules of four.
+
+  rule                            points at                                          ch      mid      min
+  (i)  choosing-slice t           NOT COMPUTABLE - see note                   
+  (ii) middle-slice expectancy    prev day high -> 1m BOS, hold to close          0.043    0.100    0.043
+  (iii) min(choosing, middle)     prev day low -> 1m BOS, target 3R               0.046    0.050    0.046
+  (iv) choosing-slice expectancy  prev day low -> 1m BOS, hold to close           0.058    0.003    0.003
+
+  DISTINCT CELLS POINTED AT BY THE 3 COMPUTABLE RULES: 3
+    (ii) middle-slice expectancy     vs (iii) min(choosing, middle)      DISAGREE
+    (ii) middle-slice expectancy     vs (iv) choosing-slice expectancy   DISAGREE
+    (iii) min(choosing, middle)      vs (iv) choosing-slice expectancy   DISAGREE
+
+  THE RULE THIS ROUND ACTUALLY USED: (iv) choosing-slice expectancy, in percent of price
+  IT POINTED AT: prev day low -> 1m BOS, hold to close
+
+  Rank of each rule's pick under every metric (1 = best of 23):
+  pick by rule                       choosing expectancy     middle expectancy        min of the two
+  (ii) middle-slice expectancy                         4                     1                     2
+  (iii) min(choosing, middle)                          3                     5                     1
+  (iv) choosing-slice expectancy                       1                    22                    22
+
+  R474's net-R column: the table carries R_tr (per-trade mean net R on the
+  choosing slice) but NO R_va. So rule (iv) can be restated in R487's unit
+  and the other two cannot. Restated:
+    (iv) in percent of price  -> prev day low -> 1m BOS, hold to close     R_tr +0.011
+    (iv) in per-trade net R   -> prev day high -> 1m BOS, hold to close    R_tr +0.046
+    DISAGREE - and this is the unit question of point 1, not a rule question.
+    R474's actual pick ranks 3 of 23 by choosing-slice net R.
+======================================================================================================================
+PART B2 - R492, LINKUSD, 11 QUALIFIERS. THE ROUND THAT FAILED, AND THE ONE ITEM 20 IS ABOUT.
+======================================================================================================================
+  qualifying cells: 11     ranking unit: per-trade net R
+
+  rule                            points at                                          ch      mid      min    t_ch
+  (i)  choosing-slice t           last session low -> 1m BOS, target 3R           0.076    0.006    0.006    5.50
+  (ii) middle-slice expectancy    prev day low -> 1m BOS, hold 24h                1.117    0.664    0.664    1.80
+  (iii) min(choosing, middle)     prev day low -> 1m BOS, hold 24h                1.117    0.664    0.664    1.80
+  (iv) choosing-slice expectancy  prev day low -> 1m BOS, hold 24h                1.117    0.664    0.664    1.80
+
+  DISTINCT CELLS POINTED AT BY THE 4 COMPUTABLE RULES: 2
+    (i)  choosing-slice t            vs (ii) middle-slice expectancy     DISAGREE
+    (i)  choosing-slice t            vs (iii) min(choosing, middle)      DISAGREE
+    (i)  choosing-slice t            vs (iv) choosing-slice expectancy   DISAGREE
+    (ii) middle-slice expectancy     vs (iii) min(choosing, middle)      AGREE
+    (ii) middle-slice expectancy     vs (iv) choosing-slice expectancy   AGREE
+    (iii) min(choosing, middle)      vs (iv) choosing-slice expectancy   AGREE
+
+  THE RULE THIS ROUND ACTUALLY USED: (i) highest choosing-slice per-trade net R t clustered by UTC day
+  IT POINTED AT: last session low -> 1m BOS, target 3R
+
+  Rank of each rule's pick under every metric (1 = best of 11):
+  pick by rule                       choosing expectancy     middle expectancy        min of the two            choosing t
+  (i)  choosing-slice t                                8                    11                    11                     1
+  (ii) middle-slice expectancy                         1                     1                     1                    10
+  (iii) min(choosing, middle)                          1                     1                     1                    10
+  (iv) choosing-slice expectancy                       1                     1                     1                    10
+
+  Spearman rank correlation among qualifiers, choosing-slice t against:
+    choosing expectancy  -0.318
+    middle expectancy    -0.036
+    min of the two       -0.109
+    TRADE COUNT n_tr     -0.518   <- NOT the mechanism: it flips sign between the two
+                                instruments. PART B4 finds the real one.
+======================================================================================================================
+PART B3 - R492, XRPUSD, 15 QUALIFIERS. NO LOOK EXISTED HERE, SO NOTHING IS AT RISK.
+======================================================================================================================
+  qualifying cells: 15     ranking unit: per-trade net R
+  This population is the clean control for the disagreement question: no cell here was ever
+  selected, so counting how often the rules diverge costs nothing and risks nothing.
+
+  rule                            points at                                          ch      mid      min    t_ch
+  (i)  choosing-slice t           1h swing low -> 1m BOS, target 3R               0.210    0.087    0.087    4.92
+  (ii) middle-slice expectancy    last session high -> 1m BOS, hold 24h           0.452    0.983    0.452    2.02
+  (iii) min(choosing, middle)     4h swing high -> 1m BOS, hold 24h               0.580    0.758    0.580    2.48
+  (iv) choosing-slice expectancy  1h swing low -> 1m BOS, hold 24h                1.896    0.154    0.154    2.78
+
+  DISTINCT CELLS POINTED AT BY THE 4 COMPUTABLE RULES: 4
+    (i)  choosing-slice t            vs (ii) middle-slice expectancy     DISAGREE
+    (i)  choosing-slice t            vs (iii) min(choosing, middle)      DISAGREE
+    (i)  choosing-slice t            vs (iv) choosing-slice expectancy   DISAGREE
+    (ii) middle-slice expectancy     vs (iii) min(choosing, middle)      DISAGREE
+    (ii) middle-slice expectancy     vs (iv) choosing-slice expectancy   DISAGREE
+    (iii) min(choosing, middle)      vs (iv) choosing-slice expectancy   DISAGREE
+
+  THE RULE THIS ROUND ACTUALLY USED: none - XRP was the companion and its sealed 20% was never read
+  IT POINTED AT: nothing. It remains INTACT.
+
+  Rank of each rule's pick under every metric (1 = best of 15):
+  pick by rule                       choosing expectancy     middle expectancy        min of the two            choosing t
+  (i)  choosing-slice t                                6                    13                    10                     1
+  (ii) middle-slice expectancy                         5                     1                     2                     9
+  (iii) min(choosing, middle)                          4                     3                     1                     7
+  (iv) choosing-slice expectancy                       1                     8                     6                     6
+
+  Spearman rank correlation among qualifiers, choosing-slice t against:
+    choosing expectancy  +0.139
+    middle expectancy    -0.596
+    min of the two       -0.221
+    TRADE COUNT n_tr     +0.571   <- NOT the mechanism: it flips sign between the two
+                                instruments. PART B4 finds the real one.
+======================================================================================================================
+PART B4 - WHAT THE t IS ACTUALLY RANKING, AND IT IS NOT THE LEVEL
+======================================================================================================================
+
+  PART 0 point 3 predicted that a t would import the LEVEL'S FIRING RATE
+  into the choice. That prediction is wrong, or at least it is not the
+  binding term - the t-to-trade-count correlation is -0.518 on LINK and
+  +0.571 on XRP, which is no mechanism at all. The real term is larger and
+  cleaner, and this table is the round's sharpest finding.
+
+  The 32 cells are 8 LEVELS x 4 EXIT RULES. The four exit rules score THE
+  SAME ENTRIES off the same level, so trade count is IDENTICAL across them
+  by construction. Any t difference between exit rules is therefore PURE
+  DISPERSION - nothing else is left to vary.
+
+  LINKUSD, all 32 cells
+    exit rule      mean t   mean per-trade net R   spread of R  mean n_tr  qualifiers
+    hold 24h        +2.29                 +0.513         0.378      2,607           5
+    target 1R       -3.32                 -0.227         0.059      2,607           0
+    target 2R       +0.61                 -0.063         0.060      2,607           0
+    target 3R       +2.67                 +0.035         0.066      2,607           6
+
+  XRPUSD, all 32 cells
+    exit rule      mean t   mean per-trade net R   spread of R  mean n_tr  qualifiers
+    hold 24h        +1.67                 +0.751         0.595        885           6
+    target 1R       -0.11                 -0.082         0.074        885           0
+    target 2R       +2.21                 +0.041         0.072        885           4
+    target 3R       +2.63                 +0.087         0.080        885           5
+
+  FINDING C, on both instruments independently and in the same direction:
+
+    hold-24h cells carry roughly FIFTEEN TIMES the per-trade expectancy of
+    target-3R cells (LINK +0.513 against +0.035; XRP +0.751 against +0.087)
+    - and target-3R cells carry the HIGHER MEAN t (LINK +2.67 against +2.29;
+    XRP +2.63 against +1.67).
+
+  A 3R target truncates the outcome distribution. Truncation cuts the
+  standard deviation far harder than it cuts the mean, so the ratio goes up
+  while the thing the account earns goes down. A selector that ranks on t is
+  therefore not choosing between LEVELS at all. IT IS CHOOSING AN EXIT RULE,
+  AND IT WILL ALWAYS PREFER THE TRUNCATED ONE.
+
+  That is exactly what happened in R492: the t pointed at a target-3R cell
+  with +0.076 of a risk unit on the choosing slice, while a hold-24h cell
+  off the same family sat at +1.117 - fifteen times the expectancy, and
+  ranked 10th of 11 on t. The mismatch item 20 opened is real, it has a
+  named mechanism, and the mechanism is dispersion, not sample size.
+
+======================================================================================================================
+PART C - WHAT THE TWO LOOKS ACTUALLY RETURNED, AND THE HARD STOP
+======================================================================================================================
+
+Published sealed results, quoted from RESEARCH_LOG.md and re-read from no
+slice:
+
+  R474  prev day low -> 1m BOS, hold to close   (picked by rule (iv))
+        sealed 371 trades / 155 days, gross +0.0726% (t by day 2.41),
+        net +0.0326% of price, gross R +0.618, NET R +0.132.  SURVIVED.
+        R487 later recomputed this foursome digit for digit and it stands.
+
+  R492  last session low -> 1m BOS, target 3R   (picked by rule (i))
+        sealed 912 trades / 326 days, gross +0.1228% (t by day 2.52),
+        net +0.0706% of price, gross R +0.299, NET R -0.131 (t by day 0.47).
+        FAILED - and the sign flip is entirely the cost line, not the signal.
+
+THE HARD STOP, AND IT IS THE WHOLE REASON THIS ITEM WAS FENCED:
+
+  Where an alternative rule points at a DIFFERENT cell, that cell's sealed
+  performance is UNKNOWN AND MUST STAY UNKNOWN. LINKUSD's final 20% is spent
+  forever; SPY/QQQ's is spent forever. This audit can say the rules disagree
+  and can say by how much on the READ slices. It cannot say, and no future
+  round may say, that another rule "would have found a survivor". Anyone who
+  computes that number has taken a second look at a spent slice.
+
+  It follows that this round CANNOT rank the four rules by outcome, has not
+  tried to, and the preference stated in PART 0 was written from first
+  principles before any of the tables above were parsed.
+
+======================================================================================================================
+PART D - THE PROPOSED PROTOCOL CHANGE (for Wallace, interactive, FUTURE rounds only)
+======================================================================================================================
+
+  1. THE SELECTOR AND THE GATE ARE STATED IN THE SAME UNIT, AND THE UNIT IS
+     THE PER-TRADE NET RISK MULTIPLE (R487). Percent of price never selects.
+
+  2. THE SELECTOR IS min(choosing, middle) PER-TRADE NET R.
+     Ties -> the larger trade count on the SMALLER slice.
+     Rationale in PART 0, points 2-6, none of which cites an outcome.
+
+  3. A t IS A GATE, NOT A CHOOSER. PART B4 gives the mechanical reason: on
+     a grid of levels x exit rules a t ranks exit rules by how truncated
+     their outcome distribution is, and prefers the truncated one even when
+     it earns a fifteenth as much. Keep it where it belongs: the existing
+     positive-expectancy-on-both-slices test, the minimum trade counts, and
+     beating the random control. A candidate that passes the gate has
+     already answered the question a t asks.
+
+  4. THE GATE GAINS A MARGIN, STATED IN ADVANCE PER ROUND. R492's selected
+     cell cleared the middle slice by +0.006 of a risk unit and the protocol
+     called that a pass, correctly, because the bar said "positive". A bar
+     of "positive" on a 20% slice is a coin flip dressed as a test. The
+     proposal is that each round pre-register a MINIMUM middle-slice margin
+     rather than a sign - and that the margin be set from the round's own
+     choosing-slice dispersion, before any middle-slice number is read, so
+     it cannot be tuned to admit or exclude a known cell.
+
+  5. WHAT DOES NOT CHANGE: one look per family, pre-registration in the
+     file's docstring before any slice is read, the random-entry control,
+     the expected-by-chance baseline quoted beside every count, and the rule
+     that a failed config is never re-tuned.
+
+  This is a PROPOSAL. It is not adopted by this file, it changes no
+  published verdict, and it applies to no round already run.
+

@@ -6510,3 +6510,210 @@ be written into the standing notes** so that no future round quotes R485's or
 R487's tight-stop figures without the qualifier, and **the pending-bookkeeping
 half of the `continue` has never been derived from his teaching either** — it
 is a larger effect than the trigger half and this round only measured it.
+
+---
+
+# R496 — THE SELECTOR AUDIT: THE MISMATCH IS REAL, IT HAS A MECHANISM, AND THE MECHANISM IS NOT THE ONE ANYONE NAMED
+
+**2026-09-08. Queue item 20. `step496_selector_audit.py`, full output in
+`step496_output.txt`. A PROTOCOL AUDIT on numbers this log has already
+published: no backtest, no price data loaded, no entry population built, no
+train/val/test split cut, no cell qualified, no sealed slice opened, nothing
+proposed for deployment, no live file touched or imported. NO LOOK CONSUMED,
+and none could be — the file's only inputs are `step474_table.csv` and
+`step492_output.txt`.**
+
+## The question
+
+R492's selected cell cleared the middle-slice gate by **+0.006 of a risk
+unit** and was then chosen for the one look because it had the highest
+choosing-slice t. Both halves were pre-registered and both were followed
+exactly; item 20's charge is that they measure different things, so a cell
+whose confirmation was a coin flip can outrank one that confirmed by half a
+risk unit. Four selection rules were to be re-read across every round that
+ever qualified more than one cell: **(i)** choosing-slice t, **(ii)**
+middle-slice expectancy, **(iii)** min of the two, **(iv)** choosing-slice
+expectancy.
+
+**The preferred rule was written from first principles in the file's
+docstring BEFORE any table was parsed** (item 20 required that ordering; the
+derivation is PART 0 and cites no outcome). It is **(iii), min(choosing,
+middle), stated in per-trade net R.**
+
+## FINDING A — the item's premise is half right. Two rounds, not four.
+
+Every stored round table on this disk was re-counted before anything was
+ranked.
+
+| round | qualifiers | was there a choice? |
+|---|---|---|
+| R450 | **0 of 64** | No. Nothing qualified; the sealed slice was never opened. |
+| R474 | **23 of 64** | **Yes.** One look taken, cell SURVIVED. |
+| R475 | **1 of 96** | No. One candidate; all rules agree trivially. |
+| R492 LINKUSD | **11 of 32** | **Yes.** One look taken, cell FAILED. |
+| R492 XRPUSD | 15 of 32 | Companion. No look existed under any outcome. |
+
+Also swept for completeness: R370 (1 survivor of 277) and R410 (1 of 10).
+**In the entire log the mismatch has been exercised exactly twice.**
+
+## FINDING B — there is no standing rule. The two rounds used DIFFERENT ones.
+
+- **R474**, `step474b_significance.py` verbatim:
+  `q.sort_values("mean_tr", ascending=False).iloc[0]` — *"the single best
+  cell by choosing-slice NET"*. That is **rule (iv), an expectancy, in
+  percent of price.**
+- **R492**, pre-registered in its docstring: *"the highest choosing-slice
+  per-trade net R t clustered by UTC day"*. That is **rule (i).**
+
+Each was fixed before its own run and each was followed exactly. **Item 20's
+premise that "the selector is a t" is true of R492 and false of R474.** The
+protocol never had a selector; it had two rounds that each invented one.
+
+## FINDING C — and this is the round's sharpest result. What a t actually ranks.
+
+PART 0 point 3 guessed the confound would be the level's **firing rate**.
+**That guess is wrong** — t against trade count is −0.518 on LINK and +0.571
+on XRP, which is no mechanism at all. The real term is bigger and cleaner.
+
+The 32 cells are 8 levels × 4 exit rules, and **the four exit rules score the
+SAME entries off the same level**, so trade count is identical across them by
+construction. Any t difference between exit rules is **pure dispersion**.
+
+| instrument | exit rule | mean t | mean per-trade net R | spread of R | n_tr |
+|---|---|---|---|---|---|
+| LINK | hold 24h | +2.29 | **+0.513** | 0.378 | 2,607 |
+| LINK | target 3R | **+2.67** | **+0.035** | 0.066 | 2,607 |
+| XRP | hold 24h | +1.67 | **+0.751** | 0.595 | 885 |
+| XRP | target 3R | **+2.63** | **+0.087** | 0.080 | 885 |
+
+**On both instruments independently and in the same direction: hold-24h cells
+carry roughly FIFTEEN TIMES the per-trade expectancy of target-3R cells, and
+target-3R cells carry the HIGHER MEAN t.** A 3R target truncates the outcome
+distribution; truncation cuts the standard deviation far harder than it cuts
+the mean, so the ratio rises while the thing the account earns falls.
+
+**A selector that ranks on t is not choosing between levels at all. It is
+choosing an exit rule, and it will always prefer the truncated one.**
+
+## The tally
+
+**R492, LINKUSD, 11 qualifiers, ranked in per-trade net R:**
+
+| rule | points at | choosing R | middle R | min | t |
+|---|---|---|---|---|---|
+| **(i) choosing t** *(the rule used)* | last session low → 1m BOS, target 3R | +0.076 | **+0.006** | +0.006 | **5.50** |
+| (ii) middle expectancy | prev day low → 1m BOS, hold 24h | **+1.117** | **+0.664** | +0.664 | 1.80 |
+| (iii) min of the two | prev day low → 1m BOS, hold 24h | +1.117 | +0.664 | **+0.664** | 1.80 |
+| (iv) choosing expectancy | prev day low → 1m BOS, hold 24h | +1.117 | +0.664 | +0.664 | 1.80 |
+
+**Rules (ii), (iii) and (iv) all point at the same cell. Rule (i) is alone,
+and it is the one that fired.** Ranked among the 11 qualifiers, the t-rule's
+pick sits **8th on choosing expectancy, 11th of 11 on middle expectancy, and
+11th of 11 on the min** — last on both metrics that are not its own. The
+cell the other three agree on ranks **1st on all three.**
+
+**So the answer to item 20's direct question is yes: on the one round where
+the t-selector was actually used, it was the worst of the four by a clear
+margin, and unanimously so.** Spearman among the qualifiers, t against
+choosing expectancy −0.318; against middle expectancy −0.036; against the min
+−0.109.
+
+**R492, XRPUSD, 15 qualifiers** (the clean control — no cell here was ever
+selected, so counting divergence costs nothing): **all four rules point at
+four DIFFERENT cells.** The t-rule's pick ranks 6th / 13th / 10th on the
+other three metrics.
+
+**R474, SPY/QQQ, 23 qualifiers, ranked in percent of price (R474's own unit).
+Rule (i) IS NOT COMPUTABLE HERE AND NEVER WILL BE** — R474 computed a t per
+ARM, never per cell, and building one would mean rebuilding the entry
+population, which item 20's fence forbids. Three rules of four:
+
+| rule | points at | choosing | middle | min |
+|---|---|---|---|---|
+| (ii) middle expectancy | prev day high → 1m BOS, hold to close | 0.043 | **0.100** | 0.043 |
+| (iii) min of the two | prev day low → 1m BOS, target 3R | 0.046 | 0.050 | **0.046** |
+| **(iv) choosing expectancy** *(the rule used)* | prev day low → 1m BOS, hold to close | **0.058** | 0.003 | 0.003 |
+
+**All three disagree.** R474's actual pick ranks **1st on choosing
+expectancy and 22nd of 23 on both middle expectancy and the min** — the same
+shape as R492's failure, produced by a different rule. A cell that clears the
+middle slice by +0.003% of price is the percent-of-price twin of clearing by
++0.006 of a risk unit.
+
+**And the unit matters as much as the rule.** R474's table carries `R_tr` but
+no `R_va`, so rule (iv) alone can be restated in R487's currency: in percent
+of price it points at `prev day low → hold to close` (R_tr +0.011); **in
+per-trade net R it points at a different cell**, `prev day high → hold to
+close` (R_tr +0.046). R474's actual pick ranks **3rd of 23** by choosing-slice
+net R. R474 predates R487 — that is chronology, not a fault.
+
+## The two looks that were actually taken, and the hard stop
+
+- **R474**, picked by rule (iv): sealed 371 trades / 155 days, net **+0.0326%**
+  of price, **net R +0.132**. SURVIVED.
+- **R492**, picked by rule (i): sealed 912 trades / 326 days, net +0.0706% of
+  price, **net R −0.131** (t by day 0.47). FAILED, and the sign flip is
+  entirely the cost line.
+
+**THE HARD STOP.** Where an alternative rule points at a different cell, that
+cell's sealed performance is **unknown and must stay unknown**. LINKUSD's
+final 20% is spent forever and SPY/QQQ's is spent forever. This audit can say
+the rules disagree and by how much **on the read slices**. It cannot say — and
+no future round may say — that another rule "would have found a survivor".
+Anyone who computes that number has taken a second look at a spent slice.
+**It follows that this round cannot rank the four rules by outcome, has not
+tried to, and the preference in PART 0 was written before any table was
+parsed.**
+
+## THE PROPOSED PROTOCOL CHANGE — for Wallace, interactive session, FUTURE rounds only
+
+1. **The selector and the gate are stated in the same unit, and the unit is
+   the per-trade net risk multiple** (R487). Percent of price never selects.
+2. **The selector is `min(choosing, middle)` per-trade net R.** Ties → the
+   larger trade count on the smaller slice. It cannot be carried by either
+   slice alone, it is monotone in the gate so a hair-thin pass can never
+   outrank a half-risk-unit pass, and it is scale-free in n.
+3. **A t is a gate, not a chooser.** FINDING C is the mechanical reason.
+   Keep the t where it belongs: positive expectancy on both slices, the
+   minimum trade counts, and beating the random control.
+4. **The gate gains a margin, pre-registered per round**, set from the
+   round's own choosing-slice dispersion before any middle-slice number is
+   read, so it cannot be tuned to admit or exclude a known cell. A bar of
+   "positive" on a 20% slice is a coin flip dressed as a test.
+5. **Unchanged:** one look per family, pre-registration in the docstring
+   before any slice is read, the random-entry control, the
+   expected-by-chance baseline beside every count, and never re-tuning a
+   failed config.
+
+**Not adopted by this file. Changes no published verdict. Applies to no round
+already run.**
+
+## Honest limits
+
+- **R474 can only ever be scored on three of the four rules**, and only in
+  percent of price. The fourth would require rebuilding an entry population.
+- **The disagreement tally rests on two selectable populations plus one
+  control** (LINK 11, XRP 15, R474 23). That is a small census, and it is the
+  whole census that exists.
+- **FINDING C is measured on this family's grid only** — 8 levels × 4 exit
+  rules, where the exit rules share entries by construction. The clean
+  identification comes from that sharing; a grid whose cells did not share
+  entries would not isolate dispersion so cleanly.
+- **PART 0's point 3 was wrong about the mechanism** and is left standing in
+  the file exactly as written, with the correction beside it, because
+  retro-editing a pre-registered rationale is the error this protocol exists
+  to prevent.
+- Nothing here re-reads, re-scores or re-interprets a published verdict.
+  R474 survived and R492 failed, under the rules each round fixed in advance.
+
+## Looks consumed
+
+**NONE, and none could be.** No sealed slice was opened, argued to be reset,
+or read. No cell that was never looked at has been looked at. No order was
+placed, no account exists, no live file was touched or imported.
+
+## What this closes
+
+**Item 20 is CLOSED.** Its deliverable is above; its output is the five-point
+proposal, which needs Wallace's yes in an interactive session before any
+future round is bound by it.

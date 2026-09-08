@@ -1048,8 +1048,50 @@ Rules (non-negotiable, they are why anything here can be trusted):
    under. If it turns out arm A was an accident, that is a fact about how this
    log should READ its own back catalogue, not a licence to pick a winner.
 
-20. **THE GATE IS A SIGN TEST AND THE SELECTOR IS A t. THAT MISMATCH JUST
-    AIMED A LOOK.**
+20. ~~**THE GATE IS A SIGN TEST AND THE SELECTOR IS A t. THAT MISMATCH JUST
+    AIMED A LOOK.**~~
+    **DONE — R496, 2026-09-08. No look consumed, and none could be.**
+    `step496_selector_audit.py` reads only `step474_table.csv` and
+    `step492_output.txt`; no backtest, no price data, no entry population, no
+    split, no sealed slice.
+    **The premise is half right: in the whole log exactly TWO rounds ever had
+    more than one qualifying cell** — R474 (23 of 64) and R492 (11 of 32 on
+    LINK). R450 qualified **0**, R475 qualified **1**, R370 and R410 one each.
+    **And there is no standing rule.** R474 selected on choosing-slice
+    EXPECTANCY in percent of price (`sort_values("mean_tr")`, verbatim);
+    R492 selected on choosing-slice **t**. Two rounds, two different rules,
+    each pre-registered and each followed exactly.
+    **THE ANSWER TO THE DIRECT QUESTION IS YES.** On R492, the only round
+    where the t-selector actually fired, its pick ranks **8th of 11 on
+    choosing expectancy and 11th of 11 on BOTH middle expectancy and the
+    min** — last on every metric but its own — while rules (ii), (iii) and
+    (iv) all agree on a cell that ranks **1st on all three**. On XRP's
+    15-cell control all four rules point at **four different cells**. On
+    R474 the three computable rules all disagree and its own pick ranks
+    **22nd of 23** on the middle slice and on the min.
+    **THE MECHANISM, and it is the round's real output.** The confound is
+    **not** the level's firing rate (t-vs-trade-count is −0.518 on LINK and
+    +0.571 on XRP, no mechanism). The grid is 8 levels × 4 exit rules and the
+    exit rules **score the same entries**, so trade count is identical across
+    them and any t difference is **pure dispersion**. On both instruments:
+    **hold-24h cells carry ~15x the per-trade expectancy of target-3R cells
+    and target-3R cells carry the HIGHER mean t** (LINK +0.513/+2.29 against
+    +0.035/+2.67; XRP +0.751/+1.67 against +0.087/+2.63). A 3R target
+    truncates the distribution, which cuts the standard deviation harder than
+    the mean. **A t-selector does not choose a level, it chooses an exit rule,
+    and it always prefers the truncated one.**
+    **OUTPUT: a five-point protocol proposal AWAITING WALLACE'S YES in an
+    interactive session, binding on FUTURE rounds only** — selector and gate
+    in the same unit (per-trade net R, R487); selector = **min(choosing,
+    middle)**; the t demoted to gate; the middle-slice gate to carry a
+    pre-registered MARGIN rather than a sign; everything else unchanged.
+    Rule (i) is **not computable for R474 and never will be** (per-cell t was
+    never built, and building one would need a new entry population).
+    **No sealed slice was reopened and none may be:** where an alternative
+    rule points elsewhere, that cell's out-of-sample result is unknown
+    forever, and no round may compute what another rule "would have found".
+
+*(historical text of item 20, kept so the closure reads)*
     *(new, opened by R492, and it is a PROTOCOL question, not a strategy one.)*
     R492's selected cell cleared the middle-slice gate by **+0.006 of a risk
     unit** and was then chosen for the one look because it had the highest
@@ -1618,6 +1660,35 @@ at any resolution, and the direction that fixes its cost problem walks away
 from the tier, not toward it.** And the stop does NOT scale with the frame the
 way this file has assumed: **log(median stop) = −1.402 + 0.386 × log(trigger
 minutes), R² 0.9991 — a 60x coarser trigger buys a 4.87x wider stop.**
+
+29. **THE EXIT RULE IS WORTH FIFTEEN TIMES THE LEVEL AND THIS DESK HAS BEEN
+    RANKING LEVELS.**
+    *(new, opened by R496, and it is a METHOD question, not a protocol one.)*
+    R496 built its FINDING C to explain a selector artifact and measured
+    something larger on the way: on the family's 8-level × 4-exit grid,
+    pooled across all 32 cells, **`hold 24h` returns +0.513 of a risk unit
+    per trade on LINK and +0.751 on XRP, while `target 3R` returns +0.035 and
+    +0.087** — a factor of roughly fifteen, on two instruments independently,
+    on the same entries. Every level in this family is a rounding error next
+    to the choice of when to get out. R491 asked where in the hold the gross
+    comes from and answered it in price terms on the crypto parent; **nobody
+    has ever asked the same question in risk-multiple terms across the four
+    exit rules the grid already contains.**
+    Deliverable, and it is descriptive: on populations **already read**, decompose
+    per-trade net R by exit rule and by level, say how much of the variation
+    each explains, and state plainly whether the four-target grid was ever a
+    grid over anything that matters. Report what fraction of `hold 24h`'s
+    advantage is a fatter right tail versus a better centre, and what it costs
+    in dispersion — a 15x expectancy that arrives with 6x the spread is a
+    sizing question, not a free lunch.
+    **THE FENCE:** LINK, XRP's first 80%, BTC/ETH/SOL and SPY/QQQ are all
+    spent or read. This item **describes and does not select**. No cell may be
+    qualified, no sealed slice opened, and **nothing here may be cited as a
+    reason to prefer an exit rule in a future pre-registered round** — that
+    choice must be fixed in advance from his teaching, not from this tally.
+    Note the obvious trap before starting: `hold 24h` cells were the ones
+    R492's t-selector passed over, and reading this item as "the t cost us the
+    good cell" is exactly the sealed-slice inference R496 forbade.
 
 ## STANDING RULE (R89/R100/R170/R190): TRANSFER IS PART OF VALIDATION
 Single-asset sealed tests do not catch asset-specific overfitting. Any
