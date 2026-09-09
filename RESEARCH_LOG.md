@@ -6717,3 +6717,239 @@ placed, no account exists, no live file was touched or imported.
 **Item 20 is CLOSED.** Its deliverable is above; its output is the five-point
 proposal, which needs Wallace's yes in an interactive session before any
 future round is bound by it.
+
+---
+
+# R497 — WHICH SEALED SLICE, IF ANY, SHOULD BE SPENT: ITEM 21's WORRY IS DEAD AND THE ANSWER IS STILL NO
+
+**2026-09-09. Queue item 24 (which supersedes the framing of item 21).
+`step497_slice_decision_memo.py`, full output in `step497_output.txt`.
+Research only, no orders, no account, no live file touched, imported or
+edited. A DECISION MEMO, not a hypothesis. NO LOOK CONSUMED, and none could
+be: `R.simulate` is never called anywhere in the file, no return, expectancy,
+win rate, risk multiple or t-statistic is computed for any instrument, and
+every instrument's tape is CUT at its own 80% boundary before `prep()` sees
+it — the sealed bars are not loaded into any frame. All four sealed slices,
+plus LINK's, are exactly as sealed at the end of this round as at the start.**
+
+## What this round was for
+
+Item 21 opened with "after R492 the family has exactly one unread
+out-of-sample window on an instrument with real history: XRPUSD's 187 days",
+and was built around the worry that **187 days may not power a construction
+firing ~103 times a year.** R494 falsified the first half — DOGE carries
+1,627 days with an intact final 20%, AVAX 1,370, DOT 860 — and item 24 asked
+for the arithmetic redone across all four, from each one's already-read first
+80% only, ending in a recommendation about which slice (if any) to spend.
+
+## The fence, fixed in the file's docstring before a byte of tape was read
+
+Six clauses. Two did real work and one was amended mid-round, in the open.
+
+1. **No look, under any outcome.** `R.simulate` is never called. The only
+   things measured are WHEN an entry fires, HOW WIDE its structural stop
+   would be, and how far apart bars move — the entries-only standing R489(b)
+   and R492's `stop/vol` table already run under.
+2. **First 80% only, enforced by TRUNCATION rather than by filtering.** A
+   filter applied after the fact still lets sealed bars into a swing, a level
+   or a sweep. `R.load` is wrapped so the imported pipeline is physically
+   incapable of reading a sealed bar. The one thing taken from beyond the
+   boundary is the last bar's TIMESTAMP, which is what tells you where the
+   boundary is; step492's own `boundaries()` does the same. A calendar date
+   is not a price.
+3. Nothing is qualified or selected. **A trade-count projection says whether
+   a question is ANSWERABLE, never what the answer is.**
+4. The argument is against R492, not around it: cost per unit of risk.
+5. No tuning, nothing retyped — every constant imported from `step450`.
+6. **AMENDED DURING THE ROUND, and the amendment is the reason the numbers
+   can be trusted.** The fence originally said no spent instrument is touched
+   at all. The first run then compared this file's cost figures to R492's
+   published 0.385 / 0.278 / 0.430 — and they are **not the same statistic.**
+   R492's is the MEAN across trades of (round trip / that trade's own stop);
+   the obvious reading, fee ÷ median stop, is a different number because
+   1/stop is convex. So LINK was added back as a **REPRODUCTION CONTROL on
+   its choosing and middle slices only**, through the same 80% truncation, so
+   its sealed slice is unreadable inside this file too. Nothing about R492's
+   verdict is re-opened or re-interpreted.
+
+## The two controls, and they are exact
+
+**CONTROL 1 — LINKUSD, `last session low` (the level R492's spent cell sat
+on; the four targets score the same entries, R496):**
+
+| slice | n here | n published | stop% med here | published | mean cost/stop here | published |
+|---|---|---|---|---|---|---|
+| choosing | **2,877** | 2,877 | **0.423** | 0.423 | **0.385** | 0.385 |
+| middle | **1,073** | 1,073 | **0.338** | 0.338 | **0.278** | 0.278 |
+
+**CONTROL 2 — XRPUSD's choosing slice against R492's published `stop/vol`
+row: 5,169 entries, 562 days, stop% med 0.4048, vol% med 0.1000, stop/vol
+3.99 — reproduced digit for digit.**
+
+Both controls sit on slices that have already been read; neither opens
+anything. They exist because the first version of this file measured the stop
+off the signal bar's CLOSE, while `simulate` fills at the **open of the next
+bar** and rejects any entry whose stop lands on the wrong side of that fill.
+That version returned 3,039 entries and a cost of 0.450 where R492 has 2,877
+and 0.385 — a 17% error in the round's headline statistic, caught by the
+control and not by inspection. **The entry bookkeeping is now `simulate`'s,
+minus the outcome.**
+
+## (1) The four windows, and the sealed spans
+
+| instrument | own window | days | choosing ends | middle ends | SEALED slice | sealed days |
+|---|---|---|---|---|---|---|
+| XRPUSD | 2024-01-01 → 2026-07-26 | 937 | 2025-07-16 | 2026-01-20 | 2026-01-20 → 2026-07-26 | **187** |
+| DOGEUSD | 2021-01-01 → 2026-07-26 | 2,032 | 2024-05-04 | 2025-06-15 | 2025-06-15 → 2026-07-26 | **406** |
+| AVAXUSD | 2021-11-18 → 2026-07-26 | 1,711 | 2024-09-10 | 2025-08-18 | 2025-08-18 → 2026-07-26 | **342** |
+| DOTUSD | 2023-08-18 → 2026-07-26 | 1,073 | 2025-05-23 | 2025-12-24 | 2025-12-24 → 2026-07-26 | **214** |
+
+XRP's boundaries reproduce R492's to the day. DOGE's sealed slice is the same
+406 calendar days LINK's was.
+
+## (2)+(3) ITEM 21's CENTRAL WORRY IS DEAD, ON ALL FOUR, INCLUDING XRP
+
+**32 of 32 cells are testable on every one of the four instruments.** Not one
+level on one instrument fails the 30-train / 8-val bar, and the thinnest
+projected sealed count anywhere is **201 entries** (XRP, prev day high, on the
+80% firing rate).
+
+| instrument | entries/day, 8 levels | thinnest level, projected sealed | fattest |
+|---|---|---|---|
+| XRPUSD (187d) | 13.4 | 201 (prev day high) | 634 (1h swing low) |
+| DOGEUSD (406d) | 14.3 | 400 (prev day low) | 1,492 (1h swing high) |
+| AVAXUSD (342d) | 16.2 | 380 (prev day high) | 1,282 (1h swing high) |
+| DOTUSD (214d) | 17.1 | 262 (prev day low) | 798 (1h swing high) |
+
+**Item 21's worry was imported from the wrong arm.** "A construction that
+fires ~103 times a year per asset may not clear the minimum trade counts" is
+R474's SPY/QQQ number — a daily-level, one-entry-per-session construction on
+an instrument that trades 6.5 hours. The crypto 1-minute arm fires **1.0 to
+3.7 times a day per level**, 24 hours a day. Even XRP's 187 days carry more
+entries per level than LINK's spent 406-day slice carried in the cell that
+was actually looked at (912). **Powering is not a constraint anywhere in this
+family, and the sentence that framed item 21 should not be repeated.**
+
+## (4) COST PER UNIT OF RISK — the only question R492 left open
+
+Mean across entries of (sourced round trip / that entry's own structural
+stop). Middle slice, the one an instrument would carry INTO its sealed
+window.
+
+| instrument | fee RT% | R488x | stop% mid | **cost/stop, pooled** | **cost/stop @ `last session low`** | all-in, pooled |
+|---|---|---|---|---|---|---|
+| **XRPUSD** | 0.0423 | 1.96 | 0.3041 | **0.274** | **0.250** | 0.523 |
+| **DOGEUSD** | 0.0667 | 1.51 | 0.3294 | **0.635** | **0.500** | 1.150 |
+| AVAXUSD | 0.3916 | 0.25 | 0.3138 | 2.768 | 2.680 | 3.887 |
+| DOTUSD | 0.3148 | 0.27 | 0.3092 | 3.871 | 1.499 | 4.650 |
+| *LINKUSD (R492, spent)* | *0.0522* | *2.12* | *0.338* | *—* | ***0.278*** | *—* |
+
+**LINK went into its sealed slice at 0.278 and paid 0.430 there**, because its
+chart structure tightened (median stop 0.423 → 0.338 → 0.319) while the round
+trip did not tighten with it. Its sealed gross of **+0.299** did not cover
+that, and the cell failed by exactly the difference.
+
+## (5) THE MEMO — the recommendation is LEAVE ALL FOUR SEALED
+
+**AVAX and DOT are not arguable.** 2.68 and 1.50 risk units of cost on the
+comparable level, five to ten times the number that just killed LINK. R493's
+contract-size rule arriving as a live fact: a $76.60 AVAX contract and a
+$95.30 DOT contract against a $0.15/side minimum. No tape fixes that.
+
+**DOGE is the one item 24 demanded a plain answer on, and the answer is
+recommend against.** Item 24's own words: *"Its fee multiple (1.51) is below
+LINK's (2.12), which already failed — say that plainly or recommend against."*
+Said plainly, and now measured rather than inferred: **DOGE would enter its
+sealed slice at 0.500 risk units of cost on the same level where LINK entered
+at 0.278 — 1.8 times the cost basis that already failed, on a slice of exactly
+the same 406 days.** Its 1,627 days of tape, its 0.1007% minute and its third
+place on R494's snapshot ranking are all real and all beside the point. **The
+tape was never the binding constraint.**
+
+**XRP is the only one that is even a conversation, and the honest reading is
+that it is a tie, not an improvement.** 0.250 against LINK's 0.278 on the
+comparable level; 0.274 against 0.278 pooled. That is the same cost basis
+inside sampling noise, and it buys the last clean crypto slice this family
+owns. To be worth spending, XRP would have to be different **in kind** — and
+the mechanism that killed LINK is present on XRP too: XRP's own median stop
+already tightened from 0.4048 on the choosing slice to 0.3041 on the middle
+slice, a 25% tightening, which is a *larger* proportional tightening than
+LINK's 0.423 → 0.338. **The fee does not tighten with it.** If XRP's sealed
+187 days continue that drift, its cost enters the 0.33-0.40 band on the far
+side, which is where LINK failed.
+
+**What would change this recommendation, stated so a future round does not
+have to guess: a cost basis roughly HALVED.** Not a better signal, not more
+tape, not another instrument. R478's venue work already took the round trip
+from Alpaca's 0.50% to CDE's 0.04-0.07%; there is no second 10x on the venue
+side, and R482/R486's still-unsourced CFM commission ladder can only make the
+real number worse. **The lever has to be the other half of the ratio: the
+stop.**
+
+**And that lever already has a measured candidate, which this memo did not
+expect to find and must state plainly.** R495 established that every round in
+this family since R450 — including this one — measures the protective exit
+from **the sweep bar's CLOSE (arm B's origin)**, while step431 §9.1 puts it at
+**the extreme printed while taking the level (arm A's origin)**, and that on
+the 1-minute crypto population the two differ by **1.9x on the median stop
+(0.242% against 0.458%) and 3.6x on cost per unit of risk (1.187 against
+0.328).** That is item 27's correction, and it is currently filed as
+bookkeeping. **On the arithmetic in this round it is not bookkeeping — it is
+the only thing on the table that could move XRP's 0.250 to the neighbourhood
+of 0.13**, which is the "different in kind" this memo just said XRP does not
+have. Carried honestly: R495's ratio was measured on BTC/ETH/SOL's spent
+population at Alpaca's cost basis, it is a ratio and not a level, and arm A's
+per-trade net R on that population is **still negative** (−0.021). It is a
+reason to measure, not a reason to spend.
+
+## Honest limits
+
+- **The projection is a rate, not a promise.** Entries per day in the middle
+  20% projected onto the sealed 20%; the two are the same length and adjacent
+  in time, and the 80% rate is carried beside it as a second read. They agree
+  within 12% everywhere. A regime change inside a sealed slice would move
+  both, and neither can be checked without opening the thing.
+- **DOT's pooled 3.871 against its 1.499 on one level is not an error, it is
+  dispersion.** The mean of 1/stop is dominated by the tightest stops, and
+  DOT's tightest levels are very tight. The pooled column is the honest
+  average trade; the single-level column is the like-for-like comparison
+  against LINK. Both are printed; neither is a selection.
+- **Costs decide nothing here** (owner rule, 2026-07-25). Nothing above
+  declines a trade or gates a strategy. This is a memo about **where a
+  finite, unrepeatable resource — a sealed slice — should be spent**, and
+  cost is being used as the best available predictor of what a look would
+  find, on the evidence of the two looks this family has already spent.
+- **The all-in column is a seven-poll spread sample** (R494), not R480's
+  clock, and the fee half assumes the CDE per-contract schedule at the coin
+  prices R493 quoted it at. R493's rule applies: a CDE cost is a property of
+  the instrument **at that day's price**.
+- **Nothing here is evidence about whether the family works on these
+  instruments.** No outcome was read. Four sealed slices stay sealed, and
+  every cell on all four stays unverified.
+
+## Looks consumed
+
+**NONE, and none could be.** `R.simulate` was never called. No sealed bar was
+loaded into any frame — including LINK's, which is spent and stayed
+unreadable inside this file. **XRPUSD, DOGEUSD, AVAXUSD and DOTUSD's final
+20% are all INTACT and unread.** No order was placed, no account exists, no
+live file was touched or imported, and nothing is proposed for deployment.
+
+## What this closes and what it opens
+
+**Items 21 and 24 are both CLOSED**, with the same answer: leave all four
+sealed. Item 21's premise (XRP is the last clean slice) was already dead;
+item 21's *worry* (187 days may not power the construction) is now dead too,
+and it was never right for this arm.
+
+One follow-up worth having, queued as **item 30** (29 is taken):
+**re-derive this round's cost-per-unit-of-risk table on the stop origin he
+actually teaches.** Same four instruments, same first-80%-only fence, same
+entries-only standing, `simulate` still never called — the only change is that
+the structural stop is taken from arm A's origin instead of arm B's, on
+instruments R495 never measured. If XRP's 0.250 becomes 0.13 there, then a
+sealed slice on this family is worth a conversation for the first time since
+R492, **and the conversation still starts with a pre-registered round and not
+with this one.** If it does not move, the recommendation above hardens from
+"leave them sealed" to "this family is finished on these instruments." Either
+answer is worth having and neither costs a look.

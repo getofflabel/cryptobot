@@ -1121,38 +1121,22 @@ Rules (non-negotiable, they are why anything here can be trusted):
     which is the exact error the protocol exists to prevent. State the
     preferred rule from first principles first, then report the tally.
 
-21. **XRP IS THE LAST CLEAN SLICE THIS FAMILY OWNS. DECIDE WHAT IT IS FOR
-    BEFORE ANYONE SPENDS IT.**
-    ⚠️ **ITS PREMISE IS OUT OF DATE — SUPERSEDED IN FRAMING BY ITEM 24
-    (R494, 2026-09-06). Run 24 instead; this text is kept because everything
-    below the premise still holds.** XRP is no longer the last clean slice
-    with real history: **DOGEUSD carries 1,627 days with an INTACT final 20%,
-    nearly nine times XRP's sealed window, plus AVAXUSD 1,370 and DOTUSD
-    860** — none of which existed as usable tape when this item was written.
-    The powering worry below is specific to 187 days and does not transfer to
-    a 325-day slice.
-    *(new, opened by R492, and it is a DECISION memo, not a backtest.)*
-    After R492 the sweep-to-break-of-structure family has exactly one unread
-    out-of-sample window on an instrument with real history: **XRPUSD's final
-    20%, 2026-01-20 → 2026-07-26, 187 days.** Everything else is spent (BTC,
-    ETH, SOL, SPY, QQQ, LINK) or is ranked off four months of tape.
-    R492 established that on this family the binding constraint is **cost per
-    unit of risk, not signal** — sealed gross R +0.299 against a cost of
-    0.430 risk units. Spending XRP's 187 days on the same parent construction
-    would therefore be spending the last slice on a question the log has
-    already answered twice.
-    Deliverable, and **no look and no entry population under any outcome**:
-    write the case, from evidence already published, for what XRP's slice
-    should be spent on — or for leaving it sealed indefinitely. Price the
-    alternatives honestly, including the one nobody has costed: **187 days is
-    a small slice, and a construction that fires ~103 times a year per asset
-    may not clear the minimum trade counts on it at all.** Compute, from
-    XRP's already-read first 80%, how many entries each of the eight levels
-    would be expected to produce in 187 days, and say plainly which cells are
-    even *testable* there. A slice you cannot power is not an asset.
-    **THE FENCE:** this item reads XRP's first 80% only (already read in
-    R492), never its final 20%. It proposes; it does not run. Any actual
-    spend of XRP's slice is a separate, later, pre-registered round.
+21. ~~**XRP IS THE LAST CLEAN SLICE THIS FAMILY OWNS. DECIDE WHAT IT IS FOR
+    BEFORE ANYONE SPENDS IT.**~~
+    **DONE — R497, 2026-09-09, answered together with item 24 which
+    superseded its framing. No look consumed, and none could be.**
+    Both halves of this item are dead. Its PREMISE died with R494 (XRP is not
+    the last clean slice). **Its WORRY died here: "a construction that fires
+    ~103 times a year may not clear the minimum trade counts on 187 days" is
+    R474's SPY/QQQ number imported into the wrong arm.** The crypto 1-minute
+    arm fires **1.0-3.7 times a DAY per level**, and **32 of 32 cells are
+    testable on all four instruments** — the thinnest projected sealed count
+    anywhere is 201 entries (XRP, prev day high). XRP's 187 days carry more
+    entries per level than LINK's spent 406-day slice carried in the cell
+    that was actually looked at. **Powering is not a constraint in this
+    family and the sentence should not be repeated.**
+    The recommendation is in item 24's closure and in R497: **leave it
+    sealed.** XRPUSD's final 20% (2026-01-20 → 2026-07-26) is INTACT.
 
 22. **RE-POLL THE FIVE INDEX-CALENDAR PERPETUALS INSIDE THEIR OWN SESSION.**
     *(new, opened by R493, and it is the unfinished half of item 17(b).)*
@@ -1197,40 +1181,49 @@ Rules (non-negotiable, they are why anything here can be trusted):
     ranking stands as published and this adds a column to it, nothing more. No
     entry population, no look, no candidate.
 
-24. **ITEM 21 WAS WRITTEN WHEN XRP WAS THE ONLY CLEAN SLICE WITH REAL HISTORY.
-    IT IS NOT ANY MORE.**
-    *(new, opened by R494, and it SUPERSEDES the framing of item 21 without
-    cancelling it. It is a DECISION memo, not a backtest.)*
-    Item 21 opens "after R492 the family has exactly one unread out-of-sample
-    window on an instrument with real history: XRPUSD's 187 days." That
-    sentence was true on 2026-09-04 and is false now. **DOGEUSD carries 1,627
-    days with an INTACT final 20% — nearly nine times XRP's sealed window —
-    and ranks third among intact instruments on the snapshot read and fifth
-    fee-only. AVAXUSD carries 1,370 and DOTUSD 860, both intact.** The
-    specific worry item 21 was built around, that 187 days may not power a
-    construction firing ~103 times a year, **does not apply to a 325-day
-    sealed slice.**
-    Deliverable, and **no look and no entry population under any outcome**:
-    redo item 21's arithmetic across the four instruments that now have real
-    history and intact slices (XRP, DOGE, AVAX, DOT), from each one's
-    already-read first 80% only. For each: how many entries would each of the
-    eight levels be expected to produce in its own sealed window, which cells
-    are even TESTABLE there at the 30-train/8-val bar, and what the sealed
-    window's calendar span actually is. Then write the case for which slice —
-    if any — should be spent, or for leaving all of them sealed.
-    **R492 IS THE THING TO ARGUE AGAINST, NOT AROUND.** It established that on
-    this family the binding constraint is **cost per unit of risk, not
-    signal**: sealed gross R +0.299 against a cost of 0.430 risk units, and
-    the queue's own note says *"do not re-test this family on any instrument
-    by making the signal better; the signal was never the binding
-    constraint."* A memo that recommends spending DOGE's slice on the same
-    parent construction must say what is different about DOGE's COST, not
-    about its tape. Its fee multiple (1.51) is below LINK's (2.12), which
-    already failed — **say that plainly or recommend against.**
-    **THE FENCE:** first 80% only, on every instrument, always. It proposes;
-    it does not run. Any actual spend is a separate, later, pre-registered
-    round. **Nothing in R494's ranking may be treated as a qualification** —
-    a screen ranks, it does not select.
+24. ~~**ITEM 21 WAS WRITTEN WHEN XRP WAS THE ONLY CLEAN SLICE WITH REAL
+    HISTORY. IT IS NOT ANY MORE.**~~
+    **DONE — R497, 2026-09-09. `step497_slice_decision_memo.py`. NO LOOK
+    CONSUMED, and none could be: `R.simulate` is never called and every
+    instrument's tape is TRUNCATED at its own 80% boundary before `prep()`
+    sees it, so no sealed bar is loaded into any frame. All four sealed
+    slices — and LINK's — are as sealed as they were at the start.**
+    **VERDICT: LEAVE ALL FOUR SEALED.**
+    Sealed spans: XRP 187d, DOGE 406d, AVAX 342d, DOT 214d. **Powering is a
+    non-issue on all four (32/32 cells testable everywhere)** — see item 21's
+    closure.
+    **The decision was made on the only thing R492 said binds: cost per unit
+    of risk**, measured entries-only as the mean of (round trip / that
+    entry's own structural stop) on the middle slice — the slice an
+    instrument would carry INTO its sealed window. On `last session low`,
+    the level R492's spent cell sat on: **XRP 0.250, DOGE 0.500, DOT 1.499,
+    AVAX 2.680, against LINK's 0.278 — which then paid 0.430 out of sample
+    and failed against a gross of +0.299.**
+    - **AVAX and DOT: not arguable**, 5-10x the cost basis that just failed.
+      R493's contract-size rule as a live fact ($76.60 and $95.30 contracts
+      against a $0.15/side minimum).
+    - **DOGE: recommend against, plainly, as this item demanded.** Its fee
+      multiple (1.51) is below LINK's (2.12) and the measured consequence is
+      **1.8x LINK's cost basis on the same level, on a slice of exactly the
+      same 406 days.** Its 1,627 days and its 0.1007% minute are real and
+      beside the point. The tape was never the binding constraint.
+    - **XRP: a tie, not an improvement** (0.250 vs 0.278; 0.274 vs 0.278
+      pooled). And the mechanism that killed LINK is present: XRP's median
+      stop already tightened 0.4048 → 0.3041 between its own slices, a
+      *larger* proportional tightening than LINK's, while the fee does not
+      tighten with it.
+    **Two reproduction controls, both exact, and they are why the numbers can
+    be trusted:** LINK's `last session low` reproduces R492 digit for digit
+    (2,877 / 0.423 / 0.385 and 1,073 / 0.338 / 0.278) and XRP's choosing
+    slice reproduces R492's published stop/vol row (5,169 / 562 / 0.4048 /
+    0.1000 / 3.99). The first version of the file measured the stop off the
+    signal bar's CLOSE instead of `simulate`'s next-bar OPEN fill and was
+    wrong by 17% on the headline statistic; **the control caught it, reading
+    the code did not.**
+    **THE STANDING CONDITION FOR EVER SPENDING ONE OF THESE SLICES, written
+    down so a future round does not have to guess: a cost basis roughly
+    HALVED.** Not a better signal, not more tape, not another instrument.
+    See item 30 — the one candidate lever with evidence behind it.
 
 25. **RESTATE R493's GOLD HANDOFF ON 850 DAYS INSTEAD OF 118.**
     *(new, opened by R494, and it is a CORRECTION, not a hypothesis.)*
@@ -1689,6 +1682,38 @@ minutes), R² 0.9991 — a 60x coarser trigger buys a 4.87x wider stop.**
     Note the obvious trap before starting: `hold 24h` cells were the ones
     R492's t-selector passed over, and reading this item as "the t cost us the
     good cell" is exactly the sealed-slice inference R496 forbade.
+
+30. **THE ONLY LEVER LEFT ON THIS FAMILY IS THE STOP ORIGIN, AND ITEM 27
+    FILED IT AS BOOKKEEPING.**
+    *(new, opened by R497, and it is a MEASUREMENT, not a hypothesis.)*
+    R497 closed items 21 and 24 with "leave all four sealed" and wrote down
+    the condition that would change that answer: **a cost basis roughly
+    halved.** The venue side is exhausted — R478 already took the round trip
+    from 0.50% to 0.04-0.07% and there is no second 10x — so the lever has to
+    be the other half of the ratio, the stop. **R495 already measured one.**
+    Every round in this family since R450, R497 included, takes the
+    protective exit from **the sweep bar's CLOSE (arm B's origin)**, while
+    step431 §9.1 puts it at **the extreme printed while taking the level
+    (arm A's origin)**. On the 1-minute crypto population the two differ by
+    **1.9x on the median stop (0.242% vs 0.458%) and 3.6x on cost per unit of
+    risk (1.187 vs 0.328)**. Item 27 files that as an editorial correction to
+    the standing notes. On R497's arithmetic it is not editorial: it is the
+    only thing on the table that could move XRP's 0.250 toward 0.13.
+    Deliverable: **re-run R497's cost-per-unit-of-risk table on arm A's stop
+    origin**, on the same four instruments (XRP, DOGE, AVAX, DOT), which R495
+    never measured. Same fence, same file structure, same two reproduction
+    controls. Publish the arm-A and arm-B columns side by side per instrument
+    and per level, and state whether the 1.9x/3.6x R495 found on BTC/ETH/SOL
+    transfers, shrinks or disappears — **re-derived on each instrument, never
+    ported** (R89/R100/R170/R190, and R494's gold result is why).
+    **THE FENCE, and it is R497's, unchanged:** `simulate` is never called;
+    no return, expectancy, win rate or risk multiple is computed for any
+    instrument; each instrument's tape is TRUNCATED at its own 80% boundary
+    before `prep()` sees it. **No look, no candidate, no qualification, and a
+    cost figure is never a reason to trade — it is a reason to decide where a
+    finite sealed slice gets spent.** A favourable result licenses a SEPARATE,
+    later, pre-registered round; it licenses nothing on its own, and it may
+    not be cited as evidence that the family works.
 
 ## STANDING RULE (R89/R100/R170/R190): TRANSFER IS PART OF VALIDATION
 Single-asset sealed tests do not catch asset-specific overfitting. Any

@@ -1,0 +1,156 @@
+======================================================================================================================
+ROUND 497 - QUEUE ITEM 24: WHICH SEALED SLICE, IF ANY, SHOULD BE SPENT. A DECISION MEMO.
+======================================================================================================================
+FENCE (full text in the docstring):
+  - R.simulate is NEVER called. No return, expectancy, win rate or risk multiple is computed for any instrument.
+  - Each instrument's tape is TRUNCATED at its own 80% boundary before prep() sees it. Sealed bars cannot enter any computation.
+  - Nothing is qualified or selected. A trade-count projection says whether a question is ANSWERABLE, never what the answer is.
+  - The benchmark to argue against is R492: sealed gross R +0.299 against a cost of 0.430 risk units. Cost, not signal.
+  - Instruments: XRPUSD, DOGEUSD, AVAXUSD, DOTUSD. All INTACT per R489/R494. No spent instrument is touched.
+
+======================================================================================================================
+(1) THE FOUR WINDOWS, CUT ON EACH INSTRUMENT'S OWN 1m/5m OVERLAP
+======================================================================================================================
+instrument  own window                   days   choosing 60% ends   middle 20% ends              SEALED slice  sealed days
+XRPUSD      2024-01-01 -> 2026-07-26      937          2025-07-16        2026-01-20  2026-01-20 -> 2026-07-26          187
+DOGEUSD     2021-01-01 -> 2026-07-26    2,032          2024-05-04        2025-06-15  2025-06-15 -> 2026-07-26          406
+AVAXUSD     2021-11-18 -> 2026-07-26    1,711          2024-09-10        2025-08-18  2025-08-18 -> 2026-07-26          342
+DOTUSD      2023-08-18 -> 2026-07-26    1,073          2025-05-23        2025-12-24  2025-12-24 -> 2026-07-26          214
+
+  R492 for scale: LINK's sealed slice was 406 calendar days (326 of them carrying an entry) and it produced 912 trades in the selected cell.
+
+  XRPUSD: first-80% tape only - 5m bars 183,817, 1m bars 591,050, last bar 2026-01-20 06:35 (boundary 2026-01-20)
+
+  DOGEUSD: first-80% tape only - 5m bars 458,420, 1m bars 1,926,638, last bar 2025-06-15 10:42 (boundary 2025-06-15)
+
+  AVAXUSD: first-80% tape only - 5m bars 385,999, 1m bars 1,616,831, last bar 2025-08-18 16:55 (boundary 2025-08-18)
+
+  DOTUSD: first-80% tape only - 5m bars 244,901, 1m bars 1,026,685, last bar 2025-12-24 07:17 (boundary 2025-12-24)
+
+======================================================================================================================
+(2)+(3) XRPUSD  -  ENTRIES PER LEVEL ON THE FIRST 80%, AND WHAT THE SEALED 187-DAY SLICE WOULD BE EXPECTED TO CARRY
+======================================================================================================================
+  choosing 562d   middle 187d   SEALED 187d (2026-01-20 -> 2026-07-26, never read)
+
+level                 n_choose  n_middle  /day 80%  /day mid  proj sealed  proj (80% rate)  train>=30  val>=8  testable in the sealed slice?
+prev day low               522       216      0.99      1.16          216              184        yes     yes  yes - comfortably powered
+prev day high              478       187      0.89      1.00          187              166        yes     yes  yes - comfortably powered
+last session low           939       412      1.80      2.20          412              337        yes     yes  yes - comfortably powered
+last session high          980       400      1.84      2.14          400              345        yes     yes  yes - comfortably powered
+1h swing low             1,429       610      2.72      3.26          610              509        yes     yes  yes - comfortably powered
+1h swing high            1,452       584      2.72      3.12          584              508        yes     yes  yes - comfortably powered
+4h swing low               628       283      1.22      1.51          283              227        yes     yes  yes - comfortably powered
+4h swing high              653       250      1.21      1.34          250              225        yes     yes  yes - comfortably powered
+
+  8 of 8 levels testable -> 32 of the 32 (level x target) cells, since the four exit rules score the SAME entries (R496).
+
+======================================================================================================================
+(2)+(3) DOGEUSD  -  ENTRIES PER LEVEL ON THE FIRST 80%, AND WHAT THE SEALED 406-DAY SLICE WOULD BE EXPECTED TO CARRY
+======================================================================================================================
+  choosing 1,219d   middle 406d   SEALED 406d (2025-06-15 -> 2026-07-26, never read)
+
+level                 n_choose  n_middle  /day 80%  /day mid  proj sealed  proj (80% rate)  train>=30  val>=8  testable in the sealed slice?
+prev day low             1,090       406      0.92      1.00          406              374        yes     yes  yes - comfortably powered
+prev day high            1,153       430      0.97      1.06          430              396        yes     yes  yes - comfortably powered
+last session low         2,283       923      1.97      2.27          923              801        yes     yes  yes - comfortably powered
+last session high        2,278       957      1.99      2.36          957              808        yes     yes  yes - comfortably powered
+1h swing low             3,336     1,324      2.87      3.26        1,324            1,164        yes     yes  yes - comfortably powered
+1h swing high            3,482     1,441      3.03      3.55        1,441            1,230        yes     yes  yes - comfortably powered
+4h swing low             1,471       560      1.25      1.38          560              507        yes     yes  yes - comfortably powered
+4h swing high            1,514       577      1.29      1.42          577              522        yes     yes  yes - comfortably powered
+
+  8 of 8 levels testable -> 32 of the 32 (level x target) cells, since the four exit rules score the SAME entries (R496).
+
+======================================================================================================================
+(2)+(3) AVAXUSD  -  ENTRIES PER LEVEL ON THE FIRST 80%, AND WHAT THE SEALED 342-DAY SLICE WOULD BE EXPECTED TO CARRY
+======================================================================================================================
+  choosing 1,026d   middle 342d   SEALED 342d (2025-08-18 -> 2026-07-26, never read)
+
+level                 n_choose  n_middle  /day 80%  /day mid  proj sealed  proj (80% rate)  train>=30  val>=8  testable in the sealed slice?
+prev day low             1,238       417      1.21      1.22          417              414        yes     yes  yes - comfortably powered
+prev day high            1,052       388      1.05      1.13          388              360        yes     yes  yes - comfortably powered
+last session low         2,329       859      2.33      2.51          859              797        yes     yes  yes - comfortably powered
+last session high        2,192       856      2.23      2.50          856              762        yes     yes  yes - comfortably powered
+1h swing low             3,311     1,152      3.26      3.37        1,152            1,116        yes     yes  yes - comfortably powered
+1h swing high            3,235     1,249      3.28      3.65        1,249            1,121        yes     yes  yes - comfortably powered
+4h swing low             1,473       539      1.47      1.58          539              503        yes     yes  yes - comfortably powered
+4h swing high            1,419       480      1.39      1.40          480              475        yes     yes  yes - comfortably powered
+
+  8 of 8 levels testable -> 32 of the 32 (level x target) cells, since the four exit rules score the SAME entries (R496).
+
+======================================================================================================================
+(2)+(3) DOTUSD  -  ENTRIES PER LEVEL ON THE FIRST 80%, AND WHAT THE SEALED 214-DAY SLICE WOULD BE EXPECTED TO CARRY
+======================================================================================================================
+  choosing 644d   middle 214d   SEALED 214d (2025-12-24 -> 2026-07-26, never read)
+
+level                 n_choose  n_middle  /day 80%  /day mid  proj sealed  proj (80% rate)  train>=30  val>=8  testable in the sealed slice?
+prev day low               745       262      1.17      1.22          262              251        yes     yes  yes - comfortably powered
+prev day high              869       252      1.31      1.18          252              280        yes     yes  yes - comfortably powered
+last session low         1,566       488      2.39      2.28          488              512        yes     yes  yes - comfortably powered
+last session high        1,612       503      2.47      2.35          503              528        yes     yes  yes - comfortably powered
+1h swing low             2,218       759      3.47      3.55          759              743        yes     yes  yes - comfortably powered
+1h swing high            2,338       744      3.59      3.48          744              769        yes     yes  yes - comfortably powered
+4h swing low             1,064       380      1.68      1.78          380              360        yes     yes  yes - comfortably powered
+4h swing high            1,020       308      1.55      1.44          308              331        yes     yes  yes - comfortably powered
+
+  8 of 8 levels testable -> 32 of the 32 (level x target) cells, since the four exit rules score the SAME entries (R496).
+
+======================================================================================================================
+(4) THE ONLY QUESTION R492 LEFT OPEN: COST PER UNIT OF RISK. ENTRIES-ONLY, NO OUTCOME READ.
+======================================================================================================================
+    The statistic is R492's, restated exactly: the MEAN across entries of (round trip / that entry's OWN structural stop).
+    NOT fee divided by the median stop - 1/stop is convex and the two differ by about a factor of three. R492 published
+    LINK's selected cell at choosing 0.385, middle 0.278, SEALED 0.430, against a sealed gross of +0.299.
+    LINK's own choosing and middle slices are recomputed below as a REPRODUCTION CONTROL (F6). Its sealed slice is spent
+    and is not readable inside this file - the same 80% truncation applies to it as to everything else.
+
+  CONTROL - LINKUSD, level 'last session low' (R492's selected cell; the four targets score the same entries, R496):
+    choosing  n 2,877 (R492 published 2,877)   stop%med 0.423 (published 0.423)   mean cost/stop 0.385  (published 0.385)
+    middle    n 1,073 (R492 published 1,073)   stop%med 0.338 (published 0.338)   mean cost/stop 0.278  (published 0.278)
+
+  CONTROL 2 - XRPUSD's CHOOSING slice against R492's published stop/vol row (5,169 entries, 562 days, stop%med 0.4048,
+  vol%med 0.1000, stop/vol 3.99). Both controls are on slices that have already been read; neither opens anything.
+
+instrument    fee RT%   allin%   R488x  entries80  stop%ch  stop%mid    vol%  stop/vol   costCH  costMID  allinMID  costMID @LSL
+    XRPUSD choosing slice as computed here: n 5,169, days 562, stop%med 0.4048, vol%med 0.1000, stop/vol 3.99
+XRPUSD         0.0423   0.0808    1.96      7,365   0.4048    0.3041  0.1000      3.99    0.268    0.274     0.523         0.250
+DOGEUSD        0.0667   0.1208    1.51     17,627   0.4070    0.3294  0.1031      4.09    0.466    0.635     1.150         0.500
+AVAXUSD        0.3916   0.5499    0.25     16,774   0.3654    0.3138  0.1021      3.67    2.273    2.768     3.887         2.680
+DOTUSD         0.3148   0.3782    0.27     11,273   0.2890    0.3092  0.0826      3.39    3.326    3.871     4.650         1.499
+LINKUSD (R492)   0.0522   0.1043    2.12              0.4230    0.3380              3.37    0.385    0.278                   0.278   <- SPENT. Failed out of sample at cost/stop 0.430 against gross +0.299.
+
+  costCH / costMID / allinMID are pooled across all eight levels; the last column is the 'last session low' level alone, which is
+  the level R492's spent cell sat on, so it is the one column that compares like with like against LINK's 0.278.
+
+======================================================================================================================
+(5) THE MEMO
+======================================================================================================================
+  Benchmark, and it is the thing to argue against: LINK entered its sealed slice with a middle-slice cost of 0.278 risk units,
+  paid 0.430 there, and its sealed GROSS of +0.299 was not enough to cover it. The signal was never the binding constraint.
+
+  XRPUSD: sealed 2026-01-20 -> 2026-07-26 (187d), 8/8 levels testable (32/32 cells), ~2,502 entries projected
+    cost per unit of risk, middle slice: 0.274 pooled fee-only / 0.250 on LINK's own level / 0.523 all-in
+    like-for-like against LINK's 0.278: -0.028   (better per unit of risk before a single outcome is read)
+    powering: not a constraint - item 21's worry was built on ~103 entries a YEAR; this arm fires 13.4 a DAY across the eight levels.
+
+  DOGEUSD: sealed 2025-06-15 -> 2026-07-26 (406d), 8/8 levels testable (32/32 cells), ~5,803 entries projected
+    cost per unit of risk, middle slice: 0.635 pooled fee-only / 0.500 on LINK's own level / 1.150 all-in
+    like-for-like against LINK's 0.278: +0.222   (WORSE per unit of risk before a single outcome is read)
+    powering: not a constraint - item 21's worry was built on ~103 entries a YEAR; this arm fires 14.3 a DAY across the eight levels.
+
+  AVAXUSD: sealed 2025-08-18 -> 2026-07-26 (342d), 8/8 levels testable (32/32 cells), ~5,547 entries projected
+    cost per unit of risk, middle slice: 2.768 pooled fee-only / 2.680 on LINK's own level / 3.887 all-in
+    like-for-like against LINK's 0.278: +2.402   (WORSE per unit of risk before a single outcome is read)
+    powering: not a constraint - item 21's worry was built on ~103 entries a YEAR; this arm fires 16.2 a DAY across the eight levels.
+
+  DOTUSD: sealed 2025-12-24 -> 2026-07-26 (214d), 8/8 levels testable (32/32 cells), ~3,649 entries projected
+    cost per unit of risk, middle slice: 3.871 pooled fee-only / 1.499 on LINK's own level / 4.650 all-in
+    like-for-like against LINK's 0.278: +1.221   (WORSE per unit of risk before a single outcome is read)
+    powering: not a constraint - item 21's worry was built on ~103 entries a YEAR; this arm fires 17.1 a DAY across the eight levels.
+
+  Nothing here is a qualification, nothing is deployed, and all four sealed slices are INTACT and unread at the end of this run.
+  The written case, with the recommendation, is in RESEARCH_LOG.md.
+
+======================================================================================================================
+LOOKS CONSUMED: NONE, and none could be. R.simulate was never called; no sealed bar was loaded into any frame.
+======================================================================================================================
