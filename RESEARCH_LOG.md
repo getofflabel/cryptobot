@@ -6953,3 +6953,281 @@ R492, **and the conversation still starts with a pre-registered round and not
 with this one.** If it does not move, the recommendation above hardens from
 "leave them sealed" to "this family is finished on these instruments." Either
 answer is worth having and neither costs a look.
+
+---
+
+# R498 — THE FIVE INDEX PERPETUALS ARE OPEN, PRICED, AND THE CHEAPEST FEE ON THE VENUE. THE SPREAD IS WHAT MAKES THEM EXPENSIVE.
+
+**2026-09-11. Queue item 22. `step498_index_perp_session_poll.py`, full output
+in `step498_out.txt`. Research only, no orders, no account, no live file
+touched, imported or edited. NO LOOK CONSUMED, and none could be: `simulate`
+is never called, no entry is built, no sweep is scanned, no return,
+expectancy, win rate, risk multiple or t-statistic is computed for any
+instrument. Every on-disk tape measurement stops at that instrument's own 80%
+boundary. No sealed slice was loaded into any frame.**
+
+## What this round was for
+
+R493 tried to price US 500 PERP and TECH PERP and could not: all five
+index-calendar perpetuals (US 500, TECH, AI, CHINA, DFNSE) were CLOSED for
+the whole poll with $0 of 24-hour volume, and R493 refused to publish a frozen
+weekend quote as a cost. Their 0.0400% fee floor was sourced and stood; the
+spread half did not exist. Item 22 asked for the same sampler run inside the
+contracts' own session, plus depth and volume, plus an R488 coordinate for
+US 500 and TECH paired with SPY/QQQ tape and labelled a proxy.
+
+## The session gate — R493's blocker is gone
+
+Polled 2026-09-11 07:37 UTC, a Friday inside the US futures session. **All
+five are OPEN with real two-sided volume**, and every one is far above the
+$750 break point, so every one pays the venue's flat floor.
+
+| contract | session | 24h $ volume | 24h contracts | notional $ | fee RT% |
+|---|---|---|---|---|---|
+| US 500 PERP | OPEN | 14,534,537 | 4,737 | 3,068.30 | 0.0400 |
+| TECH PERP | OPEN | 36,409,442 | 9,277 | 3,924.70 | 0.0400 |
+| AI PERP | OPEN | 5,773,302 | 1,986 | 2,907.00 | 0.0400 |
+| CHINA PERP | OPEN | 2,599,168 | 923 | 2,816.00 | 0.0400 |
+| DFNSE PERP | OPEN | 1,829,150 | 686 | 2,666.40 | 0.0400 |
+| *BTC PERP (context)* | *OPEN* | *352,393,676* | *456,114* | *772.60* | *0.0400* |
+| *ETH PERP (context)* | *OPEN* | *87,484,677* | *354,476* | *246.80* | *0.1216* |
+
+**R493's $0-volume reading was a calendar artifact, not a property of the
+contracts.** These are not dormant listings. TECH PERP turns over more dollars
+in a day than XRP PERP did on R489's poll.
+
+## (1) THE COST SHEET — seven polls, twelve seconds apart
+
+R493's cadence unchanged, median carried with lo–hi so the noise stays
+visible. Book age 0–2s on every contract; the gate never had to fire.
+
+| contract | spread% med | lo | hi | fee RT% | **ALL-IN RT%** |
+|---|---|---|---|---|---|
+| **TECH PERP** | 0.0408 | 0.0382 | 0.0459 | 0.0400 | **0.0808** |
+| **US 500 PERP** | 0.0424 | 0.0228 | 0.0424 | 0.0400 | **0.0824** |
+| AI PERP | 0.0618 | 0.0550 | 0.0790 | 0.0400 | 0.1018 |
+| CHINA PERP | 0.0853 | 0.0782 | 0.1030 | 0.0400 | 0.1253 |
+| DFNSE PERP | 0.0937 | 0.0937 | 0.1012 | 0.0400 | 0.1337 |
+| *BTC PERP* | *0.0130* | *0.0129* | *0.0130* | *0.0400* | *0.0530* |
+| *ETH PERP* | *0.0203* | *0.0203* | *0.0203* | *0.1216* | *0.1418* |
+
+all-in = fee round trip + one full top-of-book spread (R489/R493's formula,
+unchanged).
+
+**THE SHAPE OF THE ANSWER, and it inverts the expectation item 22 carried in
+with.** R493(b) handed these to the index specialist as *"the cheapest fee on
+the venue"*, and that is still true — 0.0400% is the floor and nothing on CDE
+beats it. But **the fee is now the small half of every one of these five.**
+The spread is 1.0x the fee on TECH and US 500 and **2.3x the fee on DFNSE.**
+Against BTC PERP, where the spread is a third of the fee, these contracts are
+the mirror image: the cheapest fee on the venue attached to the widest books
+on it. The two contracts the desk already prices bracket them — BTC all-in
+0.0530%, ETH 0.1418% — so the index five land squarely **inside the band the
+desk already trades, not below it.**
+
+## (2) DEPTH — and this is the number that actually binds
+
+R480/R483 established that depth, not spread, caps account size. Contracts at
+top of book converted to dollars at each contract's own notional; the figure
+carried is the **worse side** (min of bid and ask), because a position has to
+get out as well as in.
+
+| contract | notional $ | top-of-book ct | **top-of-book $** | 10-level ct | 10-level $ | 24h $ vol |
+|---|---|---|---|---|---|---|
+| US 500 PERP | 3,068 | 1 | **3,068** | 194 | 595,250 | 14,534,537 |
+| TECH PERP | 3,925 | 1 | **3,925** | 75 | 294,352 | 36,409,442 |
+| AI PERP | 2,907 | 8 | **23,256** | 72 | 209,304 | 5,773,302 |
+| CHINA PERP | 2,816 | 1 | **2,816** | 70 | 197,120 | 2,599,168 |
+| DFNSE PERP | 2,666 | 1 | **2,666** | 74 | 197,314 | 1,829,150 |
+| *BTC PERP* | *773* | *2* | *1,545* | *9,250* | *7,146,550* | *352,393,676* |
+| *ETH PERP* | *247* | *18* | *4,442* | *16,606* | *4,098,361* | *87,484,677* |
+
+**Four of the five quote exactly ONE contract at the touch.** The quoted
+spread in section (1) is the price of a $2,700–$3,900 trade and of nothing
+larger. The 10-level column is the honest capacity read — $197k to $595k a
+side — and it is **12x to 36x thinner than BTC PERP's $7.1M** on the same
+ten levels, against a 24-hour volume only 4x to 190x smaller. That is not a
+disqualification; it is the number that belongs in front of any sizing
+conversation, and it is the reason the spread column above should be read as
+a floor rather than as what a real order pays.
+
+## (3) THE R488 COORDINATE — the proxy the item asked for, plus the real tape
+
+### (3a) Both reproduction controls pass exactly
+
+| proxy | 80% slice | days | this round | R489 published | |
+|---|---|---|---|---|---|
+| SPY | 2016-01-01 → 2024-06-13 | 2,157 | 0.0173 | 0.0173 | **REPRODUCES** |
+| QQQ | 2016-01-01 → 2024-06-13 | 2,156 | 0.0237 | 0.0237 | **REPRODUCES** |
+
+SPY and QQQ are SPENT (R474). Nothing is scored on them here and nothing
+could be — a volatility number is a property of the price series, not a
+reading of any outcome.
+
+### (3b) The round's unasked-for output: these contracts have their own tape
+
+The venue serves 1-minute candles for every contract on the same keyless
+public endpoint. No round has ever read them. That is strictly better
+evidence than a proxy and sits inside the identical fence, so **both are
+published.**
+
+| contract | bars | days | **coverage** | own vol% median |
+|---|---|---|---|---|
+| US 500 PERP | 1,227 | 5 | 12.2% | 0.0172 |
+| TECH PERP | 1,417 | 5 | 14.1% | 0.0286 |
+| AI PERP | 464 | 5 | 4.6% | 0.0545 |
+| CHINA PERP | 519 | 5 | 5.2% | 0.0547 |
+| DFNSE PERP | 392 | 5 | 3.9% | 0.0613 |
+| *BTC PERP* | *7,952* | *8* | *78.9%* | *0.0326* |
+| *ETH PERP* | *7,398* | *8* | *73.4%* | *0.0487* |
+
+**The proxy item 22 asked for is VINDICATED on US 500 and roughly right on
+TECH.** US 500 PERP's own median minute is **0.0172%** against SPY's
+**0.0173%** — a 0.6% difference on an eight-year proxy versus a five-day
+tape. TECH PERP reads **0.0286%** against QQQ's 0.0237%, 21% higher. The
+index perps track their underlying's percentage moves, as a scaled index
+contract should.
+
+### (3c) The coordinate, both ways
+
+| contract | all-in %RT | proxy vol% | **proxy mult** | own vol% | **own mult** | coverage |
+|---|---|---|---|---|---|---|
+| US 500 PERP | 0.0824 | 0.0173 | **0.21** | 0.0172 | **0.21** | 12.2% |
+| TECH PERP | 0.0808 | 0.0237 | **0.29** | 0.0286 | **0.35** | 14.1% |
+| AI PERP | 0.1018 | — | — | 0.0545 | **0.53** | 4.6% |
+| CHINA PERP | 0.1253 | — | — | 0.0547 | **0.44** | 5.2% |
+| DFNSE PERP | 0.1337 | — | — | 0.0613 | **0.46** | 3.9% |
+| *BTC PERP* | *0.0530* | *—* | *—* | *0.0326* | *0.62* | *78.9%* |
+| *ETH PERP* | *0.1418* | *—* | *—* | *0.0487* | *0.34* | *73.4%* |
+
+For scale, from R489 on the same coordinate: XRP 1.28, LINK 0.99, SOL 1.22,
+BTC 1.04, ETH 0.49, QQQ 0.59, SPY 0.43 — everything but XRP and LINK spent.
+
+### (3d) THE CALIBRATION THAT STOPS THE "own mult" COLUMN BEING MISREAD
+
+**The own-tape column is internally comparable and NOT comparable to R489's
+ranking, and the two context rows are what prove it.** BTC PERP's own tape
+reads a median minute of **0.0326%** where R489's BTCUSD reads **0.0546%**
+(ratio 0.60); ETH PERP reads **0.0487%** against R489's **0.0687%** (ratio
+0.71). Same definition, same gap-clean filter, different window: R489 pooled
+2021–2025, this round read one week of September 2026. **R476 already
+established that this decay is real and large** (the crypto minute fell from
+2021's +0.2908% to the 2026 stub's +0.0387%), so the ~0.65x gap is the
+known decay showing up again, not an artifact of the endpoint.
+
+Consequence, stated so nobody quotes the wrong column: **US 500 PERP's 0.21
+and SPY's R489 0.43 are not the same measurement disagreeing — they are a
+2026 week and a 2016–2024 pool.** The honest cross-round statement is the
+proxy column (0.21 and 0.29), which is computed on exactly R489's tape and
+reproduces its inputs digit for digit. The own-tape column's job is the
+*relative* read among the five, where all rows share a window.
+
+### (3e) What the coordinate says
+
+**Every one of the five is under 1.0 on both reads, and four of five are
+under 0.55.** The typical minute on these contracts does not cover the
+crossing cost — US 500's covers about a fifth of it. On the relative read the
+order is **AI (0.53) > DFNSE (0.46) > CHINA (0.44) > TECH (0.35) > US 500
+(0.21)**, which is the *inverse* of the volume and spread ranking: the three
+thematic contracts are more volatile by enough to outrun their wider books,
+and the two liquid broad-index contracts are the worst coordinates on the
+venue's index shelf. **US 500 PERP's 0.21 is the second-worst R488
+coordinate this desk has ever measured on a priced contract**, above only
+DOT's 0.18 — and DOT earned its place with a pathological fee (0.35% on an
+$86.50 contract), where US 500 pays the venue's floor and is dragged down by
+its tape alone.
+
+## The handoff to the index specialist
+
+| contract | all-in RT% | = fee + spread | top of book, a side | 10-level, a side | 24h $ vol | own vol% / mult |
+|---|---|---|---|---|---|---|
+| US 500 PERP | **0.0824** | 0.0400 + 0.0424 | $3,068 | $595,250 | $14.5M | 0.0172 / 0.21 |
+| TECH PERP | **0.0808** | 0.0400 + 0.0408 | $3,925 | $294,352 | $36.4M | 0.0286 / 0.35 |
+| AI PERP | **0.1018** | 0.0400 + 0.0618 | $23,256 | $209,304 | $5.8M | 0.0545 / 0.53 |
+| CHINA PERP | **0.1253** | 0.0400 + 0.0853 | $2,816 | $197,120 | $2.6M | 0.0547 / 0.44 |
+| DFNSE PERP | **0.1337** | 0.0400 + 0.0937 | $2,666 | $197,314 | $1.8M | 0.0613 / 0.46 |
+
+Quoted at 2026-09-11 07:37–07:40 UTC, inside session, book age 0–2s.
+
+**The desk's index specialist now has, for the first time, a primary-sourced
+US perpetual round trip on a broad index — and it is 0.0808–0.0824%, roughly
+sixteen times cheaper than the 0.50% Alpaca taker figure every index round in
+this log has charged.** R474's SPY/QQQ result sits in the deployment-review
+item at the top of the queue with a sealed net of +0.0326% of price per trade
+and the honest note that its stop's tight tail sits at the scale of the
+spread. **This round does not re-open or re-interpret that verdict and may
+not be cited as doing so** — R474's numbers were computed on equity execution,
+not on this contract, and porting a cost into a spent result is a second look
+by arithmetic. What it does supply is the sourced cost sheet any *future*
+pre-registered index round would be quoted at, and the depth number that caps
+it.
+
+## Honest limits
+
+- **This is a seven-poll snapshot, not R480's 24-hour clock.** R480 found the
+  one-minute sampler quoted a wider book than the clock on 5 of 6 series, by
+  up to 29%, so these spreads are more likely pessimistic than optimistic —
+  but that calibration was measured on crypto contracts, and **the index five
+  have a session, which crypto does not.** A contract that shuts every day has
+  an intraday spread profile this round did not sample at all.
+- **The 21:00–22:00 UTC hole (R480) is untested on these contracts.** R480
+  found Coinbase's crypto books empty to 5–11% of normal depth in that hour.
+  These five *reopen* at 21:00 UTC. Whether the same hole exists, is worse, or
+  is absent on an index contract is unmeasured and matters more here, because
+  the 10-level depth is already 12–36x thinner than BTC's.
+- **Coverage is the caveat that decides how much the own-tape column is
+  worth, and it is item 25's caveat arriving on new instruments.** 12.2% and
+  14.1% on US 500 and TECH are in PAXG's territory (10.6%), and **4.6% / 5.2%
+  / 3.9% on AI, CHINA and DFNSE is well below it.** The gap-clean filter means
+  a sparse tape contributes only its consecutive-minute pairs, which are by
+  construction the contract's *busiest* minutes — so the own-tape volatility is
+  biased **high**, and the own-mult column is a ceiling, not a centre. On AI,
+  CHINA and DFNSE, with fewer than 500 bars each, the number is indicative and
+  is labelled as such rather than ranked confidently.
+- **The fee is still the cheapest the account can be, never the likeliest.**
+  The CFM volume-tier ladder above the 0.02% floor remains unsourced after
+  five attempts (R482, R486, R489, R493, this round). Every all-in figure here
+  is a best case on the fee half.
+- **Five days of tape and one poll window.** Nothing here establishes that
+  these spreads or this volume persist. R493's own experience is the argument:
+  the same five contracts read $0 and CLOSED six days ago.
+- **Costs decide nothing** (owner rule, 2026-07-25). No figure above declines
+  a trade, gates a strategy or ranks an instrument for trading. This is a cost
+  sheet and a capacity read, handed to a specialist.
+
+## Looks consumed
+
+**NONE, and none could be.** `simulate` was never called. No entry population
+was built on any instrument. No outcome, return, expectancy, win rate or risk
+multiple was computed for anything. SPY's and QQQ's on-disk tapes were cut at
+their own 80% boundary before any measurement, and the only thing read off
+them was the size of a one-minute move. **XRPUSD, DOGEUSD, AVAXUSD and
+DOTUSD's sealed slices are intact and unread; LINK's and the crypto and index
+windows stay exactly as spent as they were.** No order was placed, no account
+exists, no live file was touched or imported, and **nothing is proposed for
+deployment.**
+
+## What this closes and what it opens
+
+**Item 22 is CLOSED.** Both halves delivered: all five priced inside their own
+session with a published all-in round trip, and depth and volume recorded on
+all five. The proxy pairing item 22 specified was delivered *and independently
+validated* against the contracts' own tape, which no round had read.
+
+Two follow-ups, queued as **items 31 and 32**:
+
+- **31 — the 21:00 UTC hour on a contract that reopens at 21:00 UTC.** R480
+  found a documented daily depth hole on CDE crypto at 21:00–22:00 UTC and
+  showed it caps account size by an order of magnitude. These five contracts
+  *begin their session* in that hour and already quote one contract at the
+  touch. Sample the reopen window and the hour after it on all five, same
+  sampler, same gates, and say whether the index shelf has the hole, a worse
+  version of it, or none. Reading a live endpoint only; no look, no candidate.
+- **32 — the own-tape coordinate on a real window.** This round proved the
+  candles endpoint serves any CDE contract's 1-minute tape and that the desk
+  can read it keyless. Five days at 4–14% coverage is indicative. Pull 60–90
+  days for the five index contracts plus BTC/ETH as calibration, report
+  coverage per contract, and re-state (3c) on a window long enough that the
+  decay calibration in (3d) is a measured slope rather than a two-point
+  ratio. **The fence stays R493's: no trade is modelled and a volatility
+  number is not a candidate.**

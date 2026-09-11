@@ -1138,7 +1138,52 @@ Rules (non-negotiable, they are why anything here can be trusted):
     The recommendation is in item 24's closure and in R497: **leave it
     sealed.** XRPUSD's final 20% (2026-01-20 → 2026-07-26) is INTACT.
 
-22. **RE-POLL THE FIVE INDEX-CALENDAR PERPETUALS INSIDE THEIR OWN SESSION.**
+22. ~~**RE-POLL THE FIVE INDEX-CALENDAR PERPETUALS INSIDE THEIR OWN SESSION.**~~
+    **DONE — R498, 2026-09-11. `step498_index_perp_session_poll.py`. NO LOOK
+    CONSUMED, and none could be: `simulate` is never called, no entry is built
+    and no outcome is read; SPY/QQQ's on-disk tapes are cut at their own 80%
+    boundary before anything is measured.**
+    **R493's blocker is gone: all five are OPEN with real two-sided volume**
+    (TECH PERP turns over more dollars a day than XRP PERP did on R489's poll),
+    and all five sit far above the $750 break point, so all five pay the flat
+    0.0400% fee floor.
+    **ALL-IN ROUND TRIP, published: TECH 0.0808%, US 500 0.0824%, AI 0.1018%,
+    CHINA 0.1253%, DFNSE 0.1337%** (seven polls 12s apart, book age 0-2s, gate
+    never fired). **The expectation the item carried in with is inverted: the
+    fee is the SMALL half of every one of these five.** The spread is 1.0x the
+    fee on the two broad-index contracts and 2.3x on DFNSE — the cheapest fee
+    on the venue attached to the widest books on it. The index shelf lands
+    INSIDE the band the desk already trades (BTC PERP 0.0530%, ETH 0.1418%),
+    not below it.
+    **DEPTH IS THE BINDING NUMBER AND IT IS THIN: four of the five quote
+    exactly ONE contract at the touch** ($2,666-$3,925). Ten levels gives
+    $197k-$595k a side, **12-36x thinner than BTC PERP's $7.1M**. The quoted
+    spread is the price of a ~$3,000 trade and of nothing larger.
+    **The proxy the item specified was delivered AND independently validated.**
+    Both reproduction controls pass digit for digit (SPY 0.0173, QQQ 0.0237 =
+    R489). The round's unasked-for output: **the venue serves every contract's
+    own 1-minute candles on the same keyless endpoint, and no round had ever
+    read them.** US 500 PERP's own median minute is **0.0172% against SPY's
+    0.0173%** — the proxy is vindicated; TECH reads 0.0286% against QQQ's
+    0.0237%, 21% higher.
+    **THE COORDINATE: every one of the five is under 1.0 on both reads and
+    four of five are under 0.55.** Proxy read US 500 **0.21**, TECH **0.29**;
+    own-tape read AI 0.53 > DFNSE 0.46 > CHINA 0.44 > TECH 0.35 > US 500 0.21
+    — the *inverse* of the volume ranking. US 500's 0.21 is the second-worst
+    coordinate this desk has ever measured on a priced contract.
+    **The calibration that stops the own-tape column being misread** (R498 §3d):
+    BTC PERP's own tape reads 0.0326% where R489's BTCUSD reads 0.0546% (0.60x)
+    and ETH 0.0487% vs 0.0687% (0.71x) — same definition, a 2026 week against a
+    2021-2025 pool, and R476's decay is the mechanism. **The own-mult column is
+    the relative read among the five; the proxy column is the cross-round one.**
+    **R474's index verdict is NOT re-opened by this and may not be cited as
+    re-opened** — porting a cost into a spent result is a second look by
+    arithmetic. This supplies the cost sheet a FUTURE pre-registered index
+    round would be quoted at, and the depth number that caps it.
+    Opens items **31** and **32**.
+
+22x. *(superseded text, kept for provenance)* **RE-POLL THE FIVE
+    INDEX-CALENDAR PERPETUALS INSIDE THEIR OWN SESSION.**
     *(new, opened by R493, and it is the unfinished half of item 17(b).)*
     R493 could not price US 500 PERP or TECH PERP because both — along with AI,
     CHINA and DFNSE — were CLOSED for the whole poll with $0 of 24-hour volume,
@@ -1714,6 +1759,50 @@ minutes), R² 0.9991 — a 60x coarser trigger buys a 4.87x wider stop.**
     finite sealed slice gets spent.** A favourable result licenses a SEPARATE,
     later, pre-registered round; it licenses nothing on its own, and it may
     not be cited as evidence that the family works.
+
+31. **THE 21:00 UTC HOUR, ON CONTRACTS THAT REOPEN AT 21:00 UTC.**
+    *(new, opened by R498.)*
+    R480 found a documented daily depth hole on CDE crypto at 21:00-22:00 UTC
+    — depth falls to **5-11%** of the other 23 hours on all three coins at
+    once, mechanism primary-sourced (non-24x7 participants break 16:00-17:00
+    CT) — and showed it caps account size by an order of magnitude. **The five
+    index-calendar perpetuals BEGIN their session in that hour**, and R498
+    found they already quote **one contract at the touch** with ten-level
+    depth 12-36x thinner than BTC PERP's. Whether the index shelf has R480's
+    hole, a worse version of it, or none at all is unmeasured, and it matters
+    more here than it did on crypto.
+    Deliverable: R498's sampler, unchanged, run across the reopen window and
+    the hour after it on all five, with the same book-age and session-state
+    gates; publish spread and ten-level depth by hour against R498's
+    mid-session baseline, and say plainly whether the reopen is quotable.
+    Pair it with the first and last hour of the session so "thin at the open"
+    can be separated from "thin at the edges".
+    **THE FENCE:** reading and arithmetic on a live public endpoint. No entry
+    population, no backtest, no look, no candidate; a stale or shut book is
+    reported UNPRICED, never quoted.
+
+32. **THE OWN-TAPE COORDINATE ON A WINDOW LONG ENOUGH TO MEAN SOMETHING.**
+    *(new, opened by R498, and it is a MEASUREMENT, not a hypothesis.)*
+    R498 established that the venue serves **any CDE contract's own 1-minute
+    candles on the same keyless endpoint** and that the desk can read them —
+    something no round had done, and strictly better evidence than the proxies
+    this log has been pairing contracts with since R489. But it read five days
+    at **4.6-14.1% coverage**, which is at or below the PAXG coverage level
+    item 25 says may not be able to carry a coordinate at all, and its decay
+    calibration is a **two-point ratio** (BTC 0.60x, ETH 0.71x against R489).
+    Deliverable: pull **60-90 days** for the five index contracts plus BTC and
+    ETH as calibration, report coverage per contract, and re-state R498 §3c on
+    a window long enough that §3d's calibration is a measured slope rather
+    than two points. State plainly, per contract, whether its coverage can
+    carry a coordinate — and where it cannot, **say the number is unreadable
+    rather than inventing a correction** (item 25's rule). Note before
+    starting: the gap-clean filter counts only consecutive-minute pairs, which
+    on a sparse tape are the contract's BUSIEST minutes, so every own-tape
+    volatility in R498 is a **ceiling, not a centre** — quantify that bias
+    against BTC/ETH, where coverage is 73-79%.
+    **THE FENCE:** R493's, unchanged. `simulate` is never called, no trade is
+    modelled, no entry population is scored, and a volatility number is not a
+    candidate. No look.
 
 ## STANDING RULE (R89/R100/R170/R190): TRANSFER IS PART OF VALIDATION
 Single-asset sealed tests do not catch asset-specific overfitting. Any

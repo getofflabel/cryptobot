@@ -1,0 +1,112 @@
+============================================================================================================
+ROUND 498 - RE-POLL THE FIVE INDEX-CALENDAR PERPETUALS INSIDE THEIR OWN SESSION
+Queue item 22. Reading and arithmetic on a live public endpoint. No entry population, no
+backtest, NO LOOK, no candidate. A stale or shut book is reported UNPRICED, never quoted.
+============================================================================================================
+
+Poll started 2026-09-11 07:37:12 UTC
+
+============================================================================================================
+(1) THE SESSION GATE - the thing R493 could not get past
+============================================================================================================
+R493 polled these five and found every one CLOSED with $0 of 24-hour volume, and refused to
+quote the frozen book. This round polls inside the session. The gate is checked, not assumed.
+
+contract     code  session  open?        24h $vol    24h ct  notional $  fee RT%
+US 500 PERP  US5   OPEN     True       14,534,537     4,737    3,068.30   0.0400
+TECH PERP    TEK   OPEN     True       36,409,442     9,277    3,924.70   0.0400
+AI PERP      AIP   OPEN     True        5,773,302     1,986    2,907.00   0.0400
+CHINA PERP   CHN   OPEN     True        2,599,168       923    2,816.00   0.0400
+DFNSE PERP   DEF   OPEN     True        1,829,150       686    2,666.40   0.0400
+BTC PERP     BIP   OPEN     True      352,393,676   456,114      772.60   0.0400
+ETH PERP     ETP   OPEN     True       87,484,677   354,476      246.80   0.1216
+
+All five index-calendar contracts are OPEN with non-zero 24-hour volume. The window the
+item was waiting for is the window this round polled in.
+
+The fee half needs no poll and has not changed: every one of the five is far above the $750
+break point (R489's rule, item 23), so every one pays the flat floor 0.04% round trip.
+R493's contract-size rule does not bite on any of them - these are the cheapest contracts on
+the venue by fee, and that was never the question. The spread half is the question.
+
+============================================================================================================
+(2) SEVEN POLLS, TWELVE SECONDS APART - SPREAD AND DEPTH
+============================================================================================================
+R493's cadence unchanged: 7 polls 12s apart, median carried with lo-hi so the noise stays visible.
+Book-age gate 300s. Depth read 10 levels deep; the figure carried is the
+WORSE SIDE (min of bid and ask), because a position has to get out as well as in.
+
+contract       n    age  spread% med       lo       hi  fee RT%  ALL-IN RT%
+US 500 PERP    7     0s       0.0424   0.0228   0.0424   0.0400      0.0824
+TECH PERP      7     1s       0.0408   0.0382   0.0459   0.0400      0.0808
+AI PERP        7     1s       0.0618   0.0550   0.0790   0.0400      0.1018
+CHINA PERP     7     0s       0.0853   0.0782   0.1030   0.0400      0.1253
+DFNSE PERP     7     1s       0.0937   0.0937   0.1012   0.0400      0.1337
+BTC PERP       7     0s       0.0130   0.0129   0.0130   0.0400      0.0530
+ETH PERP       7     2s       0.0203   0.0203   0.0203   0.1216      0.1418
+
+all-in = fee round trip + one full top-of-book spread, R489/R493's formula unchanged.
+
+============================================================================================================
+(3) DEPTH AND VOLUME - the operational half, and the item says it comes first
+============================================================================================================
+R480/R483: depth, not spread, is what caps account size. Contracts at top of book converted
+to dollars at this contract's own notional. `10-level` is the same read down ten levels.
+
+contract      notional $  top ct      top $  10lv ct      10lv $  levels      24h $vol
+US 500 PERP        3,068       1      3,068      194     595,250      10    14,534,537
+TECH PERP          3,925       1      3,925       75     294,352      10    36,409,442
+AI PERP            2,907       8     23,256       72     209,304      10     5,773,302
+CHINA PERP         2,816       1      2,816       70     197,120      10     2,599,168
+DFNSE PERP         2,666       1      2,666       74     197,314      10     1,829,150
+BTC PERP             773       2      1,545    9,250   7,146,550      10   352,393,676
+ETH PERP             247      18      4,442   16,606   4,098,361      10    87,484,677
+
+============================================================================================================
+(4) THE R488 COORDINATE - the proxy the item asked for, and the real tape beside it
+============================================================================================================
+The R488 coordinate is the median day's 1-minute move divided by the all-in round trip. It is
+a SCREEN, not a prediction (R489): how many times the typical minute covers the crossing cost.
+
+(4a) THE PROXY THE ITEM ASKED FOR - LABELLED A PROXY, and the reproduction control first.
+  SPY   80% slice 2016-01-01 -> 2024-06-13  2,157 days  vol% median 0.0173   R489 published 0.0173   REPRODUCES
+  QQQ   80% slice 2016-01-01 -> 2024-06-13  2,156 days  vol% median 0.0237   R489 published 0.0237   REPRODUCES
+  SPY and QQQ are SPENT instruments (R474). Nothing is scored on them here and nothing could be:
+  a volatility number is a property of the price series, not a reading of any outcome.
+
+(4b) THE CONTRACTS' OWN 1-MINUTE TAPE, off the same public endpoint. Strictly better evidence
+     than a proxy, inside the same fence, and NEW - no round has read these contracts' tape.
+  US 500 PERP    1,227 bars    5 days  coverage  12.2%  vol% median 0.0172   09-04 08:06 -> 09-11 07:48
+  TECH PERP      1,417 bars    5 days  coverage  14.1%  vol% median 0.0286   09-04 08:27 -> 09-11 08:11
+  AI PERP          464 bars    5 days  coverage   4.6%  vol% median 0.0545   09-04 08:36 -> 09-11 08:03
+  CHINA PERP       519 bars    5 days  coverage   5.2%  vol% median 0.0547   09-04 08:16 -> 09-11 07:34
+  DFNSE PERP       392 bars    5 days  coverage   3.9%  vol% median 0.0613   09-04 08:12 -> 09-11 06:14
+  BTC PERP       7,952 bars    8 days  coverage  78.9%  vol% median 0.0326   09-04 08:13 -> 09-11 08:11
+  ETH PERP       7,398 bars    8 days  coverage  73.4%  vol% median 0.0487   09-04 08:30 -> 09-11 08:28
+
+(4c) THE COORDINATE, both ways. Proxy where the item asked for one; own tape for all five.
+
+contract      all-in %RT  proxy vol%  proxy mult  own vol%  own mult  coverage
+US 500 PERP       0.0824      0.0173        0.21    0.0172      0.21     12.2%
+TECH PERP         0.0808      0.0237        0.29    0.0286      0.35     14.1%
+AI PERP           0.1018           -           -    0.0545      0.53      4.6%
+CHINA PERP        0.1253           -           -    0.0547      0.44      5.2%
+DFNSE PERP        0.1337           -           -    0.0613      0.46      3.9%
+BTC PERP          0.0530           -           -    0.0326      0.62     78.9%
+ETH PERP          0.1418           -           -    0.0487      0.34     73.4%
+
+For scale, on the same coordinate and from R489: XRP 1.28, LINK 0.99, SOL 1.22, BTC 1.04,
+ETH 0.49, QQQ 0.59, SPY 0.43. Everything but XRP and LINK is SPENT.
+
+============================================================================================================
+(5) THE HANDOFF TO THE INDEX SPECIALIST
+============================================================================================================
+  US 500 PERP   all-in 0.0824% of price (fee 0.0400 + spread 0.0424), top of book $3,068 a side, 24h $14,534,537
+  TECH PERP     all-in 0.0808% of price (fee 0.0400 + spread 0.0408), top of book $3,925 a side, 24h $36,409,442
+  AI PERP       all-in 0.1018% of price (fee 0.0400 + spread 0.0618), top of book $23,256 a side, 24h $5,773,302
+  CHINA PERP    all-in 0.1253% of price (fee 0.0400 + spread 0.0853), top of book $2,816 a side, 24h $2,599,168
+  DFNSE PERP    all-in 0.1337% of price (fee 0.0400 + spread 0.0937), top of book $2,666 a side, 24h $1,829,150
+
+Nothing above is a candidate. No entry was built, no outcome was read, `simulate` was never
+called, and no sealed slice was touched by this file. A cost figure is never a reason to trade.
+============================================================================================================
