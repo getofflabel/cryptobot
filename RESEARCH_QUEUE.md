@@ -1206,7 +1206,64 @@ Rules (non-negotiable, they are why anything here can be trusted):
     population, no backtest, no look, no candidate, and a book that is stale or
     shut is reported UNPRICED — never quoted.
 
-23. **THE BREAK-POINT DISTANCE BELONGS ON EVERY COST TABLE THIS DESK WRITES.**
+23. ~~**THE BREAK-POINT DISTANCE BELONGS ON EVERY COST TABLE THIS DESK
+    WRITES.**~~
+    **DONE — R499, 2026-09-12. CLOSED, all three deliverables. No look
+    consumed, and none could be: `simulate()` is never called, no entry
+    population exists, and every on-disk tape read stops at its own 80%
+    boundary.**
+    **THE ITEM'S PREMISE ARRIVED AS AN OBSERVATION RATHER THAN AN ARGUMENT:
+    TWO OF TWENTY-EIGHT CONTRACTS CHANGED FEE BRANCH IN SEVEN DAYS.** Re-polled
+    2026-09-12 against R493's 2026-09-05 sheet, with the venue's schedule, the
+    fee formula and the method all unchanged: **BNB PERP (−5.6%) and ENA PERP
+    (−16.8%) both crossed floor → MIN**, and **every MIN-side contract's cost
+    percentage moved**, because a fixed $0.15 over a moving notional is a
+    moving percentage. DOT PERP got **12.6% cheaper** on a +14.5% price move;
+    1000SHIB PERP got 5.5% dearer.
+    **AND THE FLAGSHIP IS CLOSER THAN R493 SAID: BTC PERP is 3.0% of price
+    above the break, not 6%** ($772.80 against $750), 90-day base rate 49.6%.
+    **R489's RANKING DID NOT RE-ORDER AND EVERY MULTIPLE MOVED.** Fee-only read
+    (the only half that follows the break point, and the sourced sample-free
+    one): LINK **2.00** (R494 2.12), PAXG **1.98** (1.98), XRP **1.89** (1.96),
+    SOL 1.80, DOGE 1.42, BTC 1.37. **The top three are now inside 0.11 of each
+    other**, and the two that moved are the two below the break; PAXG, above
+    it, did not move at all.
+    **THE TOP-TWO FLIP IS ARITHMETIC AND R499 SOLVES IT IN CLOSED FORM.** Below
+    the break `mult(px) = vol% × size × px / 30`, saturating at `vol%/0.04`, so
+    **XRP overtakes gold at $1.4319 — a +4.8% move**; DOGE overtakes XRP at
+    +33.0%; LTC overtakes DOGE at +71.5%. The item's question is answered:
+    **the flip R489 reported is a price fact, not a spread-sample artifact.**
+    **NEW COLUMN THE ITEM DID NOT ASK FOR AND IT IS THE USEFUL ONE: `cap`**,
+    the best fee-only multiple a contract can EVER have on this venue (the one
+    it reaches at its break price). **PAXG PERP and BTC PERP are both AT their
+    cap with +0.00 headroom** — above the floor there is no lower branch, so
+    every further improvement on those two must come from the spread. XRP has
+    +0.18 left, DOGE +1.10, DOT +1.81.
+    **THE STANDING RULE, now binding on every future round that quotes a CDE
+    cost:** state, in the same table, the **COIN PRICE** it was quoted at, that
+    contract's **BREAK PRICE** ($750 / contract size), the **RATIO** the price
+    must travel to cross it, and the **BASE RATE** for a move that far. A cost
+    sheet without those four columns is a snapshot passed off as a constant.
+    Re-run step493/step499 when prices have moved rather than citing an old
+    percentage. Full text in R499.
+    Two reproduction controls, both exact: R493's fee column recomputed from
+    its own published notionals (max error 0.000048 pp, parsed off
+    `step493_output.txt` rather than retyped) and R494's median 1-minute move
+    recomputed behind the 80% fence on all eleven instruments (max difference
+    0.0000 pp).
+    Honest limits: every fee is the sourced 0.02% FLOOR, so the cheapest the
+    account can be and never the likeliest — the volume-tier ladder is
+    **unsourced after six attempts** and was not invented here either; the base
+    rate is a base rate, not a forecast, and is withheld (`--`) from the six
+    non-crypto contracts rather than borrowing the wrong distribution; and this
+    is a FEE statement, not an all-in one — the spread half does not follow the
+    break point, so R489/R494/R498's all-in figures stand as published with
+    their own sampling caveats.
+    **NO VERDICT WAS RE-INTERPRETED and none may be: R489's ranking and R494's
+    correction of it stand exactly as published; this attached a column.**
+    **Opens nothing.**
+
+23b. *(historical, the item as written, kept so the closure is readable)*
     *(new, opened by R493, and it is a BOOKKEEPING change, not a hypothesis.)*
     R493 showed that a CDE cost figure is not a constant: BTC PERP is 6% of
     price from paying more, XRP PERP is 6% from paying less, and on the pooled

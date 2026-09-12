@@ -7231,3 +7231,188 @@ Two follow-ups, queued as **items 31 and 32**:
   decay calibration in (3d) is a measured slope rather than a two-point
   ratio. **The fence stays R493's: no trade is modelled and a volatility
   number is not a candidate.**
+
+# R499 — TWO CONTRACTS CROSSED THE BREAK POINT IN SEVEN DAYS. THE COST TABLES NEVER SAID THEY COULD.
+
+**2026-09-12. Queue item 23. `step499_break_point_column.py`, full output in
+`step499_output.txt`. BOOKKEEPING, not a hypothesis. Research only, no orders,
+no account, no live file touched, imported or edited. NO LOOK CONSUMED, and
+none could be: `simulate()` is never called, no entry is built, no sweep is
+scanned, no stop is measured, and no return, expectancy, win rate, risk
+multiple or t-statistic is computed for any instrument. Every on-disk tape
+read stops at that instrument's own 80% boundary. NO VERDICT IN THIS LOG IS
+RE-INTERPRETED — R489's ranking and R494's correction of it stand exactly as
+published and this round attaches a column to them.**
+
+## What this round was for
+
+R493 showed that a Coinbase Derivatives cost figure is not a constant. The
+account pays `max(0.02% × notional, $0.15)` per contract per side (R486,
+primary-sourced), so the two branches cross at a notional of exactly **$750**,
+and because the exchange fixes contract size, **where a contract sits is a
+fact about the coin price.** R493 published that as a census. Item 23 asked
+for the consequence: put the break-point distance on the cost tables this desk
+actually reuses, restate R489's ranking with it attached, and write the rule.
+
+## The two reproduction controls, both exact
+
+- **R493's own fee column, recomputed from its own published notionals:** max
+  absolute error **0.000048 percentage points**. R493's census is parsed off
+  `step493_output.txt` rather than retyped, so the price drift below is
+  arithmetic on published numbers.
+- **R494's published median 1-minute move, recomputed behind the 80% fence on
+  all eleven ranked instruments:** max absolute difference **0.0000
+  percentage points**. The restatement is of R494's table and not a different
+  one. That volatility read is the only tape measurement in the round.
+
+## THE HEADLINE: the census moved in a week, and it moved by itself
+
+R493 quoted the desk's last full cost sheet on **2026-09-05**. Re-polled
+**2026-09-12 07:35 UTC**, with the venue's schedule unchanged, the method
+unchanged and no round in between touching either:
+
+| contract | R493 mark | today | move | R493 fee RT% | fee RT% now | crossed? |
+|---|---|---|---|---|---|---|
+| **BNB PERP** | 776.25 | 733.00 | −5.6% | 0.0400 | 0.0409 | **YES, floor → MIN** |
+| **ENA PERP** | 0.1710 | 0.1422 | −16.8% | 0.0400 | 0.0422 | **YES, floor → MIN** |
+| BTC PERP | 79,850 | 77,280 | −3.2% | 0.0400 | 0.0400 | no — **3.0% left** |
+| XRP PERP | 1.4220 | 1.3664 | −3.9% | 0.0422 | 0.0439 | no |
+| LINK PERP | 12.0730 | 11.5510 | −4.3% | 0.0497 | 0.0519 | no |
+| DOT PERP | 0.9190 | 1.0520 | +14.5% | 0.3264 | **0.2852** | no — 12.6% cheaper |
+| 1000SHIB PERP | 0.0055 | 0.0052 | −5.1% | 0.5445 | **0.5747** | no — 5.5% dearer |
+
+**Two of twenty-eight contracts changed fee branch in seven days**, and
+**every single MIN-side contract's cost percentage moved**, because a fixed
+$0.15 over a moving notional is a moving percentage. Nothing about the venue,
+the schedule or the method changed. This is item 23's premise arriving as an
+observation rather than an argument.
+
+**And the desk's flagship is closer than R493 said.** R493 published BTC PERP
+at **6% of price above the break**; it is now **3.0%**, notional $772.80
+against $750, with a pooled 90-day base rate of **49.6%**. BTC is also
+**already at its cap** — a contract paying the 0.04% floor cannot get cheaper
+on this venue at any price, so all of bitcoin's remaining cost improvement has
+to come from the spread.
+
+## R489's RANKING, RESTATED WITH THE COLUMN (fee-only read — the only pure price fact)
+
+The fee half follows the break point; the spread half does not. So the
+fee-only read is the one that restates cleanly, and it is also the sourced,
+sample-free one. `mult = median 1-min move / fee round trip`; `cap` is the
+best multiple this contract can ever have on this venue (the one it reaches at
+its break price and cannot beat).
+
+| # | instrument | contract | vol% | fee RT% | mult | *R494* | **cap** | break px | need | 90d | sealed |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | LINKUSD | LINK PERP | 0.1037 | 0.0519 | **2.00** | *2.12* | 2.59 | $15.00 | 1.30x | 23.6% | SPENT |
+| 2 | PAXGUSD | PAXG PERP | 0.0791 | 0.0400 | **1.98** | *1.98* | **1.98** | $750.00 | 0.17x | — | INTACT |
+| 3 | XRPUSD | XRP PERP | 0.0829 | 0.0439 | **1.89** | *1.96* | 2.07 | $1.50 | 1.10x | 37.3% | INTACT |
+| 4 | SOLUSD | SOL PERP | 0.1059 | 0.0590 | 1.80 | *1.88* | 2.65 | $150.00 | 1.47x | 16.3% | SPENT |
+| 5 | DOGEUSD | DOGE PERP | 0.1007 | 0.0709 | 1.42 | *1.51* | 2.52 | $0.15 | 1.77x | 8.7% | INTACT |
+| 6 | BTCUSD | BTC PERP | 0.0546 | 0.0400 | 1.37 | *1.37* | **1.37** | $75,000 | 0.97x | 49.6% | SPENT |
+| 7 | LTCUSD | LTC PERP | 0.0923 | 0.1115 | 0.83 | *0.84* | 2.31 | $150.00 | 2.79x | 2.2% | INTACT |
+| 8 | ETHUSD | ETH PERP | 0.0687 | 0.1189 | 0.58 | *0.57* | 1.72 | $7,500 | 2.97x | 1.9% | SPENT |
+| 9 | ADAUSD | ADA PERP | 0.0794 | 0.1440 | 0.55 | *0.58* | 1.98 | $0.75 | 3.60x | 1.2% | INTACT |
+| 10 | DOTUSD | DOT PERP | 0.0842 | 0.2852 | 0.30 | *0.27* | 2.10 | $7.50 | 7.13x | 0.0% | INTACT |
+| 11 | AVAXUSD | AVAX PERP | 0.0973 | 0.4032 | 0.24 | *0.25* | 2.43 | $75.00 | 10.08x | 0.0% | INTACT |
+
+**The ranking did not re-order and every multiple moved.** The order is R494's
+exactly; the levels are all different, and the difference is one week of coin
+prices with no re-measurement of anything. **The top three are now inside
+0.11 of each other** (2.00 / 1.98 / 1.89) where R494 published 2.12 / 1.98 /
+1.96 — and the two that moved are the two below the break, while PAXG, which
+is above it, did not move at all.
+
+## THE TOP-TWO FLIP IS ARITHMETIC ON THE COIN PRICE, AND HERE IS THE ARITHMETIC
+
+Below the break the fee-only multiple is **linear in the coin price**:
+
+```
+mult(px) = vol% × contract size × px / 30,   saturating at vol% / 0.04
+```
+
+So every pairwise ordering in the table above reverses at a price that is
+solvable in closed form. Against each intact instrument's current multiple:
+
+| A | catches B | B's multiple now | A's price to match | = move |
+|---|---|---|---|---|
+| **XRPUSD** | **PAXGUSD** | 1.98 | **$1.4319** | **+4.8%** |
+| DOGEUSD | PAXGUSD | 1.98 | $0.1179 | +39.3% |
+| DOGEUSD | XRPUSD | 1.89 | $0.1125 | +33.0% |
+| LTCUSD | DOGEUSD | 1.42 | $92.27 | +71.5% |
+| ADAUSD | LTCUSD | 0.83 | $0.3128 | +50.1% |
+
+**The top of R489's fee-only table is one ordinary week of XRP price from
+re-ordering.** A 4.8% rise in XRP puts it above gold; R489 and R494 both
+published it below. That is the item's question answered: the top-two flip
+R489 reported is **a price fact, not a spread-sample artifact** — and the
+same is true of the ordering underneath it.
+
+The `cap` column is the other half of the same point and it is new here.
+PAXG PERP's headroom is **+0.00** (it is above the break and cannot improve),
+BTC PERP's is **+0.00**, while XRP's is +0.18, DOGE's +1.10 and DOT's +1.81.
+**Two of the desk's cheapest contracts are at their permanent ceiling and the
+rest are below theirs by a price move.**
+
+## THE STANDING RULE — binding on every future round that quotes a CDE cost
+
+> A CDE cost figure is not a property of an instrument. The account pays
+> `max(0.02% × notional, $0.15)` per contract per side, so a contract whose
+> notional sits above $750 pays a flat 0.04% of price a round trip and one
+> below it pays a fixed number of dollars that becomes a **larger** percentage
+> the further the coin falls — hyperbolically, with no lower bound. Contract
+> size is fixed by the exchange; the coin price is not. **Therefore: any round
+> in this log that quotes a CDE round trip must state, in the same table, the
+> COIN PRICE it was quoted at, that contract's BREAK PRICE ($750 / contract
+> size), the RATIO the price must travel to cross it, and the pooled base rate
+> for a move that far.** A cost sheet without those four columns is a snapshot
+> being passed off as a constant. Two corollaries, both of which have already
+> bitten this desk: a contract already paying the 0.04% floor is **at its best
+> possible cost** and every further improvement must come from the spread
+> (BTC PERP, PAXG PERP); and the **ordering** of any fee-based ranking between
+> two below-break contracts is a statement about where their prices sat on the
+> day — it reverses at a computable price and reverses back. Re-run
+> `step493`/`step499` whenever prices have moved materially rather than citing
+> an old percentage (R486's own instruction, generalised).
+
+## Honest limits
+
+- **Every fee figure is the cheapest the account can be, never the likeliest.**
+  CFM's volume-tier ladder above the sourced 0.02% floor remains **unsourced
+  after six attempts** (R482, R486, R489, R493, R498, this round). None was
+  invented here either.
+- **The base-rate column is a base rate, not a forecast.** It is the pooled
+  distribution of forward price ratios across eleven Bybit-history coins, each
+  fenced at its own 80%, and it says how often a crypto coin-day historically
+  delivered a move that far in the direction the crossing needs. It says
+  nothing about which way any particular coin is going, and it is **not used
+  for the non-crypto contracts** — PAXG, US 500, TECH, AI, CHINA and DFNSE
+  show `--` rather than borrowing the wrong distribution (R493's rule, kept).
+- **This is a fee statement, not an all-in one.** The spread half of a cost
+  does not follow the break point, so only the fee-only read restates as a
+  pure price fact. The all-in figures in R489/R494/R498 stand as published
+  with their own sampling caveats.
+- **Costs decide nothing** (owner rule, 2026-07-25). Nothing above declines a
+  trade, gates a strategy or ranks an instrument for trading. It is a
+  bookkeeping column and a rule about how to write a cost down.
+
+## Looks consumed
+
+**NONE, and none could be.** `simulate()` was never called. No entry
+population was built on any instrument. No sweep was scanned, no break of
+structure detected, no fill modelled, no stop measured. No outcome, return,
+expectancy, win rate or risk multiple was computed for anything. Every on-disk
+tape read stops at its own 80% boundary, so **XRPUSD, DOGEUSD, AVAXUSD and
+DOTUSD's sealed slices are intact and unread**, and LINK's (R492), crypto's
+(R475) and the index's (R474) stay exactly as spent as they were. No order was
+placed, no account exists, no live file was touched or imported, and nothing is
+proposed for deployment.
+
+## What this closes and what it opens
+
+**Item 23 is CLOSED.** All three deliverables landed: the
+`break px / need / base rate` column exists and is attached to the ranking the
+desk reuses, the one-paragraph rule is written above, and R489's top-two flip
+is restated as the price fact it always was. **Nothing new is queued** — the
+round is bookkeeping and it generated no question it could not answer. The
+next unblocked item is **25** (restate R493's gold handoff on 850 days).
