@@ -1,0 +1,146 @@
+============================================================================================================
+ROUND 500 - RESTATE R493's GOLD HANDOFF ON 850 DAYS INSTEAD OF 118   (queue item 25)
+============================================================================================================
+run  2026-09-13 06:50 UTC
+A CORRECTION to a published coordinate. `simulate()` is never called; no entry population is
+scored; every tape read stops at its own 80% boundary; no look is consumed and none could be.
+Gold is NOT proposed for trading under any outcome of this file.
+
+============================================================================================================
+(0) REPRODUCTION CONTROLS - the tape moved, and here is the proof off the original bytes
+============================================================================================================
+R493/R489's 0.0467% is recomputed from `data_pre494/`, the exact file it was computed from,
+using step489's OWN `daily_vol` and `cut80`, imported unmodified. Nothing is retyped.
+
+  PRE-backfill  (R489/R493)
+    window            2026-03-01 -> 2026-07-25   (80% fence at 2026-06-26)
+    days behind fence 118
+    1m move, gap-clean median day   0.0467% of price
+    1m move, RAW median day         0.0447% of price
+    coverage          37.3% of calendar minutes, 535 bars/day
+    60s-adjacent pairs the gap-clean definition can use: 33,103 of 63,091 bars (52.5%)
+
+  POST-backfill (R494/R499)
+    window            2021-01-01 -> 2026-07-26   (80% fence at 2025-06-15)
+    days behind fence 850
+    1m move, gap-clean median day   0.0791% of price
+    1m move, RAW median day         0.1103% of price
+    coverage          17.8% of calendar minutes, 258 bars/day
+    60s-adjacent pairs the gap-clean definition can use: 155,828 of 230,990 bars (67.5%)
+
+  CONTROL 1 - R493 published 0.0467%; the pre-backfill bytes return 0.0467%  (diff 0.0000 pp)
+  CONTROL 2 - R494 published 0.0791%; today's bytes return 0.0791%  (diff 0.0000 pp)
+  CONTROL 3 - R494 published a RAW column of 0.1103%; today's bytes return 0.1103%  (diff 0.0000 pp)
+
+  The coordinate moved by +70% on tape alone: 118 days -> 850 days,
+  same code, same definition, same fence. R493's COST figure is untouched by any of this.
+
+============================================================================================================
+(1) PAXG PERP, RE-POLLED TODAY - a same-day all-in, with R499's break-point column attached
+============================================================================================================
+Seven polls twelve seconds apart, median carried (R489's discipline). A contract whose session
+is closed or whose book is stale is reported UNPRICED rather than quoted (R493's rule).
+
+  contract         24h $vol   size       mark   notional   break px    need  fee RT%  spread%  all-in RT%
+  PAXG PERP         366,097   1.00   4,358.30   4,358.30     750.00    0.17x  0.0400   0.0665      0.1065
+    spread samples n=7, lo 0.0528% hi 0.0757% - a one-minute snapshot, NOT R480's 24-hour clock
+    fee branch: FLOOR rate binds (0.02%/side) - the contract sits ABOVE the $750 break
+
+  Against R493 (2026-09-05): mark moved -1.7%, fee RT 0.0400% -> 0.0400%, spread 0.0406% -> 0.0665%, all-in 0.0806% -> 0.1065%.
+  PAXG PERP is 0.17x from the break - it is the contract R499 showed CANNOT get
+  cheaper on this venue at any price, so its fee half is a constant and only the spread moves.
+
+============================================================================================================
+(2) THE RESTATED HANDOFF - R493(b)'s gold paragraph, on 850 days instead of 118
+============================================================================================================
+
+  read                                1m move%   fee RT%   all-in%  mult fee-only  mult all-in
+  R493, as published (118d)             0.0467    0.0400    0.0806           1.17         0.58
+  R494 tape + R493 cost (850d)          0.0791    0.0400    0.0806           1.98         0.98
+  R500 tape + TODAY's cost (850d)       0.0791    0.0400    0.1065           1.98         0.74
+
+  R493's sentence was: "gold's median minute does not clear its own round trip" (0.58).
+  On the same cost and 7x the tape the all-in multiple is 0.98; on today's cost it is 0.74.
+  So gold's median minute STILL DOES NOT CLEAR its own all-in round trip, and clears the FEE HALF 1.98x over.
+  R493's COST figure is untouched and stands. The tape it was divided by does not.
+
+============================================================================================================
+(3) CAN A TENTH-FULL TAPE CARRY A COORDINATE AT ALL?  - the question the item says decides
+    how much the corrected number is worth
+============================================================================================================
+This is not answered by opinion. Take instruments whose 1-minute tape IS dense, measure the
+gap-clean coordinate on the full tape (the truth), then THIN THEM TO PAXG'S OWN PRESENCE
+PATTERN and re-measure with the identical code. If the thinned read comes back at the truth,
+a tenth-full tape carries the coordinate. If it comes back HIGH, PAXG's 0.0791% is an
+estimate of its ACTIVE minutes, not of its average minute, and the multiple is inflated.
+
+Two thinnings, because they answer different questions:
+  PAXG-MASK  - keep only the (day, minute-of-day) cells PAXG itself has a bar in. This is
+               thin AND selective: gold on a crypto venue prints when it trades.
+  RANDOM     - keep the same NUMBER of bars per day, chosen uniformly at random (seed 500).
+               Thin but NOT selective. The gap between the two columns is the selection
+               effect; the gap between RANDOM and FULL is the thinness effect.
+
+  donor        days    cov%     FULL  PAXG-MASK   x FULL   RANDOM   x FULL  mask cov%
+  BTCUSD       1627    89.0   0.0546     0.0674     1.23x   0.0599    1.10x       17.8
+  DOGEUSD      1627    82.3   0.1007     0.1302     1.29x   0.1168    1.16x       16.9
+  LTCUSD       1627    72.9   0.0923     0.1189     1.29x   0.1116    1.21x       16.2
+  AVAXUSD      1370    82.0   0.0973     0.1300     1.34x   0.1113    1.14x       19.5
+
+  PAXG-MASK inflation across 4 donors: 1.23x - 1.34x, median 1.29x
+  RANDOM    inflation across 4 donors: 1.10x - 1.21x, median 1.15x
+
+  IMPLIED CORRECTION, applied to gold's own number: 0.0791% / 1.29 = 0.0613% of price
+  and the all-in multiple with it: 0.74 -> 0.58
+  That division is INDICATIVE, not a measurement of gold - it is the size of the bias the
+  same mask puts on instruments whose truth is known. It is printed so the reader can see
+  which side of 1.0 the corrected multiple lands on, not so anybody can quote it as gold's.
+
+============================================================================================================
+(4) GLD AND IAU - THE FIRST `stop/vol` READING EITHER HAS EVER HAD ON THIS DESK
+============================================================================================================
+step489's OWN `structural_stops`, `daily_vol` and `cut80`, imported and called unmodified,
+behind each instrument's own 80% boundary. NO OUTCOME IS READ - `simulate()` is not called and
+cannot be reached from `structural_stops`. PAXGUSD and BTCUSD ride along as reproduction
+controls: if they do not return R494's published 3.79 and 3.83, the two new rows mean nothing.
+
+Neither GLD nor IAU has ever had an entry population built on it by any round in this log,
+so no slice is spent by reading a stop distance on them.
+
+  instrument   entries   days  stopmed%  vol%med  stop/vol     p25     p75  note
+  GLD              875     81    0.1318   0.0333      3.79    2.03    5.95  NEW - first reading, equity gold
+  IAU              754     81    0.2028   0.0358      4.87    2.43    9.52  NEW - first reading, equity gold
+  PAXGUSD         8462    756    0.3064   0.0834      3.79    1.93    6.91  control - R494 published 3.79
+  BTCUSD         26771   1627    0.2054   0.0545      3.83    2.34    5.99  control - R494 published 3.83
+
+  CONTROL - PAXGUSD returns 3.79 against R494's published 3.79 (diff 0.00)
+  CONTROL - BTCUSD  returns 3.83 against R494's published 3.83 (diff 0.00)
+
+  R494's nine crypto instruments span 3.54-4.50. Where the two equity-gold rows land:
+    GLD      3.79   INSIDE the crypto band
+    IAU      4.87   OUTSIDE it, above
+
+  These are the last two instruments on this disk that could have shown the ratio departing
+  from 3.5-4.5 off crypto-like tape (R494). Read the day counts above before deciding how
+  much a departure would be worth: R494's own lesson was that a ~100-day population is not
+  enough tape to read this ratio, and it is the reason R489's 13.35 evaporated.
+
+============================================================================================================
+(5) WHAT THE GOLD SPECIALIST IS ACTUALLY HANDED
+============================================================================================================
+  COST      PAXG PERP, 0.1065% of price a round trip all-in, 0.0400% of it fee.
+            Sourced, live, today, CFTC-regulated venue, crypto calendar. R493's figure stands.
+  TAPE      PAXGUSD 1-minute, 850 days behind the 80% fence, gap-clean median day
+            0.0791% of price. R493 was handed 0.0467% off 118 days. The tape moved, not the cost.
+  MULTIPLE  0.74 all-in, 1.98 fee-only. R493 handed over 0.58.
+  CAVEAT    the tape underneath it is 17.8% full - 258 bars a day out of 1,440 - and
+            it is the only 24/7 crypto row where gap-clean (0.0791%) and raw (0.1103%) disagree.
+  NOT A PROPOSAL. No entry population was built on gold in this round or any other. Nothing
+  here says the method works on gold; it says what a minute of gold is worth against what a
+  round trip on gold costs, which is the entry ticket to the question, not an answer to it.
+
+============================================================================================================
+LOOKS CONSUMED: NONE, and none could be. `simulate()` was never called. No return, expectancy,
+win rate, risk multiple or t-statistic was computed for any instrument. Every tape read stops
+at its own 80% boundary. No sealed slice was touched. No candidate is proposed.
+============================================================================================================

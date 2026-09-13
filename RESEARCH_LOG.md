@@ -7416,3 +7416,243 @@ desk reuses, the one-paragraph rule is written above, and R489's top-two flip
 is restated as the price fact it always was. **Nothing new is queued** — the
 round is bookkeeping and it generated no question it could not answer. The
 next unblocked item is **25** (restate R493's gold handoff on 850 days).
+
+---
+
+# R500 — THE GOLD COORDINATE WAS NEVER READABLE. NEITHER THE OLD ONE NOR THE CORRECTION.
+
+**2026-09-13. Queue item 25. `step500_gold_coordinate_restated.py`, full
+output in `step500_output.txt`; an earlier same-day run of the identical file,
+kept for its second spread sample, in `step500_output_run1.txt`. A CORRECTION
+to a published coordinate, not a hypothesis. Research only, no orders, no
+account, no live file touched, imported or edited. NO LOOK CONSUMED, and none
+could be: `simulate()` is never called, no entry population is scored, and no
+return, expectancy, win rate, risk multiple or t-statistic is computed for any
+instrument. Every tape read stops at that instrument's own 80% boundary.**
+
+## What this round was for
+
+Item 25, opened by R494. R493 handed the gold specialist the first sourced US
+perpetual cost gold has ever had here — PAXG PERP, 0.0806% all-in — and killed
+the obvious next thought with it: paired with PAXG's own 1-minute tape the
+R488 multiple read **0.58, "gold's median minute does not clear its own round
+trip."** That used 118 days. R494 backfilled the file to 2,033 days and the
+same code returned **0.0791% instead of 0.0467%**, a fee-only multiple of 1.98
+and second place among intact instruments. The item asked for the handoff to
+be restated on the longer tape, for a same-day book re-poll, and — the clause
+that turned out to matter — for a plain answer to **whether a tenth-full tape
+can carry a coordinate at all.**
+
+## The three reproduction controls, all exact
+
+Computed off the pre-backfill bytes in `data_pre494/`, not retyped, using
+step489's own `daily_vol` and `cut80` imported unmodified.
+
+- **R493/R489's 0.0467%** recomputes to **0.0467%** — diff 0.0000 pp.
+- **R494's 0.0791%** recomputes to **0.0791%** — diff 0.0000 pp.
+- **R494's raw column 0.1103%** recomputes to **0.1103%** — diff 0.0000 pp.
+- And in part (4), **PAXGUSD returns stop/vol 3.79 and BTCUSD 3.83**, R494's
+  published pair to the digit, which is what licenses the two new rows.
+
+## (1) THE BOOK, RE-POLLED TODAY
+
+| contract | 24h $vol | size | mark | notional | break px | need | fee RT% | spread% | **all-in RT%** |
+|---|---|---|---|---|---|---|---|---|---|
+| PAXG PERP | $366,097 | 1.00 | 4,358.30 | $4,358.30 | $750.00 | 0.17x | 0.0400 | 0.0482 | **0.0882** |
+
+Seven polls twelve seconds apart, median carried. **R493's cost figure stands
+and this round does not disturb it.** The mark moved −1.7% in eight days, the
+contract is still far above the $750 break so **the fee half is a constant**
+(R499's rule: PAXG PERP is one of the two contracts that cannot get cheaper on
+this venue at any price), and every bit of the movement is spread.
+
+**The spread is noisier than one sample admits, and this round accidentally
+measured that.** The identical file was run twice today, about ninety minutes
+apart: **0.0665% and 0.0482%**, all-in 0.1065% and 0.0882%. Both are
+seven-poll medians. That 38% swing inside one day is the size of the sampling
+noise R480's 24-hour clock exists to remove, and it is why the multiples below
+are quoted to two digits and not three.
+
+## (2) THE RESTATEMENT THE ITEM ASKED FOR
+
+| read | 1m move% | fee RT% | all-in% | mult fee-only | mult all-in |
+|---|---|---|---|---|---|
+| R493, as published (118d) | 0.0467 | 0.0400 | 0.0806 | 1.17 | **0.58** |
+| R494 tape + R493 cost (850d) | 0.0791 | 0.0400 | 0.0806 | 1.98 | 0.98 |
+| R500 tape + today's cost (850d) | 0.0791 | 0.0400 | 0.0882 | 1.98 | 0.90 |
+
+Taken at face value that is the item's deliverable and it would end here. It
+does not, because of part (3).
+
+## (3) THE ITEM'S OWN QUESTION, ANSWERED BY MEASUREMENT: **NO.**
+
+The question was whether a tenth-full tape can carry a coordinate. That is not
+answered by opinion, so it was answered by experiment. Take four instruments
+whose 1-minute tape IS dense, measure the gap-clean coordinate on the full
+tape behind the 80% fence — that is the truth — then **thin them to PAXG's own
+presence pattern** (keep only the day × minute-of-day cells PAXG itself has a
+bar in) and re-measure with the identical code. A second thinning keeps the
+same number of bars per day chosen **uniformly at random** (seed fixed before
+any number existed), which is thin but not selective, so the two columns
+separate thinness from selection.
+
+| donor | days | cov% | FULL | PAXG-MASK | ×FULL | RANDOM | ×FULL |
+|---|---|---|---|---|---|---|---|
+| BTCUSD | 1627 | 89.0 | 0.0546 | 0.0674 | **1.23x** | 0.0599 | 1.10x |
+| DOGEUSD | 1627 | 82.3 | 0.1007 | 0.1302 | **1.29x** | 0.1168 | 1.16x |
+| LTCUSD | 1627 | 72.9 | 0.0923 | 0.1189 | **1.29x** | 0.1116 | 1.21x |
+| AVAXUSD | 1370 | 82.0 | 0.0973 | 0.1300 | **1.34x** | 0.1113 | 1.14x |
+
+**Four for four, in the same direction, tightly: 1.23x–1.34x, median 1.29x.**
+Random thinning at the same density inflates 1.10x–1.21x, median 1.15x — so
+roughly **half the bias is thinness itself and half is the activity-selective
+shape of PAXG's gaps.** Gold on a crypto venue prints when it trades, and the
+minutes that survive to be 60-seconds-adjacent are disproportionately the busy
+ones. The gap-clean definition protects the coordinate from counting a HOLE as
+a move; it does nothing about the coordinate being conditioned on activity.
+
+## (3b) AND THEN THE PREMISE OF THE ITEM ITSELF DID NOT SURVIVE
+
+Two facts nobody had checked, both free, both on disk.
+
+**FIRST: the two coordinates share zero bars.** R493's window behind its own
+fence is **2026-03-01 → 2026-06-26**. The backfilled file's 80% fence lands at
+**2025-06-15**, so R494's window is **2021-01-01 → 2025-06-15** — it ends
+before R493's begins. **Overlap: 0 bars.** The "correction" is not a longer
+read of the same tape. It is a disjoint read of a different era, and the two
+numbers were never a short version and a long version of one thing.
+
+**SECOND: PAXG's 1-minute tape is not continuous, and the fence sits inside
+the hole.**
+
+    2021-01 -> 2023-06    897 days   230,990 bars   17.8% full   258/day   gap-clean 0.0791%   (behind the fence)
+    HOLE   2023-06 -> 2026-02        31 months with no 1-minute bar at all
+    2026-02 -> 2026-07    165 days    80,302 bars   33.9% full   487/day   gap-clean 0.0485%   (spans/after the fence)
+
+So the 850 days behind the fence are **entirely 2021–mid-2023**, and R494's
+"10.6% coverage" is a whole-file figure; **behind the fence, where the
+coordinate is actually computed, it is 17.8% and 258 bars a day** — which is
+also a correction to the caveat the queue item asked to be attached.
+
+**And inside gold's own file the bias is visible directly.**
+
+| year | days | bars | cov% | bars/day | gap-clean% | raw% |
+|---|---|---|---|---|---|---|
+| 2021 | 365 | 65,651 | 12.5 | 180 | 0.0889 | 0.1013 |
+| 2022 | 365 | 31,337 | **6.0** | 86 | 0.0780 | 0.1242 |
+| 2023 | 167 | 134,002 | **54.9** | 802 | **0.0383** | 0.0670 |
+
+**Correlation between coverage and the coordinate across the three years:
+−0.95.** The years with the least tape read the largest minute, which is the
+same direction and roughly the same size as the donor experiment measured on
+instruments whose truth is known. **R494's 0.0791% is a weighted average of
+two years at 6–12% coverage; it is a statement about gold's ACTIVE minutes.**
+
+## THE HEADLINE
+
+> **The 0.58 was unreadable rather than wrong — and so is the 1.98 that
+> replaced it.** Every PAXG coordinate this desk has published rests on tape
+> between 6% and 37% full, in a regime measured here to read 1.23x–1.34x high.
+> The item anticipated this outcome for R493's number and asked for it to be
+> said plainly; the run says it about R494's correction too.
+
+**The one PAXG figure on this disk that is not mostly an artifact of absent
+tape is the densest block, 2023: 54.9% full, 802 bars a day, gap-clean
+0.0383% of price on 167 days.** It is LOWER than both published coordinates.
+Paired with today's all-in it gives a multiple of **0.43**.
+
+## THE CORRECTED HANDOFF TO THE GOLD SPECIALIST
+
+- **COST — unchanged and sourced.** PAXG PERP, **0.0882% all-in today**
+  (0.0400% fee, 0.0482% spread), CFTC-regulated venue, crypto calendar. Fee
+  half is a constant above the $750 break; only the spread moves, and it moved
+  38% between two runs ninety minutes apart.
+- **TAPE — three numbers, not one, because the honest answer is a range.**
+
+| read | tape quality | 1m move% | mult all-in (today) |
+|---|---|---|---|
+| R493 as published | 118d, 37.3% full, 2026 | 0.0467 | 0.53 |
+| R494's 850d correction | 850d, 17.8% full, 2021-23 | 0.0791 | 0.90 |
+| **gold's densest block** | **167d, 54.9% full, 2023** | **0.0383** | **0.43** |
+| donor-implied de-biasing of R494's | indicative only | 0.0613 | 0.69 |
+
+- **Fee-only, which is sample-free and the only pure price fact: 1.98.**
+  R499's ranking put PAXG second on that read and **this round does not
+  disturb the ranking** — it disturbs the numerator's reliability, which
+  affects every row in that table that rests on a sparse tape, and PAXG is the
+  sparsest by a distance.
+- **The single sentence the specialist should carry: on every read this disk
+  supports, gold's median minute is between 0.43 and 0.90 of its own all-in
+  round trip, and not one of those reads is taken on tape more than half
+  full.** The fee half is cleared roughly twice over; the spread half is what
+  gold cannot clear.
+
+## (4) GLD AND IAU — THE FIRST `stop/vol` EITHER HAS EVER HAD
+
+step489's own `structural_stops`, `daily_vol` and `cut80`, imported and called
+unmodified, behind each instrument's own 80% boundary, with two controls that
+reproduce exactly. **Neither instrument has ever had an entry population built
+on it by any round in this log, so nothing is spent by reading a stop
+distance on them.**
+
+| instrument | entries | days | stopmed% | vol%med | stop/vol | p25 | p75 |
+|---|---|---|---|---|---|---|---|
+| **GLD** | 875 | **81** | 0.1318 | 0.0333 | **3.79** | 2.03 | 5.95 |
+| **IAU** | 754 | **81** | 0.2028 | 0.0358 | **4.87** | 2.43 | 9.52 |
+| PAXGUSD *(control)* | 8462 | 756 | 0.3064 | 0.0834 | 3.79 | 1.93 | 6.91 |
+| BTCUSD *(control)* | 26771 | 1627 | 0.2054 | 0.0545 | 3.83 | 2.34 | 5.99 |
+
+**GLD lands at 3.79, dead inside R494's nine-instrument crypto band
+(3.54–4.50). IAU lands at 4.87, just outside it, above.**
+
+**Read both under R494's own lesson and neither is a finding.** Each rests on
+**81 days** — fewer than the 101 that produced R489's 13.35, the number that
+evaporated on more tape and is the whole reason this item exists. The two
+equity-gold instruments were the last candidates on this disk that could have
+shown the ratio departing from 3.5–4.5 off crypto-like tape; **GLD says it
+does not, IAU hints that it might, and 81 days cannot tell those two apart.**
+The honest statement is that **the ratio has still never been caught moving,
+and the two instruments that could have caught it arrived too short to try.**
+Their 1-minute tape begins 2026-03-02 at this vendor; a longer read is a data
+question, not a research one, and is queued.
+
+## Honest limits
+
+- **The de-biasing factor is INDICATIVE and is not a measurement of gold.**
+  1.29x is what PAXG's presence mask does to four crypto instruments. Gold's
+  own intraday activity profile is not those four, and the correction is
+  printed so the reader can see which side of 1.0 the multiple lands on, not
+  so anybody can quote 0.0613% as gold's coordinate.
+- **The spread is a seven-poll snapshot, twice over, not R480's 24-hour
+  clock** — and this round is the first in the log to publish two same-day
+  samples of the same book, which is why the noise is quotable at all.
+- **`data_pre494/` is a backup of the pre-backfill bytes, not an independent
+  source.** Control 1 proves the code and the window reproduce; it does not
+  independently verify Alpaca's 2026 tape.
+- **GLD/IAU stop distances come from the UTC-stamped parquets via `prep()`
+  while their volatility comes from the ET-stamped ones the screen's UNIVERSE
+  names.** The two differ only in day labelling, which moves a per-day median
+  by a rounding error; it is recorded because the files are not the same file.
+- **Nothing here says the method works on gold, on any venue, at any cost.**
+  No entry population was scored anywhere in this round.
+
+## Looks consumed
+
+**NONE, and none could be.** `simulate()` was never called. No return,
+expectancy, win rate, risk multiple or t-statistic was computed for any
+instrument. Every tape read stops at its own 80% boundary, so **XRPUSD's final
+20% and every other INTACT slice remain unread and unspent**, and GLD and IAU
+enter this log with their slices whole. No spent slice was touched or argued
+to be reset. No candidate is proposed. No order was placed, no account was
+created, no live file was touched, imported or edited.
+
+## What this opens
+
+Three, queued as items 33, 34 and 35. **The tape-density bias is not gold's
+problem alone** — R489/R494/R499's whole ranking divides by a gap-clean
+coordinate, and the donor experiment says that coordinate is inflated wherever
+coverage is low, so the ranking needs a coverage column and a sensitivity read
+before any future round spends a look off it. **PAXG's 31-month hole should be
+probed at the vendor** the way R494 probed ADA, because if the tape exists the
+gold coordinate becomes readable for the first time. And **GLD/IAU need more
+than 81 days** before their ratio means anything.

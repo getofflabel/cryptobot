@@ -1327,32 +1327,73 @@ Rules (non-negotiable, they are why anything here can be trusted):
     HALVED.** Not a better signal, not more tape, not another instrument.
     See item 30 — the one candidate lever with evidence behind it.
 
-25. **RESTATE R493's GOLD HANDOFF ON 850 DAYS INSTEAD OF 118.**
-    *(new, opened by R494, and it is a CORRECTION, not a hypothesis.)*
-    R493 gave the gold specialist the first sourced US perpetual cost gold has
-    ever had here — **PAXG PERP, 0.0806% all-in** — and killed the obvious next
-    thought with it: paired with PAXG's own 1-minute tape the R488 multiple
-    read **0.58, "gold's median minute does not clear its own round trip."**
-    That pairing used **118 days**. On the 850 now on disk PAXG's 1-minute move
-    reads **0.0791% instead of 0.0467%, and the fee-only multiple is 1.98 —
-    second among every intact instrument on the disk, ahead of XRP.** R493's
-    cost figure is untouched and stands; the tape it was divided by does not.
-    Deliverable, arithmetic on numbers already published plus tape already on
-    disk: restate R493(b)'s gold paragraph with the 850-day coordinate,
-    re-poll PAXG PERP's book for a same-day all-in, and hand the corrected
-    pair to the gold specialist with **the caveat that decides how much it is
-    worth: PAXG's 1-minute coverage is 10.6% — about 153 bars a day out of
-    1,440 — and it is the only 24/7 crypto row where the gap-clean and raw
-    volatility columns disagree (0.0791% vs 0.1103%).** Say plainly whether a
-    tenth-full tape can carry a coordinate at all, and if the answer is no,
-    the correction is that **the 0.58 was unreadable rather than wrong.**
-    While there, give **GLD and IAU their first `stop/vol` reading** — they
-    have never had one, and after R494 they are the only instruments left on
-    this disk that could still show the ratio departing from 3.5-4.5 off
-    crypto-like tape.
-    **THE FENCE:** first 80% only. No entry population is scored, `simulate()`
-    is not called, no look, no candidate. This corrects a coordinate; it does
-    not propose trading gold.
+25. ~~**RESTATE R493's GOLD HANDOFF ON 850 DAYS INSTEAD OF 118.**~~
+    **DONE — R500, 2026-09-13. No look consumed.** All four deliverables
+    landed, three controls reproduced to the digit (0.0467%, 0.0791%, 0.1103%,
+    plus stop/vol 3.79 and 3.83), **and the item's own premise did not survive
+    the run.**
+    **THE ANSWER TO THE QUESTION THE ITEM SAID WOULD DECIDE IT IS NO.** Laid
+    over four instruments whose dense-tape truth is known, PAXG's own presence
+    mask inflates the gap-clean coordinate **1.23x–1.34x, median 1.29x**, four
+    for four in the same direction; random thinning at the same density
+    inflates 1.15x, so **half the bias is thinness and half is the
+    activity-selective shape of the gaps.** Inside gold's own file the
+    coverage-to-coordinate correlation across years is **−0.95**.
+    **So the 0.58 was UNREADABLE RATHER THAN WRONG — and so is the 1.98 that
+    replaced it.** Two facts nobody had checked: R493's window
+    (2026-03 → 2026-06) and R494's (2021-01 → 2025-06) **share ZERO bars**, so
+    the "correction" is a disjoint read of a different era, not a longer read
+    of the same tape; and **PAXG's 1-minute tape has a 31-month hole**
+    (2023-06 → 2026-02) with the 80% fence sitting inside it. R494's "10.6%
+    coverage" is a whole-file figure — **behind the fence it is 17.8%, 258 bars
+    a day**, and the 850 days are entirely 2021–mid-2023 at 6–12% coverage.
+    **The one PAXG figure on this disk not mostly an artifact of absent tape is
+    the densest block, 2023: 54.9% full, 802 bars/day, gap-clean 0.0383% —
+    LOWER than both published coordinates.**
+    **The corrected handoff, and it is a range, not a number:** PAXG PERP
+    **0.0882% all-in today** (0.0400% fee — a constant above the $750 break —
+    and 0.0482% spread; R493's cost figure stands untouched). Gold's median
+    minute is **between 0.43 and 0.90 of its own all-in round trip on every
+    read this disk supports, none of them on tape more than half full.**
+    Fee-only is **1.98** and R499's ranking is not disturbed. Also first in the
+    log: **two same-day seven-poll samples of the same book, 0.0665% and
+    0.0482%** — a 38% swing in ninety minutes, which is why the multiples are
+    quoted to two digits.
+    **GLD and IAU got their first stop/vol: 3.79 and 4.87** — GLD dead inside
+    R494's 3.54–4.50 crypto band, IAU just above it — **and neither is a
+    finding**, because both rest on **81 days**, fewer than the 101 that
+    produced R489's 13.35 before it evaporated. The two instruments that could
+    have caught the ratio moving arrived too short to try, so **the ratio has
+    still never been caught moving.**
+    **Item 32 asked for exactly this bias to be quantified on its own tape and
+    now has a donor-side number to calibrate against: 1.29x at PAXG-like
+    coverage, ~1.15x from thinness alone.**
+
+33. **THE TAPE-DENSITY BIAS IS NOT GOLD'S PROBLEM. IT IS UNDER THE WHOLE
+    RANKING.**
+    *(new, opened by R500, and it is a CORRECTION to a table the desk reuses,
+    not a hypothesis. Top of the queue on purpose: R489/R494/R499's ranking is
+    the thing every future spending round would read.)*
+    R500 measured what a sparse tape does to the gap-clean 1-minute
+    coordinate: **1.23x–1.34x inflation at PAXG-like coverage, four donors for
+    four, and ~1.15x from thinness alone with the selection effect removed.**
+    Every row of R489/R494/R499's ranking divides a cost by that same
+    coordinate, and the eleven instruments do **not** share a coverage level —
+    R494 published 10.6% to 81.3% across them. **A ranking whose numerator is
+    biased by a factor that varies 1.0x to 1.3x row by row is not a ranking
+    yet.**
+    Deliverable: attach a **COVERAGE column** to the R499 table for all eleven
+    instruments (behind each one's own 80% fence, not whole-file — R500 showed
+    those differ by a factor of 1.7 on PAXG alone), then re-rank twice: once as
+    published, and once with each instrument's coordinate **de-biased by the
+    donor curve measured at its own coverage level**. Report which orderings
+    survive and which are artifacts of tape density. Where an instrument's
+    coverage is too low to carry a coordinate at all, **say the number is
+    unreadable rather than inventing a correction** — item 25's rule, now
+    binding.
+    **THE FENCE:** R493's, unchanged. `simulate()` is never called, no entry
+    population is scored, no sealed slice is read, no look, no candidate. This
+    corrects a table; it does not select anything off it.
 
 26. **A CONCLUSION BAKED INTO A PRINT STATEMENT OUTLIVED ITS MEASUREMENT.
     FIND THE OTHERS.**
@@ -1860,6 +1901,50 @@ minutes), R² 0.9991 — a 60x coarser trigger buys a 4.87x wider stop.**
     **THE FENCE:** R493's, unchanged. `simulate` is never called, no trade is
     modelled, no entry population is scored, and a volatility number is not a
     candidate. No look.
+
+34. **PROBE THE 31-MONTH HOLE IN GOLD'S TAPE THE WAY R494 PROBED ADA.**
+    *(new, opened by R500. Cheap, and it is the only thing that could make the
+    gold coordinate readable for the first time.)*
+    R500 found PAXGUSD's 1-minute tape runs 2021-01 → 2023-06, then **31
+    months with no bar at all**, then 2026-02 → 2026-07. The 80% fence lands
+    inside the hole, which is why the "850-day" coordinate is entirely
+    2021–2023 tape at 6–12% coverage. **Nobody has asked the vendor whether
+    those months exist.** R494 established the probe: request from a date
+    before the gap and read what the first returned bar actually is, which is
+    how ADA was correctly reported as a vendor limit rather than a coin fact.
+    Deliverable: probe Alpaca for PAXGUSD 1m across 2023-07 → 2026-01, report
+    whether the tape exists, and if it does, backfill it under R494's six
+    fences **unchanged** (backward only, capped at the 2026-07-26 corpus
+    boundary, atomic writes, superseded files preserved, never write a shorter
+    frame over a longer one). Then and only then restate the gold coordinate.
+    If the months do not exist, **the finding is that gold's coordinate on this
+    disk is permanently unreadable at 1 minute**, and that is worth writing
+    down once so no future round re-derives it.
+    **THE FENCE:** PLUMBING. PAXGUSD only. No spent instrument is fetched or
+    re-windowed. No entry population is scored, `simulate()` is never called,
+    no look, no candidate. Backfilling tape does not unspend a slice.
+
+35. **GLD AND IAU ARRIVED WITH 81 DAYS. GET THEM MORE BEFORE ANYONE READS
+    THEIR RATIO.**
+    *(new, opened by R500, and it is DATA, not a hypothesis. Lowest of the
+    three.)*
+    R500 gave GLD and IAU their first stop/vol — **3.79 and 4.87** — and then
+    said plainly that neither is a finding, because both rest on **81 days**,
+    fewer than the 101 that produced R489's 13.35 before 756 days erased it.
+    They are the last two instruments on this disk that could show the ratio
+    departing from 3.5–4.5 off crypto-like tape, and right now they cannot
+    settle it either way. Their 1-minute tape begins 2026-03-02 at this vendor
+    and the 5-minute begins 2025-09-02, so **more 1-minute history plausibly
+    exists.**
+    Deliverable: probe and backfill GLD/IAU 1-minute under R494's six fences,
+    report coverage per instrument (equity-session tape is dense inside the
+    session and empty outside it, so the R500 bias applies differently and the
+    round must say how), and **only then** re-read the ratio. Carry PAXGUSD
+    and BTCUSD as reproduction controls the way R500 did.
+    **THE FENCE:** PLUMBING plus one stop-distance read. No entry population is
+    scored, `simulate()` is never called, no outcome is read, no look, no
+    candidate. Neither instrument has ever had a population built on it, and
+    this item must not be the round that changes that.
 
 ## STANDING RULE (R89/R100/R170/R190): TRANSFER IS PART OF VALIDATION
 Single-asset sealed tests do not catch asset-specific overfitting. Any
