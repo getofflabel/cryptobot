@@ -1369,7 +1369,42 @@ Rules (non-negotiable, they are why anything here can be trusted):
     now has a donor-side number to calibrate against: 1.29x at PAXG-like
     coverage, ~1.15x from thinness alone.**
 
-33. **THE TAPE-DENSITY BIAS IS NOT GOLD'S PROBLEM. IT IS UNDER THE WHOLE
+33. ~~**THE TAPE-DENSITY BIAS IS NOT GOLD'S PROBLEM. IT IS UNDER THE WHOLE
+    RANKING.**~~
+    **DONE — R501, 2026-09-14. No look consumed.** All three deliverables
+    landed, and the item's own model of the bias did not survive contact.
+    **THE COVERAGE COLUMN EXISTS**, behind each instrument's own 80% fence:
+    the eleven rows span **17.8% (PAXG) to 90.6% (ETH) full**, a factor of
+    5.1. Ten of eleven are within 4% of R494's whole-file figure; **only
+    PAXG's differs, and it is 17.8% and not the 10.6% the caveat carries.**
+    **THE ITEM ASKED FOR A DONOR CURVE IN COVERAGE. THERE ISN'T ONE.** Six
+    donors thinned to ten coverage levels by keeping a random share of each
+    day's bars move the coordinate **0.892x–1.001x from 80% full down to 5%
+    full** — a tape missing at random carries the gap-clean coordinate intact,
+    and at the extreme biases DOWN. Coverage does not predict the bias.
+    **WHAT DOES: gaps sitting where the market is quiet — and every row has
+    them.** Each instrument's own presence pattern transplanted onto donors
+    whose truth is known inflates by **1.036x–1.144x, median 1.071x, on ten of
+    eleven rows, with BTC at 89.0% full biased 1.067x and ETH at 90.6% biased
+    1.053x — as much as PAXG at 17.8% (1.128x).** The bias is real, it is on
+    the densest tape this desk owns, and **every published multiple in
+    R489/R494/R499 is ~7% too high in level.**
+    **THE RANKING SURVIVES, AND THE MECHANISM IS THAT THE BIAS IS COMMON:**
+    **44 of 45 pairwise orderings hold (98%). One reverses — XRPUSD over
+    SOLUSD (1.89/1.80 → 1.65/1.73)** — because those two sit at the two ends
+    of the common band and were adjacent. Identical ordering on R499's frozen
+    fee column and on today's live poll, so the flip is about tape, not price.
+    **PAXG is SPLIT and the round refuses to resolve it**: 1.272x on R500's
+    estimator (UNREADABLE, **R500's call stands**) and 1.128x once the ERA is
+    held fixed. The 1.127x between them is calendar, not density — see new
+    item 36. **ADA is NOT MEASURABLE, a different state from unreadable**: no
+    donor's fenced tape reaches its 2026 window, so nothing was borrowed for
+    it and its row is dropped rather than corrected — see new item 37.
+    Reproduction controls all exact: R499's vol column to 0.0000 pp on all
+    eleven, R500's four donor figures to 0.00x.
+
+33x. *(historical, the item as written, kept so the closure is readable)*
+    **THE TAPE-DENSITY BIAS IS NOT GOLD'S PROBLEM. IT IS UNDER THE WHOLE
     RANKING.**
     *(new, opened by R500, and it is a CORRECTION to a table the desk reuses,
     not a hypothesis. Top of the queue on purpose: R489/R494/R499's ranking is
@@ -1394,6 +1429,58 @@ Rules (non-negotiable, they are why anything here can be trusted):
     **THE FENCE:** R493's, unchanged. `simulate()` is never called, no entry
     population is scored, no sealed slice is read, no look, no candidate. This
     corrects a table; it does not select anything off it.
+
+36. **THE ROWS OF THAT RANKING COME FROM DIFFERENT ERAS AND NOBODY HAS EVER
+    CONTROLLED FOR IT.**
+    *(new, opened by R501, and it is the SAME SHAPE as item 33: a correction
+    to a table the desk reuses, not a hypothesis. It is what item 33 found
+    underneath the thing item 33 was looking for.)*
+    R501 measured a row's density bias two ways — against a donor's whole
+    fenced window (R500's `xALL`) and against the donor's coordinate **on the
+    same days** (`xSAME`). The gap between them is pure calendar, and it is
+    **1.127x on PAXG and 1.082x on SOL — the same order of magnitude as the
+    density bias R501 just divided out.** It is also the whole of PAXG's
+    SPLIT verdict: gold reads UNREADABLE on one estimator and correctable on
+    the other purely because its window is a more volatile era.
+    The eleven fenced windows run **2021-01 → 2023-06 (PAXG), 2024-01 →
+    2026-01 (XRP), 2026-02 → 2026-06 (ADA, 132 days), 2021-01 → 2025-06
+    (five of them)** and the ranking compares their coordinates as though
+    they were contemporaneous. They are not.
+    Deliverable: for each of the eleven, measure the coordinate of a COMMON
+    dense reference over that row's own window and over the pooled window,
+    and publish the era factor as its own column. Then state the ranking a
+    third time, era-controlled, and report which of R501's 44 surviving
+    orderings survive THAT. Where a row's window has no overlap with the
+    reference at all, **say the era factor is unmeasurable rather than
+    inventing one** — item 25's rule, and R501 has already hit this case on
+    ADA.
+    **THE FENCE:** R493's, unchanged. `simulate()` is never called, no entry
+    population is scored, no sealed slice is read — the donors' final 20%
+    included — no look, no candidate. This corrects a table; it does not
+    select anything off it.
+
+37. **ADA'S GAP SHAPE CANNOT BE TRANSPLANTED BECAUSE NO DENSE TAPE ON THIS
+    DISK REACHES 2026.**
+    *(new, opened by R501. A DATA question, not a research one — the same
+    shape as item 35, and lower priority than 36.)*
+    R501 could de-bias ten of the eleven ranked instruments and not ADAUSD:
+    its fenced window is **2026-02-13 → 2026-06-24** and every donor's fenced
+    1-minute tape stops at **2025-06 to 2025-12**, so there is no overlap to
+    put ADA's presence mask on. Its row was dropped from the corrected
+    ordering rather than corrected, which is right and also a hole: ADA is
+    **INTACT** and sits in the middle of a table the desk reads when deciding
+    where to spend a look.
+    Deliverable: extend one dense instrument's 1-minute tape (BTCUSD is the
+    obvious donor, 89.0% full) through 2026-06 so ADA's mask has somewhere to
+    land, then re-run R501's part (4) for ADA alone and place its row.
+    **Note the fence interaction and respect it:** extending a donor's file
+    MOVES that donor's own 80% boundary, so the extended tape must be fenced
+    afresh and R501's reproduction controls re-checked before anything is
+    quoted from it. ADA's own 132-day window is short besides (R494's lesson,
+    R500's restatement of it), and a longer ADA tape is worth more than a
+    corrected coordinate on a short one.
+    **THE FENCE:** data work plus one re-run of an existing descriptive part.
+    No entry population, no sealed slice, no look, no candidate.
 
 26. **A CONCLUSION BAKED INTO A PRINT STATEMENT OUTLIVED ITS MEASUREMENT.
     FIND THE OTHERS.**

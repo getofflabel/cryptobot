@@ -7656,3 +7656,272 @@ before any future round spends a look off it. **PAXG's 31-month hole should be
 probed at the vendor** the way R494 probed ADA, because if the tape exists the
 gold coordinate becomes readable for the first time. And **GLD/IAU need more
 than 81 days** before their ratio means anything.
+
+---
+
+# R501 — THE DENSITY BIAS IS REAL, IT IS ON EVERY ROW INCLUDING THE DENSEST, AND IT IS NOT MADE OF DENSITY
+
+**2026-09-14. Queue item 33. `step501_coverage_column.py`, full output in
+`step501_output.txt`. A CORRECTION to a table the desk reuses, not a
+hypothesis. Research only, no orders, no account, no live file touched,
+imported or edited. NO LOOK CONSUMED, and none could be: `simulate()` is never
+called, no entry population is built, no sweep is scanned, no stop is measured
+and no return, expectancy, win rate, risk multiple or t-statistic is computed
+for any instrument. Every tape read — the DONORS' included — stops at that
+instrument's own 80% boundary.**
+
+## What this round was for
+
+Item 33, opened by R500. R500 measured that PAXG's gap pattern inflates a
+known-true 1-minute coordinate by 1.23x–1.34x, four donors for four. Every row
+of R489/R494/R499's ranking divides a cost by that same coordinate and the
+eleven instruments do not share a coverage level, so the item's charge was:
+attach a coverage column measured **behind each instrument's own fence** (not
+whole-file), re-rank as published and de-biased, and say which orderings are
+artifacts of tape density.
+
+## The three reproduction controls, all exact
+
+- **R499's published `vol%` column**, recomputed behind the same fence on all
+  eleven instruments: max absolute difference **0.0000 percentage points**.
+  The table being corrected is the published one.
+- **R500's donor inflation**, recomputed with the identical mask expressed as
+  minutes-since-epoch instead of `(day, minute-of-day)` tuples: BTCUSD
+  **1.23x**, DOGEUSD **1.29x**, LTCUSD **1.29x**, AVAXUSD **1.34x** — R500's
+  four published figures, max absolute difference **0.00x**.
+- **R494's whole-file coverage column** is reproduced as the contrast column.
+
+## (1) THE COVERAGE COLUMN — AND IT IS NOT R494's
+
+Behind each instrument's own 80% fence, which is where the coordinate is
+actually computed:
+
+| instrument | fenced window | days | cov% | bars/day | clean% | *R494 file%* | ratio |
+|---|---|---|---|---|---|---|---|
+| LINKUSD | 2021-01-01 → 2025-06-15 | 1627 | 80.3 | 1155 | 87.1 | *79.5* | 1.01x |
+| **PAXGUSD** | 2021-01-01 → 2023-06-19 | 897 | **17.8** | 258 | 67.5 | *10.6* | **1.68x** |
+| XRPUSD | 2024-01-01 → 2026-01-20 | 751 | 54.7 | 787 | 73.7 | *57.0* | 0.96x |
+| SOLUSD | 2021-01-01 → 2025-06-15 | 1209 | 64.4 | 1246 | 91.1 | *66.8* | 0.96x |
+| DOGEUSD | 2021-01-01 → 2025-06-15 | 1627 | 82.3 | 1184 | 88.7 | *81.1* | 1.01x |
+| BTCUSD | 2021-01-01 → 2025-06-15 | 1627 | 89.0 | 1281 | 93.0 | *88.7* | 1.00x |
+| LTCUSD | 2021-01-01 → 2025-06-15 | 1627 | 72.9 | 1049 | 82.8 | *72.1* | 1.01x |
+| ETHUSD | 2021-01-01 → 2025-06-15 | 1627 | 90.6 | 1304 | 93.3 | *86.7* | 1.04x |
+| ADAUSD | 2026-02-13 → 2026-06-24 | **132** | 71.6 | 1022 | 78.0 | *71.4* | 1.00x |
+| DOTUSD | 2023-08-18 → 2025-12-24 | 860 | 83.0 | 1194 | 87.3 | *81.3* | 1.02x |
+| AVAXUSD | 2021-11-18 → 2025-08-18 | 1370 | 82.0 | 1180 | 88.2 | *80.4* | 1.02x |
+
+**Coverage behind the fence spans 17.8% to 90.6% — a factor of 5.1 across the
+eleven rows of one ranking.** The item's premise, measured. **Ten of the
+eleven rows' fenced coverage is within 4% of R494's whole-file figure; PAXG's
+is 1.68x it** (17.8%, not 10.6%), so the caveat the desk has been carrying
+understates the density of the tape gold's coordinate actually came off. R500
+reported this for PAXG and it is now established that PAXG is the only row
+where it matters.
+
+## (2) THE ITEM'S OWN MODEL OF THE BIAS IS WRONG, AND THE MEASUREMENT SAYS SO
+
+The item asked for a **donor curve measured at each instrument's own coverage
+level** — i.e. it assumed the bias is a function of how much tape is missing.
+That is testable, so it was tested. Six donors (every ranked instrument at
+least 80% full behind its own fence: LINK, DOGE, BTC, ETH, DOT, AVAX) were
+thinned to a ladder of coverage levels by keeping a fixed share of every day's
+bars chosen **uniformly at random** (seed fixed before any number existed),
+and the coordinate re-measured with the identical code.
+
+| cov% | LINK | DOGE | BTC | ETH | DOT | AVAX | **median** |
+|---|---|---|---|---|---|---|---|
+| 5 | 0.889x | 0.896x | 0.880x | 0.883x | 0.915x | 0.906x | **0.892x** |
+| 10 | 0.960x | 0.960x | 0.964x | 0.949x | 0.984x | 0.986x | 0.962x |
+| 20 | 0.984x | 0.991x | 0.994x | 0.989x | 0.983x | 1.004x | 0.990x |
+| 40 | 0.997x | 1.004x | 0.999x | 1.004x | 0.997x | 0.990x | 0.998x |
+| 60 | 0.992x | 0.995x | 1.009x | 1.005x | 0.998x | 1.001x | 1.000x |
+| 80 | 1.000x | 0.998x | 1.000x | 1.003x | 1.000x | 0.998x | 1.000x |
+
+> **Across ten coverage levels from 80% down to 5% full and six donors,
+> uniform thinning moves the coordinate by 0.892x–1.001x.** A tape missing at
+> random carries the gap-clean coordinate essentially intact all the way to 5%
+> full, and at the extreme it biases **DOWN**, not up.
+
+**So there is no donor curve in coverage to build, because coverage does not
+predict the bias.** The item is right about the consequence and wrong about
+the cause: the thing that inflates a coordinate is not how many minutes are
+missing but **which** ones. R500's own random column read 1.10x–1.21x, which
+looked like a thinness effect; this round shows that column was carrying
+PAXG's day-by-day bar-count pattern, not thinness, because thinness at matched
+density does nothing.
+
+## (3) THE DE-BIASING THAT DOES EXIST: EACH INSTRUMENT'S OWN SHAPE OF ABSENCE
+
+The generalisation of R500's method: for each of the eleven, keep only the
+minutes **it** has a bar in, on every donor whose fenced window overlaps, and
+re-measure. Two ratios, because they answer different questions — `xALL` is
+R500's definition (against the donor's whole fenced window) and `xSAME` holds
+the calendar fixed (against the donor's coordinate **on the same days**), so
+`xSAME` isolates the within-day selection, which is the thing a density
+correction is for.
+
+| instrument | cov% | donors | xALL | **xSAME** | lo | hi | verdict |
+|---|---|---|---|---|---|---|---|
+| LINKUSD | 80.3 | 5 | 1.086x | **1.086x** | 1.044 | 1.113 | de-biased |
+| PAXGUSD | 17.8 | 5 | **1.272x** | **1.128x** | 1.067 | 1.210 | **SPLIT** |
+| XRPUSD | 54.7 | 6 | 1.128x | **1.144x** | 1.126 | 1.156 | de-biased |
+| SOLUSD | 64.4 | 6 | 1.121x | **1.036x** | 1.035 | 1.049 | de-biased |
+| DOGEUSD | 82.3 | 5 | 1.073x | **1.071x** | 1.044 | 1.095 | de-biased |
+| BTCUSD | 89.0 | 5 | 1.067x | **1.067x** | 1.054 | 1.100 | de-biased |
+| LTCUSD | 72.9 | 6 | 1.110x | **1.105x** | 1.076 | 1.136 | de-biased |
+| ETHUSD | 90.6 | 5 | 1.053x | **1.053x** | 1.040 | 1.085 | de-biased |
+| **ADAUSD** | 71.6 | **0** | — | — | — | — | **NOT MEASURABLE** |
+| DOTUSD | 83.0 | 5 | 1.002x | **1.072x** | 1.062 | 1.086 | de-biased |
+| AVAXUSD | 82.0 | 5 | 1.005x | **1.065x** | 1.028 | 1.103 | de-biased |
+
+**THE FINDING NOBODY ASKED FOR AND IT IS THE ROUND'S REAL OUTPUT: every row's
+gap shape inflates its coordinate, and by similar amounts — 1.036x to 1.144x,
+median 1.071x — including BTC at 1.067x and ETH at 1.053x, the two densest
+tapes on this disk at 89.0% and 90.6% full.** The bias is not a sparse-tape
+pathology. It is what a gap-clean definition does to any tape whose gaps are
+where the market is quiet, and **every** tape here has gaps like that.
+**PAXG at 17.8% full sits at 1.128x, between LTC (72.9% full, 1.105x) and XRP
+(54.7% full, 1.144x).** Coverage and inflation are essentially unrelated across
+these eleven rows, which is (2) restated on real gap patterns instead of
+simulated ones.
+
+**PAXG is SPLIT and the round refuses to resolve it by picking an estimator.**
+xALL 1.272x is at or above the threshold — **R500's UNREADABLE call, and it
+stands, unoverturned by this round.** xSAME 1.128x is below it. The ratio
+between them, 1.127x, **is not tape density at all**: it is that PAXG's fenced
+window (2021-01 → 2023-06) is a more volatile era than the donors' full
+windows, which R500 established from the other side when it found the two gold
+coordinates share zero bars. That opens a new problem, below.
+
+**ADA is NOT MEASURABLE, which is a different state from UNREADABLE and the
+table keeps them apart.** Its fenced window is 2026-02-13 → 2026-06-24 and no
+donor has fenced tape there, so its gap shape cannot be transplanted at all.
+That is a **data gap, not a finding about ADA**, and no factor was borrowed for
+it (item 25's rule). Its row is dropped from the corrected ordering rather than
+corrected or re-placed.
+
+## (4) THE RANKING, TWICE — R499's FEE COLUMN FROZEN SO ONLY THE NUMERATOR MOVES
+
+| # | instrument | cov% | vol% | ÷x | **vol\*%** | fee%RT | mult | **mult\*** | move | sealed |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | LINKUSD | 80.3 | 0.1037 | 1.086x | 0.0955 | 0.0519 | 2.00 | **1.84** | = | SPENT |
+| 2 | PAXGUSD | 17.8 | 0.0791 | 1.128x | 0.0701 | 0.0400 | 1.98 | **1.75** | = | INTACT |
+| 3 | XRPUSD | 54.7 | 0.0829 | 1.144x | 0.0724 | 0.0439 | 1.89 | **1.65** | **−1** | INTACT |
+| 4 | SOLUSD | 64.4 | 0.1059 | 1.036x | 0.1022 | 0.0590 | 1.80 | **1.73** | **+1** | SPENT |
+| 5 | DOGEUSD | 82.3 | 0.1007 | 1.071x | 0.0940 | 0.0709 | 1.42 | 1.33 | = | INTACT |
+| 6 | BTCUSD | 89.0 | 0.0546 | 1.067x | 0.0512 | 0.0400 | 1.37 | 1.28 | = | SPENT |
+| 7 | LTCUSD | 72.9 | 0.0923 | 1.105x | 0.0835 | 0.1115 | 0.83 | 0.75 | = | INTACT |
+| 8 | ETHUSD | 90.6 | 0.0687 | 1.053x | 0.0652 | 0.1189 | 0.58 | 0.55 | = | SPENT |
+| 9 | ADAUSD | 71.6 | 0.0794 | — | *no mask* | 0.1440 | 0.55 | — | — | INTACT |
+| 10 | DOTUSD | 83.0 | 0.0842 | 1.072x | 0.0786 | 0.2852 | 0.30 | 0.28 | = | INTACT |
+| 11 | AVAXUSD | 82.0 | 0.0973 | 1.065x | 0.0913 | 0.4032 | 0.24 | 0.23 | = | INTACT |
+
+**WHICH ORDERINGS SURVIVE: 44 of the 45 pairwise orderings among the ten
+readable rows (98%). One reverses.**
+
+> **XRPUSD was above SOLUSD (1.89 vs 1.80) and is now below it (1.65 vs 1.73).**
+
+- published order: LINK > PAXG > **XRP > SOL** > DOGE > BTC > LTC > ETH > ADA > DOT > AVAX
+- de-biased order: LINK > PAXG > **SOL > XRP** > DOGE > BTC > LTC > ETH > DOT > AVAX
+
+**Why the ranking is so much more robust than the item feared, stated as a
+mechanism rather than a relief:** the bias is COMMON to the rows (1.04x–1.14x
+on ten of eleven), and a ranking is a set of ratios, so a bias shared across
+the numerators mostly cancels. The rows that move are the two whose inflation
+departs furthest from the common level — XRP highest at 1.144x, SOL lowest at
+1.036x — and they are adjacent in the published table, which is exactly the
+condition for a flip.
+
+**The reversal is operational, not cosmetic.** This table is what the desk
+reads when deciding where a sealed look goes. XRP is **INTACT** and was the
+top-ranked intact non-gold candidate after PAXG; SOL is **SPENT** (R475).
+Under the correction the best-ranked *intact* rows behind PAXG are, in order,
+**XRP (1.65), DOGE (1.33)** — XRP keeps its place among spendable slices and
+loses only to an instrument that has nothing left to spend. **Nothing here
+proposes spending anything.**
+
+## (5) TODAY'S FEE COLUMN — R499's STANDING RULE, AND IT CHANGES NOTHING
+
+Live keyless poll, 2026-09-14 08:1x UTC, with each contract's break price and
+the ratio its price must travel, as R499's rule requires:
+
+| instrument | contract | mark | notional | break px | need | fee%RT | *R499* |
+|---|---|---|---|---|---|---|---|
+| LINKUSD | LINK PERP | 11.4030 | $570.15 | $15.00 | 1.32x | 0.0526 | *0.0519* |
+| PAXGUSD | PAXG PERP | 4,321.80 | $4,321.80 | $750.00 | 0.17x | 0.0400 | *0.0400* |
+| XRPUSD | XRP PERP | 1.3872 | $693.60 | $1.50 | 1.08x | 0.0433 | *0.0439* |
+| SOLUSD | SOL PERP | 101.54 | $507.70 | $150.00 | 1.48x | 0.0591 | *0.0590* |
+| BTCUSD | BTC PERP | 77,770 | $777.70 | $75,000 | 0.96x | 0.0400 | *0.0400* |
+| DOTUSD | DOT PERP | 1.0210 | $102.10 | $7.50 | 7.35x | 0.2938 | *0.2852* |
+| AVAXUSD | AVAX PERP | 7.3900 | $73.90 | $75.00 | 10.15x | 0.4060 | *0.4032* |
+
+**The de-biased ordering is identical on today's fees and on R499's**, so the
+one reversal this round reports is a statement about tape and not about two
+days of coin prices. **BTC PERP is at $777.70 against a $750 break — 3.6% of
+price above it, wider than R499's 3.0% two days ago but the same fact.**
+
+## THE HEADLINE
+
+> **The ranking survives. The reason it survives is not the one the item
+> assumed, and the thing it survives is not the thing the item named.**
+> Tape density does not bias this coordinate — uniform thinning to 5% full
+> moves it 0.89x–1.00x. What biases it is gaps sitting where the market is
+> quiet, and **that is present on every instrument in the table, at 1.04x to
+> 1.14x, with the 89%-full tape biased as much as the 18%-full one.** Because
+> the bias is common it largely cancels in a ranking: 44 of 45 orderings hold,
+> and the one that breaks — XRP over SOL — breaks because those two rows sit
+> at the two ends of the common band and were adjacent to begin with.
+
+**Every published multiple in R489/R494/R499 is therefore roughly 7% too high
+in level** (median 1.071x), **and that is a statement about the whole column,
+not about any row's place in it.** A future round quoting one of those
+multiples should quote it as an upper bound.
+
+## Honest limits
+
+- **Every donor is itself 80–91% full, not 100%.** Each inflation here is
+  measured against an 80–91%-full truth, so all of them are
+  **understatements** of the correction against a complete tape.
+- **A transplanted mask reproduces a target's gap PATTERN on a donor's
+  prices.** It measures what that shape of absence does to a coordinate whose
+  truth is known. It is not a measurement of the target's own price process,
+  and no row's corrected `vol*` should be quoted as that instrument's real
+  one-minute move.
+- **PAXG's verdict depends on the estimator and the round leaves it split.**
+  R500's UNREADABLE call stands. The 1.128x used in the table is the
+  era-controlled figure and is the smaller of the two.
+- **ADA has no measurement at all here**, and 132 days of tape besides.
+- **The fee half is a price snapshot** (R499's rule). The primary re-rank
+  freezes R499's column deliberately; today's is printed beside it and agrees.
+- **Costs decide nothing** (owner rule, 2026-07-25). Nothing above declines a
+  trade, gates a strategy, or ranks an instrument for trading. It corrects a
+  bookkeeping table.
+
+## Looks consumed
+
+**NONE, and none could be.** `simulate()` was never called. No entry
+population was built on any instrument, no sweep scanned, no break of
+structure detected, no fill modelled, no stop measured, no outcome, return,
+expectancy, win rate, risk multiple or t-statistic computed for anything.
+Every tape read — **including every donor's** — stops at its own 80% boundary,
+so **XRPUSD, DOGEUSD, AVAXUSD, DOTUSD, ADAUSD, LTCUSD and PAXGUSD's sealed
+slices are intact and unread**, and LINK's (R492), crypto's (R475) and the
+index's (R474) stay exactly as spent as they were. No order was placed, no
+account exists, no live file was touched or imported, and nothing is proposed
+for deployment.
+
+## What this closes and what it opens
+
+**Item 33 is CLOSED.** All three deliverables landed: the coverage column
+exists behind each instrument's own fence, the ranking is stated twice, and
+the orderings that survive are separated from the one that does not.
+
+**Two new items, both opened by measurements above and neither of them a
+hypothesis:**
+- **36 — THE ROWS ARE FROM DIFFERENT ERAS AND NOBODY HAS CONTROLLED FOR IT.**
+  The `xALL` / `xSAME` gap is 1.127x on PAXG and 1.082x on SOL — the same size
+  as the density bias this round just corrected, and it is pure calendar. The
+  eleven rows span windows from 2021-01 to 2026-06 and are compared as though
+  they were contemporaneous.
+- **37 — ADA'S GAP SHAPE CANNOT BE TRANSPLANTED BECAUSE NO DENSE TAPE REACHES
+  2026.** A data question, not a research one.
