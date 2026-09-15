@@ -7925,3 +7925,250 @@ hypothesis:**
   they were contemporaneous.
 - **37 — ADA'S GAP SHAPE CANNOT BE TRANSPLANTED BECAUSE NO DENSE TAPE REACHES
   2026.** A data question, not a research one.
+
+---
+
+# R502 — THE ERA FACTOR IS REAL, IT IS EXACTLY WHAT R501 SAID THE GAP WAS, AND IT PUTS THE TOP OF THE RANKING ON THE REFERENCE YOU HAPPEN TO NAME
+
+**2026-09-15. Queue item 36. `step502_era_column.py`, full output in
+`step502_output.txt`. A CORRECTION to a table the desk reuses, not a
+hypothesis. Research only, no orders, no account, no live file touched,
+imported or edited. NO LOOK CONSUMED, and none could be: `simulate()` is never
+called, no entry population is built, no sweep is scanned, no stop is measured
+and no return, expectancy, win rate, risk multiple or t-statistic is computed
+for any instrument. Every tape read — the REFERENCE's and every donor's
+included — stops at that instrument's own 80% boundary.**
+
+## What this round was for
+
+Item 36, opened by R501. R501 measured a row's density bias two ways and named
+the gap between them as pure calendar, 1.127x on PAXG and 1.082x on SOL, but
+never measured the calendar itself. The eleven fenced windows run 2021-01 →
+2026-06 and the ranking compares their coordinates as though they were
+contemporaneous. The charge: measure a common dense reference's coordinate on
+each row's own calendar and on the pooled calendar, publish the era factor as
+its own column, state the ranking a third time, and report which of R501's 44
+surviving orderings survive that.
+
+**The reference and the rules were named before any number existed.** Reference
+`BTCUSD` behind its own fence (item 37's "obvious donor", 89.0% full, the
+longest dense tape on the disk). Pooled window = that reference's whole fenced
+window, 2021-01-01 → 2025-06-15, 1627 days, coordinate 0.0546%. Era factor =
+the reference's coordinate on the row's own calendar over its coordinate on the
+pooled calendar; **calendar only, no minute mask anywhere**, which is
+deliberately a different object from R501's transplant. A row needs **≥120
+overlapping days AND ≥30% of its own days** inside the reference's window or it
+gets no factor at all (item 25's rule). The factor is **divided out, never
+multiplied in**, and applied on top of R501's `xSAME`, so the two corrections
+compose in the order they were established.
+
+## The two reproduction controls, both exact
+
+- **R499's published `vol%` column**, recomputed behind the same fence on all
+  eleven: max absolute difference **0.0000 percentage points**.
+- **R501's `xSAME` column**, recomputed with R501's own functions: max absolute
+  difference **0.000x** on all ten measurable rows. R501's two published gaps
+  reproduce digit for digit — PAXG **1.127x**, SOL **1.082x**.
+
+The correction below therefore layers onto R501's own numbers and not onto a
+retyped copy of them.
+
+## (1) THE ERA COLUMN
+
+| instrument | its window | days | ovl d | ovl% | ref on row | ref pooled | **ERA** | verdict |
+|---|---|---|---|---|---|---|---|---|
+| LINKUSD | 2021-01-01 → 2025-06-15 | 1627 | 1627 | 100% | 0.0546 | 0.0546 | **1.000x** | contemporaneous |
+| PAXGUSD | 2021-01-01 → 2023-06-19 | 897 | 897 | 100% | 0.0557 | 0.0546 | **1.021x** | contemporaneous |
+| XRPUSD | 2024-01-01 → 2026-01-20 | 751 | 532 | 71% | 0.0592 | 0.0546 | **1.084x** | hotter era |
+| SOLUSD | 2021-01-01 → 2025-06-15 | 1209 | 1209 | 100% | 0.0572 | 0.0546 | **1.048x** | contemporaneous |
+| DOGEUSD | 2021-01-01 → 2025-06-15 | 1627 | 1627 | 100% | 0.0546 | 0.0546 | 1.000x | contemporaneous |
+| BTCUSD | 2021-01-01 → 2025-06-15 | 1627 | 1627 | 100% | 0.0546 | 0.0546 | 1.000x | reference, 1.000 by construction |
+| LTCUSD | 2021-01-01 → 2025-06-15 | 1627 | 1627 | 100% | 0.0546 | 0.0546 | 1.000x | contemporaneous |
+| ETHUSD | 2021-01-01 → 2025-06-15 | 1627 | 1627 | 100% | 0.0546 | 0.0546 | 1.000x | contemporaneous |
+| **ADAUSD** | 2026-02-13 → 2026-06-24 | 132 | **0** | 0% | — | — | — | **UNMEASURABLE** |
+| DOTUSD | 2023-08-18 → 2025-12-24 | 860 | 668 | 78% | 0.0554 | 0.0546 | **1.014x** | contemporaneous |
+| AVAXUSD | 2021-11-18 → 2025-08-18 | 1370 | 1306 | 95% | 0.0516 | 0.0546 | **0.945x** | cooler era |
+
+**On the named reference the era factor spans 0.945x (AVAX) to 1.084x (XRP) —
+a factor of 1.15 between the calmest row's calendar and the hottest one's.**
+Five rows share the pooled window exactly and read 1.000x by construction; the
+whole of the spread lives in the four rows whose windows differ, which is the
+item's premise measured.
+
+**ADA has NO era factor and was given none.** Its window is 2026-02 → 2026-06
+and the reference's fenced tape stops 2025-06: zero overlapping days. Its row
+is printed with `--` rather than dropped or corrected. That is a **data gap —
+item 37 — not a finding about ADA**, and it is now the second correction ADA
+cannot carry.
+
+## (2) THE ROBUSTNESS PANEL, WHICH IS WHERE THIS ROUND STOPS AGREEING WITH ITSELF
+
+The same column on all six dense references, because naming one is an
+assumption and the item named one:
+
+| instrument | LINK | DOGE | BTC | ETH | DOT | AVAX | **median** | spread |
+|---|---|---|---|---|---|---|---|---|
+| LINKUSD | 1.000x | 1.000x | 1.000x | 1.000x | 0.989x | 1.008x | 1.000x | 0.019 |
+| **PAXGUSD** | 1.161x | 1.147x | **1.021x** | 1.077x | — | 1.253x | **1.147x** | **0.232** |
+| **XRPUSD** | 0.887x | 0.948x | **1.084x** | 1.051x | 1.026x | 0.951x | **0.988x** | **0.197** |
+| SOLUSD | 1.084x | 1.081x | 1.048x | 1.078x | — | 1.102x | 1.081x | 0.054 |
+| DOGEUSD | 1.000x | 1.000x | 1.000x | 1.000x | 0.989x | 1.008x | 1.000x | 0.019 |
+| BTCUSD | 1.000x | 1.000x | 1.000x | 1.000x | 0.989x | 1.008x | 1.000x | 0.019 |
+| LTCUSD | 1.000x | 1.000x | 1.000x | 1.000x | 0.989x | 1.008x | 1.000x | 0.019 |
+| ETHUSD | 1.000x | 1.000x | 1.000x | 1.000x | 0.989x | 1.008x | 1.000x | 0.019 |
+| ADAUSD | — | — | — | — | — | — | — | — |
+| DOTUSD | 0.864x | 0.879x | 1.014x | 0.983x | 1.000x | 0.934x | 0.958x | 0.150 |
+| AVAXUSD | 0.923x | 0.945x | 0.945x | 0.932x | 0.991x | 1.000x | 0.945x | 0.077 |
+
+> **The single reference and the median of six differ by up to 0.126x, and
+> they differ WHERE IT MATTERS: on the three rows whose windows are not the
+> pooled one.** PAXG reads 1.021x on BTC and 1.147x on the median; XRP reads
+> 1.084x on BTC and 0.988x on the median — **opposite sides of 1.00**.
+
+The rows that agree to 0.019 are the five that share the reference's calendar,
+so their agreement is arithmetic, not evidence. **Every row the era column
+exists to correct is a row where the choice of reference moves the answer.**
+
+## (3) THE DECOMPOSITION CHECK — R501's CALENDAR CLAIM IS CONFIRMED, AND THE MATCHED COLUMN IS THE ONE THAT CONFIRMS IT
+
+R501's gap is itself a **median over the same six donors**, so the median-era
+column is the like-for-like comparison and the single-reference column is not.
+
+| instrument | R501 gap | ERA(ref) | g/ERA | **ERA(med6)** | **g/ERAmed** |
+|---|---|---|---|---|---|
+| LINKUSD | 1.000x | 1.000x | 1.000 | 1.000x | **1.000** |
+| PAXGUSD | 1.127x | 1.021x | *1.105* | 1.147x | **0.983** |
+| XRPUSD | 0.986x | 1.084x | *0.910* | 0.988x | **0.998** |
+| SOLUSD | 1.082x | 1.048x | 1.033 | 1.081x | **1.000** |
+| DOGEUSD | 1.002x | 1.000x | 1.002 | 1.000x | **1.002** |
+| BTCUSD | 1.000x | 1.000x | 1.000 | 1.000x | **1.000** |
+| LTCUSD | 1.004x | 1.000x | 1.004 | 1.000x | **1.004** |
+| ETHUSD | 1.000x | 1.000x | 1.000 | 1.000x | **1.000** |
+| DOTUSD | 0.935x | 1.014x | *0.922* | 0.958x | **0.976** |
+| AVAXUSD | 0.943x | 0.945x | 0.998 | 0.945x | **0.998** |
+
+> **On the matched column the gap and the era agree to within 2.4% on all ten
+> measurable rows, median 0.2%.** R501 asserted its `xALL`/`xSAME` gap was pure
+> calendar; this round measured the calendar on a **different object** — the
+> reference's own tape restricted by days, no minute mask anywhere — and gets
+> the same numbers back. **The assertion is confirmed, not merely restated.**
+
+And the failure mode is visible in the same table: against the **single**
+reference the identical check reads **0.910–1.105**, worst on PAXG. **One
+reference cannot carry an era factor for a row whose window it barely shares.**
+
+## (4) THE RANKING, A THIRD TIME — R499's FEE COLUMN FROZEN SO ONLY THE NUMERATOR MOVES
+
+`vol*` = vol / `xSAME` (R501, published). `vol**` = vol / `xSAME` / ERA (this
+round, on top of it).
+
+| # | instrument | vol% | /xSAME | vol*% | /ERA | **vol**%** | fee%RT | mult* | **mult*** | move | sealed |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | LINKUSD | 0.1037 | 1.086x | 0.0955 | 1.000x | 0.0955 | 0.0519 | 1.84 | **1.84** | = | SPENT |
+| 2 | PAXGUSD | 0.0791 | 1.128x | 0.0701 | 1.021x | 0.0687 | 0.0400 | 1.75 | **1.72** | = | INTACT |
+| 3 | SOLUSD | 0.1059 | 1.036x | 0.1022 | 1.048x | 0.0976 | 0.0590 | 1.73 | **1.65** | = | SPENT |
+| 4 | XRPUSD | 0.0829 | 1.144x | 0.0724 | 1.084x | 0.0668 | 0.0439 | 1.65 | **1.52** | = | INTACT |
+| 5 | DOGEUSD | 0.1007 | 1.071x | 0.0940 | 1.000x | 0.0940 | 0.0709 | 1.33 | 1.33 | = | INTACT |
+| 6 | BTCUSD | 0.0546 | 1.067x | 0.0512 | 1.000x | 0.0512 | 0.0400 | 1.28 | 1.28 | = | SPENT |
+| 7 | LTCUSD | 0.0923 | 1.105x | 0.0835 | 1.000x | 0.0835 | 0.1115 | 0.75 | 0.75 | = | INTACT |
+| 8 | ETHUSD | 0.0687 | 1.053x | 0.0652 | 1.000x | 0.0652 | 0.1189 | 0.55 | 0.55 | = | SPENT |
+| 9 | DOTUSD | 0.0842 | 1.072x | 0.0786 | 1.014x | 0.0775 | 0.2852 | 0.28 | 0.27 | = | INTACT |
+| 10 | AVAXUSD | 0.0973 | 1.065x | 0.0913 | 0.945x | 0.0966 | 0.4032 | 0.23 | 0.24 | = | INTACT |
+| 11 | ADAUSD | 0.0794 | — | — | — | *no era* | 0.1440 | — | — | — | INTACT |
+
+**ON THE NAMED REFERENCE: 45 of 45 of R501's surviving orderings survive the
+era control. Nothing moves.**
+
+- as published   : LINK > PAXG > **XRP > SOL** > DOGE > BTC > LTC > ETH > DOT > AVAX
+- R501 de-biased : LINK > PAXG > **SOL > XRP** > DOGE > BTC > LTC > ETH > DOT > AVAX
+- era-controlled : LINK > PAXG > SOL > XRP > DOGE > BTC > LTC > ETH > DOT > AVAX
+
+## (5) THE SENSITIVITY THAT IS THE ROUND'S REAL OUTPUT
+
+The same third ranking on the **median-of-six** era instead of the single
+reference — required, because part (2) measured the two to differ by 0.126x and
+an ordering must not rest on which dense tape got named:
+
+> **era-controlled (median-of-6): LINK > XRP > SOL > PAXG > DOGE > BTC > LTC >
+> ETH > DOT > AVAX**
+>
+> **42 of 45 pairs survive. The three that reverse are PAXG/SOL, PAXG/XRP and
+> SOL/XRP — every one of them in the top four.**
+
+**PAXG falls from 2nd to 4th and XRP rises from 4th to 2nd, purely on which
+reference the era factor is measured against.** The bottom six rows are
+immovable under every reading. The top four are not stable at all.
+
+## THE HEADLINE
+
+> **The era effect is real and it is exactly what R501 said the gap was —
+> confirmed to 0.2% median on an independently measured object. What the era
+> column cannot do is produce one number per row: on the three rows it exists
+> to correct, the answer flips sign with the choice of reference, and the top
+> four of the ranking reorders with it.**
+>
+> The ordering survives (45/45) on the reference the item named, and **does not
+> survive (42/45) on the estimator that matches how R501's own gap was
+> computed** — and the desk has no principled reason to prefer the first. The
+> honest statement is that **rows 5–10 of that ranking are era-stable and rows
+> 1–4 are not resolved by this round.**
+
+**Rows 1–4 are exactly the cell the desk reads when deciding where a sealed
+look goes**, and two of the four are INTACT (PAXG, XRP). Nothing here selects
+between them and nothing here proposes spending anything — the fence forbids
+it, and the finding is that the table cannot currently order them anyway.
+
+## Honest limits
+
+- **The reference is 89% full, not 100%**, and carries its own gap shape
+  (R501: 1.067x). That shape is common to both halves of every era ratio and
+  divides out of the ratio; it does not divide out of the levels, and no level
+  here is anyone's real one-minute move.
+- **Three rows have PARTIAL overlap** (XRP 71%, DOT 78%, AVAX 95%), so their
+  era factor describes the overlapping part of their window, not all of it.
+  The overlap fraction is published as its own column.
+- **The era factor assumes the reference's era pattern is the market's.** The
+  robustness panel is the measurement of how badly that assumption holds, and
+  the answer is: badly, on exactly the rows that need it.
+- **ADA has no era factor, no gap-shape factor, and 132 days of tape.** It now
+  fails two corrections for the same reason and item 37 is the fix for both.
+- **PAXG's SPLIT verdict is NOT resolved by this round and cannot be.**
+  Establishing that the `xALL`/`xSAME` gap is calendar says what the gap is
+  made of; R500's UNREADABLE call on the `xALL` estimator stands untouched.
+- **No venue poll this round.** The fee column is frozen at R499's for all
+  three orderings, because the only thing this round may move is the numerator.
+  R499's standing re-poll rule is satisfied by R501, twelve hours old, which
+  found today's fees give the identical ordering.
+- **Costs decide nothing** (owner rule, 2026-07-25). Nothing above declines a
+  trade, gates a strategy, or ranks an instrument for trading. It corrects a
+  bookkeeping table.
+
+## Looks consumed
+
+**NONE, and none was reachable.** `simulate()` is never called and neither is
+any entry builder. No entry population was built on any instrument, no sweep
+scanned, no break of structure detected, no fill modelled, no stop measured, no
+outcome, return, expectancy, win rate, risk multiple or t-statistic computed
+for anything. Every tape read — **the reference's and every donor's included** —
+stops at its own 80% boundary, so **XRPUSD, DOGEUSD, AVAXUSD, DOTUSD, ADAUSD,
+LTCUSD and PAXGUSD's sealed slices are intact and unread**, and LINK's (R492),
+crypto's (R475) and the index's (R474) stay exactly as spent as they were. No
+order was placed, no account exists, no live file was touched or imported, and
+nothing is proposed for deployment.
+
+## What this closes and what it opens
+
+**Item 36 is CLOSED.** All three deliverables landed: the era factor exists as
+its own column with an explicit unmeasurable state, the ranking is stated a
+third time, and the orderings that survive are separated from the ones that do
+not — on two estimators, because one of them was not enough.
+
+**One new item, opened by the measurement above and not a hypothesis:**
+- **38 — THE TOP FOUR ROWS OF THE RANKING DO NOT HAVE A STABLE ORDER AND THE
+  DESK READS THEM TO SPEND LOOKS.** Rows 5–10 hold under every correction this
+  desk has applied. Rows 1–4 reorder on the choice of era reference alone
+  (PAXG 2nd or 4th, XRP 2nd or 4th). Either the desk finds a principled
+  reference rule, or it stops treating the top four as ordered.
+
+**Item 37 gains a second reason to exist:** ADA now fails two separate
+corrections for the identical missing-tape reason.

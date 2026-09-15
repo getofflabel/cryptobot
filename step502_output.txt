@@ -1,0 +1,199 @@
+============================================================================================================
+ROUND 502 - THE ROWS OF THAT RANKING COME FROM DIFFERENT ERAS AND NOBODY CONTROLLED FOR IT.   (item 36)
+============================================================================================================
+run 2026-09-15 07:44:53 UTC
+A CORRECTION to a table this desk reuses, not a hypothesis. simulate() is never called, no
+entry population is built, no sealed slice is read, NO LOOK IS CONSUMED and none could be.
+
+THE REFERENCE, NAMED BEFORE ANY NUMBER: BTCUSD, behind its own 80% fence.
+THE POOLED WINDOW: that reference's WHOLE fenced window. The era factor of a row is the
+reference's coordinate on the row's own calendar over the reference's coordinate on the pooled
+calendar. Above 1.00 means the row was measured in a more volatile era than the pool.
+UNMEASURABLE RULE, FIXED IN ADVANCE: a row needs >= 120 overlapping days AND >= 30% of its own
+days inside the reference's window, or it gets NO factor at all (item 25's rule).
+
+R499's published ranking parsed off step499_output.txt by R501's own parser: 11 of 11 rows.
+
+============================================================================================================
+(1) REPRODUCTION CONTROLS - two, both against published numbers. If either fails the round stops.
+============================================================================================================
+
+  a. R499's vol% column, recomputed behind the same fence:
+     instrument     R499     here   diff pp
+     LINKUSD      0.1037   0.1037   +0.0000
+     PAXGUSD      0.0791   0.0791   +0.0000
+     XRPUSD       0.0829   0.0829   -0.0000
+     SOLUSD       0.1059   0.1059   -0.0000
+     DOGEUSD      0.1007   0.1007   -0.0000
+     BTCUSD       0.0546   0.0546   +0.0000
+     LTCUSD       0.0923   0.0923   +0.0000
+     ETHUSD       0.0687   0.0687   -0.0000
+     ADAUSD       0.0794   0.0794   -0.0000
+     DOTUSD       0.0842   0.0842   -0.0000
+     AVAXUSD      0.0973   0.0973   -0.0000
+     max absolute difference: 0.0000 percentage points
+     EXACT. The table being corrected is the published one.
+
+  b. R501's xSAME and xALL columns, recomputed with R501's own functions:
+     donors (>= 80% full behind their own fence): LINKUSD, DOGEUSD, BTCUSD, ETHUSD, DOTUSD, AVAXUSD
+     instrument    xSAME     R501    diff     xALL   gap=xALL/xSAME
+     LINKUSD      1.086x   1.086x  +0.000   1.086x           1.000x
+     PAXGUSD      1.128x   1.128x  +0.000   1.272x           1.127x
+     XRPUSD       1.144x   1.144x  +0.000   1.128x           0.986x
+     SOLUSD       1.036x   1.036x  +0.000   1.121x           1.082x
+     DOGEUSD      1.071x   1.071x  -0.000   1.073x           1.002x
+     BTCUSD       1.067x   1.067x  +0.000   1.067x           1.000x
+     LTCUSD       1.105x   1.105x  +0.000   1.110x           1.004x
+     ETHUSD       1.053x   1.053x  -0.000   1.053x           1.000x
+     ADAUSD           --       --      --       -- no donor overlap
+     DOTUSD       1.072x   1.072x  -0.000   1.002x           0.935x
+     AVAXUSD      1.065x   1.065x  +0.000   1.005x           0.943x
+     max absolute difference against R501's published xSAME: 0.000x
+     EXACT to the published precision. The correction below layers onto R501's own numbers.
+
+     The 'gap' column is the thing this round is about: R501 named it as pure calendar and
+     published two of them. Both reproduce: PAXGUSD 1.127x (R501 1.127x)  SOLUSD 1.082x (R501 1.082x)  
+
+============================================================================================================
+(2) THE ERA COLUMN - BTCUSD's OWN COORDINATE, ROW'S CALENDAR OVER THE POOLED CALENDAR
+============================================================================================================
+
+  Pooled window = BTCUSD's whole fenced window: 2021-01-01 -> 2025-06-15, 1627 days, coordinate 0.0546%
+
+  instrument its window                  days  ovl d   ovl%  ref on row  ref pooled      ERA  verdict
+  ----------------------------------------------------------------------------------------------------
+  LINKUSD    2021-01-01 -> 2025-06-15    1627   1627  100%      0.0546      0.0546   1.000x  contemporaneous
+  PAXGUSD    2021-01-01 -> 2023-06-19     897    897  100%      0.0557      0.0546   1.021x  contemporaneous
+  XRPUSD     2024-01-01 -> 2026-01-20     751    532   71%      0.0592      0.0546   1.084x  hotter era
+  SOLUSD     2021-01-01 -> 2025-06-15    1209   1209  100%      0.0572      0.0546   1.048x  contemporaneous
+  DOGEUSD    2021-01-01 -> 2025-06-15    1627   1627  100%      0.0546      0.0546   1.000x  contemporaneous
+  BTCUSD     2021-01-01 -> 2025-06-15    1627   1627  100%      0.0546      0.0546   1.000x  reference (1.000 by construction)
+  LTCUSD     2021-01-01 -> 2025-06-15    1627   1627  100%      0.0546      0.0546   1.000x  contemporaneous
+  ETHUSD     2021-01-01 -> 2025-06-15    1627   1627  100%      0.0546      0.0546   1.000x  contemporaneous
+  ADAUSD     2026-02-13 -> 2026-06-24     132      0    0%          --          --       --  UNMEASURABLE (no overlap at all)
+  DOTUSD     2023-08-18 -> 2025-12-24     860    668   78%      0.0554      0.0546   1.014x  contemporaneous
+  AVAXUSD    2021-11-18 -> 2025-08-18    1370   1306   95%      0.0516      0.0546   0.945x  cooler era
+
+  The era factor spans 0.945x to 1.084x across the 10 measurable rows - a factor of
+  1.147 between the calmest row's calendar and the hottest one's, measured on ONE instrument's
+  tape so that nothing but the calendar differs.
+
+  ROBUSTNESS - the same column on every dense reference, because the primary is an assumption:
+
+  instrument      LINK     DOGE      BTC      ETH      DOT     AVAX    median   spread
+  ------------------------------------------------------------------------------------
+  LINKUSD       1.000x   1.000x   1.000x   1.000x   0.989x   1.008x    1.000x   0.019
+  PAXGUSD       1.161x   1.147x   1.021x   1.077x       --   1.253x    1.147x   0.232
+  XRPUSD        0.887x   0.948x   1.084x   1.051x   1.026x   0.951x    0.988x   0.197
+  SOLUSD        1.084x   1.081x   1.048x   1.078x       --   1.102x    1.081x   0.054
+  DOGEUSD       1.000x   1.000x   1.000x   1.000x   0.989x   1.008x    1.000x   0.019
+  BTCUSD        1.000x   1.000x   1.000x   1.000x   0.989x   1.008x    1.000x   0.019
+  LTCUSD        1.000x   1.000x   1.000x   1.000x   0.989x   1.008x    1.000x   0.019
+  ETHUSD        1.000x   1.000x   1.000x   1.000x   0.989x   1.008x    1.000x   0.019
+  ADAUSD            --       --       --       --       --       --        --       --
+  DOTUSD        0.864x   0.879x   1.014x   0.983x   1.000x   0.934x    0.958x   0.150
+  AVAXUSD       0.923x   0.945x   0.945x   0.932x   0.991x   1.000x    0.945x   0.077
+
+  Primary reference vs the 6-reference median: max absolute difference 0.126x across
+  10 rows. That is large enough that the choice of reference is itself a judgement call.
+
+============================================================================================================
+(3) THE DECOMPOSITION CHECK - IS R501's xALL/xSAME GAP ACTUALLY THE ERA FACTOR?
+============================================================================================================
+
+  R501 asserted the gap between its two estimators is pure calendar. This round measured the
+  calendar independently, on a different object (the reference's own tape restricted by days,
+  no minute mask anywhere). If the assertion is right the two columns should track. Note the
+  gap is measured against a MEDIAN OVER DONORS whose windows differ, so exact equality is not
+  expected and is not the test; direction and rough size are.
+  TWO era columns are printed against the gap, and the SECOND is the matched one: R501's gap is
+  itself a MEDIAN OVER THE SAME SIX DONORS, so the median-era column is like-for-like and the
+  single-reference column is not. Both are shown because the difference between them is a
+  finding in its own right.
+
+  instrument    R501 gap  ERA(ref)   g/ERA  ERA(med6)  g/ERAmed  reading (matched column)
+  ----------------------------------------------------------------------------------------
+  LINKUSD         1.000x    1.000x   1.000     1.000x     1.000  gap IS the era
+  PAXGUSD         1.127x    1.021x   1.105     1.147x     0.983  gap IS the era
+  XRPUSD          0.986x    1.084x   0.910     0.988x     0.998  gap IS the era
+  SOLUSD          1.082x    1.048x   1.033     1.081x     1.000  gap IS the era
+  DOGEUSD         1.002x    1.000x   1.002     1.000x     1.002  gap IS the era
+  BTCUSD          1.000x    1.000x   1.000     1.000x     1.000  gap IS the era
+  LTCUSD          1.004x    1.000x   1.004     1.000x     1.004  gap IS the era
+  ETHUSD          1.000x    1.000x   1.000     1.000x     1.000  gap IS the era
+  DOTUSD          0.935x    1.014x   0.922     0.958x     0.976  gap IS the era
+  AVAXUSD         0.943x    0.945x   0.998     0.945x     0.998  gap IS the era
+
+  On the matched column the gap and the era agree to within 2.4% on every one of the
+  10 measurable rows (median 0.2%). R501's assertion that its xALL/xSAME gap is pure
+  calendar is CONFIRMED, and this round measured the calendar on a different object to do it.
+  Against the SINGLE reference the same check reads 0.910-1.105, worst on PAXG:
+  one reference is not enough to carry an era factor for a row whose window it barely shares.
+
+============================================================================================================
+(4) THE RANKING, A THIRD TIME. R499's FEE COLUMN STAYS FROZEN - ONLY THE NUMERATOR MOVES.
+============================================================================================================
+
+  vol*   = vol / xSAME              R501's de-biasing (gap shape), published
+  vol**  = vol / xSAME / ERA        this round, era-controlled on top of it
+
+  #   instrument     vol%   /xSAME   vol* %     /ERA   vol** %   fee%RT   mult*   mult**   move  sealed
+  --------------------------------------------------------------------------------------------------------
+  1   LINKUSD      0.1037   1.086x   0.0955   1.000x    0.0955   0.0519    1.84     1.84      =  SPENT
+  2   PAXGUSD      0.0791   1.128x   0.0701   1.021x    0.0687   0.0400    1.75     1.72      =  INTACT
+  3   SOLUSD       0.1059   1.036x   0.1022   1.048x    0.0976   0.0590    1.73     1.65      =  SPENT
+  4   XRPUSD       0.0829   1.144x   0.0724   1.084x    0.0668   0.0439    1.65     1.52      =  INTACT
+  5   DOGEUSD      0.1007   1.071x   0.0940   1.000x    0.0940   0.0709    1.33     1.33      =  INTACT
+  6   BTCUSD       0.0546   1.067x   0.0512   1.000x    0.0512   0.0400    1.28     1.28      =  SPENT
+  7   LTCUSD       0.0923   1.105x   0.0835   1.000x    0.0835   0.1115    0.75     0.75      =  INTACT
+  8   ETHUSD       0.0687   1.053x   0.0652   1.000x    0.0652   0.1189    0.55     0.55      =  SPENT
+  9   DOTUSD       0.0842   1.072x   0.0786   1.014x    0.0775   0.2852    0.28     0.27      =  INTACT
+  10  AVAXUSD      0.0973   1.065x   0.0913   0.945x    0.0966   0.4032    0.23     0.24      =  INTACT
+  11  ADAUSD       0.0794       --       --       --   NO MASK   0.1440      --       --     --  INTACT
+
+  R501 de-biased order : LINK > PAXG > SOL > XRP > DOGE > BTC > LTC > ETH > DOT > AVAX
+  era-controlled order : LINK > PAXG > SOL > XRP > DOGE > BTC > LTC > ETH > DOT > AVAX
+
+============================================================================================================
+    WHICH OF R501's SURVIVING ORDERINGS SURVIVE THE ERA CONTROL
+============================================================================================================
+
+  Rows carrying BOTH corrections: 10 of 11. Ordered pairs among them: 45.
+  R501 reported 44 of 45 pairwise orderings surviving its own correction, on 10 readable rows.
+  Of the 45 pairs this round can re-examine:
+    SURVIVE the era control : 45 (100%)
+    REVERSE under it        : 0 (0%)
+
+  NONE. Every ordering R501 left standing among these rows is the same after the era control.
+
+  SENSITIVITY - THE SAME THIRD RANKING WITH THE MEDIAN-OF-SIX ERA INSTEAD OF THE SINGLE REFERENCE,
+  because part (2) measured the two to differ by up to 0.126x and an ordering must not rest on
+  which dense tape was named:
+    era-controlled (median-of-6) : LINK > XRP > SOL > PAXG > DOGE > BTC > LTC > ETH > DOT > AVAX
+    pairs surviving on that estimator too: 42 of 45   reversals: PAXGUSD/SOLUSD, PAXGUSD/XRPUSD, SOLUSD/XRPUSD
+
+  THE SAME TABLE, THREE TIMES, ON THE ROWS THAT CARRY ALL THREE READINGS:
+    as published    : LINK > PAXG > XRP > SOL > DOGE > BTC > LTC > ETH > DOT > AVAX
+    R501 de-biased  : LINK > PAXG > SOL > XRP > DOGE > BTC > LTC > ETH > DOT > AVAX
+    era-controlled  : LINK > PAXG > SOL > XRP > DOGE > BTC > LTC > ETH > DOT > AVAX
+
+============================================================================================================
+WHAT THIS ROUND ESTABLISHES
+============================================================================================================
+
+  1. THE ERA COLUMN EXISTS and it is not small. Measured on one instrument's tape so that
+     nothing but the calendar differs, the eleven rows' windows span 0.945x (AVAXUSD) to
+     1.084x (XRPUSD) - the ranking has been comparing coordinates measured in markets
+     up to 1.15x apart in one-minute volatility.
+
+  2. 45 of 45 of R501's surviving orderings survive the era control; 0 reverse.
+
+  3. 1 row(s) have NO era factor and were given none. That is a DATA gap (item 37), not a
+     finding about those instruments, and their rows are printed with '--' rather than dropped.
+
+  4. COSTS DECIDE NOTHING (owner rule, 2026-07-25). Nothing above declines a trade, gates a
+     strategy or ranks an instrument for trading. It corrects a bookkeeping table.
+
+  FENCE HELD: simulate() never called, no entry population built, no sweep scanned, no stop
+  measured, no outcome read, every tape read behind its own 80% boundary. NO LOOK CONSUMED.
+============================================================================================================

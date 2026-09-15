@@ -1430,9 +1430,32 @@ Rules (non-negotiable, they are why anything here can be trusted):
     population is scored, no sealed slice is read, no look, no candidate. This
     corrects a table; it does not select anything off it.
 
-36. **THE ROWS OF THAT RANKING COME FROM DIFFERENT ERAS AND NOBODY HAS EVER
-    CONTROLLED FOR IT.**
-    *(new, opened by R501, and it is the SAME SHAPE as item 33: a correction
+36. ~~**THE ROWS OF THAT RANKING COME FROM DIFFERENT ERAS AND NOBODY HAS EVER
+    CONTROLLED FOR IT.**~~
+    **DONE — R502, 2026-09-15. No look consumed.** All three deliverables
+    landed. Era factor = a common dense reference's coordinate on the row's
+    own calendar over the pooled calendar, `BTCUSD` behind its own fence
+    named before any number existed, pooled window 2021-01-01 → 2025-06-15.
+    **It spans 0.945x (AVAX) to 1.084x (XRP), a factor of 1.15**, and all of
+    that spread lives in the four rows whose windows are not the pooled one.
+    **ADA has no era factor and was given none** (zero overlapping days —
+    item 37's data gap, now the second correction ADA cannot carry).
+    **R501's calendar claim is CONFIRMED on an independently measured object:**
+    its `xALL`/`xSAME` gap and the era agree to within **2.4% on all ten
+    measurable rows, median 0.2%** — once the era is medianed over the same six
+    donors the gap was medianed over.
+    **THE ORDERING, AND IT IS THE ROUND'S REAL OUTPUT:** on the named reference
+    **45 of 45** of R501's surviving orderings survive and nothing moves. On
+    the **median-of-six** estimator — the one that matches how R501's own gap
+    was computed — **42 of 45 survive, and the three reversals are all in the
+    top four**: PAXG falls 2nd → 4th, XRP rises 4th → 2nd. **Rows 5-10 are
+    era-stable under every correction this desk has applied; rows 1-4 are not
+    resolved**, and the desk has no principled reason to prefer one estimator.
+    That opens item 38. PAXG's SPLIT verdict is untouched and R500's UNREADABLE
+    call on `xALL` stands.
+
+36-OLD. *(original text, kept for the record)*
+    *(opened by R501, and it is the SAME SHAPE as item 33: a correction
     to a table the desk reuses, not a hypothesis. It is what item 33 found
     underneath the thing item 33 was looking for.)*
     R501 measured a row's density bias two ways — against a donor's whole
@@ -1458,6 +1481,41 @@ Rules (non-negotiable, they are why anything here can be trusted):
     population is scored, no sealed slice is read — the donors' final 20%
     included — no look, no candidate. This corrects a table; it does not
     select anything off it.
+
+38. **THE TOP FOUR ROWS OF THAT RANKING DO NOT HAVE A STABLE ORDER, AND THE
+    DESK READS THEM TO DECIDE WHERE A SEALED LOOK GOES.**
+    *(new, opened by R502. Same shape and same fence as items 33 and 36: a
+    correction to a table the desk reuses, not a hypothesis. HIGHEST of the
+    remaining table-correction items, because it is the only one whose subject
+    is the cell an operational decision is actually read out of.)*
+    R502 stated the ranking a third time and got two different answers out of
+    the same correction. On the single named reference (BTCUSD) **45 of 45**
+    orderings survive; on the median of the six dense references — **the
+    estimator that matches how R501's own gap was computed** — **42 of 45**
+    survive and **every reversal is in the top four**: PAXG 2nd or 4th, XRP
+    2nd or 4th, SOL between them either way. Rows 5-10 (DOGE > BTC > LTC >
+    ETH > DOT > AVAX) are identical under every correction R500/R501/R502 have
+    applied. **Two of the unstable four are INTACT** (PAXG, XRP), which is
+    precisely why this is not cosmetic.
+    The cause is measured and is not a mystery: the reference-to-reference
+    spread of the era factor is **0.232 on PAXG and 0.197 on XRP** against
+    0.019 on the five rows that share the pooled calendar, so the rows that
+    need an era factor are exactly the rows where naming the reference decides
+    the answer.
+    Deliverable, and the item will accept EITHER: (a) a **principled reference
+    rule** fixed in advance and defended on something other than the answer it
+    gives — e.g. weight each reference by its overlap with the row's window,
+    or require a reference whose own window CONTAINS the row's, and show the
+    rule was not chosen by looking at the resulting order; or (b) the finding
+    that **no such rule is available on this disk**, in which case publish the
+    ranking with rows 1-4 explicitly marked UNORDERED and stop the desk quoting
+    an order among them. Report which it is. An estimator picked because it put
+    a particular instrument on top is the failure mode this item exists to
+    prevent, so **the rule is written down before the ordering is recomputed.**
+    **THE FENCE:** R493's, unchanged. `simulate()` is never called, no entry
+    population is scored, no sealed slice is read — the references' final 20%
+    included — no look, no candidate. This corrects a table; it does not select
+    anything off it, and it explicitly does not spend PAXG's or XRP's slice.
 
 37. **ADA'S GAP SHAPE CANNOT BE TRANSPLANTED BECAUSE NO DENSE TAPE ON THIS
     DISK REACHES 2026.**
