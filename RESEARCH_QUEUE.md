@@ -1482,8 +1482,43 @@ Rules (non-negotiable, they are why anything here can be trusted):
     included — no look, no candidate. This corrects a table; it does not
     select anything off it.
 
-38. **THE TOP FOUR ROWS OF THAT RANKING DO NOT HAVE A STABLE ORDER, AND THE
-    DESK READS THEM TO DECIDE WHERE A SEALED LOOK GOES.**
+38. ~~**THE TOP FOUR ROWS OF THAT RANKING DO NOT HAVE A STABLE ORDER, AND THE
+    DESK READS THEM TO DECIDE WHERE A SEALED LOOK GOES.**~~
+    **DONE — R503, 2026-09-16. CLOSED ON BRANCH (b). No look consumed.**
+    Both halves of the deliverable landed. The rule was fixed in advance and
+    **demonstrably so**: `step503_PREREGISTRATION.md`, git commit
+    **2deb2fc, 2026-09-16 03:26:06 -0400**, written and committed before
+    `step503_reference_rule.py` existed and three hours before its first
+    output. Rule 1 = containment (a reference must carry >=98% of the pooled
+    days AND >=98% of the row's days, denominator ALWAYS on the pooled
+    calendar) plus a unanimity criterion (a pair is ordered only if every
+    admissible reference agrees). Rule 2 = overlap-weighted mean, same
+    judgement without a threshold. Decision criterion fixed before any number.
+    **R502's median-of-six had a construction defect readable off the windows
+    alone:** it divided six references by six DIFFERENT denominators (their
+    own private windows). **Only 4 of the 6 can carry a pooled-calendar
+    denominator at all** — DOT covers 41% of the pooled calendar, AVAX 80%.
+    Two of the tapes R502 medianed were never entitled to a vote.
+    **VERDICT (b). All three committed conditions FAIL.** XRP has NO
+    admissible reference (the best A1-passing tape covers **71% of its
+    window**); PAXG vs SOL splits its four admissible references **two-two**
+    (LINK and DOGE put SOL above, BTC and ETH put PAXG above, on rows 1.2% of
+    a multiple apart); and the two rules disagree about the top four.
+    **WHAT THE DESK MAY QUOTE FROM NOW ON, and this is binding:**
+    **LINK is 1st and that IS resolved** — above every row under both rules
+    and every reference either admits. **Places 2, 3 and 4 are UNORDERED:
+    {PAXG, SOL, XRP}, no order among them, and no round may quote one.**
+    **DOGE > BTC > LTC > ETH is resolved and unanimous** (20 of 21 pairs
+    resolved). DOT, AVAX and ADA carry no era factor and are unplaced.
+    **The two instruments the desk would most want ranked — PAXG and XRP, the
+    INTACT pair at the top — are exactly the two it cannot rank.**
+    **BARRED:** loosening the 98% threshold after seeing XRP drop out. A
+    looser rule would place XRP using a reference covering 71% of its window,
+    which is the thing the rule exists to forbid, and choosing it now would be
+    picking an estimator by its answer. That is the failure mode item 38 was
+    opened to prevent.
+
+38-OLD. *(original text, kept for the record)*
     *(new, opened by R502. Same shape and same fence as items 33 and 36: a
     correction to a table the desk reuses, not a hypothesis. HIGHEST of the
     remaining table-correction items, because it is the only one whose subject
@@ -1517,10 +1552,23 @@ Rules (non-negotiable, they are why anything here can be trusted):
     included — no look, no candidate. This corrects a table; it does not select
     anything off it, and it explicitly does not spend PAXG's or XRP's slice.
 
-37. **ADA'S GAP SHAPE CANNOT BE TRANSPLANTED BECAUSE NO DENSE TAPE ON THIS
-    DISK REACHES 2026.**
-    *(new, opened by R501. A DATA question, not a research one — the same
-    shape as item 35, and lower priority than 36.)*
+37. **NO DENSE TAPE ON THIS DISK REACHES 2026, AND IT NOW COSTS FOUR ROWS
+    OF THE RANKING THEIR PLACE — INCLUDING ONE OF THE TWO INTACT ROWS AT
+    THE CONTESTED TOP.**
+    *(opened by R501 as an ADA-only data gap. **PROMOTED to the top of the
+    remaining items by R503**, which found the same missing tape unplaces
+    XRP, DOT and AVAX as well. A DATA question, not a research one — and
+    after R503 it is the ONLY route on this queue that could reorder the
+    cell the desk reads to spend a look.)*
+    **R503's addition, and it is why this moved up:** under the committed
+    reference rule, **XRP, DOT, AVAX and ADA all have zero admissible
+    references** for the identical reason — every dense 1-minute tape on
+    this disk stops between **2025-06 and 2025-12**, so none of them spans
+    both its own window and the pooled calendar. The best A1-passing
+    reference covers **71% of XRP's window, 78% of DOT's, 95% of AVAX's and
+    0% of ADA's**, against the rule's 98%. **XRP is INTACT and sits in the
+    unordered top three.** Extending one dense donor through 2026 would
+    place it. Nothing else on this queue can.
     R501 could de-bias ten of the eleven ranked instruments and not ADAUSD:
     its fenced window is **2026-02-13 → 2026-06-24** and every donor's fenced
     1-minute tape stops at **2025-06 to 2025-12**, so there is no overlap to

@@ -8172,3 +8172,239 @@ not — on two estimators, because one of them was not enough.
 
 **Item 37 gains a second reason to exist:** ADA now fails two separate
 corrections for the identical missing-tape reason.
+
+---
+
+# R503 — THE RULE WAS WRITTEN DOWN FIRST, AND IT SAYS THE TOP OF THE RANKING IS UNORDERED. LINK IS FIRST; 2ND THROUGH 4TH ARE NOT A RANKING.
+
+**2026-09-16. Queue item 38. `step503_reference_rule.py`, full output in
+`step503_output.txt`, rule in `step503_PREREGISTRATION.md`. A CORRECTION to a
+table the desk reuses, not a hypothesis. Research only, no orders, no account,
+no live file touched, imported or edited. NO LOOK CONSUMED, and none could be:
+`simulate()` is never called, no entry population is built, no sweep is
+scanned, no stop is measured and no return, expectancy, win rate, risk multiple
+or t-statistic is computed for any instrument. Every tape read — every
+reference's included — stops at that instrument's own 80% boundary, so PAXG's
+and XRP's intact slices are unread.**
+
+## What this round was for
+
+Item 38, opened by R502. R502 corrected the ranking for era and got **two
+different answers out of the same correction**: on the single named reference
+(BTCUSD) 45 of 45 orderings survived; on the median of six dense references,
+42 of 45, and **every reversal sat in the top four** — the cell the desk reads
+when it decides where to spend a sealed look. Two of those four are INTACT
+(PAXG, XRP). The item would accept either a principled reference rule fixed in
+advance, or the finding that none is available, in which case rows 1–4 get
+published UNORDERED.
+
+## THE RULE WAS COMMITTED BEFORE THE ANSWER EXISTED, AND THAT IS CHECKABLE
+
+`step503_PREREGISTRATION.md`, commit **2deb2fc6aa4a7c9e9c8f7f03d64f66a1e019dc15**,
+**2026-09-16 03:26:06 −0400** — written and committed **before
+`step503_reference_rule.py` existed**, before it was run, and before any era
+factor or ordering under it existed anywhere on this disk. Every threshold used
+below is copied out of that file and none was changed. The git timestamp
+preceding the first output is the whole evidence this round offers on the
+item's central demand: *"An estimator picked because it put a particular
+instrument on top is the failure mode this item exists to prevent."*
+
+## The a-priori objection that generated the rule, established from the WINDOWS alone
+
+`ERA(row | ref)` is **one tape's volatility on the row's calendar over the same
+tape's volatility on the pooled calendar.** It is a measurement only where that
+tape spans both calendars.
+
+R502's median-of-six has a **construction defect that is visible without
+computing anything**: `era_multi` divides each reference's row-calendar
+coordinate by **that reference's own whole fenced window**, and the six windows
+are not the same window (DOT runs 2023-08 → 2025-12, AVAX 2021-11 → 2025-08,
+the other four 2021-01 → 2025-06). **Six ratios against six different
+denominators are not on a common scale and must not be medianed.** That is a
+defect of construction, not an observation about which instrument came out on
+top, and it is what the rule was built to remove.
+
+## The rule, as committed
+
+- **Pooled calendar:** BTCUSD's fenced window, **inherited from R502 unchanged**
+  (1,627 days, 2021-01-01 → 2025-06-15), so this round stays comparable.
+- **Denominator: always the reference's coordinate on the POOLED calendar**,
+  never on its own private window.
+- **RULE 1 (containment):** a reference is ADMISSIBLE for a row when it carries
+  bars on **≥98% of the pooled days (A1)** AND **≥98% of the row's own days
+  (A2)**, both overlaps ≥120 days. Era = median over admissible references. A
+  row with **no** admissible reference is **UNMEASURABLE** and gets none —
+  item 25's rule.
+- **The unanimity criterion:** a pairwise ordering is **RESOLVED** only if it
+  holds when the era is taken from **every admissible reference individually**.
+  An ordering that depends on which equally-admissible tape was named is not an
+  ordering, and a median hides that dependence behind one number.
+- **RULE 2 (overlap-weighted):** weight = (share of the row's days the
+  reference carries) × (share of pooled days it carries), weighted mean, zero
+  below R502's inherited floors. The same judgement with no threshold.
+- **The decision, fixed in advance:** report **(a)** only if all three hold —
+  every top-four row has a Rule 1 era factor; unanimity leaves the top four
+  fully ordered; Rule 2's top four is identical to Rule 1's. **Otherwise (b).**
+
+## Reproduction controls — both EXACT, as in R502
+
+- **R499's `vol%` column**, recomputed behind the same fence: max absolute
+  difference **0.0000 pp** across all eleven rows.
+- **R501's `xSAME` column**, recomputed with R501's own functions: max absolute
+  difference **0.000x**. The era correction layers onto R501's own numbers.
+
+## (1) ONLY FOUR OF THE SIX REFERENCES CAN CARRY A DENOMINATOR AT ALL
+
+| reference | its fenced window | overlap with pooled | A1 coverage | verdict |
+|---|---|---|---|---|
+| LINK | 2021-01-01 → 2025-06-15 | 1627 | 100% | admissible denominator |
+| DOGE | 2021-01-01 → 2025-06-15 | 1627 | 100% | admissible denominator |
+| BTC  | 2021-01-01 → 2025-06-15 | 1627 | 100% | admissible denominator |
+| ETH  | 2021-01-01 → 2025-06-15 | 1627 | 100% | admissible denominator |
+| DOT  | 2023-08-18 → 2025-12-24 | 668  | **41%** | FAILS A1 — excluded |
+| AVAX | 2021-11-18 → 2025-08-18 | 1306 | **80%** | FAILS A1 — excluded |
+
+**Decided by the windows and nothing else, before any era factor was read.**
+Two of the six tapes R502 medianed were never entitled to a vote.
+
+## (2) THE ERA MATRIX, EVERY CELL DIVIDED BY THE POOLED CALENDAR
+
+`A` = admissible under Rule 1.
+
+| instrument | LINK | DOGE | BTC | ETH | DOT | AVAX | **RULE 1** | n adm | **RULE 2** |
+|---|---|---|---|---|---|---|---|---|---|
+| LINK | 1.000A | 1.000A | 1.000A | 1.000A | 1.000 | 1.000 | **1.000x** | 4 | 1.000x |
+| PAXG | 1.161A | 1.147A | 1.021A | 1.077A | — | 1.243 | **1.112x** | 4 | 1.118x |
+| XRP  | 0.887 | 0.948 | 1.084 | 1.051 | 1.038 | 0.943 | **UNMEASURABLE** | **0** | 0.989x |
+| SOL  | 1.084A | 1.081A | 1.048A | 1.078A | — | 1.093 | **1.079x** | 4 | 1.075x |
+| DOGE | 1.000A | 1.000A | 1.000A | 1.000A | 1.000 | 1.000 | **1.000x** | 4 | 1.000x |
+| BTC  | 1.000A | 1.000A | 1.000A | 1.000A | 1.000 | 1.000 | **1.000x** | 4 | 1.000x |
+| LTC  | 1.000A | 1.000A | 1.000A | 1.000A | 1.000 | 1.000 | **1.000x** | 4 | 1.000x |
+| ETH  | 1.000A | 1.000A | 1.000A | 1.000A | 1.000 | 1.000 | **1.000x** | 4 | 1.000x |
+| ADA  | — | — | — | — | — | — | **UNMEASURABLE** | 0 | — |
+| DOT  | 0.864 | 0.879 | 1.014 | 0.983 | 1.011 | 0.927 | **UNMEASURABLE** | 0 | 0.941x |
+| AVAX | 0.923 | 0.945 | 0.945 | 0.932 | 1.002 | 0.992 | **UNMEASURABLE** | 0 | 0.949x |
+
+**Four rows have no admissible reference and were given no era factor**, with
+the reason printed for each: the best A1-passing reference covers **71% of
+XRP's window**, **78% of DOT's**, **95% of AVAX's** and **0% of ADA's**. Every
+one of those four is a **DATA gap — no dense tape on this disk reaches 2026 —
+and not a finding about the instrument.** That is item 37, and it now has a
+third reason to exist.
+
+## (3) THE RANKING, A FOURTH AND FIFTH TIME. R499's FEE COLUMN FROZEN.
+
+| # | instrument | vol% | /xSAME | vol* % | fee%RT | mult* | ERA1 | **mult1** | ERA2 | **mult2** | sealed |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | LINK | 0.1037 | 1.086x | 0.0955 | 0.0519 | 1.84 | 1.000x | **1.84** | 1.000x | **1.84** | SPENT |
+| 2 | PAXG | 0.0791 | 1.128x | 0.0701 | 0.0400 | 1.75 | 1.112x | **1.58** | 1.118x | **1.57** | INTACT |
+| 3 | SOL | 0.1059 | 1.036x | 0.1022 | 0.0590 | 1.73 | 1.079x | **1.60** | 1.075x | **1.61** | SPENT |
+| 4 | XRP | 0.0829 | 1.144x | 0.0724 | 0.0439 | 1.65 | UNMEAS | **—** | 0.989x | **1.67** | INTACT |
+| 5 | DOGE | 0.1007 | 1.071x | 0.0940 | 0.0709 | 1.33 | 1.000x | 1.33 | 1.000x | 1.33 | INTACT |
+| 6 | BTC | 0.0546 | 1.067x | 0.0512 | 0.0400 | 1.28 | 1.000x | 1.28 | 1.000x | 1.28 | SPENT |
+| 7 | LTC | 0.0923 | 1.105x | 0.0835 | 0.1115 | 0.75 | 1.000x | 0.75 | 1.000x | 0.75 | INTACT |
+| 8 | ETH | 0.0687 | 1.053x | 0.0652 | 0.1189 | 0.55 | 1.000x | 0.55 | 1.000x | 0.55 | SPENT |
+| 9 | DOT | 0.0842 | 1.072x | 0.0786 | 0.2852 | 0.28 | UNMEAS | — | 0.941x | 0.29 | INTACT |
+| 10 | AVAX | 0.0973 | 1.065x | 0.0913 | 0.4032 | 0.23 | UNMEAS | — | 0.949x | 0.24 | INTACT |
+| 11 | ADA | 0.0794 | — | — | 0.1440 | — | UNMEAS | — | — | — | INTACT |
+
+- R502 single-reference : LINK > **PAXG > SOL > XRP** > DOGE > BTC > LTC > ETH > DOT > AVAX
+- R502 median-of-six    : LINK > **XRP > SOL > PAXG** > DOGE > BTC > LTC > ETH > DOT > AVAX
+- **RULE 1**            : LINK > **SOL > PAXG** > DOGE > BTC > LTC > ETH   *(XRP, DOT, AVAX, ADA absent — no admissible reference)*
+- **RULE 2**            : LINK > **XRP > SOL > PAXG** > DOGE > BTC > LTC > ETH > DOT > AVAX
+
+## (4) THE UNANIMITY TEST — 20 OF 21 PAIRS RESOLVED, AND THE ONE THAT FAILS IS PAXG/SOL
+
+Of the 21 ordered pairs among the seven rows that carry a Rule 1 era factor,
+**20 are unanimous across all four admissible references. One is not:**
+
+| reference | SOL mult | PAXG mult | says |
+|---|---|---|---|
+| LINK | 1.599 | 1.509 | SOL above |
+| DOGE | 1.602 | 1.529 | SOL above |
+| BTC  | 1.654 | **1.717** | **PAXG above** |
+| ETH  | 1.608 | **1.627** | **PAXG above** |
+
+**Two references each way, on rows separated by 1.2% of a multiple.** The rule
+admits all four equally and they split down the middle. This is not a close
+call the desk can round in its favour; it is the absence of an answer.
+
+## THE COMMITTED DECISION: (b)
+
+| condition, fixed before any number | result |
+|---|---|
+| 1. every top-four row has a Rule 1 era factor | **FAIL** (XRP has none) |
+| 2. unanimity leaves the top four fully ordered | **FAIL** (SOL/PAXG splits 2–2) |
+| 3. Rule 2's top four identical to Rule 1's | **FAIL** (LINK > SOL > PAXG vs LINK > XRP > SOL > PAXG) |
+
+**All three fail. The round reports (b): no principled reference rule resolves
+the top four on this disk.**
+
+> **WHAT THE DESK MAY QUOTE FROM NOW ON.**
+> **LINK is 1st, and that IS resolved** — it sits above every other row under
+> both committed rules and under every reference either rule admits.
+> **Places 2, 3 and 4 are UNORDERED and must be written that way: {PAXG, SOL,
+> XRP}, no order among them.** PAXG vs SOL splits its admissible references
+> two–two; XRP cannot be placed at all, because **no tape on this disk spans
+> both its window and the pooled one**. Below them, **DOGE > BTC > LTC > ETH is
+> resolved and unanimous**, exactly as it has been under every correction since
+> R500. DOT, AVAX and ADA carry no era factor and are unplaced for the same
+> data reason as XRP.
+> **The two instruments the desk would most want ranked — PAXG and XRP, the
+> INTACT pair at the top — are precisely the two it cannot rank.** That is the
+> round's operational output, and it is a reason to stop reading an order out
+> of that cell rather than a reason to pick one.
+
+## Honest limits, fixed before running
+
+- The pooled calendar is still BTCUSD's window. **Inheriting it keeps this
+  round comparable with R502; it does not make it neutral.** A different
+  pooled calendar is a different question and was not asked.
+- **98% and the weighting form are choices.** They are defended on the
+  construction of the estimator and they were committed before the answer
+  existed. That is the most this round can offer, and it is not proof.
+- **Rules 1 and 2 are two reasonable rules, not the only two.** Their
+  agreement would have been evidence, not proof; their disagreement is
+  likewise evidence that the top is unstable, not a theorem that it is.
+- Every reference is itself 80–91% full behind its own fence (R501: BTC
+  1.067x). That shape is common to numerator and denominator and divides out
+  of the ratio; it does not divide out of the levels, and **no level here is
+  anyone's real one-minute move.**
+- Rule 1's strictness is what makes XRP unmeasurable. A looser threshold would
+  place XRP — **and it would place it using a reference that covers 71% of its
+  window, which is the thing the rule exists to forbid.** Loosening it after
+  seeing that XRP dropped out is exactly the failure mode this item was opened
+  to prevent, and it is **barred**.
+- The fee column is R499's, frozen, as in R501 and R502. R499's standing
+  re-poll rule is satisfied by R501/R502, which found today's fees give the
+  identical ordering.
+
+## Looks consumed
+
+**NONE, and none was reachable.** `simulate()` is never called and neither is
+any entry builder. No entry population was built on any instrument, no sweep
+scanned, no break of structure detected, no fill modelled, no stop measured, no
+outcome, return, expectancy, win rate, risk multiple or t-statistic computed
+for anything. Every tape read — **every reference's included** — stops at its
+own 80% boundary, so **PAXG's and XRP's sealed slices are intact and unread**,
+and LINK's (R492), crypto's (R475) and the index's (R474) stay exactly as spent
+as they were. No order was placed, no account exists, no live file was touched
+or imported, and nothing is proposed for deployment.
+
+## What this closes and what it opens
+
+**Item 38 is CLOSED on branch (b).** Both halves of the deliverable landed: a
+principled rule was fixed in advance and demonstrably so (git commit 2deb2fc,
+three hours ahead of the first output), and the finding is that it does **not**
+resolve the top four. The ranking is republished with **places 2–4 marked
+UNORDERED** and the desk stops quoting an order among PAXG, SOL and XRP.
+
+**Item 37 gains a THIRD reason to exist, and it is now the item that would
+actually change something:** XRP, DOT and AVAX are unplaced for the identical
+reason ADA was — **no dense 1-minute tape on this disk reaches past 2025-06**.
+Extending one dense donor through 2026 would place XRP, which is one of the two
+INTACT rows at the contested top. That is a DATA job, not a research one, and
+it is the only route on the table that could reorder the cell.
+
+**Nothing new is opened as a hypothesis.** This round could not produce a
+candidate and did not.

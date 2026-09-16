@@ -1,0 +1,162 @@
+============================================================================================================
+ROUND 503 - THE TOP FOUR ROWS DO NOT HAVE A STABLE ORDER, AND THE DESK READS THEM.   (item 38)
+============================================================================================================
+run 2026-09-16 07:58:59 UTC
+A CORRECTION to a table this desk reuses, not a hypothesis. simulate() is never called, no
+entry population is built, no sealed slice is read, NO LOOK IS CONSUMED and none could be.
+
+THE RULE WAS COMMITTED BEFORE THIS FILE EXISTED: step503_PREREGISTRATION.md
+  commit 2deb2fc6aa4a7c9e9c8f7f03d64f66a1e019dc15  (2026-09-16 03:26:06 -0400)
+  Every threshold below is copied out of it. The git timestamp on that commit precedes this
+  file's first output, which is the evidence this round offers that the rule was not chosen by
+  looking at the order it gives.
+
+THE A-PRIORI OBJECTION THAT GENERATES THE RULE, established from the WINDOWS alone:
+  ERA(row|ref) is one tape's volatility on the ROW's calendar over the same tape's volatility on
+  the POOLED calendar. It is a measurement only where that tape spans both. R502's median-of-six
+  divides each reference by ITS OWN whole window, and the six windows are not the same window -
+  six ratios against six different denominators are not on a common scale and must not be medianed.
+
+R499's published ranking parsed off step499_output.txt by R501's own parser: 11 of 11 rows.
+
+============================================================================================================
+(1) REPRODUCTION CONTROLS - the same two R502 ran. If either fails the round stops.
+============================================================================================================
+
+  a. R499's vol% column, recomputed behind the same fence: max absolute difference 0.0000 pp
+     EXACT. The table being corrected is the published one.
+
+  b. R501's xSAME column, recomputed with R501's own functions. Donors (>= 80% full): LINK, DOGE, BTC, ETH, DOT, AVAX
+     max absolute difference against R501's published xSAME: 0.000x
+     EXACT to the published precision. The era correction layers onto R501's own numbers.
+
+============================================================================================================
+(2) ADMISSIBILITY UNDER THE COMMITTED RULE - WHICH REFERENCES ACTUALLY SPAN BOTH CALENDARS
+============================================================================================================
+
+  POOLED CALENDAR (inherited from R502, unchanged): BTCUSD's fenced window, 2021-01-01 -> 2025-06-15, 1627 days.
+  RULE 1 admissibility: a reference must carry >= 98% of POOLED_DAYS (A1) AND >= 98% of the
+  row's own days (A2), both overlaps >= 120 days. DENOMINATOR IS ALWAYS THE POOLED CALENDAR,
+  never the reference's private window - that is the defect the rule exists to remove.
+
+  A1, the reference's own coverage of the pooled calendar:
+     reference  its fenced window           ovl days   A1 cov   verdict
+     ----------------------------------------------------------------
+     LINK       2021-01-01 -> 2025-06-15        1627    100%   ADMISSIBLE denominator
+     DOGE       2021-01-01 -> 2025-06-15        1627    100%   ADMISSIBLE denominator
+     BTC        2021-01-01 -> 2025-06-15        1627    100%   ADMISSIBLE denominator
+     ETH        2021-01-01 -> 2025-06-15        1627    100%   ADMISSIBLE denominator
+     DOT        2023-08-18 -> 2025-12-24         668     41%   FAILS A1 - excluded
+     AVAX       2021-11-18 -> 2025-08-18        1306     80%   FAILS A1 - excluded
+
+     4 of 6 dense references can carry a pooled-calendar denominator at all.
+     This is decided by the windows and nothing else; no era factor has been computed yet.
+
+  THE ERA MATRIX. Every cell divides by the reference's coordinate ON THE POOLED CALENDAR.
+  'A' marks a cell ADMISSIBLE under Rule 1; a bare number is computable but not admissible.
+
+  instrument       LINK      DOGE       BTC       ETH       DOT      AVAX  RULE1 med  n adm  RULE2 wtd
+  ----------------------------------------------------------------------------------------------------
+  LINKUSD        1.000A    1.000A    1.000A    1.000A    1.000     1.000      1.000x      4     1.000x
+  PAXGUSD        1.161A    1.147A    1.021A    1.077A        --    1.243      1.112x      4     1.118x
+  XRPUSD         0.887     0.948     1.084     1.051     1.038     0.943      UNMEAS      0     0.989x
+  SOLUSD         1.084A    1.081A    1.048A    1.078A        --    1.093      1.079x      4     1.075x
+  DOGEUSD        1.000A    1.000A    1.000A    1.000A    1.000     1.000      1.000x      4     1.000x
+  BTCUSD         1.000A    1.000A    1.000A    1.000A    1.000     1.000      1.000x      4     1.000x
+  LTCUSD         1.000A    1.000A    1.000A    1.000A    1.000     1.000      1.000x      4     1.000x
+  ETHUSD         1.000A    1.000A    1.000A    1.000A    1.000     1.000      1.000x      4     1.000x
+  ADAUSD             --        --        --        --        --        --     UNMEAS      0         --
+  DOTUSD         0.864     0.879     1.014     0.983     1.011     0.927      UNMEAS      0     0.941x
+  AVAXUSD        0.923     0.945     0.945     0.932     1.002     0.992      UNMEAS      0     0.949x
+
+  Rows with NO admissible reference, given NO era factor (item 25's rule): XRP, ADA, DOT, AVAX
+    XRP    its window 2024-01-01 -> 2026-01-20; the best A1-passing reference covers 71% of it (LINK), under 98%.
+    ADA    its window 2026-02-13 -> 2026-06-24; the best A1-passing reference covers 0% of it (LINK), under 98%.
+    DOT    its window 2023-08-18 -> 2025-12-24; the best A1-passing reference covers 78% of it (LINK), under 98%.
+    AVAX   its window 2021-11-18 -> 2025-08-18; the best A1-passing reference covers 95% of it (LINK), under 98%.
+
+============================================================================================================
+(3) THE RANKING UNDER EACH COMMITTED RULE. R499's FEE COLUMN STAYS FROZEN.
+============================================================================================================
+
+  #   instrument     vol%   /xSAME   vol* %   fee%RT   mult*     ERA1   mult1     ERA2   mult2   sealed
+  ----------------------------------------------------------------------------------------------------
+  1   LINKUSD      0.1037   1.086x   0.0955   0.0519    1.84   1.000x    1.84   1.000x    1.84   SPENT
+  2   PAXGUSD      0.0791   1.128x   0.0701   0.0400    1.75   1.112x    1.58   1.118x    1.57   INTACT
+  3   SOLUSD       0.1059   1.036x   0.1022   0.0590    1.73   1.079x    1.60   1.075x    1.61   SPENT
+  4   XRPUSD       0.0829   1.144x   0.0724   0.0439    1.65   UNMEAS      --   0.989x    1.67   INTACT
+  5   DOGEUSD      0.1007   1.071x   0.0940   0.0709    1.33   1.000x    1.33   1.000x    1.33   INTACT
+  6   BTCUSD       0.0546   1.067x   0.0512   0.0400    1.28   1.000x    1.28   1.000x    1.28   SPENT
+  7   LTCUSD       0.0923   1.105x   0.0835   0.1115    0.75   1.000x    0.75   1.000x    0.75   INTACT
+  8   ETHUSD       0.0687   1.053x   0.0652   0.1189    0.55   1.000x    0.55   1.000x    0.55   SPENT
+  9   DOTUSD       0.0842   1.072x   0.0786   0.2852    0.28   UNMEAS      --   0.941x    0.29   INTACT
+  10  AVAXUSD      0.0973   1.065x   0.0913   0.4032    0.23   UNMEAS      --   0.949x    0.24   INTACT
+  11  ADAUSD       0.0794       --       --   0.1440      --   UNMEAS      --       --      --   INTACT
+
+  R501 de-biased order (published) : LINK > PAXG > SOL > XRP > DOGE > BTC > LTC > ETH > DOT > AVAX
+  R502 single-reference order      : LINK > PAXG > SOL > XRP > DOGE > BTC > LTC > ETH > DOT > AVAX
+  R502 median-of-six order         : LINK > XRP > SOL > PAXG > DOGE > BTC > LTC > ETH > DOT > AVAX
+  RULE 1 (containment, median adm) : LINK > SOL > PAXG > DOGE > BTC > LTC > ETH
+  RULE 2 (overlap-weighted)        : LINK > XRP > SOL > PAXG > DOGE > BTC > LTC > ETH > DOT > AVAX
+  absent from RULE 1's ordering, having no admissible reference: XRP, ADA, DOT, AVAX
+
+============================================================================================================
+(4) THE UNANIMITY CRITERION - AN ORDERING THAT DEPENDS ON WHICH ADMISSIBLE TAPE WAS NAMED IS NOT
+    AN ORDERING. Every pair is re-decided with each admissible reference alone, one at a time.
+============================================================================================================
+
+  Rows carrying a Rule 1 era factor: 7 of 11. Ordered pairs among them: 21.
+    RESOLVED (every admissible reference agrees) : 20
+    UNORDERED                                    : 1
+
+  The pairs the desk may no longer quote an order for, and why each one failed:
+    SOL    vs PAXG    4 admissible references disagree
+        on LINK : SOL 1.599 vs PAXG 1.509  -> SOL above
+        on DOGE : SOL 1.602 vs PAXG 1.529  -> SOL above
+        on BTC  : SOL 1.654 vs PAXG 1.717  -> PAXG above
+        on ETH  : SOL 1.608 vs PAXG 1.627  -> PAXG above
+
+  THE TOP FOUR OF THE PUBLISHED TABLE, WHICH IS THE CELL AN OPERATIONAL DECISION IS READ OUT OF:
+    LINK (SPENT), PAXG (INTACT), SOL (SPENT), XRP (INTACT)
+    pairs among them: 6;  UNORDERED under Rule 1: 1;  rows with no era factor at all: 1 (XRP)
+
+============================================================================================================
+(5) THE COMMITTED DECISION. THREE CONDITIONS, ALL FIXED BEFORE ANY NUMBER EXISTED.
+============================================================================================================
+
+  1. every top-four row has a computable era factor under Rule 1            : FAIL
+  2. unanimity leaves the top four fully ordered                          : FAIL
+  3. Rule 2's order of the top four is identical to Rule 1's              : FAIL
+       Rule 1 top four : LINK > SOL > PAXG
+       Rule 2 top four : LINK > XRP > SOL > PAXG
+
+  VERDICT: the round reports (b).
+  NO PRINCIPLED REFERENCE RULE RESOLVES THE TOP FOUR ON THIS DISK. The rows below are published
+  UNORDERED and the desk stops quoting an order among them.
+    UNORDERED: SOL vs PAXG   (4 admissible references disagree)
+    UNORDERED: XRP against everything - no admissible reference exists for its window
+
+  WHAT IS STILL ORDERED, AND IT IS MOST OF THE TABLE:
+    LINK > DOGE > BTC > LTC > ETH
+    20 of 21 pairs are RESOLVED - unanimous across every reference the rule admits.
+
+============================================================================================================
+WHAT THIS ROUND ESTABLISHES
+============================================================================================================
+
+  1. THE RULE PREDATES THE ANSWER, and that is checkable: commit 2deb2fc6aa4a carries
+     every threshold used above and was made before this file existed.
+
+  2. R502's median-of-six had a construction defect visible from the windows alone: it divided
+     six references by six different denominators. 4 of 6 references can carry a pooled-calendar
+     denominator at all; the rest were excluded before any era factor was read.
+
+  3. THE ANSWER IS (b). 20 of 21 pairwise orderings are RESOLVED; 1 are UNORDERED,
+     of which 1 sit in the top four.
+
+  4. COSTS DECIDE NOTHING (owner rule, 2026-07-25). Nothing above declines a trade, gates a
+     strategy or ranks an instrument for trading. It corrects a bookkeeping table.
+
+  FENCE HELD: simulate() never called, no entry population built, no sweep scanned, no stop
+  measured, no outcome read, every tape read behind its own 80% boundary. NO LOOK CONSUMED.
+============================================================================================================
