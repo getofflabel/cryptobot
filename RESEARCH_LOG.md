@@ -8408,3 +8408,224 @@ it is the only route on the table that could reorder the cell.
 
 **Nothing new is opened as a hypothesis.** This round could not produce a
 candidate and did not.
+
+---
+
+# R504 — THE FOUR UNPLACED ROWS ARE NOT WAITING ON DATA. THE RULE THAT UNPLACED THEM CANNOT PLACE THEM BEFORE 2036.
+
+**2026-09-17. Queue item 37. `step504_placement_feasibility.py`, full output in
+`step504_output.txt`. A DATA question answered as a feasibility proof, not a
+hypothesis. Research only, no orders, no account, no live file touched,
+imported or edited. NO LOOK CONSUMED and none was reachable: `simulate()` is
+never called, no entry population is built, no sweep scanned, no stop
+measured, and no return, expectancy, win rate, risk multiple or t-statistic is
+computed for any instrument. Every tape measurement stops at that
+instrument's own 80% boundary, so PAXG's and XRP's intact slices are unread.
+**NO FILE WAS WRITTEN, EXTENDED, MOVED OR TRUNCATED** — and part (5) is why.**
+
+## What this round was for
+
+Item 37, promoted to the top of the queue by R503. R503 left four rows of the
+instrument ranking — **XRP, DOT, AVAX, ADA** — with no admissible reference and
+therefore no era factor, one of them (XRP) INTACT and sitting in the contested
+top three. The item's deliverable was concrete: *"extend one dense
+instrument's 1-minute tape (BTCUSD is the obvious donor) through 2026-06 so
+ADA's mask has somewhere to land,"* and R503 added that the same extension
+*"would place XRP. Nothing else on this queue can."*
+
+**The deliverable was attempted and it cannot be executed.** Not "is hard" —
+cannot. Three facts decide it and each is sourced here rather than asserted.
+
+## Reproduction controls — both EXACT, R503's two unchanged
+
+- **R499's `vol%` column**, recomputed behind the same fence: max absolute
+  difference **0.0000 pp** across all eleven rows.
+- **R501's `xSAME` column**, recomputed with R501's own functions: max
+  absolute difference **0.000x**. The disk is the one R501, R502 and R503 read.
+
+## (1) THE ITEM'S PREMISE IS FALSE OF THE FILES AND TRUE ONLY OF THE FENCE
+
+**All 11 of the 1-minute files already end on the corpus boundary,
+2026-07-26.** Nothing is missing forward, on any instrument, dense or thin.
+
+| instrument | FILE first | FILE last | file bars | FENCED window (the 80%) | cov% |
+|---|---|---|---|---|---|
+| LINK | 2021-01-01 | 2026-07-26 | 2,325,622 | 2021-01-01 → 2025-06-15 | 80.3% |
+| PAXG | 2021-01-01 | 2026-07-26 | 311,292 | 2021-01-01 → 2023-06-19 | 17.8% |
+| XRP | 2024-01-01 | 2026-07-26 | 770,145 | 2024-01-01 → 2026-01-20 | 54.7% |
+| SOL | 2021-01-01 | 2026-07-26 | 1,955,709 | 2021-01-01 → 2025-06-15 | 64.4% |
+| DOGE | 2021-01-01 | 2026-07-26 | 2,373,535 | 2021-01-01 → 2025-06-15 | 82.3% |
+| BTC | 2021-01-01 | 2026-07-26 | 2,597,036 | 2021-01-01 → 2025-06-15 | 89.0% |
+| LTC | 2021-01-01 | 2026-07-26 | 2,110,763 | 2021-01-01 → 2025-06-15 | 72.9% |
+| ETH | 2021-01-01 | 2026-07-26 | 2,538,368 | 2021-01-01 → 2025-06-15 | 90.6% |
+| ADA | 2026-02-13 | 2026-07-26 | 168,115 | 2026-02-13 → 2026-06-24 | 71.6% |
+| DOT | 2023-08-18 | 2026-07-26 | 1,256,982 | 2023-08-18 → 2025-12-24 | 83.0% |
+| AVAX | 2021-11-18 | 2026-07-26 | 1,980,264 | 2021-11-18 → 2025-08-18 | 82.0% |
+
+**"No dense tape on this disk reaches 2026" is a statement about `cut80`, not
+about the tape.** The fence keeps a fixed **PROPORTION** of a file's own span,
+so a tape that starts in 2021 and ends today is admissible only to 2025, and
+every day of new tape moves that boundary forward by **0.8 of a day**. The
+donor cannot catch the present by being fed; it recedes at 20% of the speed
+it is fed.
+
+## (2) EVERY FILE ALREADY STARTS AT THE VENDOR'S FIRST BAR
+
+R494's *"backfill means BACKWARD"* was the one route its own fence blesses, and
+the four late-starting rows were the obvious candidates. A read-only probe of
+Alpaca's public bars endpoint (three bars per symbol, `start=2015-01-01`,
+nothing saved) says the route is exhausted:
+
+| symbol | file first bar | vendor first bar | verdict |
+|---|---|---|---|
+| LINK / PAXG / SOL / DOGE / BTC / LTC / ETH | 2021-01-01 | 2021-01-01 | file == vendor floor |
+| **XRP** | 2024-01-01 06:00 | **2024-01-01 06:00** | file == vendor floor |
+| DOT | 2023-08-18 13:03 | 2023-08-18 13:03 | file == vendor floor |
+| AVAX | 2021-11-18 13:00 | 2021-11-18 13:00 | file == vendor floor |
+| ADA | 2026-02-13 12:02 | 2026-02-13 12:02 | file == vendor floor |
+
+**XRP's 2024-01-01 was the live suspect** — the only round-number start on the
+disk that step494's probe list never re-tested, and a fetch-parameter artefact
+there would have placed the desk's last clean slice. It is not an artefact.
+It is where Alpaca's XRP tape begins. **There is no earlier tape to buy for
+any of the four.**
+
+## (3) THE RULE'S TWO CONDITIONS PULL APART, AND THE CLOSED FORM SAYS BY HOW MUCH
+
+R503's Rule 1 needs one reference to satisfy both:
+
+- **A1** — cover ≥98% of the pooled calendar (BTC's fenced window,
+  2021-01-01 → 2025-06-15) ⟹ **the reference must start on or before
+  2021-02-02**, essentially at the pooled start.
+- **A2** — cover ≥98% of the **row's own fenced window**, which for all four
+  rows ends later than any 2021-starting tape's fence does.
+
+Under a fence keeping a fixed share `f` of a window, a reference that starts
+earlier than the row also **fences** earlier than the row, by exactly `1−f` of
+its head start. So A2 tolerates a lead of at most
+
+> **(1 − 0.98) × 0.80 / (1 − 0.80) = 8% of the row's remaining window**
+
+and that budget grows only **8 days per 100 days of new tape**, while the lead
+itself is a fixed number of years. At today's boundary:
+
+| row | starts | A2 lead budget | ref must start after | youngest dense ref | its start | verdict |
+|---|---|---|---|---|---|---|
+| XRP | 2024-01-01 | 75 d | 2023-10-18 | DOT | 2023-08-18 | no such reference |
+| DOT | 2023-08-18 | 86 d | 2023-05-24 | AVAX | 2021-11-18 | no such reference |
+| AVAX | 2021-11-18 | 137 d | 2021-07-04 | DOT | 2023-08-18 | A2 satisfiable — **but DOT fails A1 at 41%** |
+| ADA | 2026-02-13 | 13 d | 2026-01-30 | DOT | 2023-08-18 | no such reference |
+
+**The two demands name disjoint sets of start dates**, and they are disjoint
+because of the SHAPE of the rule — a proportional fence plus a containment
+threshold — not because of anything on this disk.
+
+## (4) THE BRUTE FORCE: PUSH THE CORPUS BOUNDARY TO 2100 ON AN IDEALISED TAPE
+
+Every (row × reference) pair was re-scored with the corpus boundary swept from
+2026-07-26 out to 2100, **assuming both tapes are 100% dense** from their real
+first bar. Real tapes are 80–91% full behind their fences (R501), so this is a
+strict **upper bound** on A1 and A2: what the idealised pair cannot do, no
+real pair can.
+
+| row | first boundary at which ANY pair clears both | that is |
+|---|---|---|
+| **AVAX** | 2036-07-25 | **+10 years** |
+| **XRP** | 2061-07-26 | **+35 years** |
+| **DOT** | 2061-07-26 | **+35 years** |
+| **ADA** | 2100-07-26 | **+74 years** |
+
+**The four rows are not unplaceable in principle. They are unplaceable in any
+useful time.** The rule exists to decide where the desk spends its NEXT look;
+a correction that arrives in 2036 is not a correction. Item 37's deliverable
+— *extend one dense donor and the row gets placed* — **cannot be executed by
+this desk at any point in its working life**, and no amount of money spent on
+data changes that, because the binding constraint is a ratio between two
+window LENGTHS and not a count of bars.
+
+## (5) THE HAZARD THE ITEM FLAGGED IS LIVE, AND IT IS BIGGER THAN THE ITEM THOUGHT
+
+Item 37 warned that *"extending a donor's file MOVES that donor's own 80%
+boundary."* It does, and the consequence reaches further than the donor.
+**`cut80` recomputes the boundary from whatever span the file has today, so
+every sealed-slice boundary this log has ever published is a FUNCTION OF THE
+FILE, not a date**, and it moves 0.8 days for every day of tape appended.
+
+**53 days of real bars exist between the corpus boundary and today** and were
+deliberately not fetched. Had they been, every fence on the disk would have
+moved **42 days**:
+
+| instrument | fence today | fence if the corpus ran to today | moves |
+|---|---|---|---|
+| LINK | 2025-06-14 | 2025-07-27 | +42 d — **R492 SPENT the slice that starts here** |
+| **XRP** | **2026-01-19** | **2026-03-03** | +42 d — **R492 published this slice as 2026-01-20 → 2026-07-26 and INTACT** |
+| BTC / ETH / SOL / DOGE / LTC / PAXG | 2025-06-14 | 2025-07-27 | +42 d |
+| DOT | 2025-12-23 | 2026-02-03 | +42 d |
+| AVAX | 2025-08-17 | 2025-09-29 | +42 d |
+| ADA | 2026-06-23 | 2026-08-04 | +42 d |
+
+R492 spent LINK's final 20% and published XRP's as INTACT, **both as date
+ranges**. A routine data pull would silently redefine both: six weeks of what
+R492 recorded as LINK's SEALED slice would become readable again, and six
+weeks of what it read as **XRP's TRAIN/VAL would become part of XRP's sealed
+slice** — pre-contaminating **the sweep-to-break-of-structure family's last
+clean window on an instrument with real history.** That is a live bookkeeping
+defect, it is one `fetch` away from happening, and it is why this round wrote
+nothing to disk.
+
+## What the desk may quote — UNCHANGED
+
+**R503's table stands exactly as published.** LINK is 1st and that is
+resolved; places 2–4 are **UNORDERED {PAXG, SOL, XRP}**; DOGE > BTC > LTC >
+ETH is resolved; DOT, AVAX and ADA carry no era factor. **Nothing in this
+round republishes an ordering, moves a threshold or reads a slice.**
+
+## Honest limits, fixed before running
+
+- **The feasibility result is about R503's rule, not about the instruments.**
+  It says the committed rule cannot place these rows in useful time. It does
+  **not** say the rows are unrankable, and it is **not** a licence to loosen
+  98% — loosening it after seeing which rows drop out is exactly the failure
+  mode item 38 was opened to prevent and stays **barred**.
+- **The idealised sweep is an upper bound and deliberately generous.** It
+  assumes perfect density, no vendor outages and that both tapes keep
+  trading. Every one of those assumptions favours placement, and placement
+  still does not arrive before 2036.
+- **The three routes that WOULD place the rows are named and none is taken**:
+  (a) a fence that keeps a fixed number of trailing DAYS instead of a fixed
+  proportion, which makes every tape's admissible region end on the same date
+  — and changes the size of every sealed slice in this log; (b) a pooled
+  calendar built from the intersection of the rows being ranked instead of
+  BTC's window, which has never been asked; (c) accept {PAXG, SOL, XRP}
+  unordered permanently. **Choosing one after seeing which rows it would
+  place is the thing the desk has spent three rounds learning not to do**, so
+  each is queued as a pre-registered item and none is exercised here.
+- The pooled calendar is still BTC's window, inherited from R502 through R503
+  unchanged, for the same reason: comparability, not neutrality.
+
+## Looks consumed
+
+**NONE, and none was reachable.** No entry population was built on any
+instrument, no sweep scanned, no break of structure detected, no fill
+modelled, no stop measured, no outcome read. Every tape measurement stops at
+its own 80% boundary, so **PAXG's and XRP's sealed slices are intact and
+unread**, and LINK's (R492), crypto's (R475) and the index's (R474) stay as
+spent as they were. No order was placed, no account exists, no live file was
+touched or imported, **no file on disk was written or modified**, and nothing
+is proposed for deployment.
+
+## What this closes and what it opens
+
+**Item 37 is CLOSED as NOT EXECUTABLE.** The data it asks for forward does not
+exist yet and would not help; the data it would need backward does not exist
+at the vendor; and the rule it was serving cannot be satisfied before 2036 on
+a tape better than any real one.
+
+**Three items open in its place**, all pre-registration items in R503's shape:
+**39** (fence geometry — a trailing-days fence, rule fixed before the ordering
+is recomputed), **40** (the sealed-boundary bookkeeping defect — pin every
+published fence as a DATE so a data pull cannot move it, which must land
+BEFORE any future backfill), and **41** (the pooled calendar as the
+intersection of the ranked rows). **40 is the one with a deadline attached: it
+is cheap, it is editorial plus a constant, and until it lands every fetch this
+desk runs is one command away from redefining XRP's last clean slice.**

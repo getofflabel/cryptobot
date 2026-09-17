@@ -1,0 +1,249 @@
+============================================================================================================
+ROUND 504 - CAN THE FOUR UNPLACED ROWS BE PLACED BY ANY DATA?   (item 37)
+============================================================================================================
+run 2026-09-17 07:47:04 UTC
+A DATA question and a feasibility proof, not a hypothesis. simulate() is never called, no entry
+population is built, no sealed slice is read, NO FILE IS WRITTEN, NO LOOK IS CONSUMED.
+
+Every threshold used here is IMPORTED from the round that committed it:
+  CONTAIN_MIN 0.98 (R503 pre-registration, commit 2deb2fc6aa4a)
+  pooled calendar = BTCUSD's fenced window (R502, inherited by R503)
+  fence = first 80% of each instrument's own window (step489.cut80)
+  corpus boundary = 2026-07-26 (R494 fence 3)
+
+============================================================================================================
+(0) REPRODUCTION CONTROLS - R503's two, unchanged. If either fails the round stops.
+============================================================================================================
+
+  a. R499's vol% column, recomputed behind the same fence: max absolute difference 0.0000 pp
+     EXACT.
+
+  b. R501's xSAME column, recomputed with R501's own functions: max absolute difference 0.000x
+     EXACT to the published precision. The disk is the one R501, R502 and R503 read.
+
+============================================================================================================
+(1) THE ITEM'S PREMISE, CHECKED: EVERY FILE ON THIS DISK ALREADY REACHES THE CORPUS BOUNDARY
+============================================================================================================
+
+  instrumentFILE first   FILE last       file bars   FENCED window (the 80%)     fenced    cov%
+  --------------------------------------------------------------------------------------------
+  LINK    2021-01-01   2026-07-26      2,325,622   2021-01-01 -> 2025-06-15      1627   80.3%
+  PAXG    2021-01-01   2026-07-26        311,292   2021-01-01 -> 2023-06-19       897   17.8%
+  XRP     2024-01-01   2026-07-26        770,145   2024-01-01 -> 2026-01-20       751   54.7%
+  SOL     2021-01-01   2026-07-26      1,955,709   2021-01-01 -> 2025-06-15      1209   64.4%
+  DOGE    2021-01-01   2026-07-26      2,373,535   2021-01-01 -> 2025-06-15      1627   82.3%
+  BTC     2021-01-01   2026-07-26      2,597,036   2021-01-01 -> 2025-06-15      1627   89.0%
+  LTC     2021-01-01   2026-07-26      2,110,763   2021-01-01 -> 2025-06-15      1627   72.9%
+  ETH     2021-01-01   2026-07-26      2,538,368   2021-01-01 -> 2025-06-15      1627   90.6%
+  ADA     2026-02-13   2026-07-26        168,115   2026-02-13 -> 2026-06-24       132   71.6%
+  DOT     2023-08-18   2026-07-26      1,256,982   2023-08-18 -> 2025-12-24       860   83.0%
+  AVAX    2021-11-18   2026-07-26      1,980,264   2021-11-18 -> 2025-08-18      1370   82.0%
+
+  11 of 11 files end on the corpus boundary 2026-07-26. NOTHING IS MISSING FORWARD.
+  The item's sentence is true of the FENCED tape and false of the FILE. What stops a donor
+  reaching 2026 is not an absent bar, it is that `cut80` keeps a PROPORTION: a tape that starts
+  in 2021 and ends today is admissible only to 2025, and buying more of it moves that boundary
+  forward by only 80% of a day per day.
+
+============================================================================================================
+(2) THE FOUR UNPLACED ROWS START WHERE THE VENDOR STARTS - NO BACKWARD EXTENSION EXISTS
+============================================================================================================
+
+  Read-only probe of Alpaca /v1beta3/crypto/us/bars, three bars per symbol, start=2015-01-01.
+  Nothing returned is saved. This asks one question: is the file's first bar the VENDOR's first bar,
+  or an artefact of the start date somebody typed when they fetched it? (XRP's 2024-01-01 start
+  is the only round number on the disk that step494 never re-probed, so it is the live suspect.)
+
+     symbol  file first bar        vendor first bar      verdict
+     --------------------------------------------------------------------------
+     LINK    2021-01-01 06:00:00   2021-01-01 06:00:00   file == vendor floor
+     PAXG    2021-01-01 07:54:00   2021-01-01 07:54:00   file == vendor floor
+     XRP     2024-01-01 06:00:00   2024-01-01 06:00:00   file == vendor floor
+     SOL     2021-01-01 06:06:00   2021-01-01 06:06:00   file == vendor floor
+     DOGE    2021-01-01 06:01:00   2021-01-01 06:01:00   file == vendor floor
+     BTC     2021-01-01 06:00:00   2021-01-01 06:00:00   file == vendor floor
+     LTC     2021-01-01 06:00:00   2021-01-01 06:00:00   file == vendor floor
+     ETH     2021-01-01 06:00:00   2021-01-01 06:00:00   file == vendor floor
+     ADA     2026-02-13 12:02:00   2026-02-13 12:02:00   file == vendor floor
+     DOT     2023-08-18 13:03:00   2023-08-18 13:03:00   file == vendor floor
+     AVAX    2021-11-18 13:00:00   2021-11-18 13:00:00   file == vendor floor
+
+     Every file already starts at the vendor's first bar. R494's 'backfill means BACKWARD'
+     route is exhausted: there is no earlier tape to buy for any of the four.
+
+============================================================================================================
+(3) THE TWO CONDITIONS PULL IN OPPOSITE DIRECTIONS. THE CLOSED FORM.
+============================================================================================================
+
+  A1 says: the reference must cover >= 98% of the pooled calendar, 2021-01-01 -> 2025-06-15.
+     => its window must START at or before 2021-02-02, i.e. essentially at the pooled start.
+  A2 says: the same reference must cover >= 98% of the ROW's own fenced window,
+     which for every one of these four ENDS LATER than any 2021-starting tape's fence does.
+
+  Under a fence that keeps a fixed 80% of a window, a reference that starts EARLIER than
+  the row also fences EARLIER than the row, by exactly 20% of the head start. A2 therefore
+  tolerates a lead of at most (1-0.98)*0.80/(1-0.80) = 8% of the row's remaining window.
+
+  Evaluated at TODAY's corpus boundary, 2026-07-26. The allowance grows with the boundary, which is
+  what part (4) sweeps.
+
+     row    row starts    A2 lead budget  ref must start  youngest dense ref  its start    verdict
+     --------------------------------------------------------------------------------------------------------
+     XRP    2024-01-01              75 d   2023-10-18   DOT                 2023-08-18   NO SUCH REFERENCE - all are older
+     DOT    2023-08-18              86 d   2023-05-24   AVAX                2021-11-18   NO SUCH REFERENCE - all are older
+     AVAX   2021-11-18             137 d   2021-07-04   DOT                 2023-08-18   satisfiable
+     ADA    2026-02-13              13 d   2026-01-30   DOT                 2023-08-18   NO SUCH REFERENCE - all are older
+
+  And the reference that satisfies A2 must ALSO satisfy A1, which pins it to the 2021 start.
+  For these four rows the two demands name disjoint sets of start dates TODAY, and the gap
+  closes only as slowly as the lead budget grows - 8 days a year per 100 days of new tape.
+
+============================================================================================================
+(4) BRUTE FORCE, ON AN IDEALISED 100%-DENSE TAPE: PUSH THE CORPUS BOUNDARY TO 2100 AND SEE
+============================================================================================================
+
+  Real tapes are 80-91% full behind their fences (R501), so a perfectly dense tape is an UPPER
+  BOUND on A1 and A2. If the upper bound does not clear 98%, no real tape can.
+  For each unplaced row and each dense reference, both tapes are assumed to run unbroken from
+  their real first bar to a corpus boundary swept forward from 2026-07-26.
+
+  XRP  (first bar 2024-01-01)
+     corpus boundary          LINK       DOGE        BTC        ETH        DOT       AVAX    any pair
+     ------------------------------------------------------------------------------------------------
+     2026-07-26 (+ 0y)  100%/71%   100%/71%   100%/71%   100%/71%    41%/96%    80%/79%           no
+     2027-07-26 (+ 1y)  100%/79%   100%/79%   100%/79%   100%/79%    41%/97%    80%/85%           no
+     2028-07-25 (+ 2y)  100%/84%   100%/84%   100%/84%   100%/84%    41%/98%    80%/88%           no
+     2029-07-26 (+ 3y)  100%/87%   100%/87%   100%/87%   100%/87%    41%/98%    80%/90%           no
+     2031-07-26 (+ 5y)  100%/90%   100%/90%   100%/90%   100%/90%    41%/99%    80%/93%           no
+     2036-07-25 (+10y)  100%/94%   100%/94%   100%/94%   100%/94%    41%/99%    80%/96%           no
+     2046-07-26 (+20y)  100%/97%   100%/97%   100%/97%   100%/97%    41%/100%   80%/98%           no
+     2061-07-26 (+35y)  100%/98%   100%/98%   100%/98%   100%/98%    41%/100%   80%/99%          YES
+     2076-07-25 (+50y)  100%/99%   100%/99%   100%/99%   100%/99%    41%/100%   80%/99%          YES
+     2100-07-26 (+74y)  100%/99%   100%/99%   100%/99%   100%/99%    41%/100%   80%/99%          YES
+     (each cell is A1/A2 on the idealised tape; a pair passes only if BOTH clear 98%)
+
+  DOT  (first bar 2023-08-18)
+     corpus boundary          LINK       DOGE        BTC        ETH        DOT       AVAX    any pair
+     ------------------------------------------------------------------------------------------------
+     2026-07-26 (+ 0y)  100%/78%   100%/78%   100%/78%   100%/78%      --   80%/85%           no
+     2027-07-26 (+ 1y)  100%/83%   100%/83%   100%/83%   100%/83%      --   80%/89%           no
+     2028-07-25 (+ 2y)  100%/87%   100%/87%   100%/87%   100%/87%      --   80%/91%           no
+     2029-07-26 (+ 3y)  100%/89%   100%/89%   100%/89%   100%/89%      --   80%/93%           no
+     2031-07-26 (+ 5y)  100%/92%   100%/92%   100%/92%   100%/92%      --   80%/94%           no
+     2036-07-25 (+10y)  100%/95%   100%/95%   100%/95%   100%/95%      --   80%/97%           no
+     2046-07-26 (+20y)  100%/97%   100%/97%   100%/97%   100%/97%      --   80%/98%           no
+     2061-07-26 (+35y)  100%/98%   100%/98%   100%/98%   100%/98%      --   80%/99%          YES
+     2076-07-25 (+50y)  100%/99%   100%/99%   100%/99%   100%/99%      --   80%/99%          YES
+     2100-07-26 (+74y)  100%/99%   100%/99%   100%/99%   100%/99%      --   80%/99%          YES
+     (each cell is A1/A2 on the idealised tape; a pair passes only if BOTH clear 98%)
+
+  AVAX  (first bar 2021-11-18)
+     corpus boundary          LINK       DOGE        BTC        ETH        DOT       AVAX    any pair
+     ------------------------------------------------------------------------------------------------
+     2026-07-26 (+ 0y)  100%/95%   100%/95%   100%/95%   100%/95%    41%/53%      --          no
+     2027-07-26 (+ 1y)  100%/96%   100%/96%   100%/96%   100%/96%    41%/62%      --          no
+     2028-07-25 (+ 2y)  100%/97%   100%/97%   100%/97%   100%/97%    41%/67%      --          no
+     2029-07-26 (+ 3y)  100%/97%   100%/97%   100%/97%   100%/97%    41%/72%      --          no
+     2031-07-26 (+ 5y)  100%/98%   100%/98%   100%/98%   100%/98%    41%/77%      --          no
+     2036-07-25 (+10y)  100%/99%   100%/99%   100%/99%   100%/99%    41%/85%      --         YES
+     2046-07-26 (+20y)  100%/99%   100%/99%   100%/99%   100%/99%    41%/91%      --         YES
+     2061-07-26 (+35y)  100%/99%   100%/99%   100%/99%   100%/99%    41%/94%      --         YES
+     2076-07-25 (+50y)  100%/100%  100%/100%  100%/100%  100%/100%   41%/96%      --         YES
+     2100-07-26 (+74y)  100%/100%  100%/100%  100%/100%  100%/100%   41%/97%      --         YES
+     (each cell is A1/A2 on the idealised tape; a pair passes only if BOTH clear 98%)
+
+  ADA  (first bar 2026-02-13)
+     corpus boundary          LINK       DOGE        BTC        ETH        DOT       AVAX    any pair
+     ------------------------------------------------------------------------------------------------
+     2026-07-26 (+ 0y)  100%/0%    100%/0%    100%/0%    100%/0%     41%/0%     80%/0%            no
+     2027-07-26 (+ 1y)  100%/11%   100%/11%   100%/11%   100%/11%    41%/57%    80%/27%           no
+     2028-07-25 (+ 2y)  100%/48%   100%/48%   100%/48%   100%/48%    41%/75%    80%/57%           no
+     2029-07-26 (+ 3y)  100%/63%   100%/63%   100%/63%   100%/63%    41%/82%    80%/69%           no
+     2031-07-26 (+ 5y)  100%/76%   100%/76%   100%/76%   100%/76%    41%/89%    80%/81%           no
+     2036-07-25 (+10y)  100%/88%   100%/88%   100%/88%   100%/88%    41%/94%    80%/90%           no
+     2046-07-26 (+20y)  100%/94%   100%/94%   100%/94%   100%/94%    41%/97%    80%/95%           no
+     2061-07-26 (+35y)  100%/96%   100%/96%   100%/96%   100%/96%    41%/98%    80%/97%           no
+     2076-07-25 (+50y)  100%/97%   100%/97%   100%/97%   100%/97%    41%/99%    80%/98%           no
+     2100-07-26 (+74y)  100%/98%   100%/98%   100%/98%   100%/98%    41%/99%    80%/99%          YES
+     (each cell is A1/A2 on the idealised tape; a pair passes only if BOTH clear 98%)
+
+  THE SWEEP'S OWN ANSWER, read off the table above rather than asserted next to it:
+
+     row    first boundary at which any pair clears both  that is        what it means
+     --------------------------------------------------------------------------------------------------------
+     XRP    2061-07-26                                    +35 years      reachable only by waiting 35 years for tape
+     DOT    2061-07-26                                    +35 years      reachable only by waiting 35 years for tape
+     AVAX   2036-07-25                                    +10 years      reachable only by waiting 10 years for tape
+     ADA    2100-07-26                                    +74 years      reachable only by waiting 74 years for tape
+
+  So the four rows are not UNPLACEABLE in principle - they are unplaceable IN ANY USEFUL TIME.
+  The earliest any of them clears the committed rule is +10 years of additional tape, and
+  the rule's whole purpose is to decide where the desk spends its NEXT look. A correction that
+  arrives in 2036 is not a correction. Item 37's deliverable - 'extend one dense donor
+  and the row gets placed' - cannot be executed by this desk at any point in its working life.
+
+============================================================================================================
+(5) THE HAZARD THE ITEM WARNED ABOUT IS BIGGER THAN THE ITEM THOUGHT: FENCES ARE NOT DATES
+============================================================================================================
+
+  `cut80` recomputes the boundary from whatever span the file has TODAY. Every published
+  sealed-slice boundary in this log is therefore a FUNCTION OF THE FILE, not a date, and moves
+  0.8 days for every day of tape appended. 53 days of real bars exist between the corpus boundary
+  and today (2026-09-17) and were deliberately not fetched. Had they been:
+
+     instrumentfence TODAY   fence if corpus ran to now    moves by   note
+     ----------------------------------------------------------------------------------
+     LINK    2025-06-14    2025-07-27                       42 d   R492 SPENT the slice that starts here
+     PAXG    2025-06-14    2025-07-27                       42 d   
+     XRP     2026-01-19    2026-03-03                       42 d   R492 PUBLISHED THIS SLICE AS 2026-01-20 -> 2026-07-26
+     SOL     2025-06-14    2025-07-27                       42 d   
+     DOGE    2025-06-14    2025-07-27                       42 d   
+     BTC     2025-06-14    2025-07-27                       42 d   
+     LTC     2025-06-14    2025-07-27                       42 d   
+     ETH     2025-06-14    2025-07-27                       42 d   
+     ADA     2026-06-23    2026-08-04                       42 d   
+     DOT     2025-12-23    2026-02-03                       42 d   
+     AVAX    2025-08-17    2025-09-29                       42 d   
+
+  This is not hypothetical bookkeeping. R492 spent LINK's final 20% and published XRP's as
+  INTACT, both as DATE RANGES. Appending seven weeks of real tape would silently redefine both
+  of those ranges - part of what R492 read as LINK's SEALED slice would become readable, and
+  part of what it read as XRP's TRAIN/VAL would become XRP's sealed slice. The desk's last
+  clean window is defined by a formula that any future data pull moves. That is a bookkeeping
+  defect, it is live today, and it is why this round wrote nothing.
+
+============================================================================================================
+(6) WHAT THE DESK MAY QUOTE, AND WHAT WOULD HAVE TO CHANGE
+============================================================================================================
+
+  UNCHANGED, and this round changes nothing about it: LINK is 1st and that is resolved;
+  places 2-4 are UNORDERED {PAXG, SOL, XRP}; DOGE > BTC > LTC > ETH is resolved; DOT, AVAX
+  and ADA carry no era factor. R503's table stands exactly as published.
+
+  WHAT IS NEW: the four unplaced rows are not waiting on data. Three routes exist and this
+  round deliberately takes NONE of them, because choosing one after seeing which rows it
+  would place is the exact failure mode item 38 was opened to prevent:
+    (a) FENCE SHAPE. A fence that keeps a fixed NUMBER of trailing days instead of a fixed
+        proportion makes every tape's admissible region end on the same date, and A2 becomes
+        satisfiable. It also changes the size of every sealed slice in this log.
+    (b) POOLED CALENDAR. A1 is measured against BTC's fenced window because R502 chose it and
+        R503 inherited it. A pooled calendar built from the INTERSECTION of the rows being
+        ranked is a different and defensible question that has never been asked.
+    (c) ACCEPT IT. Publish {PAXG, SOL, XRP} unordered permanently and stop spending rounds on
+        the cell. The ranking's job is to point at a slice; it already points at three.
+
+  Any of the three must be pre-registered like R503's rule was, with the decision fixed before
+  the resulting order is computed. That is a queue item, not a footnote to this one.
+
+============================================================================================================
+VERDICT
+============================================================================================================
+
+  ITEM 37 IS CLOSED AS NOT EXECUTABLE, on three primary-sourced facts:
+    1. all 11 files already reach the corpus boundary 2026-07-26; nothing is missing forward;
+    2. all 11 files already start at Alpaca's first bar; nothing is available backward;
+    3. A1 and A2 name disjoint start dates for all four rows today, and the soonest any row
+       clears both - on an idealised tape denser than any real one - is +10 years.
+  No tape was written, no threshold moved, no slice read, no ordering republished.
+  LOOKS CONSUMED: NONE, and none was reachable.
+============================================================================================================

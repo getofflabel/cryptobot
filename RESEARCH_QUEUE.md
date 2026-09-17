@@ -1552,9 +1552,39 @@ Rules (non-negotiable, they are why anything here can be trusted):
     included — no look, no candidate. This corrects a table; it does not select
     anything off it, and it explicitly does not spend PAXG's or XRP's slice.
 
-37. **NO DENSE TAPE ON THIS DISK REACHES 2026, AND IT NOW COSTS FOUR ROWS
-    OF THE RANKING THEIR PLACE — INCLUDING ONE OF THE TWO INTACT ROWS AT
-    THE CONTESTED TOP.**
+37. ~~**NO DENSE TAPE ON THIS DISK REACHES 2026, AND IT NOW COSTS FOUR ROWS
+    OF THE RANKING THEIR PLACE.**~~
+    **CLOSED AS NOT EXECUTABLE — R504, 2026-09-17. No look consumed, and
+    nothing was written to disk.** Three primary-sourced facts kill it.
+    **(1) The premise is false of the files.** All 11 one-minute files
+    already end on the corpus boundary 2026-07-26. Nothing is missing
+    forward. "No dense tape reaches 2026" is a statement about `cut80`,
+    which keeps a fixed **PROPORTION** of a file's span — so a donor's
+    admissible region recedes at 20% of the speed it is fed, and feeding it
+    never closes the gap.
+    **(2) Nothing is available backward either.** A read-only vendor probe
+    from 2015 says every file on the disk already starts at Alpaca's first
+    bar, XRP's suspicious round 2024-01-01 included. R494's "backfill means
+    BACKWARD" route is exhausted.
+    **(3) The rule cannot be satisfied in useful time.** A1 pins a reference's
+    start at the pooled start (2021-01); A2 tolerates a lead of at most
+    **8% of the row's remaining window** and that budget grows 8 days per 100
+    days of tape. Swept to 2100 on an idealised 100%-dense tape — an upper
+    bound on any real one — the first boundary where any pair clears both is
+    **AVAX +10 years, XRP +35, DOT +35, ADA +74.** A ranking correction that
+    arrives in 2036 is not a correction.
+    **The live hazard it flagged is bigger than it thought and is now item
+    40:** every published sealed-slice boundary in this log is a recomputed
+    fraction, not a date, and moves 0.8 days per day of appended tape. The 53
+    days of real bars sitting between the corpus boundary and today would move
+    every fence 42 days — turning six weeks of what R492 read as **XRP's
+    train/val into XRP's "sealed" slice**, pre-contaminating the family's last
+    clean window. That is why R504 wrote no tape.
+    R503's table is UNCHANGED: LINK 1st, {PAXG, SOL, XRP} unordered, DOGE >
+    BTC > LTC > ETH resolved, DOT/AVAX/ADA unplaced.
+
+    **ITEM 37 AS IT WAS WRITTEN, kept verbatim below so the closure can be
+    checked against what was actually asked:**
     *(opened by R501 as an ADA-only data gap. **PROMOTED to the top of the
     remaining items by R503**, which found the same missing tape unplaces
     XRP, DOT and AVAX as well. A DATA question, not a research one — and
@@ -1587,6 +1617,70 @@ Rules (non-negotiable, they are why anything here can be trusted):
     corrected coordinate on a short one.
     **THE FENCE:** data work plus one re-run of an existing descriptive part.
     No entry population, no sealed slice, no look, no candidate.
+
+39. **THE FENCE IS A PROPORTION AND THAT IS A CHOICE NOBODY EVER MADE ON
+    PURPOSE.**
+    *(new, opened by R504. A PRE-REGISTRATION item in R503's exact shape.)*
+    R504 proved the four unplaced rows are unplaceable before 2036 **because**
+    `cut80` keeps 80% of each instrument's own span, so tapes that start in
+    different years stop being admissible in different years. A fence that
+    instead keeps a **fixed number of trailing days** — every instrument's
+    readable region ending on the same date — makes A2 satisfiable for every
+    row at once, at the price of changing the SIZE of every sealed slice in
+    this log.
+    Deliverable: write the rule down FIRST, in a committed file, exactly as
+    R503 did — which fence, what trailing length, what happens to instruments
+    whose tape is shorter than it, and **the decision rule for what counts as
+    a better fence, fixed before the resulting ordering is computed**. Then
+    recompute the ranking under it and report whether the top four resolve.
+    **THE FENCE:** the ordering is recomputed, nothing is selected off it.
+    **Item 40 MUST LAND FIRST** — re-fencing without pinning the published
+    boundaries as dates is the exact defect item 40 exists to close. No entry
+    population, no sealed slice read, no look, no candidate. **A trailing-days
+    fence that would move a SPENT boundary (LINK, crypto, the index) must
+    treat those as pinned at the dates already published and say so in the
+    pre-registration; unspending a slice by re-fencing is barred.**
+
+40. **EVERY SEALED-SLICE BOUNDARY IN THIS LOG IS A FORMULA, NOT A DATE, AND
+    ONE `fetch` MOVES ALL OF THEM. ⏰ DO THIS BEFORE THE NEXT DATA PULL.**
+    *(new, opened by R504, and it is the only item on this queue with a
+    deadline attached. BOOKKEEPING, cheap, and blocking item 39.)*
+    `step489.cut80` computes `t0 + (t1 − t0) × 0.80` off whatever span the
+    file has at the moment it runs. R492 published LINK's spent slice and
+    **XRP's INTACT slice as date ranges** on top of that formula. R504
+    measured the exposure: **53 days of real bars already exist past the
+    corpus boundary, and appending them moves every fence on the disk 42
+    days** — six weeks of R492's LINK "sealed" region becomes readable, and
+    six weeks of what R492 READ as XRP's train/val becomes part of XRP's
+    "sealed" slice. The desk's last clean window on an instrument with real
+    history is one routine command from being contaminated.
+    Deliverable: pin them. A committed table mapping each instrument to the
+    **date** its fence sits at today and the round that published it, and a
+    `fenced_at(sym)` that reads the pinned date where one exists and falls
+    back to `cut80` only for instruments no round has ever fenced. Report
+    which published boundaries the pinning locks and confirm the pinned dates
+    reproduce R501/R502/R503's numbers exactly.
+    **THE FENCE:** editorial plus one constant table. **No threshold moves,
+    no slice is re-read, no ordering is republished, and `cut80` itself is
+    not edited** — the pin wraps it, R494's pattern. No look, no candidate.
+
+41. **A1 IS MEASURED AGAINST BTC's WINDOW BECAUSE R502 PICKED IT AND NOBODY
+    HAS ASKED THE OTHER QUESTION.**
+    *(new, opened by R504. A PRE-REGISTRATION item, lower priority than 39
+    and 40 because it is a smaller lever.)*
+    The pooled calendar is BTCUSD's fenced window, inherited from R502 through
+    R503 for comparability and explicitly NOT for neutrality (R503's own
+    honest-limits paragraph says so). A pooled calendar built from the
+    **intersection of the rows actually being ranked** is a different and
+    defensible construction that has never been asked, and it moves the
+    denominator every era factor is divided by.
+    Deliverable: commit the construction first, then report whether the top
+    four resolve under it and whether rows 5–8 (DOGE > BTC > LTC > ETH, stable
+    under every correction since R500) survive. **If it resolves the top four
+    and R503's rule did not, say plainly that two defensible calendars
+    disagree** rather than adopting the one that answers.
+    **THE FENCE:** descriptive, ordering only. No entry population, no sealed
+    slice, no look, no candidate.
 
 26. **A CONCLUSION BAKED INTO A PRINT STATEMENT OUTLIVED ITS MEASUREMENT.
     FIND THE OTHERS.**
