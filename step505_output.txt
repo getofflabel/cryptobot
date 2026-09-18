@@ -1,0 +1,219 @@
+============================================================================================================
+ROUND 505 - PIN EVERY PUBLISHED FENCE AS A DATE   (queue item 40)
+============================================================================================================
+run 2026-09-18 07:27:22 UTC
+BOOKKEEPING. No hypothesis, no entry population, no sweep, no stop, no outcome, NO LOOK.
+`cut80` is imported and NOT edited. No file on disk is written, extended, moved or truncated.
+corpus boundary 2026-07-26 (R494 fence 3); 54 days of real bars exist past it and are still not fetched.
+
+============================================================================================================
+(0) THE PIN, RE-DERIVED. Every pinned date is `S.cut80` on the file as it stands RIGHT NOW.
+============================================================================================================
+    If any row has drifted by one second the table is already stale and the round stops.
+
+  sym      pinned fence          cut80 today              drift      bars now  bars pinned
+  --------------------------------------------------------------------------------------------
+  BTC      2025-06-15 06:33:36   2025-06-15 06:33:36   0 days 00:00:00     2,597,036    2,597,036
+  ETH      2025-06-15 06:35:12   2025-06-15 06:35:12   0 days 00:00:00     2,538,368    2,538,368
+  SOL      2025-06-15 06:35:36   2025-06-15 06:35:36   0 days 00:00:00     1,955,709    1,955,709
+  LINK     2025-06-15 06:42:24   2025-06-15 06:42:24   0 days 00:00:00     2,325,622    2,325,622
+  LTC      2025-06-15 06:46:24   2025-06-15 06:46:24   0 days 00:00:00     2,110,763    2,110,763
+  XRP      2026-01-20 06:38:24   2026-01-20 06:38:24   0 days 00:00:00       770,145      770,145
+  ADA      2026-06-24 07:11:36   2026-06-24 07:11:36   0 days 00:00:00       168,115      168,115
+  DOT      2025-12-24 07:23:48   2025-12-24 07:23:48   0 days 00:00:00     1,256,982    1,256,982
+  PAXG     2025-06-15 11:06:00   2025-06-15 11:06:00   0 days 00:00:00       311,292      311,292
+  AVAX     2025-08-18 16:58:24   2025-08-18 16:58:24   0 days 00:00:00     1,980,264    1,980,264
+  DOGE     2025-06-15 10:46:36   2025-06-15 10:46:36   0 days 00:00:00     2,373,535    2,373,535
+  SPY      2024-06-13 09:35:24   2024-06-13 09:35:24   0 days 00:00:00     2,114,524    2,114,524
+  QQQ      2024-06-13 09:35:12   2024-06-13 09:35:12   0 days 00:00:00     2,036,866    2,036,866
+  GLD      2026-06-25 21:34:24   2026-06-25 21:34:24   0 days 00:00:00        76,899       76,899
+  IAU      2026-06-25 21:35:12   2026-06-25 21:35:12   0 days 00:00:00        55,190       55,190
+  GBPUSD   2026-06-14 17:23:12   2026-06-14 17:23:12   0 days 00:00:00       206,225      206,225
+  GBPJPY   2026-06-14 17:23:12   2026-06-14 17:23:12   0 days 00:00:00       206,346      206,346
+
+  worst drift across 17 pinned instruments: 0 days 00:00:00.  bar-count mismatches: 0.
+  EXACT. The pinned dates ARE today's fences, to the second, on every instrument.
+
+============================================================================================================
+(1) THE FENCED FRAME IS IDENTICAL THROUGH THE PIN AND THROUGH `cut80`
+============================================================================================================
+    R501's `fenced()` cuts with `f['t'] < t80`. Two frames with the same fingerprint cannot
+    disagree on ANY number computed behind the fence - coverage, vol%, era factor, A1, A2.
+
+  sym        bars (cut80)   bars (pin)  fingerprint cut80 fingerprint pin         
+  --------------------------------------------------------------------------------------------
+  BTC           2,084,756    2,084,756  c32df09355221e3f    c32df09355221e3f   MATCH
+  ETH           2,121,411    2,121,411  91892be40658c82b    91892be40658c82b   MATCH
+  SOL           1,506,765    1,506,765  f6daf47569ec8633    f6daf47569ec8633   MATCH
+  LINK          1,879,664    1,879,664  1f711efdef0c4aaf    1f711efdef0c4aaf   MATCH
+  LTC           1,707,218    1,707,218  4bc47711e0f8b328    4bc47711e0f8b328   MATCH
+  XRP             591,053      591,053  0d07e868c4834747    0d07e868c4834747   MATCH
+  ADA             134,852      134,852  749b25eb7696c9e1    749b25eb7696c9e1   MATCH
+  DOT           1,026,687    1,026,687  a204d2d4877cfa9b    a204d2d4877cfa9b   MATCH
+  PAXG            230,990      230,990  1c44ab246390121d    1c44ab246390121d   MATCH
+  AVAX          1,616,834    1,616,834  c107747e0b47b0ed    c107747e0b47b0ed   MATCH
+  DOGE          1,926,639    1,926,639  555c0b2761b56be5    555c0b2761b56be5   MATCH
+  SPY           1,665,986    1,665,986  793da054e9ce8b17    793da054e9ce8b17   MATCH
+  QQQ           1,568,098    1,568,098  65c8c4320ab9623c    65c8c4320ab9623c   MATCH
+  GLD              62,913       62,913  51cecdb5649d0d0f    51cecdb5649d0d0f   MATCH
+  IAU              45,494       45,494  c949a1abc5017e89    c949a1abc5017e89   MATCH
+  GBPUSD          163,269      163,269  4893c0eb646b1a2b    4893c0eb646b1a2b   MATCH
+  GBPJPY          163,357      163,357  4cdbc07976eeb89b    4cdbc07976eeb89b   MATCH
+
+  17 of 17 frames identical.
+
+============================================================================================================
+(2) REPRODUCTION CONTROLS - R503's two, R504's two, recomputed THROUGH THE PIN
+============================================================================================================
+
+  a. R499's vol% column, recomputed behind the PINNED fence: max absolute difference 0.0000 pp
+     EXACT.
+
+  b. R501's xSAME column, recomputed with R501's own functions behind the PINNED fence: max absolute difference 0.000x
+     EXACT to the published precision.
+
+  c. R502 and R503 take their inputs from exactly these frames - the pooled calendar is
+     BTC's fenced window and A1/A2 are day-set containments inside each row's fenced window.
+     Part (1) showed those frames are identical bar for bar, so every era factor, every A1,
+     every A2 and the published ORDERING are unchanged by construction. NOTHING IS REPUBLISHED.
+
+============================================================================================================
+(3) THE HAZARD, PRICED. WHAT ONE `fetch` DOES TO A FENCE, WITH AND WITHOUT THE PIN
+============================================================================================================
+
+  R504 measured 53 unfetched days on 2026-09-17 and a 42-day move. Today the gap is 54 days.
+  A fence at 80% moves 0.8 of a day per day of tape appended, so appending 54 days moves it 43.2 days.
+
+  sym      fence today  cut80 after the fetch      moves   fenced_at() after the fetch    moves
+  ------------------------------------------------------------------------------------------------
+  BTC      2025-06-15   2025-07-28 11:21            43d   2025-06-15 06:33                 0d
+  ETH      2025-06-15   2025-07-28 11:23            43d   2025-06-15 06:35                 0d
+  SOL      2025-06-15   2025-07-28 11:23            43d   2025-06-15 06:35                 0d
+  LINK     2025-06-15   2025-07-28 11:30            43d   2025-06-15 06:42                 0d
+  LTC      2025-06-15   2025-07-28 11:34            43d   2025-06-15 06:46                 0d
+  XRP      2026-01-20   2026-03-04 11:26            43d   2026-01-20 06:38                 0d
+  ADA      2026-06-24   2026-08-06 11:59            43d   2026-06-24 07:11                 0d
+  DOT      2025-12-24   2026-02-05 12:11            43d   2025-12-24 07:23                 0d
+  PAXG     2025-06-15   2025-07-28 15:54            43d   2025-06-15 11:06                 0d
+  AVAX     2025-08-18   2025-09-30 21:46            43d   2025-08-18 16:58                 0d
+  DOGE     2025-06-15   2025-07-28 15:34            43d   2025-06-15 10:46                 0d
+  SPY      2024-06-13   2024-07-26 14:23            43d   2024-06-13 09:35                 0d
+  QQQ      2024-06-13   2024-07-26 14:23            43d   2024-06-13 09:35                 0d
+  GLD      2026-06-25   2026-08-08 02:22            43d   2026-06-25 21:34                 0d
+  IAU      2026-06-25   2026-08-08 02:23            43d   2026-06-25 21:35                 0d
+  GBPUSD   2026-06-14   2026-07-27 22:11            43d   2026-06-14 17:23                 0d
+  GBPJPY   2026-06-14   2026-07-27 22:11            43d   2026-06-14 17:23                 0d
+
+  The right-hand column is the deliverable: the pinned fence does not know the file grew.
+
+============================================================================================================
+(4) WHAT THE PIN LOCKS
+============================================================================================================
+
+  BTC      fence 2025-06-15 06:33:36   published by R489 (2026-09-01)
+            POOLED CALENDAR. R502/R503/R504 measure A1 against BTC's fenced window; moving it moves every era factor. Also the crypto arm's own 80% boundary.
+
+  ETH      fence 2025-06-15 06:35:12   published by R489 (2026-09-01)
+            ranking row; sealed slice SPENT by R475.
+
+  SOL      fence 2025-06-15 06:35:36   published by R489 (2026-09-01)
+            ranking row, contested top three (R503); sealed slice SPENT by R475.
+
+  LINK     fence 2025-06-15 06:42:24   published by R489 (2026-09-01)
+            **R492 SPENT the slice that starts here** (2025-06-15 -> 2026-07-26, 406d). Moving this boundary un-spends six weeks of a spent slice.
+
+  LTC      fence 2025-06-15 06:46:24   published by R489 (2026-09-01)
+            ranking row (7th, stable since R500).
+
+  XRP      fence 2026-01-20 06:38:24   published by R489 (2026-09-01)
+            **R492 published 2026-01-20 -> 2026-07-26 as INTACT and never read it.** This is the family's last clean window on an instrument with real history. Moving it forward pre-contaminates the slice with six weeks R492 already READ.
+
+  ADA      fence 2026-06-24 07:11:36   published by R489 (2026-09-01)
+            ranking row, unplaced by R503; INTACT.
+
+  DOT      fence 2025-12-24 07:23:48   published by R494 (2026-09-06)
+            ranking row, unplaced by R503; INTACT. R489's pre-backfill fence (2026-06-26) is superseded.
+
+  PAXG     fence 2025-06-15 11:06:00   published by R494 (2026-09-06)
+            ranking row, contested top three (R503); INTACT and unread. R489's pre-backfill fence (2026-06-26) is superseded.
+
+  AVAX     fence 2025-08-18 16:58:24   published by R494 (2026-09-06)
+            ranking row, unplaced by R503; INTACT. Data-absent in R489 (3 days of tape).
+
+  DOGE     fence 2025-06-15 10:46:36   published by R494 (2026-09-06)
+            ranking row (5th, stable since R500); INTACT. Data-absent in R489 (3 days of tape).
+
+  SPY      fence 2024-06-13 09:35:24   published by R474 (2026-07-27)
+            **R474 SPENT the slice that starts here** (2024-06 -> 2026-07, 371 trades / 155 days) and that cell is the one AWAITING DEPLOYMENT REVIEW.
+
+  QQQ      fence 2024-06-13 09:35:12   published by R474 (2026-07-27)
+            same spent slice as SPY (R474).
+
+  GLD      fence 2026-06-25 21:34:24   published by R489 (2026-09-01)
+            R489(a2) vol% row; 81 days, queue item 35.
+
+  IAU      fence 2026-06-25 21:35:12   published by R489 (2026-09-01)
+            R489(a2) vol% row; 81 days, queue item 35.
+
+  GBPUSD   fence 2026-06-14 17:23:12   published by R489 (2026-09-01)
+            R489(a2) vol% row.
+
+  GBPJPY   fence 2026-06-14 17:23:12   published by R489 (2026-09-01)
+            R489(a2) vol% row.
+
+============================================================================================================
+(5) THE FORMULA HAS THREE CALL SITES, NOT ONE. THE OTHER TWO CUT THE SPENT SLICES.
+============================================================================================================
+
+  step489.cut80 / step493.cut80  - the SCREEN's fence, wrapped by fenced_at() above.
+  step450.main  t_tr/t_va         - the CRYPTO arm's shared clock. Same formula, BTC's 5m-1m overlap.
+  step474.main  t_tr/t_va         - the INDEX arm's shared clock. Same formula, SPY's 5m-1m overlap.
+
+  R475's spent crypto slice and R474's spent index slice were cut by the latter two, not by
+  `cut80`, so pinning `cut80` alone would have left the two SPENT slices exposed. They are pinned
+  here as ARM_CLOCKS. Item 40's fence forbids editing those files; the table is the pin.
+
+  arm               t0                   t_tr (60%)           t_va (80%)           round  recomputable
+  ------------------------------------------------------------------------------------------------
+  crypto_1m_R476    2021-01-01 06:00:00  2024-05-04 18:24:00  2025-06-15 06:32:00  R476   yes
+  crypto_1m_R450    2026-03-01           2026-05-28 08:27     2026-06-26 19:16     R450   NO
+  index_1m_R474     2016-01-01 00:01:00  2022-05-03 19:09:24  2024-06-13 09:32:12  R474   yes
+
+  The two recomputable clocks were re-derived this run and agree with the pin; see part (6).
+
+============================================================================================================
+(6) THE TWO RECOMPUTABLE ARM CLOCKS, RE-DERIVED
+============================================================================================================
+
+  crypto_1m_R476  (BTCUSD 5m and 1m overlap)
+    window 2021-01-01 06:00:00 -> 2026-07-26 18:40:00  (2032 days)
+    t_tr  recomputed 2024-05-04 18:24:00   pinned 2024-05-04 18:24:00   drift 0 days 00:00:00
+    t_va  recomputed 2025-06-15 06:32:00   pinned 2025-06-15 06:32:00   drift 0 days 00:00:00
+    EXACT
+
+  index_1m_R474  (SPY 5m and 1m overlap)
+    window 2016-01-01 00:01:00 -> 2026-07-24 23:55:00  (3857 days)
+    t_tr  recomputed 2022-05-03 19:09:24   pinned 2022-05-03 19:09:24   drift 0 days 00:00:00
+    t_va  recomputed 2024-06-13 09:32:12   pinned 2024-06-13 09:32:12   drift 0 days 00:00:00
+    EXACT
+
+  2 of 2 recomputable arm clocks reproduce exactly. crypto_1m_R450 is NOT recomputable -
+  its 147-day file has since grown to 2,032 days, which is precisely the defect, already realised,
+  on the clock that cut R475's spent slice. It is pinned from step450_output.txt.
+
+============================================================================================================
+(7) THE FALLBACK PATH, EXERCISED
+============================================================================================================
+
+  `fenced_at` falls back to `S.cut80` for any instrument no round has fenced. Demonstrated on a
+  5-minute tape, which no round has ever fenced and which is therefore NOT in the table:
+    BTCUSD 5m   pinned? False   fenced_at -> 2025-06-15 06:32:00   cut80 -> 2025-06-15 06:32:00   SAME
+
+  17 instruments pinned, 3 arm clocks pinned. Everything else still computes the formula, which is
+  correct: an instrument no round has published a boundary for has no boundary to protect.
+
+============================================================================================================
+LOOKS CONSUMED: NONE, and none was reachable. No entry population, no sweep, no stop, no
+outcome, no t-statistic. PAXG's and XRP's intact slices are unread; LINK's, crypto's and the
+index's stay as spent as they were. NO FILE ON DISK WAS WRITTEN, EXTENDED, MOVED OR TRUNCATED.
+============================================================================================================

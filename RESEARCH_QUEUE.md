@@ -1634,35 +1634,44 @@ Rules (non-negotiable, they are why anything here can be trusted):
     a better fence, fixed before the resulting ordering is computed**. Then
     recompute the ranking under it and report whether the top four resolve.
     **THE FENCE:** the ordering is recomputed, nothing is selected off it.
-    **Item 40 MUST LAND FIRST** — re-fencing without pinning the published
-    boundaries as dates is the exact defect item 40 exists to close. No entry
+    **Item 40 HAS LANDED (R505, 2026-09-18) and this item is UNBLOCKED.**
+    The published boundaries are now dates in `FENCES_PINNED.md`, so a
+    trailing-days fence can be pre-registered against something that does not
+    move under it. No entry
     population, no sealed slice read, no look, no candidate. **A trailing-days
     fence that would move a SPENT boundary (LINK, crypto, the index) must
-    treat those as pinned at the dates already published and say so in the
-    pre-registration; unspending a slice by re-fencing is barred.**
+    treat those as pinned at the dates in `FENCES_PINNED.md` and say so in
+    the pre-registration; unspending a slice by re-fencing is barred — and
+    that clause is now ENFORCEABLE rather than aspirational, because the
+    dates exist.**
 
-40. **EVERY SEALED-SLICE BOUNDARY IN THIS LOG IS A FORMULA, NOT A DATE, AND
-    ONE `fetch` MOVES ALL OF THEM. ⏰ DO THIS BEFORE THE NEXT DATA PULL.**
-    *(new, opened by R504, and it is the only item on this queue with a
-    deadline attached. BOOKKEEPING, cheap, and blocking item 39.)*
-    `step489.cut80` computes `t0 + (t1 − t0) × 0.80` off whatever span the
-    file has at the moment it runs. R492 published LINK's spent slice and
-    **XRP's INTACT slice as date ranges** on top of that formula. R504
-    measured the exposure: **53 days of real bars already exist past the
-    corpus boundary, and appending them moves every fence on the disk 42
-    days** — six weeks of R492's LINK "sealed" region becomes readable, and
-    six weeks of what R492 READ as XRP's train/val becomes part of XRP's
-    "sealed" slice. The desk's last clean window on an instrument with real
-    history is one routine command from being contaminated.
-    Deliverable: pin them. A committed table mapping each instrument to the
-    **date** its fence sits at today and the round that published it, and a
-    `fenced_at(sym)` that reads the pinned date where one exists and falls
-    back to `cut80` only for instruments no round has ever fenced. Report
-    which published boundaries the pinning locks and confirm the pinned dates
-    reproduce R501/R502/R503's numbers exactly.
-    **THE FENCE:** editorial plus one constant table. **No threshold moves,
-    no slice is re-read, no ordering is republished, and `cut80` itself is
-    not edited** — the pin wraps it, R494's pattern. No look, no candidate.
+40. ~~**EVERY SEALED-SLICE BOUNDARY IN THIS LOG IS A FORMULA, NOT A DATE.**~~
+    **DONE — R505, 2026-09-18. No look consumed. The deadline is discharged.**
+    The pin is committed: **`FENCES_PINNED.md`** (17 instruments, each fence a
+    full-precision timestamp, the round that published it, and what it locks)
+    and **`fenced_at(sym)`** in `step505_pinned_fences.py`, which returns the
+    pinned date without reading the file and falls back to `cut80` only where
+    no round has ever fenced. `cut80` is imported and **unedited**.
+    All four verifications EXACT: every pinned date equals `S.cut80` on today's
+    file **to the second** (worst drift 0, 17 of 17, zero bar-count
+    mismatches); the fenced FRAME is identical through the pin and through the
+    formula (same bars, same SHA-256, 17 of 17); **R499's vol% recomputes to
+    0.0000 pp and R501's xSAME to 0.000x behind the pinned fence**, and
+    R502/R503 read those exact frames so the ordering is unchanged by
+    construction; both recomputable arm clocks reproduce `t_tr`/`t_va` exactly.
+    **THE ROUND'S REAL FINDING: the formula has THREE call sites and `cut80`
+    is the least dangerous one.** `step450.main` and `step474.main` compute
+    `t0 + span × 0.60 / 0.80` on a shared clock — and those two cut the
+    **SPENT** slices (R475's crypto, R474's index, the latter being the cell
+    awaiting deployment review). Pinning `cut80` alone would have left both
+    exposed. All three are pinned as `ARM_CLOCKS`.
+    **And one of them is already lost:** `crypto_1m_R450`'s clock CANNOT be
+    recomputed — the 147-day file it was cut on is now 2,032 days — so the
+    defect is not hypothetical, it has already happened, on a spent slice.
+    See new item 42.
+    Today the gap past the corpus boundary is **54 days**; appending them
+    would move every unpinned fence **43 days** and moves every pinned one
+    **0**.
 
 41. **A1 IS MEASURED AGAINST BTC's WINDOW BECAUSE R502 PICKED IT AND NOBODY
     HAS ASKED THE OTHER QUESTION.**
@@ -1681,6 +1690,38 @@ Rules (non-negotiable, they are why anything here can be trusted):
     disagree** rather than adopting the one that answers.
     **THE FENCE:** descriptive, ordering only. No entry population, no sealed
     slice, no look, no candidate.
+
+42. **THE CLOCK THAT CUT R475's SPENT SLICE NO LONGER EXISTS ON THIS DISK.**
+    *(new, opened by R505. BOOKKEEPING, cheap, and lower priority than 39/40
+    because nothing currently depends on it.)*
+    R505 pinned the three call sites of the proportional fence and found that
+    one of them is **already unrecoverable**: `crypto_1m_R450`'s shared clock
+    was computed on a 147-day BTCUSD file that R494's backfill has since grown
+    to 2,032 days, so the window that defined **R475's spent sealed slice,
+    2026-06-27 → 2026-07-26**, cannot be re-cut from the current disk. Its row
+    in `FENCES_PINNED.md` is transcribed from `step450_output.txt` and from
+    nothing else — the only row in that table that is not derived.
+    Nothing in this log depends on re-cutting it (the slice is spent either
+    way), but any future round that wants to **re-read R475's population**
+    would be re-reading a differently-cut one and must say so.
+    **Two obvious recovery routes are already closed, checked by R505 so the
+    next round does not spend a session on them:** `data_pre494/` holds only
+    the five symbols R494 backfilled (ADA, DOT, PAXG, AVAX, DOGE) — **BTCUSD
+    is not among them**, because R494 explicitly did not touch it; and
+    `.gitignore` excludes `*.parquet`, so there is **no git history of any
+    data file** to restore from.
+    Deliverable, purely editorial: look once for any other archive of the
+    pre-backfill BTCUSD 1m/5m frames (the crypto backfill that grew them ran
+    around R476, so anything it superseded would be in whatever directory
+    THAT round used, if it kept one). If one exists, record its path in
+    `FENCES_PINNED.md` so the row becomes derivable again. If none does, mark
+    the row **transcribed-only, permanently** and add the one-sentence rule
+    that a round re-reading a spent population must state which cut it is
+    re-reading.
+    **THE FENCE:** editorial plus, at most, one path recorded. **No file is
+    written, moved, restored or re-fenced, no slice is re-read, no boundary
+    moves, and a pre-backfill frame found in `data_pre494/` may be INSPECTED
+    for its endpoints and nothing else.** No look, no candidate.
 
 26. **A CONCLUSION BAKED INTO A PRINT STATEMENT OUTLIVED ITS MEASUREMENT.
     FIND THE OTHERS.**
