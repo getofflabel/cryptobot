@@ -1618,32 +1618,43 @@ Rules (non-negotiable, they are why anything here can be trusted):
     **THE FENCE:** data work plus one re-run of an existing descriptive part.
     No entry population, no sealed slice, no look, no candidate.
 
-39. **THE FENCE IS A PROPORTION AND THAT IS A CHOICE NOBODY EVER MADE ON
-    PURPOSE.**
-    *(new, opened by R504. A PRE-REGISTRATION item in R503's exact shape.)*
-    R504 proved the four unplaced rows are unplaceable before 2036 **because**
-    `cut80` keeps 80% of each instrument's own span, so tapes that start in
-    different years stop being admissible in different years. A fence that
-    instead keeps a **fixed number of trailing days** — every instrument's
-    readable region ending on the same date — makes A2 satisfiable for every
-    row at once, at the price of changing the SIZE of every sealed slice in
-    this log.
-    Deliverable: write the rule down FIRST, in a committed file, exactly as
-    R503 did — which fence, what trailing length, what happens to instruments
-    whose tape is shorter than it, and **the decision rule for what counts as
-    a better fence, fixed before the resulting ordering is computed**. Then
-    recompute the ranking under it and report whether the top four resolve.
-    **THE FENCE:** the ordering is recomputed, nothing is selected off it.
-    **Item 40 HAS LANDED (R505, 2026-09-18) and this item is UNBLOCKED.**
-    The published boundaries are now dates in `FENCES_PINNED.md`, so a
-    trailing-days fence can be pre-registered against something that does not
-    move under it. No entry
-    population, no sealed slice read, no look, no candidate. **A trailing-days
-    fence that would move a SPENT boundary (LINK, crypto, the index) must
-    treat those as pinned at the dates in `FENCES_PINNED.md` and say so in
-    the pre-registration; unspending a slice by re-fencing is barred — and
-    that clause is now ENFORCEABLE rather than aspirational, because the
-    dates exist.**
+39. ~~**THE FENCE IS A PROPORTION AND THAT IS A CHOICE NOBODY EVER MADE ON
+    PURPOSE.**~~
+    **DONE — R506, 2026-09-19. No look consumed. VERDICT: NOT BETTER.**
+    The fence was committed first, R503's shape: `step506_PREREGISTRATION.md`,
+    commit `ecabe309a350`, 2026-09-19 04:34:48 −0400, **four hours ahead of the
+    first output** — the fence, the trailing length, the unfenceable-row
+    policy and all four decision criteria fixed before any FENCE-T number
+    existed. One amendment (`a197850`, same day, still before the script) is
+    recorded rather than hidden: the read-boundary clause was self-contradictory
+    and was split in two; no threshold, rule, criterion or trailing length moved.
+    **FENCE-T:** every instrument readable on `[t0_i, T_END)` with
+    **T_END = BTC's PINNED fence, 2025-06-15 06:33:36** (a date out of
+    `FENCES_PINNED.md`, so it cannot move under the fence being tested),
+    trailing length **406 days**. Chosen on the estimator, not the answer:
+    BTC's window IS the pooled calendar, so it stays **identical to the second
+    (1,627 days both ways)** and every change comes from the rows. PAXG's and
+    SOL's era cells reproduce R503 digit for digit, which is the proof.
+    **It does exactly what R504 said it would and it is not enough.** A2 stops
+    binding: **4 rows with no admissible reference → 0**, XRP, DOT and AVAX all
+    placed with 4 references each. **And the top four gets WORSE: 1 contested
+    pair becomes 4 of 6.** LINK vs XRP splits 2–2, so **the fence that places
+    XRP is the fence that takes away R503's one resolved statement, LINK 1st.**
+    **BTCUSD is the minority reference in all four contested pairs** — the tape
+    that sets the denominator disagrees with every other admissible reference
+    every time. ADA is lost entirely, and that is closed, not open: **no
+    trailing-days fence can both keep ADA readable and respect the pin**, since
+    any `T_END` late enough for ADA un-spends LINK.
+    Decision: P1 PASS, P2 **FAIL** (4 of 6 unordered), P3 PASS, P4 **FAIL**
+    twice — XRP re-seals **219.0 days R492 already READ as its train/val**, and
+    ADA is lost. Ladder {180, 270, 365, 406, 540} — no rung passes, and the
+    three short rungs are not clean tests of their own fence (the read guard
+    clamps them back to the pin) and fail on un-spending anyway.
+    **NOTHING ADOPTED. R503's table stands unchanged: LINK 1st and resolved,
+    places 2–4 UNORDERED {PAXG, SOL, XRP}, DOGE > BTC > LTC > ETH resolved.**
+    R504's route (a) is SPENT. Route (c) — accept the top unordered permanently
+    — now has an argument it did not have: two pre-registered fences of
+    opposite geometry agree the cell has no order.
 
 40. ~~**EVERY SEALED-SLICE BOUNDARY IN THIS LOG IS A FORMULA, NOT A DATE.**~~
     **DONE — R505, 2026-09-18. No look consumed. The deadline is discharged.**
@@ -1673,10 +1684,38 @@ Rules (non-negotiable, they are why anything here can be trusted):
     would move every unpinned fence **43 days** and moves every pinned one
     **0**.
 
+43. **THE TAPE THAT SETS THE DENOMINATOR IS THE ONE THAT DISAGREES WITH
+    EVERYBODY, ON EVERY CONTESTED PAIR.**
+    *(new, opened by R506. A PRE-REGISTRATION item, and it is the one with
+    real content left in this family.)*
+    R506 placed XRP, DOT and AVAX and in doing so produced four independently
+    contested pairs instead of R503's one — LINK/XRP and SOL/PAXG split 2–2,
+    XRP/SOL and XRP/PAXG split 3–1. **BTCUSD is in the minority on all four.**
+    ETH joins it on two. Under the proportional fence there was one contested
+    pair and no pattern to see; with four there is one, and BTCUSD is not an
+    arbitrary member of the reference set — **it is the tape whose window
+    defines the pooled calendar every era factor divides by.**
+    Deliverable: commit the construction FIRST, then ask whether the
+    minority-of-one is a property of BTC's tape (its coordinate is the lowest
+    of the four admissible references, 0.0546 against LINK 0.1037) or a
+    property of its double role as both reference and denominator. The obvious
+    discriminator is to recompute the same four pairs with each admissible
+    reference in turn promoted to define the pooled calendar, and report
+    whether the dissenter travels with the tape or with the role. **If the
+    dissent follows whichever tape is made the denominator, every era factor
+    in this log has a structural bias nobody has priced.**
+    **Do this BEFORE item 41**, which proposes to change exactly that calendar
+    and would be uninterpretable without this answer.
+    **THE FENCE:** descriptive, ordering only, behind the PINNED proportional
+    fences. No entry population, no sealed slice read, no look, no candidate,
+    no fence adopted.
+
 41. **A1 IS MEASURED AGAINST BTC's WINDOW BECAUSE R502 PICKED IT AND NOBODY
     HAS ASKED THE OTHER QUESTION.**
-    *(new, opened by R504. A PRE-REGISTRATION item, lower priority than 39
-    and 40 because it is a smaller lever.)*
+    *(new, opened by R504. A PRE-REGISTRATION item. **R506 puts item 43
+    ahead of this one:** 43 asks whether the dissenting reference travels with
+    the tape or with the DENOMINATOR ROLE, and this item proposes to change
+    exactly that denominator, so it is uninterpretable until 43 answers.)*
     The pooled calendar is BTCUSD's fenced window, inherited from R502 through
     R503 for comparability and explicitly NOT for neutrality (R503's own
     honest-limits paragraph says so). A pooled calendar built from the

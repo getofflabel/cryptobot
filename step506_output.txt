@@ -1,0 +1,214 @@
+============================================================================================================
+ROUND 506 - THE FENCE IS A PROPORTION AND THAT IS A CHOICE NOBODY EVER MADE ON PURPOSE.   (item 39)
+============================================================================================================
+run 2026-09-19 08:35:58 UTC
+A FENCE-GEOMETRY question, pre-registered. simulate() is never called, no entry population is built,
+no sealed slice is read, NO LOOK IS CONSUMED and none is reachable. Nothing is adopted.
+
+THE RULE WAS COMMITTED BEFORE THIS FILE EXISTED: step506_PREREGISTRATION.md
+  commit ecabe309a350333e3094d3a495c536f7c625ef62  (2026-09-19 04:34:48 -0400)
+  amendment A1 in a197850, same day, also before this file existed. It splits the read
+  boundary in two and changes no threshold, rule, criterion or trailing length.
+
+R499's published ranking parsed off step499_output.txt by R501's own parser: 11 of 11 rows.
+
+============================================================================================================
+(1) REPRODUCTION CONTROLS, BEHIND THE PINNED PROPORTIONAL FENCE. If either fails the round stops.
+============================================================================================================
+
+  a. R499's vol% column, recomputed behind the PINNED fence: max absolute difference 0.0000 pp
+     EXACT. The disk is the one R501, R502, R503, R504 and R505 read.
+
+  b. R501's xSAME column, R501's own functions. Donors (>= 80% full): LINK, DOGE, BTC, ETH, DOT, AVAX
+     max absolute difference against R501's published xSAME: 0.000x
+     EXACT to the published precision.
+
+============================================================================================================
+(2) FENCE-T, AND WHAT IT DOES TO EVERY PINNED BOUNDARY. THE UN-SPEND BAR IS CHECKED, NOT ASSUMED.
+============================================================================================================
+
+  T_END (primary, copied out of FENCES_PINNED.md) = BTCUSD's pinned fence = 2025-06-15 06:33:36
+  Trailing length D = BTCUSD's file end 2026-07-26 18:42:00 - T_END = 406.51 days  ->  406 trailing days
+  All eleven ranked files end on the same DAY: YES (2026-07-26)  -> common-T_END and fixed-trailing-days are the same fence here.
+
+  The pooled calendar is BTC's fenced window. T_END *is* BTC's pinned fence, so the denominator
+  every era factor divides by does not move at all. Any change in the ordering comes from the ROWS.
+
+  instrument pinned fence          FENCE-T                      moves   direction  sealed-slice length prop -> FENCE-T
+  ----------------------------------------------------------------------------------------------------------------------
+  LINKUSD    2025-06-15 06:42:24   2025-06-15 06:33:36        -0.006d   earlier      406.5d ->   406.5d
+  PAXGUSD    2025-06-15 11:06:00   2025-06-15 06:33:36        -0.189d   earlier      406.5d ->   406.7d
+  XRPUSD     2026-01-20 06:38:24   2025-06-15 06:33:36      -219.003d   earlier      187.5d ->   406.5d
+  SOLUSD     2025-06-15 06:35:36   2025-06-15 06:33:36        -0.001d   earlier      406.5d ->   406.5d
+  DOGEUSD    2025-06-15 10:46:36   2025-06-15 06:33:36        -0.176d   earlier      406.5d ->   406.7d
+  BTCUSD     2025-06-15 06:33:36   2025-06-15 06:33:36        +0.000d   unchanged    406.5d ->   406.5d
+  LTCUSD     2025-06-15 06:46:24   2025-06-15 06:33:36        -0.009d   earlier      406.5d ->   406.5d
+  ETHUSD     2025-06-15 06:35:12   2025-06-15 06:33:36        -0.001d   earlier      406.5d ->   406.5d
+  ADAUSD     2026-06-24 07:11:36   2025-06-15 06:33:36      -374.026d   earlier       32.7d ->   406.7d
+  DOTUSD     2025-12-24 07:23:48   2025-06-15 06:33:36      -192.035d   earlier      214.7d ->   406.7d
+  AVAXUSD    2025-08-18 16:58:24   2025-06-15 06:33:36       -64.434d   earlier      342.3d ->   406.7d
+
+  A boundary moving LATER would UN-SPEND tape. A boundary moving EARLIER re-seals tape that was
+  readable, which is false labelling wherever a round already spent a look on it (P4b).
+
+============================================================================================================
+(3) WHO SURVIVES THE FENCE, AND WHO DOES NOT
+============================================================================================================
+
+  instrument FENCE-T window                 days       bars    cov%     vol%   verdict
+  --------------------------------------------------------------------------------------------
+  LINKUSD    2021-01-01 -> 2025-06-15       1627    1879659    80.3   0.1037   readable  [DONOR]
+  PAXGUSD    2021-01-01 -> 2023-06-19        897     230990    17.8   0.0791   readable
+  XRPUSD     2024-01-01 -> 2025-06-15        532     358542    46.9   0.0881   readable
+  SOLUSD     2021-01-01 -> 2025-06-15       1209    1506764    64.4   0.1059   readable
+  DOGEUSD    2021-01-01 -> 2025-06-15       1627    1926469    82.3   0.1007   readable  [DONOR]
+  BTCUSD     2021-01-01 -> 2025-06-15       1627    2084756    89.0   0.0546   readable  [DONOR]
+  LTCUSD     2021-01-01 -> 2025-06-15       1627    1707211    72.9   0.0923   readable
+  ETHUSD     2021-01-01 -> 2025-06-15       1627    2121410    90.6   0.0687   readable  [DONOR]
+  ADAUSD     --                               --         --      --       --   UNFENCEABLE: first bar is at or after the fence (first bar 2026-02-13)
+  DOTUSD     2023-08-18 -> 2025-06-15        668     803225    83.7   0.0833   readable  [DONOR]
+  AVAXUSD    2021-11-18 -> 2025-06-15       1306    1537602    81.8   0.0980   readable  [DONOR]
+
+  rows readable under FENCE-T: 10 of 11.  donors: LINK, DOGE, BTC, ETH, DOT, AVAX
+  rows LOST relative to the proportional fence: ADA
+
+============================================================================================================
+(4) THE ERA MATRIX UNDER FENCE-T. R503's RULES 1 AND 2, INHERITED VERBATIM.
+============================================================================================================
+
+  POOLED CALENDAR: BTCUSD's FENCE-T window, 1627 days (under the proportional fence it was 1627 days).
+  A1 (reference covers >= 98% of pooled days):
+     LINK     1627 of 1627 pooled days =  100%   ADMISSIBLE
+     DOGE     1627 of 1627 pooled days =  100%   ADMISSIBLE
+     BTC      1627 of 1627 pooled days =  100%   ADMISSIBLE
+     ETH      1627 of 1627 pooled days =  100%   ADMISSIBLE
+     DOT       668 of 1627 pooled days =   41%   FAILS A1
+     AVAX     1306 of 1627 pooled days =   80%   FAILS A1
+
+  instrument       LINK      DOGE       BTC       ETH       DOT      AVAX     RULE1  n adm     RULE2
+  --------------------------------------------------------------------------------------------------
+  LINKUSD        1.000A    1.000A    1.000A    1.000A    1.000     1.000     1.000x      4    1.000x
+  PAXGUSD        1.161A    1.147A    1.021A    1.077A        --    1.243     1.112x      4    1.118x
+  XRPUSD         0.887A    0.948A    1.084A    1.051A    1.038     0.954     0.999x      4    0.990x
+  SOLUSD         1.084A    1.081A    1.048A    1.078A        --    1.093     1.079x      4    1.075x
+  DOGEUSD        1.000A    1.000A    1.000A    1.000A    1.000     1.000     1.000x      4    1.000x
+  BTCUSD         1.000A    1.000A    1.000A    1.000A    1.000     1.000     1.000x      4    1.000x
+  LTCUSD         1.000A    1.000A    1.000A    1.000A    1.000     1.000     1.000x      4    1.000x
+  ETHUSD         1.000A    1.000A    1.000A    1.000A    1.000     1.000     1.000x      4    1.000x
+  DOTUSD         0.864A    0.879A    1.014A    0.983A    1.000     0.932     0.931x      4    0.940x
+  AVAXUSD        0.923A    0.945A    0.945A    0.932A    1.000     1.000     0.939x      4    0.949x
+
+  rows with NO admissible reference under FENCE-T: NONE
+  under the proportional fence R503 found four: XRP, DOT, AVAX, ADA.
+
+============================================================================================================
+(5) THE RANKING UNDER FENCE-T. R499's FEE COLUMN STAYS FROZEN.
+============================================================================================================
+
+  #   instrument     vol%   /xSAME   vol* %   fee%RT   mult*     ERA1   mult1     ERA2   mult2   sealed
+  ----------------------------------------------------------------------------------------------------
+  1   LINKUSD      0.1037   1.086x   0.0955   0.0519    1.84   1.000x    1.84   1.000x    1.84   SPENT
+  2   PAXGUSD      0.0791   1.128x   0.0701   0.0400    1.75   1.112x    1.58   1.118x    1.57   INTACT
+  3   XRPUSD       0.0881   1.148x   0.0767   0.0439    1.75   0.999x    1.75   0.990x    1.77   INTACT
+  4   SOLUSD       0.1059   1.036x   0.1022   0.0590    1.73   1.079x    1.60   1.075x    1.61   SPENT
+  5   DOGEUSD      0.1007   1.071x   0.0940   0.0709    1.33   1.000x    1.33   1.000x    1.33   INTACT
+  6   BTCUSD       0.0546   1.067x   0.0512   0.0400    1.28   1.000x    1.28   1.000x    1.28   SPENT
+  7   LTCUSD       0.0923   1.105x   0.0835   0.1115    0.75   1.000x    0.75   1.000x    0.75   INTACT
+  8   ETHUSD       0.0687   1.053x   0.0652   0.1189    0.55   1.000x    0.55   1.000x    0.55   SPENT
+  9   DOTUSD       0.0833   1.072x   0.0777   0.2852    0.27   0.931x    0.29   0.940x    0.29   INTACT
+  10  AVAXUSD      0.0980   1.065x   0.0920   0.4032    0.23   0.939x    0.24   0.949x    0.24   INTACT
+
+  R503 RULE 1 (proportional fence, published) : LINK > SOL > PAXG > DOGE > BTC > LTC > ETH   (XRP, DOT, AVAX, ADA absent)
+  FENCE-T RULE 1                             : LINK > XRP > SOL > PAXG > DOGE > BTC > LTC > ETH > DOT > AVAX
+  FENCE-T RULE 2                             : LINK > XRP > SOL > PAXG > DOGE > BTC > LTC > ETH > DOT > AVAX
+
+============================================================================================================
+(6) THE UNANIMITY TEST UNDER FENCE-T - THE QUESTION THE ITEM ACTUALLY ASKS
+============================================================================================================
+
+  rows carrying a Rule 1 era factor: 10 of 11. ordered pairs among them: 45.
+    RESOLVED (every admissible reference agrees) : 41
+    UNORDERED                                    : 4
+
+  the pairs with no order, and why each failed:
+    LINK   vs XRP     4 admissible references disagree
+        on LINK : LINK 1.840 vs XRP 1.971  -> XRP above
+        on DOGE : LINK 1.840 vs XRP 1.845  -> XRP above
+        on BTC  : LINK 1.840 vs XRP 1.613  -> LINK above
+        on ETH  : LINK 1.840 vs XRP 1.663  -> LINK above
+    XRP    vs SOL     4 admissible references disagree
+        on LINK : XRP 1.971 vs SOL 1.598  -> XRP above
+        on DOGE : XRP 1.845 vs SOL 1.602  -> XRP above
+        on BTC  : XRP 1.613 vs SOL 1.653  -> SOL above
+        on ETH  : XRP 1.663 vs SOL 1.607  -> XRP above
+    XRP    vs PAXG    4 admissible references disagree
+        on LINK : XRP 1.971 vs PAXG 1.509  -> XRP above
+        on DOGE : XRP 1.845 vs PAXG 1.529  -> XRP above
+        on BTC  : XRP 1.613 vs PAXG 1.718  -> PAXG above
+        on ETH  : XRP 1.663 vs PAXG 1.628  -> XRP above
+    SOL    vs PAXG    4 admissible references disagree
+        on LINK : SOL 1.598 vs PAXG 1.509  -> SOL above
+        on DOGE : SOL 1.602 vs PAXG 1.529  -> SOL above
+        on BTC  : SOL 1.653 vs PAXG 1.718  -> PAXG above
+        on ETH  : SOL 1.607 vs PAXG 1.628  -> PAXG above
+
+  THE TOP FOUR UNDER FENCE-T: LINK (SPENT), PAXG (INTACT), XRP (INTACT), SOL (SPENT)
+    pairs among them: 6;  UNORDERED: 4;  no era factor at all: 0
+  R503's contested three under the proportional fence: PAXG, SOL, XRP
+
+============================================================================================================
+(7) THE COMMITTED DECISION. FOUR CONDITIONS, ALL FIXED BEFORE ANY NUMBER EXISTED.
+============================================================================================================
+
+  P1 placement   - every top-four row has a Rule 1 era factor           : PASS
+  P2 resolution  - unanimity leaves the top four fully ordered             : FAIL
+  P3 agreement   - Rule 2's top four identical to Rule 1's                 : PASS
+       Rule 1 top four : LINK > XRP > SOL > PAXG
+       Rule 2 top four : LINK > XRP > SOL > PAXG
+  P4 admissibility of the fence itself                                     : FAIL
+       (a) no un-spending  : PASS   no pinned boundary moves later
+       (b) no material pre-contamination (>= 1d on a spent-look row) : FAIL
+            XRP    re-seals   219.0 days - R492 READ this region as XRP's train/val
+            immaterial (< 1 day): LINK 9min, PAXG 272min, SOL 2min, DOGE 253min, LTC 13min, ETH 2min
+       (c) no ranked row lost : FAIL   LOST: ADA
+
+  VERDICT: NOT BETTER
+
+============================================================================================================
+(8) THE DECLARED SENSITIVITY LADDER. IT IS NOT A SELECTOR - THE VERDICT ABOVE IS THE PRIMARY'S.
+============================================================================================================
+
+  D (days)  T_END                  readable  lost rows  era-less   P1   P2   P3   P4   verdict
+  --------------------------------------------------------------------------------------------------------
+  180       2026-01-27 18:42:00          10          1         3    n    n    n    n   NOT BETTER
+  270       2025-10-29 18:42:00          10          1         3    n    n    n    n   NOT BETTER
+  365       2025-07-26 18:42:00          10          1         3    n    n    n    n   NOT BETTER
+  406       2025-06-15 06:33:36          10          1         0    Y    n    Y    n   NOT BETTER  <-- PRIMARY
+  540       2025-02-01 18:42:00          10          1         0    Y    n    Y    n   NOT BETTER
+
+  No rung but the primary supplies a verdict, an ordering or a fence. A rung that 'works better'
+  is a finding about sensitivity, not a licence to move the primary - that is the failure mode
+  items 38 and 39 exist to prevent.
+
+============================================================================================================
+WHAT THIS ROUND ESTABLISHES
+============================================================================================================
+
+  1. THE FENCE PREDATES THE ANSWER, and that is checkable: commit ecabe309a350 carries the
+     fence, the trailing length, the unfenceable-row policy and all four decision criteria, and
+     was made before this file existed.
+
+  2. THE VERDICT IS: NOT BETTER.
+
+  3. NOTHING IS ADOPTED. R503's published table stands: LINK 1st and resolved; places 2-4
+     UNORDERED {PAXG, SOL, XRP}; DOGE > BTC > LTC > ETH resolved. This round recomputed an
+     ordering under a different fence and selected nothing off it, which is item 39's own fence.
+
+  4. COSTS DECIDE NOTHING (owner rule, 2026-07-25). Nothing above declines a trade, gates a
+     strategy or ranks an instrument for trading.
+
+  FENCE HELD: simulate() never called, no entry population built, no sweep scanned, no stop
+  measured, no outcome read. No byte at or past any pinned proportional fence was read, so
+  PAXG's, XRP's, ADA's, DOT's and AVAX's intact slices are untouched. NO LOOK CONSUMED.
+  NO FILE ON DISK WAS WRITTEN, EXTENDED, MOVED OR TRUNCATED.
+============================================================================================================

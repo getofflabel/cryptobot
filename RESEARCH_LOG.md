@@ -8775,3 +8775,244 @@ the exact window R475 spent. Nothing in this log depends on re-cutting it —
 the slice is spent either way — but any future round that wants to *re-read
 R475's population* should know it would be re-reading a differently-cut one.
 Queued as item 42.
+
+---
+
+# R506 — THE TRAILING-DAYS FENCE PLACES ALL FOUR MISSING ROWS AND MAKES THE TOP OF THE RANKING WORSE. IT ALSO UN-RESOLVES THE ONE THING R503 RESOLVED.
+
+**2026-09-19. Queue item 39. `step506_trailing_fence.py`, rule in
+`step506_PREREGISTRATION.md`, full output in `step506_output.txt`. A
+FENCE-GEOMETRY question, pre-registered in R503's shape. Research only, no
+orders, no account, no live file touched, imported or edited. NO LOOK
+CONSUMED and none was reachable: `simulate()` is never called, no entry
+population is built, no sweep scanned, no break of structure detected, no fill
+modelled, no stop measured, and no return, expectancy, win rate, risk multiple
+or t-statistic is computed for any instrument. Every tape read is hard-clamped
+to that instrument's PINNED proportional fence, so PAXG's, XRP's, ADA's,
+DOT's and AVAX's intact slices are unread. NO FILE ON DISK WAS WRITTEN,
+EXTENDED, MOVED OR TRUNCATED.**
+
+## What this round was for
+
+Item 39, unblocked by R505. R504 proved that four rows of the instrument
+ranking — XRP, DOT, AVAX, ADA — cannot be placed before 2036 **because**
+`cut80` keeps a fixed PROPORTION of each tape's own span, so a reference that
+starts earlier than a row also fences earlier than it and can never satisfy
+A1 and A2 at once. R504 named three routes out and exercised none. This is
+route (a): a fence that keeps a fixed number of **trailing days**, so every
+instrument's readable region ends on the same date and A2 is satisfiable by
+construction.
+
+## THE RULE WAS COMMITTED BEFORE THE ANSWER EXISTED, AND THAT IS CHECKABLE
+
+`step506_PREREGISTRATION.md`, commit
+**ecabe309a350333e3094d3a495c536f7c625ef62**, **2026-09-19 04:34:48 −0400** —
+written and committed **before `step506_trailing_fence.py` existed**, before
+it was run, and before any FENCE-T window, coverage figure, coordinate, era
+factor or ordering existed anywhere on this disk. The first output file is
+timestamped 08:35:58 UTC, four hours later. Every constant used below is
+copied out of that file and none was changed.
+
+**One amendment, and it is recorded rather than hidden.** `AMENDMENT A1`
+(commit `a197850`, same day, also before the script existed) fixes a clause
+that was **self-contradictory as written**: the pre-registration set the read
+boundary to `min(pinned fence, T_END)`, which for ten of eleven rows would
+have forbidden reading exactly the tape the same file's own **mandatory
+reproduction controls** must read. The single boundary is split in two —
+`REPRO_BOUNDARY` = the pinned proportional fence (what R499/R501/R502/R503/
+R504/R505 each read), `FENCE_T_BOUNDARY` = `T_END`. **No threshold, rule,
+decision criterion, trailing length or ladder rung moved.** The binding
+guarantee is unchanged and is enforced in code by a hard clamp in `upto()`:
+*no byte at or past an instrument's pinned proportional fence is read
+anywhere in this file, at any rung of the ladder.*
+
+## THE FENCE, AS COMMITTED
+
+- **FENCE-T:** readable region of instrument *i* = `[t0_i, T_END)`, the same
+  `T_END` for every *i*.
+- **`T_END` = `PINNED["BTCUSD"]["t80"]` = 2025-06-15 06:33:36**, copied
+  verbatim out of `FENCES_PINNED.md` — a date on disk, not a formula, so it
+  cannot move under the fence being tested. Trailing length
+  **D = 406 days** (406 d 12:08:24 back from BTC's file end). All eleven
+  ranked files end on the same day, 2026-07-26, so a common `T_END` and a
+  fixed trailing day-count are **the same fence here**, verified not assumed.
+- **Why that length, decided on the estimator and not on the answer:**
+  BTCUSD's fenced window **is** the pooled calendar, inherited by R502, R503
+  and R504 unchanged, and it is the denominator every era factor divides by.
+  Setting `T_END` to BTC's own pinned fence leaves the pooled calendar
+  **literally unchanged, to the second — 1,627 days before and after** — so
+  the denominator does not move and any change in the ordering comes from the
+  ROWS. Confirmed in the output: PAXG's and SOL's era cells reproduce R503's
+  digit for digit (PAXG 1.161/1.147/1.021/1.077 → 1.112x; SOL → 1.079x).
+- **Scope, narrow on purpose:** one call site only, the eleven-instrument
+  ranking screen. The three arm clocks are NOT re-fenced; SPY and QQQ are out
+  of scope; `FENCES_PINNED.md` is read and never edited.
+- **Decision rule, four conditions, all fixed in advance:** P1 placement,
+  P2 resolution, P3 agreement (R503's three verbatim) and **P4 admissibility
+  of the fence itself** — (a) no un-spending, (b) no material
+  pre-contamination (≥1 day re-sealed on a row a round has already spent a
+  look on), (c) no ranked row lost. A named third verdict, *"ordering
+  improved, fence inadmissible"*, exists precisely so a good answer cannot
+  buy a bad fence.
+
+## Reproduction controls — both EXACT, the same two since R502
+
+- **R499's `vol%` column**, recomputed behind the pinned fence: max absolute
+  difference **0.0000 pp** across all eleven rows.
+- **R501's `xSAME` column**, R501's own functions: max absolute difference
+  **0.000x**. The disk is the one R501, R502, R503, R504 and R505 read.
+
+## (1) THE FENCE DOES EXACTLY WHAT R504 SAID IT WOULD. A2 STOPS BEING A PROBLEM.
+
+Under the proportional fence R503 found **four rows with no admissible
+reference at all** (XRP, DOT, AVAX, ADA). Under FENCE-T:
+
+| | proportional fence (R503) | FENCE-T |
+|---|---|---|
+| rows readable | 11 | **10** (ADA drops out) |
+| rows with NO admissible reference | **4** — XRP, DOT, AVAX, ADA | **0** |
+| rows with 4 admissible references | 7 | **10 of 10** |
+| pooled calendar | BTC's 1,627 days | BTC's 1,627 days — **identical** |
+
+XRP, DOT and AVAX are placed, exactly as the mechanism predicted: every
+reference now ends where the row ends, so A2 passes by construction. **ADA
+cannot be placed by this fence or by any other trailing-days fence** — its
+first bar is 2026-02-13 and any `T_END` late enough to keep it readable is
+later than LINK's pinned fence, which un-spends a spent slice. That is closed,
+not open: **no trailing-days fence can both keep ADA readable and respect the
+pin.**
+
+## (2) AND THE TOP OF THE RANKING GETS WORSE, NOT BETTER
+
+| | proportional fence (R503) | FENCE-T |
+|---|---|---|
+| top four | LINK, PAXG, XRP, SOL (XRP unplaceable) | LINK, PAXG, XRP, SOL (all placed) |
+| pairs among the top four | 6 | 6 |
+| **UNORDERED among them** | 1 pair (PAXG/SOL) + 1 row absent | **4 pairs of 6** |
+| pairs resolved, whole table | 20 of 21 | 41 of 45 |
+
+The four contested pairs, and the split on each:
+
+| pair | LINK | DOGE | BTC | ETH | split |
+|---|---|---|---|---|---|
+| LINK vs XRP | XRP | XRP | **LINK** | **LINK** | 2–2 |
+| XRP vs SOL | XRP | XRP | **SOL** | XRP | 3–1 |
+| XRP vs PAXG | XRP | XRP | **PAXG** | XRP | 3–1 |
+| SOL vs PAXG | SOL | SOL | **PAXG** | **PAXG** | 2–2 |
+
+**BTC is the minority reference in all four**, and it is the reference that
+defines the pooled calendar. ETH joins it in two. R503 could observe
+reference-dependence on one pair; with XRP placed there are four, and they
+are not scattered — the tape that sets the denominator is the tape that
+disagrees with every other admissible reference on every contested pair.
+
+**And the fence un-resolves the only thing R503 resolved.** R503's quotable
+sentence was *"LINK is 1st, and that IS resolved — it sits above every other
+row under both committed rules and under every reference either rule
+admits."* Under FENCE-T, LINK vs XRP splits 2–2. **The fence that places XRP
+is the fence that takes away first place.**
+
+## (3) THE COMMITTED DECISION
+
+| condition, fixed before any number | result |
+|---|---|
+| **P1** every top-four row has a Rule 1 era factor | **PASS** |
+| **P2** unanimity leaves the top four fully ordered | **FAIL** — 4 of 6 pairs unordered |
+| **P3** Rule 2's top four identical to Rule 1's | **PASS** — both LINK > XRP > SOL > PAXG |
+| **P4a** no un-spending | **PASS** — no pinned boundary moves later; checked on all 11 |
+| **P4b** no material pre-contamination | **FAIL** — **XRP re-seals 219.0 days that R492 READ as XRP's train/val** |
+| **P4c** no ranked row lost | **FAIL** — ADA lost |
+
+Immaterial boundary slips, reported and below the 1-day bar: LINK 9 min,
+PAXG 272 min, SOL 2 min, DOGE 253 min, LTC 13 min, ETH 2 min.
+
+**VERDICT: NOT BETTER.** P2 alone decides it; P4 decides it twice over.
+
+> **WHAT THE DESK MAY QUOTE — UNCHANGED.** R503's table stands exactly as
+> published. **LINK is 1st and that is resolved. Places 2–4 are UNORDERED
+> {PAXG, SOL, XRP}. DOGE > BTC > LTC > ETH is resolved.** DOT, AVAX and ADA
+> carry no era factor. Nothing in this round republishes an ordering, moves a
+> threshold, adopts a fence or reads a slice — and item 39's own fence said it
+> would not: *"the ordering is recomputed, nothing is selected off it."*
+
+## (4) THE DECLARED SENSITIVITY LADDER — NO RUNG PASSES, AND THE SHORT ONES ARE NOT EVEN CLEAN TESTS
+
+| D | `T_END` | rows readable | era-less | P1 | P2 | P3 | P4 | verdict |
+|---|---|---|---|---|---|---|---|---|
+| 180 | 2026-01-27 | 10 | 3 | n | n | n | n | NOT BETTER |
+| 270 | 2025-10-29 | 10 | 3 | n | n | n | n | NOT BETTER |
+| 365 | 2025-07-26 | 10 | 3 | n | n | n | n | NOT BETTER |
+| **406 (primary)** | **2025-06-15** | **10** | **0** | **Y** | **n** | **Y** | **n** | **NOT BETTER** |
+| 540 | 2025-02-01 | 10 | 0 | Y | n | Y | n | NOT BETTER |
+
+**Stated honestly: the three short rungs are not clean tests of their own
+fence.** A `T_END` later than a pinned boundary would un-spend tape, so the
+read guard clamps every read back to the pin — which is why those rungs still
+show three era-less rows. They fail P4(a) on un-spending in any case, which is
+the whole reason the guard exists. The ladder's real content is that **D must
+be ≥ 406 days for the fence to place anything at all, and 540 buys nothing
+406 does not.** No rung supplied a verdict; the verdict is the primary's.
+
+## Honest limits, fixed before running
+
+- **A common end date is a choice, not a neutral act.** It equalises the END
+  of every readable region and leaves the START alone, so it makes rows
+  comparable in one direction only. A fence equalising both is a third
+  question and was not asked.
+- **A fence that places a row is not a fence that measures it well.** A2
+  passing *by construction* is exactly what makes the era factor computable —
+  and exactly why these factors deserve less credit than a reference that
+  spanned a row because the tape really overlapped. That objection was
+  written down before the numbers existed and the numbers did not soften it.
+- **FENCE-T shortens tape and never lengthens it.** XRP loses 219 of its 750
+  readable days, DOT loses 192, AVAX 64. Rows that lose tape lose precision
+  this round does not attempt to price.
+- **The trailing length is defended on the estimator, not on the ordering.**
+  That is not proof 406 days is the right length; it is proof 406 days was not
+  chosen by looking.
+- **The un-spend and pre-contamination checks are about the pin, not about
+  truth.** They ask whether a fence re-labels tape a look was already spent
+  on. They do not ask whether the original fence was well placed.
+- The fee column is R499's, frozen, as in R501, R502 and R503. The only thing
+  this round was allowed to move is the fence.
+- **Costs decide nothing** (owner rule, 2026-07-25). Nothing above declines a
+  trade, gates a strategy or ranks an instrument for trading.
+
+## Looks consumed
+
+**NONE, and none was reachable.** `simulate()` is never called and neither is
+any entry builder. No entry population was built on any instrument, no sweep
+scanned, no break of structure detected, no fill modelled, no stop measured,
+no outcome, return, expectancy, win rate, risk multiple or t-statistic
+computed for anything. Every tape read is hard-clamped in code to the pinned
+proportional fence, so **PAXG's, XRP's, ADA's, DOT's and AVAX's sealed slices
+are intact and unread**, and LINK's (R492), crypto's (R475) and the index's
+(R474) stay exactly as spent as they were. No order was placed, no account
+exists, no live file was touched or imported, no file on disk was written,
+extended, moved or truncated, and nothing is proposed for deployment.
+
+## What this closes and what it opens
+
+**Item 39 is CLOSED on the verdict NOT BETTER.** Both halves of the
+deliverable landed: the fence, the trailing length, the unfenceable-row policy
+and all four decision criteria were committed before the ordering existed
+(commit `ecabe309a350`, four hours ahead of the first output), and the finding
+is that the trailing-days fence **places every missing row and still does not
+resolve the top four** — it triples the number of contested pairs in that
+cell and costs first place and ADA to do it.
+
+**R504's route (a) is now spent.** Of its three named routes out, (a) is
+tested and rejected, (b) is queue item 41 (the pooled calendar as the
+intersection of the ranked rows) and (c) is *accept {PAXG, SOL, XRP}
+unordered permanently*. **After this round (c) has an argument it did not have
+before:** two fences with opposite geometry, each pre-registered, both say the
+top of that cell has no order, and the second one says it more loudly than the
+first. Item 41 remains worth doing as the last defensible construction nobody
+has asked, but the desk should not expect it to produce an order.
+
+**One thing opened, and it is a real finding rather than a chore:** across
+four independently contested pairs, **BTCUSD — the tape that defines the
+pooled calendar — is the minority reference every single time.** Under the
+proportional fence there was one contested pair and no pattern to see. That is
+a property of the estimator worth a round on its own, and it bears directly on
+item 41, which proposes to change exactly that calendar. Queued as item 43.
