@@ -212,3 +212,48 @@ anything.
   The only thing this round is allowed to move is the fence.
 * **Costs decide nothing** (owner rule, 2026-07-25). Nothing here declines a
   trade, gates a strategy or ranks an instrument for trading.
+
+---
+
+# AMENDMENT A1 — committed 2026-09-19, BEFORE `step506_trailing_fence.py` was written or run
+
+**The clause above titled "THE READ BOUNDARY" was self-contradictory as
+written and is corrected here, before any FENCE-T quantity exists on this
+disk. It is recorded rather than quietly edited.**
+
+**The contradiction.** The clause set `READ_BOUNDARY(i) := min(pinned
+proportional fence(i), T_END)`. For ten of the eleven ranked instruments
+`T_END` is EARLIER than the pinned proportional fence, so obeying that clause
+literally would forbid reading the tape between `T_END` and the pinned fence
+— which is exactly the tape the two **mandatory reproduction controls**,
+required by this same file, must read in order to reproduce R499's `vol%` and
+R501's `xSAME`. One number cannot serve both purposes.
+
+**The correction.** The single read boundary is split in two. Nothing else
+changes.
+
+* `REPRO_BOUNDARY(i)` := instrument *i*'s **pinned proportional fence**, from
+  `FENCES_PINNED.md`. Used **only** for the two reproduction controls. This is
+  precisely the boundary R499, R501, R502, R503, R504 and R505 each read to,
+  it is behind every published fence, it reads no intact sealed slice and it
+  consumes no look.
+* `FENCE_T_BOUNDARY(i)` := `T_END`, the same instant for every *i*. Used for
+  **every** FENCE-T quantity — coverage, coordinate, donor membership, era
+  factor, ordering, unanimity.
+
+**The guarantee that actually matters is unchanged and is restated as the
+binding one:** *no byte at or past instrument i's pinned proportional fence is
+read anywhere in this round.* PAXG's, XRP's, ADA's, DOT's and AVAX's intact
+sealed slices are therefore untouched, LINK's, the crypto arm's and the
+index's spent slices are unmoved, and **no look is consumed or reachable**.
+
+**Why the re-read is not a breach of FENCE-T.** The region `[T_END, pinned
+fence)` is not a virgin slice under any fence. It is tape R499/R501/R502/R503
+already read as train/val under the proportional fence. FENCE-T would *re-label*
+it as sealed, and pricing that re-labelling in days is the entire job of
+criterion **P4(b)** above. P4(b) exists to measure this; it does not forbid it.
+
+**No threshold, rule, decision criterion, trailing length or ladder rung is
+changed by this amendment.** P1, P2, P3, P4(a), P4(b), P4(c), the verdict
+table, `T_END`, `D`, the unfenceable-row policy and the sensitivity ladder all
+stand exactly as committed in `ecabe309a350333e3094d3a495c536f7c625ef62`.
