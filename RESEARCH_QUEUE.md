@@ -1684,10 +1684,92 @@ Rules (non-negotiable, they are why anything here can be trusted):
     would move every unpinned fence **43 days** and moves every pinned one
     **0**.
 
-43. **THE TAPE THAT SETS THE DENOMINATOR IS THE ONE THAT DISAGREES WITH
-    EVERYBODY, ON EVERY CONTESTED PAIR.**
-    *(new, opened by R506. A PRE-REGISTRATION item, and it is the one with
-    real content left in this family.)*
+43. ~~**THE TAPE THAT SETS THE DENOMINATOR IS THE ONE THAT DISAGREES WITH
+    EVERYBODY, ON EVERY CONTESTED PAIR.**~~
+    **DONE — R507, 2026-09-21. No look consumed.** Construction committed
+    first (`step507_PREREGISTRATION.md`, commit `3ff6d532a03e`, before the
+    script existed), including a derived prediction the run could falsify.
+    **VERDICT: H-TAPE, on 16 of 16 (pair × promoted-calendar) cells.** Each
+    admissible reference (LINK, DOGE, BTC, ETH) promoted in turn to define the
+    pooled calendar, geometry held fixed at R506's FENCE-T: **not one vote
+    changes.** BTC stays the dissenter under every promotion; no promoted
+    reference ever becomes one. **The denominator role is exonerated and
+    item 41 is NOT blocked by this.**
+    **The mechanism is algebra, and it is the round's real content:
+    P-CANCEL HOLDS EXACTLY.** `den[r]` is common to both sides of the pairwise
+    comparison and cancels — 64 vote cells checked, 0 sign changes, worst
+    ratio movement **0.000e+00**. So **the pooled calendar cannot change how
+    any reference votes on any pair; its only channel into an ordering is the
+    A1 gate — WHO votes, never HOW a voter votes.** Era factor VALUES do still
+    move with the calendar; only the pairwise ordering verdict is invariant.
+    **A precision correction to R506's own sentence:** a 2–2 split has no
+    minority, so *"BTC is the minority reference in all four"* is exact on two
+    pairs and loose on two. The exact pattern is a bloc: **LINK and DOGE agree
+    4/4, BTC opposes that bloc 4/4, ETH is the swing (2/4 with each side).**
+    **Honest limit, and it is binding:** under every promotion all four
+    references covered **100.0%** of the promoted calendar, so A1 never
+    excluded anybody and the one channel by which the role could have mattered
+    **was never exercised**. H-TAPE is established for this cell, not as a
+    law. P-CANCEL is the durable half; the 16-of-16 is the local half.
+    Declared secondary (T_END moved with the promoted reference too): identical
+    splits, but 3 of 4 rungs CLAMPED and the four pins sit within 4h13m of each
+    other, so it moves almost nothing. No verdict taken from it.
+
+41. **A1 IS UNBLOCKED, AND R507 HAS SHRUNK IT TO A ONE-PAGE CENSUS.**
+    *(opened by R504, RE-SCOPED by R507 2026-09-21. Still a PRE-REGISTRATION
+    item. Item 43's blocker is discharged: the answer was H-TAPE.)*
+    **Read this before writing the prereg.** R507 proved the pooled calendar
+    **cancels out of every pairwise comparison** (P-CANCEL, 64 cells, 0 sign
+    changes, 0.000e+00 ratio movement). So this item's original question —
+    *"does a calendar built from the intersection of the ranked rows reorder
+    the table?"* — **has an answer already: it cannot, directly.** A different
+    calendar can only change an ordering by changing WHICH references pass A1.
+    **Re-scoped deliverable:** commit the intersection construction first, then
+    report (a) the A1 census — which references pass A1 against the
+    intersection calendar and which pass against BTC's, side by side — and
+    (b) only if that census DIFFERS, the resulting ordering and whether the
+    top four resolve. If the admissible set is identical, say plainly that the
+    two calendars **cannot** disagree about any pairwise verdict and stop;
+    that is a complete answer, not a null result. Also report what the
+    intersection does to era factor VALUES, which R507 showed are NOT
+    invariant (and see item 44).
+    **THE FENCE:** descriptive, ordering only, behind the PINNED proportional
+    fences. No entry population, no sealed slice, no look, no candidate, no
+    fence or calendar adopted.
+
+44. **P-CANCEL SAYS THE CALENDAR LIVES ENTIRELY IN THE VALUES. NOBODY HAS
+    MEASURED HOW FAR THE VALUES MOVE.**
+    *(new, opened by R507. Cheap, descriptive, and it is the honest follow-up
+    to R507's own limit.)*
+    R507 established that a change of pooled calendar cannot move a pairwise
+    unanimity verdict, and said in the same breath that it **does** move the
+    era factor values — Rule 1 medians and Rule 2 weighted means both divide
+    by `den[r]`. This desk quotes those values (PAXG 1.112x, SOL 1.079x, and
+    the rest of R503's column) as though they were properties of the
+    instrument. They are properties of the instrument **and of a calendar
+    nobody chose on purpose**.
+    Deliverable: for each of the four admissible references promoted in turn
+    (R507's own four runs already build these frames), report the full Rule 1
+    and Rule 2 column and the **spread of each row's era factor across the four
+    calendars** — max/min, and in the same units R503 published. State plainly
+    whether any published era factor moves by more than the gaps R503 used to
+    separate rows. **If it does, R503's quotable numbers need a ± attached and
+    this queue should say so.**
+    Also settle the second half of R507's limit: build one calendar that
+    **does** exclude a reference under A1 (the intersection of item 41 is the
+    obvious candidate) and confirm that a split can move there — by removing a
+    voter, never by turning one.
+    **THE FENCE:** descriptive, values and ordering only, behind the PINNED
+    proportional fences. No entry population, no sealed slice, no look, no
+    candidate, nothing adopted.
+
+~~41. **A1 IS MEASURED AGAINST BTC's WINDOW BECAUSE R502 PICKED IT AND NOBODY
+    HAS ASKED THE OTHER QUESTION.** (superseded by the re-scoped item 41
+    above, R507)**~~
+    *(new, opened by R504. A PRE-REGISTRATION item. **R506 puts item 43
+    ahead of this one:** 43 asks whether the dissenting reference travels with
+    the tape or with the DENOMINATOR ROLE, and this item proposes to change
+    exactly that denominator, so it is uninterpretable until 43 answers.)*
     R506 placed XRP, DOT and AVAX and in doing so produced four independently
     contested pairs instead of R503's one — LINK/XRP and SOL/PAXG split 2–2,
     XRP/SOL and XRP/PAXG split 3–1. **BTCUSD is in the minority on all four.**
@@ -1729,6 +1811,8 @@ Rules (non-negotiable, they are why anything here can be trusted):
     disagree** rather than adopting the one that answers.
     **THE FENCE:** descriptive, ordering only. No entry population, no sealed
     slice, no look, no candidate.
+    *(SUPERSEDED 2026-09-21 by the re-scoped item 41 above. R507's P-CANCEL
+    answered the "does it reorder" half before this item ran.)*
 
 42. **THE CLOCK THAT CUT R475's SPENT SLICE NO LONGER EXISTS ON THIS DISK.**
     *(new, opened by R505. BOOKKEEPING, cheap, and lower priority than 39/40

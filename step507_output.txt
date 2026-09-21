@@ -1,0 +1,183 @@
+============================================================================================================
+ROUND 507 - DOES THE DISSENTING REFERENCE TRAVEL WITH THE TAPE, OR WITH THE DENOMINATOR ROLE?   (item 43)
+============================================================================================================
+run 2026-09-21 16:41:53 UTC
+DESCRIPTIVE, ORDERING ONLY. simulate() is never called, no entry population is built, no sealed
+slice is read, NO LOOK IS CONSUMED and none is reachable. Nothing is adopted.
+
+THE CONSTRUCTION WAS COMMITTED BEFORE THIS FILE EXISTED: step507_PREREGISTRATION.md
+  commit 3ff6d532a03e15d1fced8186863b246db89b5200  (2026-09-21 12:38:31 -0400)
+  It carries the promotion set, the primary/secondary split, the three reproduction controls,
+  the two hypotheses AND a derived prediction (P-CANCEL) that this run can falsify.
+
+R499's published ranking parsed off step499_output.txt by R501's own parser: 11 of 11 rows.
+
+============================================================================================================
+(1) THREE REPRODUCTION CONTROLS. IF ANY FAILS THE ROUND STOPS.
+============================================================================================================
+
+  a. R499's vol% column, behind the PINNED fence: max absolute difference 0.0000 pp
+     EXACT.
+
+  b. R501's xSAME column, R501's own functions: max absolute difference 0.000x
+     EXACT to the published precision.
+
+  c. R506's FENCE-T cell, rebuilt. Rows readable: 10 of 11. Donors: LINK, DOGE, BTC, ETH, DOT, AVAX
+     admissible references (recomputed, not retyped): LINK, DOGE, BTC, ETH
+
+     R506's four contested pairs, reproduced vote by vote:
+     pair                  LINK    DOGE     BTC     ETH   split          matches R506
+     ------------------------------------------------------------------------------
+     LINK vs XRP            XRP     XRP    LINK    LINK   2-2            YES
+     XRP vs SOL             XRP     XRP     SOL     XRP   3-1            YES
+     PAXG vs XRP            XRP     XRP    PAXG     XRP   3-1            YES
+     PAXG vs SOL            SOL     SOL    PAXG    PAXG   2-2            YES
+
+     ALL FOUR EXACT. This is R506's cell, digit for digit.
+     minority reference on each pair, under the INHERITED pooled calendar (BTC):
+        LINK  vs XRP   -> minority: TIED, none
+        XRP   vs SOL   -> minority: BTC
+        PAXG  vs XRP   -> minority: BTC
+        PAXG  vs SOL   -> minority: TIED, none
+
+============================================================================================================
+(2) THE PRIMARY. GEOMETRY HELD FIXED AT R506's FENCE-T; ONLY THE POOLED CALENDAR IS PROMOTED.
+============================================================================================================
+
+  T_END = 2025-06-15 06:33:36 for every promotion. The only thing that moves is which
+  instrument's day-set is called the pooled calendar - i.e. the DENOMINATOR ROLE, alone.
+
+  promoted    pooled days                   admissible refs    A1 gate changed?
+  ------------------------------------------------------------------------------
+  LINK               1627              LINK, DOGE, BTC, ETH                  no
+  DOGE               1627              LINK, DOGE, BTC, ETH                  no
+  BTC                1627              LINK, DOGE, BTC, ETH                  no
+  ETH                1627              LINK, DOGE, BTC, ETH                  no
+
+  A1 per reference, promotion by promotion (share of the promoted calendar each reference covers):
+  promoted          LINK        DOGE         BTC         ETH
+  ----------------------------------------------------------
+  LINK          100.0%A     100.0%A     100.0%A     100.0%A 
+  DOGE          100.0%A     100.0%A     100.0%A     100.0%A 
+  BTC           100.0%A     100.0%A     100.0%A     100.0%A 
+  ETH           100.0%A     100.0%A     100.0%A     100.0%A 
+  'A' = passes A1 and may vote. A1 is the ONLY channel the pooled calendar has into a split.
+
+============================================================================================================
+(3) THE FOUR CONTESTED PAIRS, UNDER EVERY PROMOTION. THE QUESTION THE ITEM ACTUALLY ASKS.
+============================================================================================================
+
+  LINK vs XRP
+     pooled calendar       LINK    DOGE     BTC     ETH   split       minority
+     ------------------------------------------------------------------------
+     LINK promoted          XRP     XRP    LINK    LINK   2-2       TIED, none
+     DOGE promoted          XRP     XRP    LINK    LINK   2-2       TIED, none
+     BTC promoted           XRP     XRP    LINK    LINK   2-2       TIED, none
+     ETH promoted           XRP     XRP    LINK    LINK   2-2       TIED, none
+
+  XRP vs SOL
+     pooled calendar       LINK    DOGE     BTC     ETH   split       minority
+     ------------------------------------------------------------------------
+     LINK promoted          XRP     XRP     SOL     XRP   3-1              BTC
+     DOGE promoted          XRP     XRP     SOL     XRP   3-1              BTC
+     BTC promoted           XRP     XRP     SOL     XRP   3-1              BTC
+     ETH promoted           XRP     XRP     SOL     XRP   3-1              BTC
+
+  PAXG vs XRP
+     pooled calendar       LINK    DOGE     BTC     ETH   split       minority
+     ------------------------------------------------------------------------
+     LINK promoted          XRP     XRP    PAXG     XRP   3-1              BTC
+     DOGE promoted          XRP     XRP    PAXG     XRP   3-1              BTC
+     BTC promoted           XRP     XRP    PAXG     XRP   3-1              BTC
+     ETH promoted           XRP     XRP    PAXG     XRP   3-1              BTC
+
+  PAXG vs SOL
+     pooled calendar       LINK    DOGE     BTC     ETH   split       minority
+     ------------------------------------------------------------------------
+     LINK promoted          SOL     SOL    PAXG    PAXG   2-2       TIED, none
+     DOGE promoted          SOL     SOL    PAXG    PAXG   2-2       TIED, none
+     BTC promoted           SOL     SOL    PAXG    PAXG   2-2       TIED, none
+     ETH promoted           SOL     SOL    PAXG    PAXG   2-2       TIED, none
+
+  ACROSS ALL 16 (pair x promoted-calendar) CELLS:
+     minority UNCHANGED from the inherited calendar (H-TAPE)   :  16 of 16
+     minority BECOMES the promoted reference  (H-ROLE)        :   0 of 16
+     neither                                  (H-MIXED)       :   0 of 16
+
+============================================================================================================
+(3b) WHAT THE PATTERN ACTUALLY IS. R506's SENTENCE IS LOOSE ON THE TWO TIED PAIRS.
+============================================================================================================
+
+  A 2-2 split has no minority, so 'BTC is the minority reference in all four' is exact on two
+  pairs and loose on two. The precise statement is a BLOC structure - how often each pair of
+  references votes the same way, across R506's four contested pairs (inherited calendar):
+
+              LINK    DOGE     BTC     ETH
+  ----------------------------------------
+  LINK           -      4/4      0/4      2/4
+  DOGE          4/4       -      0/4      2/4
+  BTC           0/4      0/4       -      2/4
+  ETH           2/4      2/4      2/4       -
+
+  Read off the matrix: LINK and DOGE agree on 4 of 4 and BTC opposes that bloc on 4 of 4.
+  ETH is the swing - with BTC on the two tied pairs, with LINK/DOGE on the two 3-1 pairs.
+  So the honest sentence is: BTC dissents from the LINK-DOGE bloc on every contested pair,
+  and is a minority OF ONE on the two that are not ties. That is the fact item 43 is about,
+  and part (3) has just shown it does not move when the denominator role moves.
+
+============================================================================================================
+(4) P-CANCEL, THE PREDICTION COMMITTED BEFORE THE RUN. CHECKED VOTE BY VOTE, NOT ASSERTED.
+============================================================================================================
+
+  P-CANCEL: den[r] is common to both sides of R506's comparison and cancels, so a vote sign
+  cannot move under promotion while its voter stays admissible. Every cell is checked.
+
+  vote cells checked (voter admissible under BOTH the inherited and the promoted calendar): 64
+  vote signs that MOVED: 0
+  worst relative movement in a single side's ratio nmult/cell:  0.000e+00
+
+  P-CANCEL HOLDS. Not one vote sign moved, and the ratios themselves did not move either -
+  the denominator cancels exactly, as derived. The pooled calendar's ONLY reachable effect
+  on an ordering is through A1: WHO votes, never HOW a voter votes.
+
+============================================================================================================
+(5) DECLARED SECONDARY - THE FULL DOUBLE ROLE (T_END MOVES WITH THE PROMOTED REFERENCE).
+============================================================================================================
+
+  R506 set T_END to BTC's pinned fence BECAUSE BTC was the reference. This rung moves both
+  halves at once and is therefore CONFOUNDED. It is a sensitivity reading; the verdict is the
+  primary's. A T_END later than another row's pin is CLAMPED by the read guard and is not a
+  clean test of its own geometry - the same defect R506 declared on its short ladder rungs.
+
+  promoted  T_END                 clean?     rows  refs   contested pairs among R506's four -> minority
+  --------------------------------------------------------------------------------------------------------
+  LINK      2025-06-15 06:42:24   CLAMPED      10     4   LINK/XRP:TIED+none; XRP/SOL:BTC; PAXG/XRP:BTC; PAXG/SOL:TIED+none
+  DOGE      2025-06-15 10:46:36   CLAMPED      10     4   LINK/XRP:TIED+none; XRP/SOL:BTC; PAXG/XRP:BTC; PAXG/SOL:TIED+none
+  BTC       2025-06-15 06:33:36   CLEAN        10     4   LINK/XRP:TIED+none; XRP/SOL:BTC; PAXG/XRP:BTC; PAXG/SOL:TIED+none
+  ETH       2025-06-15 06:35:12   CLAMPED      10     4   LINK/XRP:TIED+none; XRP/SOL:BTC; PAXG/XRP:BTC; PAXG/SOL:TIED+none
+
+  Nothing on this table supplies a verdict, an ordering or a fence.
+
+============================================================================================================
+WHAT THIS ROUND ESTABLISHES
+============================================================================================================
+
+  1. THE CONSTRUCTION PREDATES THE ANSWER: commit 3ff6d532a03e, made before this file existed.
+
+  2. VERDICT: H-TAPE.  The dissent is a property of BTC's TAPE. The denominator role is exonerated.
+
+  3. P-CANCEL: HOLDS - and it is the mechanism behind the verdict.
+     The pooled calendar cancels out of every pairwise comparison. It reaches an ordering only
+     through A1, by changing which references are allowed to vote.
+
+  4. NOTHING IS ADOPTED. R503's published table stands: LINK 1st and resolved; places 2-4
+     UNORDERED {PAXG, SOL, XRP}; DOGE > BTC > LTC > ETH resolved. No fence, calendar or
+     ordering is adopted, republished or proposed for deployment.
+
+  5. COSTS DECIDE NOTHING (owner rule, 2026-07-25).
+
+  FENCE HELD: simulate() never called, no entry population built, no sweep scanned, no stop
+  measured, no outcome read. No byte at or past any pinned proportional fence was read, so
+  PAXG's, XRP's, ADA's, DOT's and AVAX's intact slices are untouched. NO LOOK CONSUMED.
+  NO FILE ON DISK WAS WRITTEN, EXTENDED, MOVED OR TRUNCATED.
+============================================================================================================

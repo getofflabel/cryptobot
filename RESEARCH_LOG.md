@@ -9016,3 +9016,188 @@ pooled calendar — is the minority reference every single time.** Under the
 proportional fence there was one contested pair and no pattern to see. That is
 a property of the estimator worth a round on its own, and it bears directly on
 item 41, which proposes to change exactly that calendar. Queued as item 43.
+
+# R507 — THE DISSENT TRAVELS WITH THE TAPE, NOT WITH THE ROLE. THE DENOMINATOR CANCELS OUT OF EVERY PAIRWISE COMPARISON, EXACTLY.
+
+**2026-09-21. Queue item 43. `step507_reference_role.py`, construction in
+`step507_PREREGISTRATION.md`, full output in `step507_output.txt`. A
+DESCRIPTIVE, ordering-only question, pre-registered in R503's and R506's
+shape. Research only, no orders, no account, no live file touched, imported or
+edited. NO LOOK CONSUMED and none was reachable: `simulate()` is never called,
+no entry population is built, no sweep scanned, no break of structure
+detected, no fill modelled, no stop measured, and no return, expectancy, win
+rate, risk multiple or t-statistic is computed for any instrument. Every tape
+read goes through R506's hard clamp, so PAXG's, XRP's, ADA's, DOT's and AVAX's
+intact slices are unread. NO FILE ON DISK WAS WRITTEN, EXTENDED, MOVED OR
+TRUNCATED.**
+
+## What this round was for
+
+R506 placed XRP, DOT and AVAX under FENCE-T and turned R503's single contested
+pair into **four** — and **BTCUSD was the dissenting reference on all four**.
+BTCUSD is also the tape whose fenced window **defines the pooled calendar that
+every era factor's denominator is computed on**. Item 43 asked which half of
+that double role produces the dissent, because if it is the role, every era
+factor in this log carries a structural bias nobody has priced, and item 41 —
+which proposes to change exactly that calendar — is uninterpretable.
+
+## THE CONSTRUCTION WAS COMMITTED BEFORE THE ANSWER EXISTED, AND THAT IS CHECKABLE
+
+`step507_PREREGISTRATION.md`, commit
+**3ff6d532a03e15d1fced8186863b246db89b5200**, **2026-09-21 12:38:31 −0400** —
+written and committed **before `step507_reference_role.py` existed**, before
+it was run, and before any promoted-calendar cell, vote, split or ordering
+existed anywhere on this disk. It carries the promotion set, the
+primary/secondary split, the three reproduction controls, the two hypotheses
+(H-TAPE / H-ROLE / H-MIXED) and the answer table. **It also carries a derived
+prediction, P-CANCEL, committed so this round could be wrong in public.**
+
+## Reproduction controls — THREE, all EXACT
+
+- **R499's `vol%`** behind the pinned proportional fence: max absolute
+  difference **0.0000 pp**.
+- **R501's `xSAME`**, R501's own functions: max absolute difference
+  **0.000x**.
+- **NEW, and it is the one that matters here: R506's four contested pairs and
+  all sixteen of their votes, reproduced digit for digit.** The admissible
+  reference set was **recomputed, not retyped**, and came back LINK, DOGE,
+  BTC, ETH as R506 published. Without this control the round would not know it
+  was reading the cell item 43 is about.
+
+## (1) THE ANSWER: H-TAPE, ON 16 OF 16 CELLS
+
+Geometry held **fixed** at R506's FENCE-T (`T_END` = 2025-06-15 06:33:36,
+D = 406 days). The only thing moved is which instrument's day-set is called
+the pooled calendar — the denominator role, alone. Each of the four admissible
+references is promoted in turn.
+
+| pair | promoted calendar | LINK | DOGE | BTC | ETH | split |
+|---|---|---|---|---|---|---|
+| LINK vs XRP | **all four** | XRP | XRP | **LINK** | **LINK** | 2–2 |
+| XRP vs SOL | **all four** | XRP | XRP | **SOL** | XRP | 3–1 |
+| PAXG vs XRP | **all four** | XRP | XRP | **PAXG** | XRP | 3–1 |
+| PAXG vs SOL | **all four** | SOL | SOL | **PAXG** | **PAXG** | 2–2 |
+
+**Not one vote changes under any promotion.** Across all 16
+(pair × promoted-calendar) cells: minority unchanged **16 of 16** (H-TAPE),
+minority becomes the promoted reference **0 of 16** (H-ROLE), neither
+**0 of 16**.
+
+**VERDICT: H-TAPE. The dissent is a property of BTC's tape. The denominator
+role is exonerated, and item 41 is not blocked by this.**
+
+## (2) AND THE MECHANISM IS ALGEBRA, NOT LUCK. P-CANCEL HOLDS EXACTLY.
+
+The prediction committed in §3.4 of the pre-registration: R506's pairwise
+comparison is `nmult[a]/cells[a][r] > nmult[b]/cells[b][r]`, and
+`cells[x][r] = coord(r on x's overlap) / den[r]` — **`den[r]` is the only term
+the pooled calendar enters, it is common to both sides, and it cancels.**
+
+Checked vote by vote rather than asserted: **64 vote cells, 0 sign changes,
+and the worst relative movement in a single side's ratio is 0.000e+00.** Not
+"small" — zero.
+
+> **THE GENERAL RESULT, AND IT IS THE ROUND'S REAL CONTENT: the pooled
+> calendar cannot change how any reference votes on any pair. Its ONLY channel
+> into an ordering is the A1 admissibility gate — it changes WHO is allowed to
+> vote, never HOW an allowed voter votes.** Every unanimity split this desk
+> has published or will publish is invariant to the choice of pooled calendar,
+> conditional on the admissible set. R502's, R503's and R506's contested pairs
+> were never exposed to that choice.
+
+Note what this does **not** exonerate: the era factor **values** (Rule 1
+medians, Rule 2 weighted means) do divide by `den[r]` and do move with the
+calendar. What is invariant is the pairwise ORDERING verdict.
+
+## (3) A PRECISION CORRECTION TO R506's OWN SENTENCE
+
+R506 wrote *"BTC is the minority reference in all four."* **A 2–2 split has no
+minority**, so that sentence is exact on two pairs and loose on two. The
+precise pattern is a bloc structure — how often each pair of references votes
+the same way across the four contested pairs:
+
+| | LINK | DOGE | BTC | ETH |
+|---|---|---|---|---|
+| **LINK** | — | **4/4** | **0/4** | 2/4 |
+| **DOGE** | **4/4** | — | **0/4** | 2/4 |
+| **BTC** | **0/4** | **0/4** | — | 2/4 |
+| **ETH** | 2/4 | 2/4 | 2/4 | — |
+
+**LINK and DOGE agree on 4 of 4. BTC opposes that bloc on 4 of 4. ETH is the
+swing** — with BTC on the two ties, with LINK/DOGE on the two 3–1s. The honest
+sentence is: **BTC dissents from the LINK–DOGE bloc on every contested pair,
+and is a minority of one on the two that are not ties.** That fact is what
+item 43 is about, and part (3) shows it does not move when the role moves.
+
+## (4) DECLARED SECONDARY — THE FULL DOUBLE ROLE
+
+R506 set `T_END` to BTC's pinned fence *because* BTC was the reference, so a
+second, **confounded** rung moves both halves at once:
+`T_END = PINNED[R]["t80"]` as well. All four promotions return **identical
+splits and identical minorities**. Reported honestly: **three of the four
+rungs are CLAMPED and are therefore not clean tests of their own geometry** —
+the same defect R506 declared on its short ladder — and in any case the four
+pins sit within 4 hours 13 minutes of each other, so this rung barely moves
+the geometry even where it is clean. It supplies no verdict; the primary's
+stands.
+
+## Honest limits, and the first one is the binding one
+
+- **The role's only channel was inert in this cell, and that is why H-TAPE is
+  cheap here.** Under every promotion all four references cover **100.0% of
+  the promoted calendar**, so A1 never excluded anybody and the one mechanism
+  by which the role could have mattered was never exercised. **H-TAPE is
+  established for this cell, not as a law.** In a cell where a promoted
+  calendar excluded a reference, a split could change — by removing a voter,
+  never by turning one — and that would still not be H-ROLE in the sense item
+  43 feared.
+- **P-CANCEL is the durable half of this round; H-TAPE is the local half.**
+  The cancellation is algebraic and general. The 16-of-16 is one cell.
+- **"Exonerated" means the denominator role, not the reference set.** BTC's
+  vote still differs from everybody else's on four pairs. This round says that
+  difference is in BTC's tape; it does not say the difference is benign, and
+  it does not say which side is right. Nothing here resolves a contested pair.
+- **A 2–2 split is unordered whichever way you read it.** The correction in
+  (3) sharpens the description and changes no verdict: LINK vs XRP and
+  PAXG vs SOL were unordered in R506 and are unordered now.
+- The fee column is R499's, frozen, as in R501, R502, R503 and R506. The only
+  thing this round was allowed to move is which day-set is called the pooled
+  calendar.
+- **Costs decide nothing** (owner rule, 2026-07-25). Nothing above declines a
+  trade, gates a strategy or ranks an instrument for trading.
+
+## Looks consumed
+
+**NONE, and none was reachable.** `simulate()` is never called and neither is
+any entry builder. No entry population was built on any instrument, no sweep
+scanned, no break of structure detected, no fill modelled, no stop measured,
+no outcome, return, expectancy, win rate, risk multiple or t-statistic
+computed for anything. Every tape read is hard-clamped in code to the pinned
+proportional fence, so **PAXG's, XRP's, ADA's, DOT's and AVAX's sealed slices
+are intact and unread**, and LINK's (R492), crypto's (R475) and the index's
+(R474) stay exactly as spent as they were. No order was placed, no account
+exists, no live file was touched or imported, no file on disk was written,
+extended, moved or truncated, and nothing is proposed for deployment.
+
+> **WHAT THE DESK MAY QUOTE — UNCHANGED.** R503's table stands exactly as
+> published. **LINK is 1st and that is resolved. Places 2–4 are UNORDERED
+> {PAXG, SOL, XRP}. DOGE > BTC > LTC > ETH is resolved.** DOT, AVAX and ADA
+> carry no era factor. Nothing in this round republishes an ordering, moves a
+> threshold, adopts a fence or a calendar, or reads a slice.
+
+## What this closes and what it opens
+
+**Item 43 is CLOSED on the verdict H-TAPE, with P-CANCEL as the mechanism.**
+**Item 41 is UNBLOCKED and its expected content has shrunk:** it proposed to
+rebuild the pooled calendar from the intersection of the ranked rows, and this
+round has just shown that a change of calendar **cannot** move a pairwise
+unanimity verdict except by changing the admissible set. Item 41 should
+therefore be re-scoped before it is run — the question worth asking is no
+longer "does a different calendar reorder the table" (it cannot, directly) but
+**"does a different calendar admit or exclude a different set of references"**,
+which is a one-page A1 census, not a re-ranking. Re-scoped in the queue.
+
+**And one new item is opened by (2):** P-CANCEL is general, so the era
+factor's sensitivity to the pooled calendar lives entirely in its VALUES, not
+its ordering — and this desk has never measured how far a Rule 1 median moves
+when the calendar moves. Queued as item 44.
