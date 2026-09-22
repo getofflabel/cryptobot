@@ -1885,8 +1885,8 @@ Rules (non-negotiable, they are why anything here can be trusted):
     fences. No entry population, no sealed slice read, no look, no candidate,
     no fence adopted.
 
-41. **A1 IS MEASURED AGAINST BTC's WINDOW BECAUSE R502 PICKED IT AND NOBODY
-    HAS ASKED THE OTHER QUESTION.**
+~~41. **A1 IS MEASURED AGAINST BTC's WINDOW BECAUSE R502 PICKED IT AND NOBODY
+    HAS ASKED THE OTHER QUESTION.** (SUPERSEDED by the re-scoped item 41, R507; that item is now CLOSED by R508. Kept for provenance only — not an open item.)**~~
     *(new, opened by R504. A PRE-REGISTRATION item. **R506 puts item 43
     ahead of this one:** 43 asks whether the dissenting reference travels with
     the tape or with the DENOMINATOR ROLE, and this item proposes to change
