@@ -1715,7 +1715,58 @@ Rules (non-negotiable, they are why anything here can be trusted):
     splits, but 3 of 4 rungs CLAMPED and the four pins sit within 4h13m of each
     other, so it moves almost nothing. No verdict taken from it.
 
-41. **A1 IS UNBLOCKED, AND R507 HAS SHRUNK IT TO A ONE-PAGE CENSUS.**
+41. ~~**A1 IS UNBLOCKED, AND R507 HAS SHRUNK IT TO A ONE-PAGE CENSUS.**~~
+    **DONE — R508, 2026-09-22. CLOSED, both halves. No look consumed, and none
+    could be: `simulate()` is never called, no entry population exists, and
+    every tape read goes through R506's hard clamp.** Construction committed
+    first (`step508_PREREGISTRATION.md`, commit `8ccb2e3`, before the script
+    existed), carrying four calendars, a degeneracy rule fixed before any
+    calendar's size was known, and TWO falsifiable predictions.
+    **THE ITEM'S LITERAL CALENDAR IS THE EMPTY SET.** The intersection of the
+    eleven ranked rows is **0 days**, and so is the intersection of the top
+    four. Under the committed degeneracy rule (A1 is `ov/npool >= 0.98 AND
+    ov >= 120`, and an intersection gives `ov = npool`) such a calendar admits
+    **nobody** and cannot produce a table at all.
+    **AND THE REASON IS NOT ABOUT CALENDARS. PAXGUSD's fenced tape ENDS
+    2023-06-19 — two years before its own fence — and XRPUSD's STARTS
+    2024-01-01, so PAXG ∩ XRP = ZERO DAYS.** Two of the four rows an
+    operational decision is read out of share not one day of tape. SOL carries
+    a 417-day hole and shares 294 days with XRP; ADA is 2026-only and empties
+    the eleven-row intersection by itself. See new item 45.
+    **THE CENSUS DIFFERS, AND ON THE ONE NON-DEGENERATE CALENDAR IT DIFFERS BY
+    ADDING VOTERS.** CAL-DON (intersection of the six donors, 668 days,
+    2023-08-18 → 2025-06-15) admits **6 references instead of 4 — DOT (41.1%
+    under BTC's calendar) and AVAX (80.3%) both reach 100% and join.** First
+    cell in this log where the pooled calendar's one real channel is open.
+    **WHAT THE EXTRA VOTERS BUY: two placements and nothing else.** DOT and
+    AVAX gain a Rule 1 era factor (1.011x, 1.064x) and the ordering goes from
+    7 rows to 9 — `LINK > SOL > PAXG > DOGE > BTC > LTC > ETH > DOT > AVAX`.
+    **The order of R503's seven does not change, XRP still has no Rule 1 era
+    factor, and SOL vs PAXG is still unordered on four disagreeing
+    references.** A second defensible calendar leaves every published verdict
+    standing. Declared secondary (FENCE-T cell): same 4 → 6 census, but there
+    CAL-DON makes the top **worse** — four unordered pairs among the top four.
+    **P-CANCEL WAS TESTED FOR THE FIRST TIME AND PASSES; THE ROUND'S OWN
+    PREDICTION WAS HALF WRONG AND SAYS SO.** P-CANCEL-2 had two clauses.
+    Clause 1 (sign invariance) **HOLDS — 84 vote cells, 0 sign changes.**
+    Clause 2 ("the ratio moves by exactly 0") is **FALSE and was wrong to
+    write**: a single side's ratio moves **13.6%**. R507's `0.000e+00` was an
+    artifact of its cell — its four promoted calendars were the SAME 1,627-day
+    day-set, so `den[r]` never moved. **Here it moves 13.6% and every sign
+    still holds.**
+    **ERA FACTOR VALUES: item 44's first half is answered here.** CAL-BTC →
+    CAL-DON moves LINK 1.000 → 1.077, PAXG 1.112 → 1.200, SOL 1.079 → 1.163,
+    and **four of seven rows move further than the gap separating them from
+    their neighbour — so R503's quotable era factors DO need a ±.** The guard,
+    and it is mandatory beside that sentence: the movement is **a common scale
+    factor of 1.0774x**, per-row residuals 1.0000-1.0017, and **the largest
+    `mult1` move that is not the common factor is 0.003** against gaps of
+    0.028-0.236. The VALUES need a ±; the ORDERING does not move.
+    **NOTHING IS ADOPTED. CAL-DON is not neutral either** (it runs from
+    2023-08-18 only because DOT's tape starts there) and a calendar that
+    answers more pairs is not thereby better. R503's table stands as published.
+
+41b. *(historical, the item as written, kept so the closure is readable)*
     *(opened by R504, RE-SCOPED by R507 2026-09-21. Still a PRE-REGISTRATION
     item. Item 43's blocker is discharged: the answer was H-TAPE.)*
     **Read this before writing the prereg.** R507 proved the pooled calendar
@@ -1740,7 +1791,22 @@ Rules (non-negotiable, they are why anything here can be trusted):
 44. **P-CANCEL SAYS THE CALENDAR LIVES ENTIRELY IN THE VALUES. NOBODY HAS
     MEASURED HOW FAR THE VALUES MOVE.**
     *(new, opened by R507. Cheap, descriptive, and it is the honest follow-up
-    to R507's own limit.)*
+    to R507's own limit. **RE-SCOPED by R508, 2026-09-22: the first half is
+    ANSWERED and must not be re-run.** R508 measured it on a calendar that
+    genuinely moves the denominator — the values shift by a **common factor of
+    1.0774x**, per-row residuals 1.0000-1.0017, **four of seven rows moving
+    further than their neighbour gap in absolute terms while the largest
+    non-common `mult1` move is 0.003.** The answer to "do R503's numbers need a
+    ±" is **YES for the quoted value and NO for the ordering**, and that
+    sentence must travel with the ± wherever it is used.
+    **WHAT IS LEFT, AND IT IS NOW THE WHOLE ITEM:** the second half — build a
+    calendar that **excludes SOME reference under A1** and confirm a split can
+    move there, **by removing a voter, never by turning one.** R508 supplies
+    two exclusion calendars and both are too blunt to be the test (CAL-ALL and
+    CAL-TOP4 exclude everybody by being empty; CAL-DON excludes nobody). The
+    construction worth committing is one that admits a strict, non-empty subset
+    — and R508's day-overlap matrix is where to find it. The four-promotion
+    spread R507 set up is **no longer the deliverable**; one exclusion cell is.)*
     R507 established that a change of pooled calendar cannot move a pairwise
     unanimity verdict, and said in the same breath that it **does** move the
     era factor values — Rule 1 medians and Rule 2 weighted means both divide
@@ -1762,6 +1828,33 @@ Rules (non-negotiable, they are why anything here can be trusted):
     **THE FENCE:** descriptive, values and ordering only, behind the PINNED
     proportional fences. No entry population, no sealed slice, no look, no
     candidate, nothing adopted.
+
+45. **TWO OF THE TOP FOUR SHARE ZERO DAYS OF TAPE. NOBODY HAS EVER SAID HOW
+    MUCH SHARED HISTORY THE PUBLISHED ORDERING RESTS ON.**
+    *(new, opened by R508, and it is a ONE-PAGE CENSUS on numbers already
+    computable behind the pinned fences. Cheap.)*
+    R508 built the day-overlap matrix of the four rows the desk reads an
+    operational decision out of and found **PAXG ∩ XRP = 0 days**, SOL ∩ XRP =
+    294, LINK ∩ XRP = 532, against LINK ∩ SOL = 1,209. **PAXGUSD's fenced tape
+    ends 2023-06-19 and XRPUSD's begins 2024-01-01: those two instruments have
+    never traded a common day on this disk.** Every comparison between them is
+    therefore carried **entirely by the era correction** and by no directly
+    shared history at all — which is what the correction is for, but it has
+    never been stated as a per-pair quantity beside the ordering it produces.
+    Deliverable, purely descriptive: for every ordered pair in R503's published
+    table, report the number of **directly shared days**, the share of the
+    shorter row's window that represents, and whether the pair's verdict is
+    RESOLVED or UNORDERED — one table, sorted by shared days. Say plainly which
+    published verdicts rest on **zero or near-zero** shared tape. Also state,
+    per pair, how many of the admissible references contain BOTH rows'
+    windows, since a reference that contains neither is doing arithmetic
+    rather than measurement.
+    **This is a HONESTY COLUMN, exactly like R499's break-point column** — it
+    attaches a caveat to numbers already published and corrects nothing.
+    **THE FENCE:** descriptive, behind the PINNED proportional fences. No entry
+    population, no sealed slice, no look, no candidate, **no verdict may be
+    re-interpreted and no pair may be re-decided by it**, and a pair with thin
+    shared tape is **not** thereby demoted — R503's table stands as published.
 
 ~~41. **A1 IS MEASURED AGAINST BTC's WINDOW BECAUSE R502 PICKED IT AND NOBODY
     HAS ASKED THE OTHER QUESTION.** (superseded by the re-scoped item 41

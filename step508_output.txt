@@ -1,0 +1,284 @@
+============================================================================================================
+ROUND 508 - DOES A POOLED CALENDAR BUILT FROM THE RANKED ROWS ADMIT A DIFFERENT SET OF REFERENCES?   (item 41)
+============================================================================================================
+run 2026-09-22 06:37:46 UTC
+DESCRIPTIVE, CENSUS AND ORDERING ONLY. simulate() is never called, no entry population is built, no
+sealed slice is read, NO LOOK IS CONSUMED and none is reachable. Nothing is adopted.
+
+THE CONSTRUCTION WAS COMMITTED BEFORE THIS FILE EXISTED: step508_PREREGISTRATION.md
+  commit 8ccb2e3  (2026-09-22)
+  It carries the four calendars, the degeneracy rule, the three reproduction controls and TWO
+  derived predictions (A1-SUP, P-CANCEL-2) that this run can falsify.
+
+R499's published ranking parsed off step499_output.txt by R501's own parser: 11 of 11 rows.
+
+============================================================================================================
+(1) THREE REPRODUCTION CONTROLS. IF ANY FAILS THE ROUND STOPS.
+============================================================================================================
+
+  a. R499's vol% column, behind the PINNED fence: max absolute difference 0.0000 pp
+     EXACT.
+
+  b. R501's xSAME column, R501's own functions: max absolute difference 0.0005x
+     EXACT to the published precision.
+
+  c. R503's proportional cell, rebuilt. Rows live: 11 of 11. Donors: LINK, DOGE, BTC, ETH, DOT, AVAX
+     A1-passing references (recomputed, not retyped): LINK, DOGE, BTC, ETH
+     donors FAILING A1                                : DOT, AVAX
+     R503's era column reproduced: Rule 1 on 7 rows, Rule 2 on 10, UNMEAS on 4. EXACT to 0.0015x.
+     This is R503's cell, digit for digit.
+
+============================================================================================================
+(2) THE FOUR CALENDARS. THE DEGENERACY RULE WAS COMMITTED BEFORE ANY SIZE WAS KNOWN.
+============================================================================================================
+
+  calendar     days                       span  built from
+  ------------------------------------------------------------------------------------------------
+  CAL-BTC      1627   2021-01-01 -> 2025-06-15  BTCUSD's fenced day-set (inherited R502/R503/R506/R507)
+  CAL-ALL         0                    (empty)  intersection of ALL 11 live ranked rows
+  CAL-DON       668   2023-08-18 -> 2025-06-15  intersection of the 6 DONORS
+  CAL-TOP4        0                    (empty)  intersection of the top 4 rows by mult*
+
+  DEGENERACY RULE (committed): a calendar with fewer than 120 days cannot admit ANY donor,
+  because A1 is `ov/npool >= 0.98 AND ov >= 120` and an intersection gives ov = npool.
+  -> CAL-ALL is DEGENERATE (0 days). Nothing is ranked under it and nothing falls back to rescue it.
+  -> CAL-TOP4 is DEGENERATE (0 days). Nothing is ranked under it and nothing falls back to rescue it.
+
+  (2b) WHY. POST-HOC REPORTING ADDITION, DECLARED - it explains the two empty cells above and
+       changes no measurement, threshold, calendar or verdict.
+
+  row                     fence   days       first        last  largest hole
+  --------------------------------------------------------------------------
+  LINK               2025-06-15   1627  2021-01-01  2025-06-15  1d @ 2021-01
+  PAXG               2025-06-15    897  2021-01-01  2023-06-19  4d @ 2023-06
+  XRP                2026-01-20    751  2024-01-01  2026-01-20  1d @ 2024-01
+  SOL                2025-06-15   1209  2021-01-01  2025-06-15417d @ 2023-07
+  DOGE               2025-06-15   1627  2021-01-01  2025-06-15  1d @ 2021-01
+  BTC                2025-06-15   1627  2021-01-01  2025-06-15  1d @ 2021-01
+  LTC                2025-06-15   1627  2021-01-01  2025-06-15  1d @ 2021-01
+  ETH                2025-06-15   1627  2021-01-01  2025-06-15  1d @ 2021-01
+  ADA                2026-06-24    132  2026-02-13  2026-06-24  1d @ 2026-02
+  DOT                2025-12-24    860  2023-08-18  2025-12-24  1d @ 2023-08
+  AVAX               2025-08-18   1370  2021-11-18  2025-08-18  1d @ 2021-11
+
+  Shared DAYS between the top-4 rows an operational decision is read out of (LINK, PAXG, SOL, XRP):
+               LINK     PAXG      SOL      XRP
+  LINK         1627      897     1209      532
+  PAXG          897      897      897        0
+  SOL          1209      897     1209      294
+  XRP           532        0      294      751
+
+============================================================================================================
+(3) THE A1 CENSUS, SIDE BY SIDE. THIS IS THE ITEM'S CORE DELIVERABLE.
+============================================================================================================
+
+  Share of each calendar that each DONOR covers, and its A1 verdict ('A' = passes, may vote):
+
+  donor            CAL-BTC         CAL-ALL         CAL-DON        CAL-TOP4
+  ------------------------------------------------------------------------
+  LINK             100.0%A           0.0%          100.0%A           0.0% 
+  DOGE             100.0%A           0.0%          100.0%A           0.0% 
+  BTC              100.0%A           0.0%          100.0%A           0.0% 
+  ETH              100.0%A           0.0%          100.0%A           0.0% 
+  DOT               41.1%            0.0%          100.0%A           0.0% 
+  AVAX              80.3%            0.0%          100.0%A           0.0% 
+
+  ADMISSIBLE SET          4 refs          0 refs          6 refs          0 refs
+     CAL-BTC    LINK, DOGE, BTC, ETH
+     CAL-ALL    (none)   <-- DIFFERS
+     CAL-DON    LINK, DOGE, BTC, ETH, DOT, AVAX   <-- DIFFERS
+     CAL-TOP4   (none)   <-- DIFFERS
+
+  A1-SUP, committed before the run: under CAL-ALL and CAL-DON (row sets containing every donor)
+  the census must be ALL-OR-NOTHING - every donor passes, or none does. A partial census falsifies it.
+     CAL-ALL    0 of 6 donors pass  -> NONE
+     CAL-DON    6 of 6 donors pass  -> ALL
+     CAL-TOP4   0 of 6 donors pass  (no guarantee applies; a partial census here is expected, not a falsification)
+
+  A1-SUP: HOLDS
+
+============================================================================================================
+(4) DOES THE CENSUS DIFFER? THE ITEM SAYS PART (b) RUNS ONLY IF IT DOES.
+============================================================================================================
+  CAL-ALL    admissible set DIFFERS from CAL-BTC
+  CAL-DON    admissible set DIFFERS from CAL-BTC
+  CAL-TOP4   admissible set DIFFERS from CAL-BTC
+
+  Part (b) RUNS. Every change below is attributed to an ADDED or REMOVED voter and checked
+  numerically against P-CANCEL-2 - a surviving voter's sign may not move.
+
+  --- CAL-ALL (0 days) -----------------------------------------------------------------------
+      voters ADDED  : (none)
+      voters REMOVED: LINK, DOGE, BTC, ETH
+      Rule 1 order  : 
+      CAL-BTC       : LINK > SOL > PAXG > DOGE > BTC > LTC > ETH
+      Rule 2 order  : 
+      rows that GAIN a Rule 1 era factor: (none)
+      rows that LOSE  a Rule 1 era factor: LINK, PAXG, SOL, DOGE, BTC, LTC, ETH
+      TOP FOUR by mult*: LINK, PAXG, SOL, XRP
+      top four RESOLVE? NO   unordered pairs among them: 0   rows with no era factor: 4
+         (CAL-BTC had SOL vs PAXG: 4 admissible references disagree)
+
+  --- CAL-DON (668 days) -----------------------------------------------------------------------
+      voters ADDED  : DOT, AVAX
+      voters REMOVED: (none)
+      Rule 1 order  : LINK > SOL > PAXG > DOGE > BTC > LTC > ETH > DOT > AVAX
+      CAL-BTC       : LINK > SOL > PAXG > DOGE > BTC > LTC > ETH
+      Rule 2 order  : LINK > XRP > SOL > PAXG > DOGE > BTC > LTC > ETH > DOT > AVAX
+      rows that GAIN a Rule 1 era factor: DOT, AVAX
+      rows that LOSE  a Rule 1 era factor: (none)
+      TOP FOUR by mult*: LINK, PAXG, SOL, XRP
+      top four RESOLVE? NO   unordered pairs among them: 1   rows with no era factor: 1
+         SOL   vs PAXG   4 admissible references disagree
+         (CAL-BTC had SOL vs PAXG: 4 admissible references disagree)
+
+  --- CAL-TOP4 (0 days) ----------------------------------------------------------------------
+      voters ADDED  : (none)
+      voters REMOVED: LINK, DOGE, BTC, ETH
+      Rule 1 order  : 
+      CAL-BTC       : LINK > SOL > PAXG > DOGE > BTC > LTC > ETH
+      Rule 2 order  : 
+      rows that GAIN a Rule 1 era factor: (none)
+      rows that LOSE  a Rule 1 era factor: LINK, PAXG, SOL, DOGE, BTC, LTC, ETH
+      TOP FOUR by mult*: LINK, PAXG, SOL, XRP
+      top four RESOLVE? NO   unordered pairs among them: 0   rows with no era factor: 4
+         (CAL-BTC had SOL vs PAXG: 4 admissible references disagree)
+
+============================================================================================================
+(4b) P-CANCEL-2, THE SECOND PREDICTION COMMITTED BEFORE THE RUN. CHECKED VOTE BY VOTE.
+============================================================================================================
+
+  For every reference admissible under BOTH CAL-BTC and the intersection calendar, its vote on
+  every pair must be unchanged and the ratio nmult/cell must move by exactly 0.
+
+  vote cells checked (voter admissible under both calendars): 84
+  CLAUSE 1 - vote signs that MOVED: 0
+  CLAUSE 2 - worst relative movement in a single side's ratio nmult/cell: 1.360e-01
+
+  P-CANCEL-2 AS WRITTEN HAD TWO CLAUSES AND THEY DID NOT COME BACK THE SAME WAY. Reported separately
+  rather than averaged into one verdict:
+    CLAUSE 1 (sign invariance - the substantive prediction, and R507's actual P-CANCEL):
+       HOLDS. Not one vote sign moved.
+    CLAUSE 2 ('the ratio moves by exactly 0'): FALSE, and it was wrong to write.
+       A single side's ratio moves by up to 13.6%. Clause 2 was copied from R507's
+       observed 0.000e+00, and THAT zero was an artifact of R507's cell: its four promoted
+       calendars were the SAME 1,627-day day-set, so den[r] never moved and the cancellation
+       was never exercised. Here den[r] moves by 13.6% and EVERY SIGN STILL HOLDS.
+       **This round is the first real test of P-CANCEL, and it passes it.**
+
+============================================================================================================
+(5) WHAT THE INTERSECTION DOES TO ERA FACTOR VALUES. R507 SHOWED THESE ARE NOT INVARIANT.
+============================================================================================================
+
+  RULE 1 (containment, median over admissible references):
+  instrument      CAL-BTC    CAL-ALL    CAL-DON   CAL-TOP4    spread
+  ------------------------------------------------------------------
+  LINK             1.000x     UNMEAS     1.077x     UNMEAS     0.077
+  PAXG             1.112x     UNMEAS     1.200x     UNMEAS     0.088
+  XRP              UNMEAS     UNMEAS     UNMEAS     UNMEAS        --
+  SOL              1.079x     UNMEAS     1.163x     UNMEAS     0.084
+  DOGE             1.000x     UNMEAS     1.077x     UNMEAS     0.077
+  BTC              1.000x     UNMEAS     1.077x     UNMEAS     0.077
+  LTC              1.000x     UNMEAS     1.077x     UNMEAS     0.077
+  ETH              1.000x     UNMEAS     1.077x     UNMEAS     0.077
+  ADA              UNMEAS     UNMEAS     UNMEAS     UNMEAS        --
+  DOT              UNMEAS     UNMEAS     1.011x     UNMEAS        --
+  AVAX             UNMEAS     UNMEAS     1.064x     UNMEAS        --
+
+  RULE 2 (overlap-weighted mean):
+  instrument      CAL-BTC    CAL-ALL    CAL-DON   CAL-TOP4    spread
+  ------------------------------------------------------------------
+  LINK             1.000x     UNMEAS     1.068x     UNMEAS     0.068
+  PAXG             1.118x     UNMEAS     1.208x     UNMEAS     0.090
+  XRP              0.989x     UNMEAS     1.047x     UNMEAS     0.059
+  SOL              1.075x     UNMEAS     1.156x     UNMEAS     0.081
+  DOGE             1.000x     UNMEAS     1.068x     UNMEAS     0.068
+  BTC              1.000x     UNMEAS     1.068x     UNMEAS     0.068
+  LTC              1.000x     UNMEAS     1.068x     UNMEAS     0.068
+  ETH              1.000x     UNMEAS     1.068x     UNMEAS     0.068
+  ADA              UNMEAS     UNMEAS     UNMEAS     UNMEAS        --
+  DOT              0.941x     UNMEAS     1.001x     UNMEAS     0.060
+  AVAX             0.949x     UNMEAS     1.016x     UNMEAS     0.068
+
+  DOES ANY PUBLISHED ERA FACTOR MOVE BY MORE THAN THE GAP THAT SEPARATES ITS ROW FROM ITS NEIGHBOUR?
+  R503's ranking metric is mult1 = mult* / ERA1, so an era factor moving by `spread` moves mult1 by
+  mult* x (1/min - 1/max). That is the number to set beside R503's own adjacent-row gaps.
+
+  row         mult*  ERA1 spread  mult1 move  nearest gap   exceeds?
+  ------------------------------------------------------------------
+  LINK         1.84        0.077       0.132        0.236         no
+  SOL          1.73        0.084       0.115        0.028        YES
+  PAXG         1.75        0.088       0.116        0.028        YES
+  DOGE         1.33        0.077       0.095        0.047        YES
+  BTC          1.28        0.077       0.092        0.047        YES
+  LTC          0.75        0.077       0.054        0.200         no
+  ETH          0.55        0.077       0.039        0.200         no
+
+  rows whose era factor moves further than their nearest neighbour gap: 4
+  -> R503's quotable era factors need a +/- attached, and the queue is told so (item 44).
+
+  (5b) THE GUARD ON THAT SENTENCE. POST-HOC REPORTING ADDITION, DECLARED - no measurement changes.
+  'Four rows move further than their neighbour gap' does NOT mean the ordering is fragile. Most of
+  the movement is a COMMON SCALE FACTOR: a different calendar re-prices every reference's
+  denominator at once, which divides every row's mult1 by roughly the same number and cannot
+  reorder anything. That is P-CANCEL seen from the value side. The decomposition:
+
+  common factor CAL-BTC -> CAL-DON (median of the per-row ratios): 1.0774x
+  row        ERA1 BTC   ERA1 DON    ratio   residual vs common   mult1 move from residual
+  -------------------------------------------------------------------------------
+  LINK          1.000      1.077   1.0774               1.0000                      0.000
+  SOL           1.079      1.163   1.0775               1.0001                      0.000
+  PAXG          1.112      1.200   1.0793               1.0017                      0.003
+  DOGE          1.000      1.077   1.0774               1.0000                      0.000
+  BTC           1.000      1.077   1.0774               1.0000                      0.000
+  LTC           1.000      1.077   1.0774               1.0000                      0.000
+  ETH           1.000      1.077   1.0774               1.0000                      0.000
+
+  Largest mult1 move that is NOT the common factor: 0.003.
+  The honest sentence: the era factor VALUES move a lot and need a +/-; the ORDERING they
+  produce moves by the residual only, and the residual is what P-CANCEL bounds at zero for
+  a shared reference set.
+
+============================================================================================================
+(6) DECLARED SECONDARY - R506's FENCE-T CELL, FOR CONTINUITY WITH R506/R507. NO VERDICT IS TAKEN FROM IT.
+============================================================================================================
+
+  T_END = 2025-06-15 06:33:36 for every row. Rows live: 10 of 11.
+  Donors: LINK, DOGE, BTC, ETH, DOT, AVAX
+  CAL-BTC admissible references: LINK, DOGE, BTC, ETH   (R507 reported LINK, DOGE, BTC, ETH)
+
+  donor            CAL-BTC         CAL-ALL         CAL-DON        CAL-TOP4
+  ------------------------------------------------------------------------
+  LINK             100.0%A           0.0%          100.0%A           0.0% 
+  DOGE             100.0%A           0.0%          100.0%A           0.0% 
+  BTC              100.0%A           0.0%          100.0%A           0.0% 
+  ETH              100.0%A           0.0%          100.0%A           0.0% 
+  DOT               41.1%            0.0%          100.0%A           0.0% 
+  AVAX              80.3%            0.0%          100.0%A           0.0% 
+
+     CAL-BTC     1627d   LINK, DOGE, BTC, ETH
+     CAL-ALL        0d   (none)   <-- DIFFERS
+     CAL-DON      668d   LINK, DOGE, BTC, ETH, DOT, AVAX   <-- DIFFERS
+        Rule 1 order: LINK > XRP > SOL > PAXG > DOGE > BTC > LTC > ETH > DOT > AVAX
+        top four LINK, PAXG, XRP, SOL resolve? NO (4 unordered, 0 without a factor)
+     CAL-TOP4       0d   (none)   <-- DIFFERS
+
+============================================================================================================
+WHAT THIS ROUND ESTABLISHES
+============================================================================================================
+
+  1. THE CONSTRUCTION PREDATES THE ANSWER: commit 8ccb2e3, made before this file existed.
+
+  2. A1-SUP: HOLDS.  P-CANCEL-2: HOLDS (84 vote cells, 0 sign changes).
+
+  3. NOTHING IS ADOPTED. R503's published table stands: LINK 1st and resolved; places 2-4
+     UNORDERED {PAXG, SOL, XRP}; DOGE > BTC > LTC > ETH resolved. No calendar is adopted,
+     no ordering is republished, no fence moves, nothing is proposed for deployment.
+
+  4. COSTS DECIDE NOTHING (owner rule, 2026-07-25).
+
+  FENCE HELD: simulate() never called, no entry population built, no sweep scanned, no stop
+  measured, no outcome read. No byte at or past any pinned proportional fence was read, so
+  PAXG's, XRP's, ADA's, DOT's and AVAX's intact slices are untouched. NO LOOK CONSUMED.
+  NO DATA FILE ON DISK WAS WRITTEN, EXTENDED, MOVED OR TRUNCATED.
+============================================================================================================

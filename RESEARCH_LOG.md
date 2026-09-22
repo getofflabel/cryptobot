@@ -9201,3 +9201,239 @@ which is a one-page A1 census, not a re-ranking. Re-scoped in the queue.
 factor's sensitivity to the pooled calendar lives entirely in its VALUES, not
 its ordering — and this desk has never measured how far a Rule 1 median moves
 when the calendar moves. Queued as item 44.
+
+# R508 — THE CALENDAR ITEM 41 PROPOSED DOES NOT EXIST. THE ONE THAT DOES ADMITS TWO MORE VOTERS, PLACES TWO MORE ROWS, AND STILL CANNOT SEPARATE SOL FROM PAXG.
+
+**2026-09-22. Queue item 41 (as re-scoped by R507).
+`step508_intersection_calendar.py`, construction in
+`step508_PREREGISTRATION.md`, full output in `step508_output.txt`. A
+DESCRIPTIVE, census-and-ordering question, pre-registered in R503's, R506's
+and R507's shape. Research only, no orders, no account, no live file touched,
+imported or edited. NO LOOK CONSUMED and none was reachable: `simulate()` is
+never called, no entry population is built, no sweep scanned, no break of
+structure detected, no fill modelled, no stop measured, and no return,
+expectancy, win rate, risk multiple or t-statistic is computed for any
+instrument. Every tape read goes through R506's hard clamp, so PAXG's, XRP's,
+ADA's, DOT's and AVAX's intact slices are unread. NO DATA FILE ON DISK WAS
+WRITTEN, EXTENDED, MOVED OR TRUNCATED.**
+
+## What this round was for
+
+R507 proved **P-CANCEL**: the pooled calendar cancels out of every pairwise
+comparison, so it can reach an ordering through exactly one channel — the
+**A1 gate**, which decides **who votes**, never **how a voter votes**. That
+shrank item 41 from a re-ranking to a census: *does a pooled calendar built
+from the intersection of the ranked rows admit a different set of
+references?* R507's own honest limit was that its four promoted calendars all
+covered 100% of each other, **so A1 never excluded anybody and the one channel
+by which a calendar could matter was never exercised.** This round exercises
+it.
+
+## THE CONSTRUCTION WAS COMMITTED BEFORE THE ANSWER EXISTED, AND THAT IS CHECKABLE
+
+`step508_PREREGISTRATION.md`, commit **8ccb2e3**, **2026-09-22** — written and
+committed **before `step508_intersection_calendar.py` existed**, before it was
+run, and before any intersection calendar, A1 verdict, era factor, vote or
+ordering existed anywhere on this disk. It carries the four calendars, the
+**degeneracy rule** (fixed before any calendar's size was known), the three
+reproduction controls, and **two derived predictions committed so this round
+could be wrong in public** — A1-SUP and P-CANCEL-2.
+
+## Reproduction controls — THREE, all EXACT
+
+- **R499's `vol%`** behind the pinned proportional fence: max absolute
+  difference **0.0000 pp**.
+- **R501's `xSAME`**, R501's own functions: max absolute difference
+  **0.0005x**.
+- **R503's published cell, rebuilt**: 11 of 11 rows live, donors LINK, DOGE,
+  BTC, ETH, DOT, AVAX; A1-passing references exactly **LINK, DOGE, BTC, ETH**;
+  **DOT and AVAX failing A1 at 41.1% and 80.3%** (R503 published 41% and 80%);
+  Rule 1 on 7 rows and Rule 2 on 10 reproduced to **0.0015x**, with XRP, ADA,
+  DOT and AVAX UNMEAS under Rule 1 exactly as published. This is R503's cell,
+  digit for digit.
+
+## (1) THE ROUND'S HEADLINE: ITEM 41's LITERAL CALENDAR IS EMPTY, AND SO IS THE ONE THE DECISION IS READ OUT OF
+
+| calendar | days | span | built from |
+|---|---|---|---|
+| CAL-BTC (inherited) | **1,627** | 2021-01-01 → 2025-06-15 | BTCUSD's fenced day-set |
+| **CAL-ALL** | **0** | **(empty)** | intersection of all 11 live ranked rows |
+| CAL-DON | **668** | 2023-08-18 → 2025-06-15 | intersection of the 6 donors |
+| **CAL-TOP4** | **0** | **(empty)** | intersection of the top 4 rows by `mult*` |
+
+**The intersection of the rows actually being ranked is the empty set**, and
+under the degeneracy rule committed before any size was known (A1 is
+`ov/npool ≥ 0.98 AND ov ≥ 120`, and an intersection gives `ov = npool`) an
+empty or sub-120-day calendar **admits nobody**: no reference votes, no row
+carries a Rule 1 era factor, and nothing is ranked under it. Item 41 asked
+what that calendar does to the table. **It cannot produce a table at all.**
+
+**And the reason is the useful part, because it is not about calendars.**
+Behind their own pinned fences:
+
+- **PAXGUSD's tape ENDS 2023-06-19** — 897 days, stopping **two years before
+  its own fence date of 2025-06-15.** (Queue item 34's 31-month hole, seen
+  from the calendar side.)
+- **XRPUSD's tape STARTS 2024-01-01.**
+- **So PAXG ∩ XRP = 0 days.** Two of the four rows an operational decision is
+  read out of **share not one single day of tape.**
+- SOLUSD carries a **417-day hole** (2023-07-06 → 2024-08-26), so SOL ∩ XRP is
+  294 days.
+- ADAUSD is 2026-only (132 days) and overlaps none of the long rows, which is
+  what empties CAL-ALL by itself.
+
+Shared days among the top four: LINK/PAXG 897, LINK/SOL 1,209, LINK/XRP 532,
+SOL/PAXG 897, **SOL/XRP 294**, **PAXG/XRP 0**.
+
+## (2) THE A1 CENSUS — THE ITEM'S CORE DELIVERABLE, AND IT DIFFERS
+
+| donor | CAL-BTC | CAL-ALL | CAL-DON | CAL-TOP4 |
+|---|---|---|---|---|
+| LINK | 100.0% **A** | 0.0% | 100.0% **A** | 0.0% |
+| DOGE | 100.0% **A** | 0.0% | 100.0% **A** | 0.0% |
+| BTC | 100.0% **A** | 0.0% | 100.0% **A** | 0.0% |
+| ETH | 100.0% **A** | 0.0% | 100.0% **A** | 0.0% |
+| **DOT** | **41.1%** | 0.0% | **100.0% A** | 0.0% |
+| **AVAX** | **80.3%** | 0.0% | **100.0% A** | 0.0% |
+
+**The census DIFFERS on all three intersection calendars**, and on the one
+that is not degenerate it differs by **adding two voters**: under CAL-DON the
+admissible set goes **4 → 6 references (DOT and AVAX join)**. This is the
+first cell in this log where the pooled calendar's one real channel is
+actually open.
+
+**A1-SUP HOLDS** — the prediction committed before the run that an
+intersection over a row set containing every donor must be **all-or-nothing**:
+CAL-ALL 0 of 6, CAL-DON 6 of 6, no partial census anywhere it was predicted.
+
+## (3) WHAT THE EXTRA VOTERS BUY, AND WHAT THEY DO NOT
+
+Under CAL-DON, in the proportional cell:
+
+- **DOTUSD and AVAXUSD gain a Rule 1 era factor** (1.011x and 1.064x) —
+  R503 gave them none, and the Rule 1 ordering goes from **7 rows to 9**:
+  `LINK > SOL > PAXG > DOGE > BTC > LTC > ETH > DOT > AVAX`.
+- **The order of the seven rows R503 placed does not change at all.**
+- **XRPUSD still has no Rule 1 era factor**, and it cannot get one this way:
+  no A1-passing reference contains 98% of XRP's window.
+- **The top four still do not resolve.** `SOL vs PAXG` is still unordered,
+  still on four admissible references disagreeing — the same pair, for the
+  same reason, with two more references in the room.
+
+**So the answer to item 41's second half is: a second defensible calendar
+places two more rows and leaves every published verdict standing.** It does
+not resolve the contested pair, and it does not rescue XRP.
+
+**Declared secondary, R506's FENCE-T cell, no verdict taken from it:** the
+same census (4 → 6), but there CAL-DON makes the top of the table **worse** —
+the top four (LINK, PAXG, XRP, SOL) go from R506's contested state to **four
+unordered pairs**. Recorded because it is the opposite direction from the
+primary and a round that only reported the primary would be flattering itself.
+
+## (4) P-CANCEL, TESTED FOR THE FIRST TIME — AND THE PREDICTION AS WRITTEN WAS HALF WRONG
+
+P-CANCEL-2 was committed with two clauses. **They did not come back the same
+way and they are reported separately rather than averaged into one verdict.**
+
+- **CLAUSE 1 — sign invariance (the substantive prediction, and R507's actual
+  P-CANCEL): HOLDS. 84 vote cells, 0 sign changes.**
+- **CLAUSE 2 — "the ratio moves by exactly 0": FALSE, and it was wrong to
+  write.** A single side's ratio `nmult/cell` moves by up to **13.6%.**
+
+**Clause 2 was copied from R507's observed `0.000e+00`, and that zero was an
+artifact of R507's cell**: its four promoted calendars were the *same*
+1,627-day day-set, so `den[r]` never moved and the cancellation was never
+exercised. **Here `den[r]` moves by 13.6% and every sign still holds. R508 is
+the first genuine test of P-CANCEL and P-CANCEL passes it.** The algebra R507
+derived is now a measured fact and not only a derivation.
+
+## (5) WHAT THE CALENDAR DOES TO ERA FACTOR VALUES — AND THE GUARD ON IT
+
+Rule 1, CAL-BTC → CAL-DON: LINK 1.000 → **1.077**, PAXG 1.112 → **1.200**,
+SOL 1.079 → **1.163**, DOGE/BTC/LTC/ETH 1.000 → **1.077**. Rule 2 moves the
+same way (XRP 0.989 → 1.047, DOT 0.941 → 1.001, AVAX 0.949 → 1.016).
+
+Set against R503's own adjacent-row gaps in `mult1`, **four of seven rows
+(SOL, PAXG, DOGE, BTC) move further than the gap that separates them from
+their neighbour.** **So yes: R503's quotable era factors need a ± attached,
+and this is the first half of item 44 answered.**
+
+**And here is the guard, because that sentence invites a wrong reading.**
+Decomposed, **the movement is almost entirely a COMMON SCALE FACTOR of
+1.0774x** — a different calendar re-prices every reference's denominator at
+once. Per-row residuals against that common factor are **1.0000, 1.0001,
+1.0017, 1.0000, 1.0000, 1.0000, 1.0000**; the **largest `mult1` movement that
+is not the common factor is 0.003**, against gaps of 0.028 to 0.236.
+**The VALUES need a ±; the ORDERING they produce moves by the residual only,
+and the residual is what P-CANCEL bounds at zero for a shared reference set.**
+A round that quoted the "four rows exceed their gap" line without this
+decomposition would be reporting fragility that is not there.
+
+## Honest limits
+
+- **The declared post-hoc additions are marked as such in the output and
+  here.** Three blocks were added after the committed run produced its
+  numbers — the day-count/hole table explaining the two empty calendars, the
+  two-clause reading of P-CANCEL-2, and the common-factor decomposition.
+  **None of them changes a measurement, threshold, calendar, construction or
+  verdict**; each explains a number the committed run had already produced.
+  The committed run's own figures are unaltered.
+- **CAL-DON is not neutral either, and is not adopted.** It is the
+  intersection of the donors, which is itself a choice; it happens to run
+  2023-08-18 → 2025-06-15 because DOT's tape starts there. A calendar that
+  answers more pairs is not thereby better and nothing here adopts one.
+- **"Two more rows placed" is a placement, not an endorsement.** DOT and AVAX
+  rank 8th and 9th; R493's contract-size finding is why, and nothing in this
+  round touches it.
+- **The empty intersections are a fact about this disk on this date.** Item 34
+  (gold's 31-month hole) and item 35 (GLD/IAU tape) both bear on it; if PAXG's
+  hole is ever filled, CAL-TOP4 stops being empty and this census must be
+  re-run rather than cited.
+- **Costs decide nothing** (owner rule, 2026-07-25). Nothing above declines a
+  trade, gates a strategy or ranks an instrument for trading.
+
+## Looks consumed
+
+**NONE, and none was reachable.** `simulate()` is never called and neither is
+any entry builder. No entry population was built on any instrument, no sweep
+scanned, no break of structure detected, no fill modelled, no stop measured,
+no outcome, return, expectancy, win rate, risk multiple or t-statistic
+computed for anything. Every tape read is hard-clamped in code to the pinned
+proportional fence, so **PAXG's, XRP's, ADA's, DOT's and AVAX's sealed slices
+are intact and unread**, and LINK's (R492), crypto's (R475) and the index's
+(R474) stay exactly as spent as they were. No order was placed, no account
+exists, no live file was touched or imported, no data file on disk was
+written, extended, moved or truncated, and nothing is proposed for deployment.
+
+> **WHAT THE DESK MAY QUOTE — UNCHANGED.** R503's table stands exactly as
+> published. **LINK is 1st and that is resolved. Places 2–4 are UNORDERED
+> {PAXG, SOL, XRP}. DOGE > BTC > LTC > ETH is resolved.** DOT, AVAX and ADA
+> carry no era factor **in the published table**; CAL-DON gives DOT and AVAX
+> one and CAL-DON is **not adopted**. Nothing here republishes an ordering,
+> moves a threshold, adopts a fence or a calendar, or reads a slice.
+
+## What this closes and what it opens
+
+**Item 41 is CLOSED.** Both halves are answered: the census DIFFERS (4 → 6
+references under the only non-degenerate intersection), and the ordering it
+produces places two more rows, changes none of R503's seven, and still leaves
+SOL vs PAXG unordered. Item 41's literal calendar — the intersection of the
+ranked rows — **is empty and cannot exist while ADA is 2026-only and PAXG's
+tape stops in 2023.**
+
+**Item 44 is HALF ANSWERED and should be re-scoped rather than re-run.** Its
+first half (how far do the values move) has its answer here: a common 1.0774x
+scale with residuals under 0.002, four rows moving further than their
+neighbour gap in absolute terms and none of it reordering anything. Its second
+half — *"build one calendar that DOES exclude a reference under A1 and confirm
+a split can move there, by removing a voter, never by turning one"* — is
+**still open and is now the interesting half**, and R508 has handed it two
+ready-made exclusion calendars (CAL-ALL and CAL-TOP4 exclude everybody, which
+is too blunt; the useful construction is a calendar that excludes SOME).
+
+**One new item is opened by (1), and it is not a calendar question at all:**
+two of the four rows the desk reads an operational decision out of share zero
+days of tape, and a third pair shares 294. Every comparison among the top four
+is therefore carried entirely by the era correction rather than by any
+directly shared history — and nobody has ever stated, per pair, how much
+shared tape the published ordering actually rests on. Queued as item 45.
