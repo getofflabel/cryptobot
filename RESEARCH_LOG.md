@@ -9437,3 +9437,196 @@ days of tape, and a third pair shares 294. Every comparison among the top four
 is therefore carried entirely by the era correction rather than by any
 directly shared history — and nobody has ever stated, per pair, how much
 shared tape the published ordering actually rests on. Queued as item 45.
+
+## ROUND 509 — an exclusion calendar exists, the denominator moved by 34% and not one vote turned; but every exclusion this desk's rules can build removes a reference that was never voting (2026-09-23)
+
+**Queue item 44, second half.** Pre-registration `step509_PREREGISTRATION.md`,
+commit `0c457b4`, written and committed **before `step509_exclusion_calendar.py`
+existed**. Implementation `step509_exclusion_calendar.py`, output
+`step509_output.txt`.
+
+**Item 44's FIRST half is ANSWERED by R508 and was not re-run:** the era factor
+VALUES move by a common 1.0774x, residuals 1.0000–1.0017, largest non-common
+`mult1` move 0.003. YES for the quoted value, NO for the ordering.
+
+### What was asked
+
+R508 left exactly one sentence of item 44 open: *build a calendar that excludes
+SOME reference under A1 and confirm a split can move there — by removing a
+voter, never by turning one.* Neither R507 nor R508 could exercise this. R507's
+four promoted calendars were the same 1,627-day day-set, so A1 never excluded
+anybody. R508's three intersection calendars were too blunt: CAL-ALL and
+CAL-TOP4 were empty, CAL-DON excluded nobody. **A strict, non-empty exclusion
+had never been built on this disk.**
+
+### Reproduction controls — all three pass before anything is published
+
+R499's `vol%` column rebuilt behind the pinned fence: **max difference 0.0000 pp**.
+R501's `xSAME` column, R501's own functions: **0.0005x**. R503's proportional
+cell under CAL-BTC: admissible set exactly {LINK, DOGE, BTC, ETH}, donors
+failing A1 exactly {DOT, AVAX}, full era column reproduced to 1.5e-3 (Rule 1 on
+7 rows, Rule 2 on 10, UNMEAS on 4). **This is R503's cell, digit for digit.**
+
+### The baseline and the two committed families
+
+**BASELINE = CAL-DON**, the intersection of the 6 donors: **668 days,
+2023-08-18 → 2025-06-15, 6 admissible references.** Control CAL-BTC: 1,627 days,
+4 references. R508 reported 6 against 4; rebuilt here as 6 against 4.
+
+**FAMILY A — leave-one-out over the donors** (`LOO-d` = the intersection of
+every donor except `d`). Five of six are identical to the baseline at 668 days.
+**`LOO-DOT` is 1,306 days and removes exactly one voter — the only single-voter
+exclusion cell in either family.**
+
+**FAMILY B — self-promotion over every live ranked row.** `SELF-XRP` (751d) and
+`SELF-ADA` (132d) admit **nobody**. Seven cells (`SELF-LINK/PAXG/SOL/DOGE/BTC/
+LTC/ETH`) admit {LINK, DOGE, BTC, ETH} and remove DOT and AVAX. **`SELF-DOT`
+admits only DOT and `SELF-AVAX` admits only AVAX** — electorates of one.
+
+17 members built: 0 degenerate, 5 identical to the baseline, 2 admitting nobody,
+**10 EXCLUSION CELLS**.
+
+### The three committed predictions
+
+- **P-LOO — HOLDS, and it is exact.** Committed before the run: under `LOO-d`
+  every *other* donor covers the calendar at exactly 100.0%, and the left-out
+  donor covers it at exactly `D*/|LOO-d|`, because `d`'s intersection with the
+  others' intersection *is* the full donor intersection. Measured: worst
+  deviation from 100.0% is **0.00e+00 pp** across every surviving donor in every
+  LOO cell, and all 6 left-out donors match the formula to **0.00e+00** —
+  `LOO-DOT` reads **51.1485% = 668/1306** and fails A1, as predicted. **The
+  arithmetic is the measurement.**
+- **P-EXCL — HOLDS.** 10 exclusion cells of 17 members built.
+- **P-TURN — clause 1 HOLDS and is the strongest test of P-CANCEL to date.**
+  **672 surviving-voter vote cells across every exclusion cell, 0 sign changes**,
+  while the **worst single-side movement in `nmult/cell` is 34.4%**. R507 moved
+  the denominator by 0.0% (and could not test the cancellation at all), R508 by
+  13.6%, **R509 by 34.4% — and not one vote turned.**
+  Committed falsifier `RESOLVED(X) → RESOLVED(not-X)`: **0 occurrences.**
+  **Clause 2 is VACUOUS: 0 pair verdicts moved in any exclusion cell**, so
+  "a split moves by losing a voter" was never actually demonstrated. The next
+  two sections are why, and they are the round's real output.
+
+### (5c) DECLARED POST-HOC — why clause 2 came back zero, and it is less flattering than the zero
+
+*Post-hoc reporting addition, declared in the prereg's section 9 and marked as
+such in the output. It changes no measurement, threshold, calendar, construction
+or verdict; it explains a number the committed run already produced.*
+
+"Zero verdicts moved" is not the same sentence as "the removal was harmless". A
+baseline pair can fail to move because it **survived** the removal, or because
+it **left the table** when a row lost its era factor. The committed comparison
+counted only the first kind. Of 36 baseline pairs: `LOO-DOT` shares 28 and loses
+**8**; the seven `SELF-*` cells share 21 and lose **15**; `SELF-DOT` and
+`SELF-AVAX` share **0** and lose all **36**. Moved, in every cell: **0**.
+
+The reason underneath it: a reference votes on a pair only if it is admissible
+for **both** rows, and `adm[row]` carries a **second gate beside A1** —
+`cov_row >= 0.98`, the reference's containment of *that row's* window, **which
+does not depend on the pooled calendar at all**. Census of who actually votes,
+over the 36 baseline pairs: **LINK 21, DOGE 21, BTC 21, ETH 21, DOT 0, AVAX 0.**
+Sole dissenter on any pair: **0 for all six references.**
+
+**So A1 is the calendar's only channel into an ordering (R507), and that channel
+is itself gated downstream by a calendar-INDEPENDENT containment test. On this
+disk the two gates overlap so completely that no calendar in either committed
+family changes a single pairwise verdict.** That is a stronger statement than
+P-CANCEL: not just sign-invariance, but invariance of the whole verdict table.
+
+**And the contested pair could not have moved anyway.** The sole-dissenter
+census reading 0 for every reference means SOL/PAXG's "4 admissible references
+disagree" is a **2–2** split (consistent with R506's published 2–2, and
+independently implied here). **Removing one voter from a 2–2 leaves a 2–1, which
+is still a disagreement.** No single-voter exclusion could have resolved the
+top four even if it had reached them.
+
+### (5d) DECLARED POST-HOC — what the two zero-vote references are actually doing, and a caveat R508 needs beside it
+
+*Same declaration. No measurement changes.*
+
+The "admissible set" census is the **union over rows** of `adm[row]`, which
+flattens away which rows a reference is admissible *for*. Printed out:
+
+| reference | rows it is admissible for |
+|---|---|
+| LINK / DOGE / BTC / ETH | 7 each — LINK, PAXG, SOL, DOGE, BTC, LTC, ETH |
+| **DOT** | **1 — itself** |
+| **AVAX** | **1 — itself** |
+
+The other side of the same fact: **DOT's Rule 1 era factor of 1.011 and AVAX's
+of 1.064 are medians over a single cell — the row measured against its own
+tape.** Every other ranked row's factor is a median over 4 distinct references.
+And a row whose only admissible reference is itself shares none with any other
+row, so unanimity can never be reached: **DOT is UNORDERED on 8 of 8 baseline
+pairs, AVAX on 8 of 8.**
+
+**R508's "CAL-DON places two more rows" is exact about the NUMBER and must not
+be read as a PLACE.** Those two rows receive an era factor computed against
+their own tape and remain UNORDERED against every other row in the table.
+Nothing in R508 is wrong; **this is the caveat that belongs beside it**, and it
+should travel with any future citation of CAL-DON's six-reference census.
+
+### Declared secondary — R506's FENCE-T cell, no verdict taken from it
+
+Same construction at the shared boundary: CAL-DON 668 days, 6 admissible,
+**9 exclusion cells**, the same pattern (`LOO-DOT` and `SELF-AVAX` remove DOT;
+seven `SELF-*` cells remove DOT and AVAX). Reported for continuity with
+R506/R507/R508 only.
+
+### Honest limits
+
+- **Clause 2 of P-TURN was never exercised and this round does not claim it
+  was.** "A split moves by removing a voter" remains **unproven on this disk** —
+  not falsified, untested. The two families are exhaustive by rule, not by
+  imagination; a calendar outside them might reach a voting reference.
+- **The two declared post-hoc blocks are marked as such in the output and here.**
+  Both explain numbers the committed run had already produced. The committed
+  run's own figures are unaltered.
+- **The four real voters were never separated from each other by any calendar
+  built here.** Every exclusion removed DOT, AVAX, or all four at once. Whether
+  LINK/DOGE/BTC/ETH can be split apart by *any* calendar is open, and the
+  containment gate above suggests the answer is no while their windows coincide.
+- **The 2–2 reading of SOL/PAXG is inferred** from the sole-dissenter census
+  reading 0, and agrees with R506's published 2–2. It is not a new measurement.
+- **`SELF-ADA` at 132 days clears the 120-day floor by 12 days** and admits
+  nobody; it is reported, not leaned on.
+- **Costs decide nothing** (owner rule, 2026-07-25). Nothing above declines a
+  trade, gates a strategy or ranks an instrument for trading.
+
+### Looks consumed
+
+**NONE, and none was reachable.** `simulate()` is never called and neither is
+any entry builder. No entry population was built on any instrument, no sweep
+scanned, no break of structure detected, no fill modelled, no stop measured, no
+outcome, return, expectancy, win rate, risk multiple or t-statistic computed for
+anything. Every tape read is hard-clamped in code to the pinned proportional
+fence, so **PAXG's, XRP's, ADA's, DOT's and AVAX's sealed slices are intact and
+unread**, and LINK's (R492), crypto's (R475) and the index's (R474) stay exactly
+as spent as they were. No order was placed, no account exists, no live file was
+touched or imported, no data file on disk was written, extended, moved or
+truncated, and nothing is proposed for deployment.
+
+> **WHAT THE DESK MAY QUOTE — UNCHANGED.** R503's table stands exactly as
+> published. **LINK is 1st and that is resolved. Places 2–4 are UNORDERED
+> {PAXG, SOL, XRP}. DOGE > BTC > LTC > ETH is resolved.** No calendar is
+> adopted, no ordering republished, no fence or threshold moved. The one thing
+> added is a **caveat**: CAL-DON's two extra references vote on nothing, and the
+> two extra rows it places carry a self-computed era factor and are UNORDERED
+> against everything.
+
+### What this closes and what it opens
+
+**Item 44 is CLOSED.** Both halves now have answers: the values move by a common
+factor with negligible residual (R508), and an exclusion calendar exists, was
+built by rule, moved the denominator by 34.4% and turned **zero** votes (R509).
+The item's own phrasing — *"confirm a split can move there"* — is answered
+**"no split moved, and here is the structural reason it could not"**, which is a
+complete answer rather than a null result.
+
+**One new item is opened, and it is a housekeeping correction rather than a
+hunt:** the desk's `adm[row]` gate means a reference can be counted in an
+"admissible set" while voting on nothing, and a row can be "placed" while being
+unordered against every other row. Both readings have already appeared in this
+log (R508's 4 → 6 census). Queued as **item 46**: put the vote count and the
+ordered/unordered status beside every reference census this desk publishes, the
+same way R499's break-point column and R501's coverage column were retro-fitted.

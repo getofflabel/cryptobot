@@ -1788,8 +1788,42 @@ Rules (non-negotiable, they are why anything here can be trusted):
     fences. No entry population, no sealed slice, no look, no candidate, no
     fence or calendar adopted.
 
-44. **P-CANCEL SAYS THE CALENDAR LIVES ENTIRELY IN THE VALUES. NOBODY HAS
-    MEASURED HOW FAR THE VALUES MOVE.**
+44. ~~**P-CANCEL SAYS THE CALENDAR LIVES ENTIRELY IN THE VALUES. NOBODY HAS
+    MEASURED HOW FAR THE VALUES MOVE.**~~
+    **DONE — CLOSED by R509, 2026-09-23. No look consumed. DO NOT RE-RUN
+    EITHER HALF.** First half answered by R508 (common 1.0774x scale,
+    residuals 1.0000-1.0017, largest non-common `mult1` move 0.003 — YES for
+    the quoted value, NO for the ordering). Second half answered by R509:
+    **an exclusion calendar exists and was built by rule.** Baseline CAL-DON
+    (668d, 6 admissible references); two committed families — leave-one-out
+    over the donors and self-promotion over every live ranked row — produced
+    **10 exclusion cells of 17 members**, including `LOO-DOT` (1,306d,
+    removes exactly one voter) and `SELF-DOT`/`SELF-AVAX` (electorates of
+    one). **P-LOO held exactly** (worst deviation 0.00e+00; `LOO-DOT` reads
+    51.1485% = 668/1306 and fails A1, as the arithmetic predicted).
+    **P-TURN clause 1 held and is the strongest test of P-CANCEL to date:
+    672 surviving-voter vote cells, 0 sign changes, while the worst
+    single-side movement in `nmult/cell` was 34.4%** (R507 0.0%, R508 13.6%).
+    **Clause 2 is VACUOUS — 0 pair verdicts moved anywhere — and the reason
+    is the round's real output:** `adm[row]` carries a **second gate beside
+    A1**, `cov_row >= 0.98`, which does **not** depend on the pooled calendar.
+    Vote census over the 36 baseline pairs: **LINK 21, DOGE 21, BTC 21,
+    ETH 21, DOT 0, AVAX 0.** Every exclusion this desk's rules can build
+    removes a reference that was **never voting**. So the calendar's one
+    channel into an ordering is gated downstream by a calendar-INDEPENDENT
+    test, and **no calendar in either family changes a single pairwise
+    verdict** — a stronger invariance than P-CANCEL.
+    **THE CAVEAT THAT NOW TRAVELS WITH R508's CENSUS:** DOT and AVAX are
+    admissible **for themselves only**; their era factors (1.011, 1.064) are
+    medians over **one self-reference**, and both are **UNORDERED on 8 of 8**
+    baseline pairs. **R508's "places two more rows" is exact about the NUMBER
+    and is not a PLACE.**
+    Also settled in passing: SOL/PAXG's "4 references disagree" is a **2-2**
+    split, so **removing one voter leaves 2-1 and could never have resolved
+    it** even if an exclusion had reached the four real voters.
+    **Open, and honestly labelled: clause 2 remains UNTESTED, not falsified.**
+    The two families are exhaustive by rule, not by imagination.
+    *(historical text of the item follows, kept so the closure is readable)*
     *(new, opened by R507. Cheap, descriptive, and it is the honest follow-up
     to R507's own limit. **RE-SCOPED by R508, 2026-09-22: the first half is
     ANSWERED and must not be re-run.** R508 measured it on a calendar that
@@ -1849,12 +1883,39 @@ Rules (non-negotiable, they are why anything here can be trusted):
     per pair, how many of the admissible references contain BOTH rows'
     windows, since a reference that contains neither is doing arithmetic
     rather than measurement.
+    **PARTLY SUPPLIED ALREADY — R509, 2026-09-23.** That last sentence has its
+    answer in aggregate: over the 36 baseline pairs under CAL-DON the vote
+    census is **LINK 21, DOGE 21, BTC 21, ETH 21, DOT 0, AVAX 0**, and DOT and
+    AVAX are admissible **for themselves only**. This item still owes the
+    **per-pair** table and the shared-days column; do not re-derive the
+    aggregate.
     **This is a HONESTY COLUMN, exactly like R499's break-point column** — it
     attaches a caveat to numbers already published and corrects nothing.
     **THE FENCE:** descriptive, behind the PINNED proportional fences. No entry
     population, no sealed slice, no look, no candidate, **no verdict may be
     re-interpreted and no pair may be re-decided by it**, and a pair with thin
     shared tape is **not** thereby demoted — R503's table stands as published.
+
+46. **A REFERENCE CAN BE COUNTED AS "ADMISSIBLE" WHILE VOTING ON NOTHING,
+    AND A ROW CAN BE "PLACED" WHILE BEING UNORDERED AGAINST EVERYTHING.**
+    *(new, opened by R509. A HONESTY COLUMN, exactly like R499's break-point
+    column and R501's coverage column. Cheap, descriptive, corrects nothing.)*
+    R509 found that this desk's "admissible set" census is the **union over
+    rows** of `adm[row]`, which flattens away *which* rows a reference is
+    admissible for. Under CAL-DON, **DOT and AVAX are admissible for
+    themselves only**: they vote on **0 of 36** baseline pairs, their era
+    factors are medians over a **single self-reference**, and both rows are
+    **UNORDERED on 8 of 8** pairs. A reader of R508's "4 -> 6 references,
+    two more rows placed" would not know any of that from the census alone.
+    Deliverable, purely descriptive: for every reference census this log has
+    published, attach **(a) the number of ranked pairs the reference actually
+    votes on, (b) the number of rows it is admissible for, and (c) for every
+    "placed" row, whether it is RESOLVED or UNORDERED against the rest.**
+    Say plainly which published census rows are carried by a self-reference.
+    **THE FENCE:** descriptive, behind the PINNED proportional fences. No
+    entry population, no sealed slice, no look, no candidate, **no verdict may
+    be re-interpreted and no row may be re-decided by it** — R503's table
+    stands as published. Nothing is adopted.
 
 ~~41. **A1 IS MEASURED AGAINST BTC's WINDOW BECAUSE R502 PICKED IT AND NOBODY
     HAS ASKED THE OTHER QUESTION.** (superseded by the re-scoped item 41

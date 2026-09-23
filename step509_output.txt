@@ -1,0 +1,343 @@
+============================================================================================================
+ROUND 509 - A CALENDAR THAT EXCLUDES *SOME* REFERENCE, AND WHETHER A SPLIT MOVES BY LOSING A VOTER
+            OR BY TURNING ONE.   (item 44, second half)
+============================================================================================================
+run 2026-09-23 07:37:01 UTC
+DESCRIPTIVE, CENSUS AND ORDERING ONLY. simulate() is never called, no entry population is built, no
+sealed slice is read, NO LOOK IS CONSUMED and none is reachable. Nothing is adopted.
+
+THE CONSTRUCTION WAS COMMITTED BEFORE THIS FILE EXISTED: step509_PREREGISTRATION.md
+  commit 0c457b4  (2026-09-23)
+  It carries the baseline (CAL-DON), the two families (LOO over donors, SELF over live rows),
+  the degeneracy rule, three reproduction controls and THREE predictions - P-LOO (exact arithmetic),
+  P-EXCL (existence) and P-TURN (the item's actual question) - that this run can falsify.
+
+ITEM 44's FIRST HALF IS ANSWERED BY R508 AND IS NOT RE-RUN HERE: the era factor VALUES move by a
+common 1.0774x with residuals 1.0000-1.0017; largest non-common mult1 move 0.003. YES for the
+quoted value, NO for the ordering. This round is the SECOND half and only the second half.
+
+R499's published ranking parsed off step499_output.txt by R501's own parser: 11 of 11 rows.
+
+============================================================================================================
+(1) THREE REPRODUCTION CONTROLS. IF ANY FAILS THE ROUND STOPS AND PUBLISHES NOTHING.
+============================================================================================================
+
+  a. R499's vol% column, behind the PINNED fence: max absolute difference 0.0000 pp
+     EXACT.
+
+  b. R501's xSAME column, R501's own functions: max absolute difference 0.0005x
+     EXACT to the published precision.
+
+  c. R503's proportional cell, rebuilt. Rows live: 11 of 11.
+     Donors (cov >= 80.0%): LINK, DOGE, BTC, ETH, DOT, AVAX
+     A1-passing references under CAL-BTC (recomputed, not retyped): LINK, DOGE, BTC, ETH
+     donors FAILING A1 under CAL-BTC                          : DOT, AVAX
+     R503's era column reproduced: Rule 1 on 7 rows, Rule 2 on 10, UNMEAS on 4. EXACT to 0.0015x.
+     This is R503's cell, digit for digit.
+
+============================================================================================================
+(2) THE BASELINE. EXCLUSION IS ONLY MEANINGFUL AGAINST WHOEVER WOULD OTHERWISE VOTE.
+============================================================================================================
+
+  BASELINE = CAL-DON = intersection of the 6 donors
+     days D* = 668   span 2023-08-18 -> 2025-06-15
+     admissible references: LINK, DOGE, BTC, ETH, DOT, AVAX   (6 of 6 donors)
+  CONTROL  = CAL-BTC (1627 days)   admissible: LINK, DOGE, BTC, ETH   (4)
+
+  R508 measured exactly this and reported 6 against 4. Rebuilt here: 6 against 4.
+
+============================================================================================================
+(3) THE TWO COMMITTED FAMILIES, BUILT BY RULE AND REPORTED IN FULL - INCLUDING THE DEGENERATE MEMBERS.
+============================================================================================================
+
+  FAMILY A  LEAVE-ONE-OUT over the donors
+  calendar         days                       span                       admissible references    
+  ------------------------------------------------------------------------------------------------
+  LOO-LINK          668   2023-08-18 -> 2025-06-15             LINK, DOGE, BTC, ETH, DOT, AVAX
+  LOO-DOGE          668   2023-08-18 -> 2025-06-15             LINK, DOGE, BTC, ETH, DOT, AVAX
+  LOO-BTC           668   2023-08-18 -> 2025-06-15             LINK, DOGE, BTC, ETH, DOT, AVAX
+  LOO-ETH           668   2023-08-18 -> 2025-06-15             LINK, DOGE, BTC, ETH, DOT, AVAX
+  LOO-DOT          1306   2021-11-18 -> 2025-06-15                  LINK, DOGE, BTC, ETH, AVAX  <== EXCLUSION CELL
+  LOO-AVAX          668   2023-08-18 -> 2025-06-15             LINK, DOGE, BTC, ETH, DOT, AVAX
+
+  FAMILY B  SELF-PROMOTION over every live ranked row
+  calendar         days                       span                       admissible references    
+  ------------------------------------------------------------------------------------------------
+  SELF-LINK        1627   2021-01-01 -> 2025-06-15                        LINK, DOGE, BTC, ETH  <== EXCLUSION CELL
+  SELF-PAXG         897   2021-01-01 -> 2023-06-19                        LINK, DOGE, BTC, ETH  <== EXCLUSION CELL
+  SELF-XRP          751   2024-01-01 -> 2026-01-20                                      (none)  (admits nobody)
+  SELF-SOL         1209   2021-01-01 -> 2025-06-15                        LINK, DOGE, BTC, ETH  <== EXCLUSION CELL
+  SELF-DOGE        1627   2021-01-01 -> 2025-06-15                        LINK, DOGE, BTC, ETH  <== EXCLUSION CELL
+  SELF-BTC         1627   2021-01-01 -> 2025-06-15                        LINK, DOGE, BTC, ETH  <== EXCLUSION CELL
+  SELF-LTC         1627   2021-01-01 -> 2025-06-15                        LINK, DOGE, BTC, ETH  <== EXCLUSION CELL
+  SELF-ETH         1627   2021-01-01 -> 2025-06-15                        LINK, DOGE, BTC, ETH  <== EXCLUSION CELL
+  SELF-ADA          132   2026-02-13 -> 2026-06-24                                      (none)  (admits nobody)
+  SELF-DOT          860   2023-08-18 -> 2025-12-24                                         DOT  <== EXCLUSION CELL
+  SELF-AVAX        1370   2021-11-18 -> 2025-08-18                                        AVAX  <== EXCLUSION CELL
+
+============================================================================================================
+(3b) P-LOO - THE EXACT ARITHMETIC PREDICTION, CHECKED TO 1e-9.
+============================================================================================================
+
+  Committed: under LOO-d every OTHER donor covers the calendar at EXACTLY 100.0%, and the
+  left-out donor d covers it at EXACTLY D*/|LOO-d| = 668/|LOO-d|, because d's intersection with
+  the others' intersection IS the full donor intersection.
+
+  calendar      |LOO-d|      d   d cov measured   d cov predicted        err   d passes A1?  predicted
+  ----------------------------------------------------------------------------------------------------
+  LOO-LINK          668   LINK        100.0000%         100.0000%   0.00e+00           True       True
+  LOO-DOGE          668   DOGE        100.0000%         100.0000%   0.00e+00           True       True
+  LOO-BTC           668    BTC        100.0000%         100.0000%   0.00e+00           True       True
+  LOO-ETH           668    ETH        100.0000%         100.0000%   0.00e+00           True       True
+  LOO-DOT          1306    DOT         51.1485%          51.1485%   0.00e+00          False      False
+  LOO-AVAX          668   AVAX        100.0000%         100.0000%   0.00e+00           True       True
+
+  CLAUSE 1 (every surviving donor covers LOO-d at exactly 100.0%): worst deviation 0.00e+00 pp
+  CLAUSE 2 (the left-out donor covers at exactly D*/|LOO-d|, and its A1 verdict follows): 6 of 6 cells exact
+
+  P-LOO: HOLDS - the arithmetic is the measurement.
+
+============================================================================================================
+(4) P-EXCL - DOES A STRICT, NON-EMPTY EXCLUSION CELL EXIST AT ALL? THIS HAS NEVER BEEN BUILT HERE.
+============================================================================================================
+
+  members built: 17   degenerate: 0   identical to baseline: 5   admit nobody: 2
+  EXCLUSION CELLS (admissible set a strict, non-empty subset of CAL-DON's): 10
+     LOO-DOT       1306d   admits LINK, DOGE, BTC, ETH, AVAX       REMOVES DOT
+     SELF-LINK     1627d   admits LINK, DOGE, BTC, ETH             REMOVES DOT, AVAX
+     SELF-PAXG      897d   admits LINK, DOGE, BTC, ETH             REMOVES DOT, AVAX
+     SELF-SOL      1209d   admits LINK, DOGE, BTC, ETH             REMOVES DOT, AVAX
+     SELF-DOGE     1627d   admits LINK, DOGE, BTC, ETH             REMOVES DOT, AVAX
+     SELF-BTC      1627d   admits LINK, DOGE, BTC, ETH             REMOVES DOT, AVAX
+     SELF-LTC      1627d   admits LINK, DOGE, BTC, ETH             REMOVES DOT, AVAX
+     SELF-ETH      1627d   admits LINK, DOGE, BTC, ETH             REMOVES DOT, AVAX
+     SELF-DOT       860d   admits DOT                              REMOVES LINK, DOGE, BTC, ETH, AVAX
+     SELF-AVAX     1370d   admits AVAX                             REMOVES LINK, DOGE, BTC, ETH, DOT
+
+  P-EXCL: HOLDS
+
+============================================================================================================
+(5) P-TURN - THE ITEM'S ACTUAL QUESTION. DOES A SPLIT MOVE BY LOSING A VOTER, OR BY TURNING ONE?
+============================================================================================================
+
+  --- LOO-DOT  (1306 days)  voter(s) REMOVED: DOT ---------------------------------
+      CLAUSE 1  surviving-voter vote cells checked: 84   signs that MOVED: 0
+      CLAUSE 2  pairs whose RESOLVED/UNORDERED verdict MOVED vs the baseline: 0
+         (none - the removal changed no pair's verdict in this cell)
+      Rule 1 order  : LINK > SOL > PAXG > DOGE > BTC > LTC > ETH > AVAX
+      CAL-DON       : LINK > SOL > PAXG > DOGE > BTC > LTC > ETH > DOT > AVAX
+      TOP FOUR by mult*: LINK, PAXG, SOL, XRP   resolve? NO   (1 unordered, 1 without a factor)
+         SOL   vs PAXG   4 admissible references disagree
+
+  --- SELF-LINK  (1627 days)  voter(s) REMOVED: DOT, AVAX -------------------------------
+      CLAUSE 1  surviving-voter vote cells checked: 84   signs that MOVED: 0
+      CLAUSE 2  pairs whose RESOLVED/UNORDERED verdict MOVED vs the baseline: 0
+         (none - the removal changed no pair's verdict in this cell)
+      Rule 1 order  : LINK > SOL > PAXG > DOGE > BTC > LTC > ETH
+      CAL-DON       : LINK > SOL > PAXG > DOGE > BTC > LTC > ETH > DOT > AVAX
+      TOP FOUR by mult*: LINK, PAXG, SOL, XRP   resolve? NO   (1 unordered, 1 without a factor)
+         SOL   vs PAXG   4 admissible references disagree
+
+  --- SELF-PAXG  (897 days)  voter(s) REMOVED: DOT, AVAX -------------------------------
+      CLAUSE 1  surviving-voter vote cells checked: 84   signs that MOVED: 0
+      CLAUSE 2  pairs whose RESOLVED/UNORDERED verdict MOVED vs the baseline: 0
+         (none - the removal changed no pair's verdict in this cell)
+      Rule 1 order  : LINK > SOL > PAXG > DOGE > BTC > LTC > ETH
+      CAL-DON       : LINK > SOL > PAXG > DOGE > BTC > LTC > ETH > DOT > AVAX
+      TOP FOUR by mult*: LINK, PAXG, SOL, XRP   resolve? NO   (1 unordered, 1 without a factor)
+         SOL   vs PAXG   4 admissible references disagree
+
+  --- SELF-SOL  (1209 days)  voter(s) REMOVED: DOT, AVAX --------------------------------
+      CLAUSE 1  surviving-voter vote cells checked: 84   signs that MOVED: 0
+      CLAUSE 2  pairs whose RESOLVED/UNORDERED verdict MOVED vs the baseline: 0
+         (none - the removal changed no pair's verdict in this cell)
+      Rule 1 order  : LINK > SOL > PAXG > DOGE > BTC > LTC > ETH
+      CAL-DON       : LINK > SOL > PAXG > DOGE > BTC > LTC > ETH > DOT > AVAX
+      TOP FOUR by mult*: LINK, PAXG, SOL, XRP   resolve? NO   (1 unordered, 1 without a factor)
+         SOL   vs PAXG   4 admissible references disagree
+
+  --- SELF-DOGE  (1627 days)  voter(s) REMOVED: DOT, AVAX -------------------------------
+      CLAUSE 1  surviving-voter vote cells checked: 84   signs that MOVED: 0
+      CLAUSE 2  pairs whose RESOLVED/UNORDERED verdict MOVED vs the baseline: 0
+         (none - the removal changed no pair's verdict in this cell)
+      Rule 1 order  : LINK > SOL > PAXG > DOGE > BTC > LTC > ETH
+      CAL-DON       : LINK > SOL > PAXG > DOGE > BTC > LTC > ETH > DOT > AVAX
+      TOP FOUR by mult*: LINK, PAXG, SOL, XRP   resolve? NO   (1 unordered, 1 without a factor)
+         SOL   vs PAXG   4 admissible references disagree
+
+  --- SELF-BTC  (1627 days)  voter(s) REMOVED: DOT, AVAX --------------------------------
+      CLAUSE 1  surviving-voter vote cells checked: 84   signs that MOVED: 0
+      CLAUSE 2  pairs whose RESOLVED/UNORDERED verdict MOVED vs the baseline: 0
+         (none - the removal changed no pair's verdict in this cell)
+      Rule 1 order  : LINK > SOL > PAXG > DOGE > BTC > LTC > ETH
+      CAL-DON       : LINK > SOL > PAXG > DOGE > BTC > LTC > ETH > DOT > AVAX
+      TOP FOUR by mult*: LINK, PAXG, SOL, XRP   resolve? NO   (1 unordered, 1 without a factor)
+         SOL   vs PAXG   4 admissible references disagree
+
+  --- SELF-LTC  (1627 days)  voter(s) REMOVED: DOT, AVAX --------------------------------
+      CLAUSE 1  surviving-voter vote cells checked: 84   signs that MOVED: 0
+      CLAUSE 2  pairs whose RESOLVED/UNORDERED verdict MOVED vs the baseline: 0
+         (none - the removal changed no pair's verdict in this cell)
+      Rule 1 order  : LINK > SOL > PAXG > DOGE > BTC > LTC > ETH
+      CAL-DON       : LINK > SOL > PAXG > DOGE > BTC > LTC > ETH > DOT > AVAX
+      TOP FOUR by mult*: LINK, PAXG, SOL, XRP   resolve? NO   (1 unordered, 1 without a factor)
+         SOL   vs PAXG   4 admissible references disagree
+
+  --- SELF-ETH  (1627 days)  voter(s) REMOVED: DOT, AVAX --------------------------------
+      CLAUSE 1  surviving-voter vote cells checked: 84   signs that MOVED: 0
+      CLAUSE 2  pairs whose RESOLVED/UNORDERED verdict MOVED vs the baseline: 0
+         (none - the removal changed no pair's verdict in this cell)
+      Rule 1 order  : LINK > SOL > PAXG > DOGE > BTC > LTC > ETH
+      CAL-DON       : LINK > SOL > PAXG > DOGE > BTC > LTC > ETH > DOT > AVAX
+      TOP FOUR by mult*: LINK, PAXG, SOL, XRP   resolve? NO   (1 unordered, 1 without a factor)
+         SOL   vs PAXG   4 admissible references disagree
+
+  --- SELF-DOT  (860 days)  voter(s) REMOVED: LINK, DOGE, BTC, ETH, AVAX --------------------------------
+      CLAUSE 1  surviving-voter vote cells checked: 0   signs that MOVED: 0
+      CLAUSE 2  pairs whose RESOLVED/UNORDERED verdict MOVED vs the baseline: 0
+         (none - the removal changed no pair's verdict in this cell)
+      Rule 1 order  : DOT
+      CAL-DON       : LINK > SOL > PAXG > DOGE > BTC > LTC > ETH > DOT > AVAX
+      TOP FOUR by mult*: LINK, PAXG, SOL, XRP   resolve? NO   (0 unordered, 4 without a factor)
+
+  --- SELF-AVAX  (1370 days)  voter(s) REMOVED: LINK, DOGE, BTC, ETH, DOT -------------------------------
+      CLAUSE 1  surviving-voter vote cells checked: 0   signs that MOVED: 0
+      CLAUSE 2  pairs whose RESOLVED/UNORDERED verdict MOVED vs the baseline: 0
+         (none - the removal changed no pair's verdict in this cell)
+      Rule 1 order  : AVAX
+      CAL-DON       : LINK > SOL > PAXG > DOGE > BTC > LTC > ETH > DOT > AVAX
+      TOP FOUR by mult*: LINK, PAXG, SOL, XRP   resolve? NO   (0 unordered, 4 without a factor)
+
+  ACROSS EVERY EXCLUSION CELL
+     surviving-voter vote cells checked : 672
+     surviving-voter signs that MOVED   : 0   (worst single-side ratio movement 3.442e-01)
+     pair verdicts that MOVED           : 0
+     of those, fully ATTRIBUTED to the removed voter: 0
+     RESOLVED -> RESOLVED reversals     : 0  (the committed falsifier)
+
+  P-TURN: HOLDS. A split moves by LOSING a voter and never by TURNING one.
+     Read this honestly: no split MOVED in any exclusion cell, so P-TURN's second clause
+     is satisfied vacuously. The substantive half that IS exercised is clause 1 - a voter
+     was genuinely removed and no surviving voter's sign moved.
+
+============================================================================================================
+(5c) WHY CLAUSE 2 CAME BACK ZERO. POST-HOC REPORTING ADDITION, DECLARED - no measurement changes.
+============================================================================================================
+
+  'Zero verdicts moved' is NOT the same sentence as 'the removal was harmless'. A baseline pair
+  can fail to move for two very different reasons: it SURVIVED the removal unchanged, or it
+  LEFT THE TABLE because a row lost its era factor and is no longer ranked at all. The
+  committed comparison only counts the first kind. Here is the split.
+
+  cell         removed                base pairs  shared  absent  moved   rows that left the ranking
+  --------------------------------------------------------------------------------------------------------
+  LOO-DOT      DOT                            36      28       8      0   DOT
+  SELF-LINK    DOT, AVAX                      36      21      15      0   DOT, AVAX
+  SELF-PAXG    DOT, AVAX                      36      21      15      0   DOT, AVAX
+  SELF-SOL     DOT, AVAX                      36      21      15      0   DOT, AVAX
+  SELF-DOGE    DOT, AVAX                      36      21      15      0   DOT, AVAX
+  SELF-BTC     DOT, AVAX                      36      21      15      0   DOT, AVAX
+  SELF-LTC     DOT, AVAX                      36      21      15      0   DOT, AVAX
+  SELF-ETH     DOT, AVAX                      36      21      15      0   DOT, AVAX
+  SELF-DOT     LINK, DOGE, BTC, ETH, AVAX         36       0      36      0   LINK, SOL, PAXG, DOGE, BTC, LTC, ETH, AVAX
+  SELF-AVAX    LINK, DOGE, BTC, ETH, DOT         36       0      36      0   LINK, SOL, PAXG, DOGE, BTC, LTC, ETH, DOT
+
+  AND THE REASON UNDERNEATH IT. A reference votes on a pair (a,b) only if it is admissible for
+  BOTH rows, and `adm[row]` carries a SECOND gate beside A1: `cov_row >= 0.98`, the reference's
+  containment of THAT ROW's window - which does not depend on the pooled calendar at all.
+  So the question is not 'was a voter removed' but 'was a voter that was actually VOTING removed'.
+
+  reference     baseline pairs it votes on  of     sole dissenter on   pairs where it is the ONLY thing standing between
+  --------------------------------------------------------------------------------------------------------
+  LINK                                  21  36                     0   (none)
+  DOGE                                  21  36                     0   (none)
+  BTC                                   21  36                     0   (none)
+  ETH                                   21  36                     0   (none)
+  DOT                                    0  36                     0   (none)
+  AVAX                                   0  36                     0   (none)
+
+  THE HONEST SENTENCE: every exclusion this desk's own rules can build removes a reference that
+  was already gated out of the pairs that are actually contested. A1 is the calendar's only
+  channel into an ordering (R507) and that channel is itself gated downstream by a
+  calendar-INDEPENDENT containment test. On this disk the two gates overlap so completely that
+  NO calendar in either committed family changes a single pairwise verdict.
+
+============================================================================================================
+(5d) WHAT THE TWO ZERO-VOTE REFERENCES ARE ACTUALLY DOING. POST-HOC REPORTING ADDITION, DECLARED.
+============================================================================================================
+
+  A reference with 0 votes is still counted in the 'admissible set' census, because that census is
+  the UNION over rows of `adm[row]`. So it is worth printing WHICH rows each reference is
+  admissible for, which the census flattens away.
+
+  reference    rows it is admissible for    which rows
+  --------------------------------------------------------------------------------------------------------
+  LINK                                 7    LINK, PAXG, SOL, DOGE, BTC, LTC, ETH
+  DOGE                                 7    LINK, PAXG, SOL, DOGE, BTC, LTC, ETH
+  BTC                                  7    LINK, PAXG, SOL, DOGE, BTC, LTC, ETH
+  ETH                                  7    LINK, PAXG, SOL, DOGE, BTC, LTC, ETH
+  DOT                                  1    DOT   <== ITSELF ONLY
+  AVAX                                 1    AVAX   <== ITSELF ONLY
+
+  And the other side of the same fact: how many DISTINCT references each ranked row's Rule 1 era
+  factor is a median over. A median over one cell is not an average of anything.
+
+  row          ERA1   refs in the median   which
+  --------------------------------------------------------------------------------------------------------
+  LINK        1.077                    4   LINK, DOGE, BTC, ETH
+  SOL         1.163                    4   LINK, DOGE, BTC, ETH
+  PAXG        1.200                    4   LINK, DOGE, BTC, ETH
+  DOGE        1.077                    4   LINK, DOGE, BTC, ETH
+  BTC         1.077                    4   LINK, DOGE, BTC, ETH
+  LTC         1.077                    4   LINK, DOGE, BTC, ETH
+  ETH         1.077                    4   LINK, DOGE, BTC, ETH
+  DOT         1.011                    1   DOT   <== SELF-REFERENCE ONLY: this row is era-corrected by its own tape
+  AVAX        1.064                    1   AVAX   <== SELF-REFERENCE ONLY: this row is era-corrected by its own tape
+
+  Those rows can never be ORDERED against anything: unanimity needs a reference admissible for
+  BOTH rows, and a row whose only admissible reference is itself shares none with any other.
+     DOT    baseline pairs  8   UNORDERED  8   RESOLVED  0
+     AVAX   baseline pairs  8   UNORDERED  8   RESOLVED  0
+
+  So R508's 'CAL-DON places two more rows' is exact about the NUMBER and must not be read as a
+  PLACE: those rows receive an era factor computed against their own tape and remain UNORDERED
+  against every other row in the table. Nothing in R508 is wrong; this is the caveat that
+  belongs beside it.
+
+============================================================================================================
+(6) DECLARED SECONDARY - R506's FENCE-T CELL, FOR CONTINUITY WITH R506/R507/R508. NO VERDICT IS TAKEN FROM IT.
+============================================================================================================
+
+  T_END = 2025-06-15 06:33:36 for every row. Rows live: 10 of 11.
+  Donors: LINK, DOGE, BTC, ETH, DOT, AVAX
+  CAL-DON: 668 days   admissible: LINK, DOGE, BTC, ETH, DOT, AVAX
+     EXCLUSION  LOO-DOT       1306d   admits LINK, DOGE, BTC, ETH, AVAX     REMOVES DOT
+     EXCLUSION  SELF-LINK     1627d   admits LINK, DOGE, BTC, ETH           REMOVES DOT, AVAX
+     EXCLUSION  SELF-PAXG      897d   admits LINK, DOGE, BTC, ETH           REMOVES DOT, AVAX
+     EXCLUSION  SELF-SOL      1209d   admits LINK, DOGE, BTC, ETH           REMOVES DOT, AVAX
+     EXCLUSION  SELF-DOGE     1627d   admits LINK, DOGE, BTC, ETH           REMOVES DOT, AVAX
+     EXCLUSION  SELF-BTC      1627d   admits LINK, DOGE, BTC, ETH           REMOVES DOT, AVAX
+     EXCLUSION  SELF-LTC      1627d   admits LINK, DOGE, BTC, ETH           REMOVES DOT, AVAX
+     EXCLUSION  SELF-ETH      1627d   admits LINK, DOGE, BTC, ETH           REMOVES DOT, AVAX
+     EXCLUSION  SELF-AVAX     1306d   admits LINK, DOGE, BTC, ETH, AVAX     REMOVES DOT
+  exclusion cells in the secondary cell: 9
+
+============================================================================================================
+WHAT THIS ROUND ESTABLISHES
+============================================================================================================
+
+  1. THE CONSTRUCTION PREDATES THE ANSWER: commit 0c457b4, made before this file existed.
+
+  2. P-LOO: HOLDS.   P-EXCL: HOLDS (10 exclusion cells of 17 built).
+
+  3. NOTHING IS ADOPTED. R503's published table stands: LINK 1st and resolved; places 2-4
+     UNORDERED {PAXG, SOL, XRP}; DOGE > BTC > LTC > ETH resolved. No calendar is adopted,
+     no ordering is republished, no fence moves, nothing is proposed for deployment.
+
+  4. COSTS DECIDE NOTHING (owner rule, 2026-07-25).
+
+  FENCE HELD: simulate() never called, no entry population built, no sweep scanned, no stop
+  measured, no outcome read. No byte at or past any pinned proportional fence was read, so
+  PAXG's, XRP's, ADA's, DOT's and AVAX's intact slices are untouched. NO LOOK CONSUMED.
+  NO DATA FILE ON DISK WAS WRITTEN, EXTENDED, MOVED OR TRUNCATED.
+============================================================================================================
